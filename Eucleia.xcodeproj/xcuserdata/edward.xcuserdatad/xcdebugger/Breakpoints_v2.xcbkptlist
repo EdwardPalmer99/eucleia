@@ -1,0 +1,910 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "ABC9CF6F-93DD-44C5-8042-13FE6F45713F"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B271CA94-8268-46B0-A01E-06E4B9081BA7"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WarpC/WarpParser.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "225"
+            endingLineNumber = "225"
+            landmarkName = "parseStructDefinition()"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B52DC4D9-34F0-4B62-A8E0-7F0EB4DBA427"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WarpC/WarpScope.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "91"
+            endingLineNumber = "91"
+            landmarkName = "getVariable(this, name)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "510578FD-64A6-400B-B616-782B87A492D5"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WarpC/WarpScope.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "95"
+            endingLineNumber = "95"
+            landmarkName = "getVariable(this, name)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "685DD698-16C1-4DE3-99E3-0F365ADBDF74"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WarpC/WarpParser.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "378"
+            endingLineNumber = "378"
+            landmarkName = "parseStructDotAccessor(lastExpressionNode)"
+            landmarkType = "9">
+            <Locations>
+               <Location
+                  uuid = "685DD698-16C1-4DE3-99E3-0F365ADBDF74 - 53cbce32d3446077"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "parseStructDotAccessor"
+                  moduleName = "WarpC"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/WarpC/WarpC/WarpParser.c"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "351"
+                  endingLineNumber = "351"
+                  offsetFromSymbolStart = "41">
+               </Location>
+               <Location
+                  uuid = "685DD698-16C1-4DE3-99E3-0F365ADBDF74 - 53cbce32d344609a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "parseStructDotAccessor"
+                  moduleName = "WarpC"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/WarpC/WarpC/WarpParser.c"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "354"
+                  endingLineNumber = "354"
+                  offsetFromSymbolStart = "122">
+               </Location>
+               <Location
+                  uuid = "685DD698-16C1-4DE3-99E3-0F365ADBDF74 - 53cbce32d3439fd3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "parseStructDotAccessor"
+                  moduleName = "WarpC"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/WarpC/WarpC/WarpParser.c"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "379"
+                  endingLineNumber = "379"
+                  offsetFromSymbolStart = "122">
+               </Location>
+               <Location
+                  uuid = "685DD698-16C1-4DE3-99E3-0F365ADBDF74 - 53cbce32d3439cfa"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "parseStructDotAccessor"
+                  moduleName = "WarpC"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/WarpC/WarpC/WarpParser.c"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "386"
+                  endingLineNumber = "386"
+                  offsetFromSymbolStart = "122">
+               </Location>
+               <Location
+                  uuid = "685DD698-16C1-4DE3-99E3-0F365ADBDF74 - 53cbce32d3439ff2"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "parseStructDotAccessor"
+                  moduleName = "WarpC"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/WarpC/WarpC/WarpParser.c"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "378"
+                  endingLineNumber = "378"
+                  offsetFromSymbolStart = "122">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "97A1BB84-4267-48F9-B6E0-3BE391044B91"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WarpC/WarpParser.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "369"
+            endingLineNumber = "369"
+            landmarkName = "parseStructDotAccessor(lastExpressionNode)"
+            landmarkType = "9">
+            <Locations>
+               <Location
+                  uuid = "97A1BB84-4267-48F9-B6E0-3BE391044B91 - 53cbce32d344634d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "parseStructDotAccessor"
+                  moduleName = "WarpC"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/WarpC/WarpC/WarpParser.c"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "345"
+                  endingLineNumber = "345"
+                  offsetFromSymbolStart = "12">
+               </Location>
+               <Location
+                  uuid = "97A1BB84-4267-48F9-B6E0-3BE391044B91 - 53cbce32d344634d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "parseStructDotAccessor"
+                  moduleName = "WarpC"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/WarpC/WarpC/WarpParser.c"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "345"
+                  endingLineNumber = "345"
+                  offsetFromSymbolStart = "29">
+               </Location>
+               <Location
+                  uuid = "97A1BB84-4267-48F9-B6E0-3BE391044B91 - 53cbce32d3439e8a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "parseStructDotAccessor"
+                  moduleName = "WarpC"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/WarpC/WarpC/WarpParser.c"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "370"
+                  endingLineNumber = "370"
+                  offsetFromSymbolStart = "29">
+               </Location>
+               <Location
+                  uuid = "97A1BB84-4267-48F9-B6E0-3BE391044B91 - 53cbce32d3439fad"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "parseStructDotAccessor"
+                  moduleName = "WarpC"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/WarpC/WarpC/WarpParser.c"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "377"
+                  endingLineNumber = "377"
+                  offsetFromSymbolStart = "29">
+               </Location>
+               <Location
+                  uuid = "97A1BB84-4267-48F9-B6E0-3BE391044B91 - 53cbce32d3439ea5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "parseStructDotAccessor"
+                  moduleName = "WarpC"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/WarpC/WarpC/WarpParser.c"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "369"
+                  endingLineNumber = "369"
+                  offsetFromSymbolStart = "29">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "BBC67910-12E9-4C41-A47E-C4E02E069885"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WarpC/WarpUtility.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "89"
+            endingLineNumber = "89"
+            landmarkName = "assertIsVariable(varType)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FA535148-6D0B-4836-B4F6-55AE489E12BD"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WarpC/EucleiaInterpreterHelper.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "373"
+            endingLineNumber = "373"
+            landmarkName = "evaluateFor(node, scope)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D8CCCE75-3E58-4413-902C-C8C198BF4213"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WarpC/WarpParser.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "470"
+            endingLineNumber = "470"
+            landmarkName = "parseAtomicallyExpression()"
+            landmarkType = "9">
+            <Locations>
+               <Location
+                  uuid = "D8CCCE75-3E58-4413-902C-C8C198BF4213 - cb59ebf162fe88ae"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "parseAtomicallyExpression"
+                  moduleName = "WarpC"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/WarpC/WarpC/WarpParser.c"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "473"
+                  endingLineNumber = "473"
+                  offsetFromSymbolStart = "709">
+               </Location>
+               <Location
+                  uuid = "D8CCCE75-3E58-4413-902C-C8C198BF4213 - cb59ebf162fe8bb7"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "parseAtomicallyExpression"
+                  moduleName = "WarpC"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/WarpC/WarpC/WarpParser.c"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "480"
+                  endingLineNumber = "480"
+                  offsetFromSymbolStart = "709">
+               </Location>
+               <Location
+                  uuid = "D8CCCE75-3E58-4413-902C-C8C198BF4213 - cb59ebf162fe88cd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "parseAtomicallyExpression"
+                  moduleName = "WarpC"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/WarpC/WarpC/WarpParser.c"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "470"
+                  endingLineNumber = "470"
+                  offsetFromSymbolStart = "665">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "81874D8C-F7F3-4ECD-B545-A0B754114BE6"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WarpC/WarpObject.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "378"
+            endingLineNumber = "378"
+            landmarkName = "checkContainerIntegrity(container)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B1E8A113-2D5F-4E18-A3C0-00DC20F355AB"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WarpC/WarpObject.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "380"
+            endingLineNumber = "380"
+            landmarkName = "checkContainerIntegrity(container)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6617175B-BD47-43DE-9DD5-FEE15F03DE1C"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WarpC/EucleiaInterpreterHelper.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "310"
+            endingLineNumber = "310"
+            landmarkName = "evaluateReturn(node, scope)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "374D80E5-E274-4B7A-A693-F20332340CDB"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WarpC/WarpInterpreter.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "112"
+            endingLineNumber = "112"
+            landmarkName = "evaluate(node, scope)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "283E2D67-F6A7-404E-9F4B-AA12E117D5A4"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WarpC/EucleiaInterpreterHelper.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "66"
+            endingLineNumber = "66"
+            landmarkName = "evaluateFunction(node, scope)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D37DBCC0-9F1A-4F09-9D6D-9A0C8D8B49DC"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WarpC/WarpInterpreter.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "32"
+            endingLineNumber = "32"
+            landmarkName = "runInterpreter(fpath)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9BAD8992-3027-4479-849A-D311A781530B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WarpC/WarpAST.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "447"
+            endingLineNumber = "447"
+            landmarkName = "assertNodeType(node, expectedType)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "24ED9BB5-F156-4DB5-9A4D-644B01C34A1A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WarpC/EucleiaInterpreterHelper.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "390"
+            endingLineNumber = "390"
+            landmarkName = "evaluateFor(node, scope)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2D2A76C5-5F23-4C89-BA03-46FD0D3D15FD"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WarpC/EucleiaInterpreterHelper.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "384"
+            endingLineNumber = "384"
+            landmarkName = "evaluateFor(node, scope)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FDDABAAB-7C5A-443A-BCBC-69E4616D962A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Eucleia/EucleiaObject.hpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "123"
+            endingLineNumber = "123"
+            landmarkName = "operator&lt;&lt;(out, object)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EBEB0E42-E0CB-4631-A86F-51F4634803D8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Eucleia/EucleiaTokenizer.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "145"
+            endingLineNumber = "145"
+            landmarkName = "Tokenizer::skipComment()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7E8C0BDC-F692-47DC-B8A5-BDA6E3E4CF68"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Eucleia/EucleiaTokenizer.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "135"
+            endingLineNumber = "135"
+            landmarkName = "Tokenizer::buildNextToken()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "7E8C0BDC-F692-47DC-B8A5-BDA6E3E4CF68 - 83ee644ad3ab54aa"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Tokenizer::skipComment()"
+                  moduleName = "Eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/Eucleia%20V2/Eucleia/EucleiaTokenizer.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "136"
+                  endingLineNumber = "136"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  uuid = "7E8C0BDC-F692-47DC-B8A5-BDA6E3E4CF68 - df42acd3b60c8ae2"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Tokenizer::buildNextToken()"
+                  moduleName = "Eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/Eucleia%20V2/Eucleia/EucleiaTokenizer.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "135"
+                  endingLineNumber = "135"
+                  offsetFromSymbolStart = "381">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "266BE3DD-E543-4806-AF2D-E54293D68298"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Eucleia/EucleiaTokenizer.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "114"
+            endingLineNumber = "114"
+            landmarkName = "Tokenizer::buildNextToken()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C3C97472-4DED-4466-9AE7-858EFFF85F53"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Eucleia/EucleiaTokenizer.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "115"
+            endingLineNumber = "115"
+            landmarkName = "Tokenizer::buildNextToken()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7AC994C7-39B9-4915-B7E8-5731A8C16556"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Eucleia/EucleiaNode.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "430"
+            endingLineNumber = "430"
+            landmarkName = "ArrayAccessNode::evaluate(scope)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "7AC994C7-39B9-4915-B7E8-5731A8C16556 - 1093b045c373c60"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ArrayAccessNode::evaluate(Scope&amp;)"
+                  moduleName = "Eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/Eucleia%20V2/Eucleia/EucleiaNode.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "413"
+                  endingLineNumber = "413"
+                  offsetFromSymbolStart = "126">
+               </Location>
+               <Location
+                  uuid = "7AC994C7-39B9-4915-B7E8-5731A8C16556 - 1093b045c373c01"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ArrayAccessNode::evaluate(Scope&amp;)"
+                  moduleName = "Eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/Eucleia%20V2/Eucleia/EucleiaNode.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "412"
+                  endingLineNumber = "412"
+                  offsetFromSymbolStart = "105">
+               </Location>
+               <Location
+                  uuid = "7AC994C7-39B9-4915-B7E8-5731A8C16556 - 1093b045c373e57"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ArrayAccessNode::evaluate(Scope&amp;)"
+                  moduleName = "Eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/Eucleia%20V2/Eucleia/EucleiaNode.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "430"
+                  endingLineNumber = "430"
+                  offsetFromSymbolStart = "105">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "62360F31-C36B-4F76-B6E1-3D9A297B8E15"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Eucleia/EucleiaNode.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "138"
+            endingLineNumber = "138"
+            landmarkName = "VariableNode::evaluate(scope)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8048D348-C75C-4F7E-82E7-C0FFA795C890"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Eucleia/EucleiaScope.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "90"
+            endingLineNumber = "90"
+            landmarkName = "Scope::updateObject(name, object)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "601CA68F-C002-4301-900F-FF57C68C7351"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Eucleia/EucleiaScope.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "54"
+            endingLineNumber = "54"
+            landmarkName = "Scope::defineObject(name, object)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "601CA68F-C002-4301-900F-FF57C68C7351 - 70f91fdfd32f3c72"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Scope::defineObject(std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt;&gt; const&amp;, std::__1::shared_ptr&lt;BaseObject&gt;)"
+                  moduleName = "Eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/Eucleia%20V2/Eucleia/EucleiaScope.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "56"
+                  endingLineNumber = "56"
+                  offsetFromSymbolStart = "45">
+               </Location>
+               <Location
+                  uuid = "601CA68F-C002-4301-900F-FF57C68C7351 - 70f91fdfd32f3c30"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Scope::defineObject(std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt;&gt; const&amp;, std::__1::shared_ptr&lt;BaseObject&gt;)"
+                  moduleName = "Eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/Eucleia%20V2/Eucleia/EucleiaScope.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "54"
+                  endingLineNumber = "54"
+                  offsetFromSymbolStart = "32">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B502638D-2824-4C9E-BC4A-320D3DA14483"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Eucleia/EucleiaNode.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "176"
+            endingLineNumber = "176"
+            landmarkName = "AssignNode::evaluate(scope)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "B502638D-2824-4C9E-BC4A-320D3DA14483 - ab12d076de2000c7"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "AssignNode::evaluate(Scope&amp;)"
+                  moduleName = "Eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/Eucleia%20V2/Eucleia/EucleiaNode.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "149"
+                  endingLineNumber = "149"
+                  offsetFromSymbolStart = "113">
+               </Location>
+               <Location
+                  uuid = "B502638D-2824-4C9E-BC4A-320D3DA14483 - ab12d076de2000c7"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "AssignNode::evaluate(Scope&amp;)"
+                  moduleName = "Eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/Eucleia%20V2/Eucleia/EucleiaNode.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "149"
+                  endingLineNumber = "149"
+                  offsetFromSymbolStart = "95">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "44B9DDA6-EEC6-4009-BA72-4D4F768F1C2B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Eucleia/EucleiaScope.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "83"
+            endingLineNumber = "83"
+            landmarkName = "Scope::updateObject(name, object)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "28C3BE3B-C969-4867-A577-7870E3A6E6D9"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Eucleia/EucleiaScope.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "87"
+            endingLineNumber = "87"
+            landmarkName = "Scope::updateObject(name, object)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "28C3BE3B-C969-4867-A577-7870E3A6E6D9 - b6c21ca00ffd0ee6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Scope::setObject(std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt;&gt; const&amp;, std::__1::shared_ptr&lt;BaseObject&gt;)"
+                  moduleName = "Eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/Eucleia%20V2/Eucleia/EucleiaScope.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "89"
+                  endingLineNumber = "89"
+                  offsetFromSymbolStart = "683">
+               </Location>
+               <Location
+                  uuid = "28C3BE3B-C969-4867-A577-7870E3A6E6D9 - b6c21ca00ffd0ee6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Scope::setObject(std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt;&gt; const&amp;, std::__1::shared_ptr&lt;BaseObject&gt;)"
+                  moduleName = "Eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/Eucleia%20V2/Eucleia/EucleiaScope.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "89"
+                  endingLineNumber = "89"
+                  offsetFromSymbolStart = "692">
+               </Location>
+               <Location
+                  uuid = "28C3BE3B-C969-4867-A577-7870E3A6E6D9 - b6c21ca00ffd0ee6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Scope::setObject(std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt;&gt; const&amp;, std::__1::shared_ptr&lt;BaseObject&gt;)"
+                  moduleName = "Eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/Eucleia%20V2/Eucleia/EucleiaScope.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "89"
+                  endingLineNumber = "89"
+                  offsetFromSymbolStart = "574">
+               </Location>
+               <Location
+                  uuid = "28C3BE3B-C969-4867-A577-7870E3A6E6D9 - b6c21ca00ffd0ee6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Scope::setObject(std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt;&gt; const&amp;, std::__1::shared_ptr&lt;BaseObject&gt;)"
+                  moduleName = "Eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/Eucleia%20V2/Eucleia/EucleiaScope.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "89"
+                  endingLineNumber = "89"
+                  offsetFromSymbolStart = "433">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "17D3981C-5F63-46FB-A1B6-B0885E746E7B"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Eucleia/EucleiaObject.hpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "149"
+            endingLineNumber = "149"
+            landmarkName = "operator&lt;&lt;(out, object)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6390FF63-9594-49CC-A596-73018B13A8CB"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "eucleia/src/EucleiaParser.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "571"
+            endingLineNumber = "571"
+            landmarkName = "Parser::skipPunctuation(name)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>
