@@ -32,15 +32,16 @@ protected:
 	
 	std::shared_ptr<BaseNode> parseProgram();
 	std::shared_ptr<ArrayNode> parseArray();
-	
-	std::shared_ptr<BaseNode> parseVariable();
+
+	std::shared_ptr<BaseNode> parseVariableDefinition();
+	std::shared_ptr<BaseNode> parseVariableName();
 	
 	std::shared_ptr<DoWhileNode> parseDoWhile();
 	std::shared_ptr<WhileNode> parseWhile();
 	std::shared_ptr<ForLoopNode> parseFor();
 	
 	std::shared_ptr<IfNode> parseIf();
-	std::shared_ptr<FunctionNode> parseFunction();
+	std::shared_ptr<FunctionNode> parseFunctionDefinition();
 
 	std::shared_ptr<BreakNode> parseBreak();
 	std::shared_ptr<ReturnNode> parseReturn();
@@ -50,6 +51,8 @@ protected:
 	bool isKeyword(const std::string & keyword);
 	bool isPunctuation(const std::string & punctuation);
 	bool isOperator(const std::string & operatorName);
+	
+	bool isDataTypeKeyword();
 
 	void skipKeyword(const std::string & keyword);
 	void skipPunctuation(const std::string & punctuation);

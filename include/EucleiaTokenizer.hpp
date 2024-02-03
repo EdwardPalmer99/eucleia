@@ -53,7 +53,9 @@ public:
 	Token next();
 	
 	inline bool empty() const { return _tokens.empty(); }
-
+	
+	bool isDataTypeToken();
+	
 protected:
 	void skipComment();
 	void skipWhitespace();
@@ -64,7 +66,7 @@ protected:
 	Token readID();
 	Token readOperator();
 	Token readPunctuation();
-	
+		
 	bool isKeyword(const std::string & possibleKeyword) const;
 	
 	void generateTokens();

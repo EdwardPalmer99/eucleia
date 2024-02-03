@@ -1,12 +1,12 @@
-func printFib(min : int, max : int)
+func printFib(int min, int max)
 {
-	for (n : int = min; n < max; n = n + 1)
+	for (int n = min; n < max; n = n + 1)
 	{
 		print(fib(n));
 	};
 };
 
-func fib(n : int)
+func fib(int n)
 {
 	if (n > 2)
 	{
@@ -20,4 +20,4 @@ func fib(n : int)
 	return 0;
 };
 
-printFib(1, 29);
+printFib(1, 10);

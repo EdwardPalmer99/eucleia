@@ -10,6 +10,7 @@
 
 #include <string>
 #include <set>
+#include "RecognizedInputs.hpp"
 
 struct StreamPoint
 {
@@ -43,6 +44,8 @@ protected:
 
 	void destroy();
 	void reportError(const char *format, ...);
+	
+	inline const RecognizedInputs & recognizedInputs() const { return _recognizedInputs; }
 
 private:
 	void consume();
@@ -50,8 +53,7 @@ private:
 	char *_basePtr{nullptr};
 	StreamPoint _current;
 	
-	std::set<char> _allowedPunctuation;
-	std::set<char> _allowedOperators;
+	RecognizedInputs _recognizedInputs;
 };
 
 

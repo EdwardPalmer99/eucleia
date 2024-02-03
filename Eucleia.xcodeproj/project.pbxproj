@@ -8,8 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2B62DF6E2B62F920006009CD /* EucleiaInterpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B62DF6C2B62F920006009CD /* EucleiaInterpreter.cpp */; };
-		2B6617292B6DB719006D06EE /* printFibonacci.ek in Resources */ = {isa = PBXBuildFile; fileRef = 2B6617282B6DB719006D06EE /* printFibonacci.ek */; };
-		2B66172D2B6DB7E1006D06EE /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 2B66172C2B6DB7E1006D06EE /* README.md */; };
+		2B76C14B2B6DC8FE005B36A7 /* RecognizedInputs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B76C1492B6DC8FE005B36A7 /* RecognizedInputs.cpp */; };
 		2B7CC9852B546E6400D0D335 /* EucleiaNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B7CC9832B546E6400D0D335 /* EucleiaNode.cpp */; };
 		2B7CC9972B54731900D0D335 /* EucleiaObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B7CC9952B54731900D0D335 /* EucleiaObject.cpp */; };
 		2B7CC99B2B547E1300D0D335 /* EucleiaScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B7CC9992B547E1300D0D335 /* EucleiaScope.cpp */; };
@@ -35,16 +34,19 @@
 		2B62DF6C2B62F920006009CD /* EucleiaInterpreter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EucleiaInterpreter.cpp; sourceTree = "<group>"; };
 		2B62DF6D2B62F920006009CD /* EucleiaInterpreter.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EucleiaInterpreter.hpp; sourceTree = "<group>"; };
 		2B62DF712B66FEEA006009CD /* EucleiaUtility.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EucleiaUtility.hpp; sourceTree = "<group>"; };
-		2B66171C2B6DA9D6006D06EE /* EucleiaTestTarget.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EucleiaTestTarget.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B6617272B6DB54F006D06EE /* eucleia-formatting.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "eucleia-formatting.plist"; sourceTree = "<group>"; };
-		2B6617282B6DB719006D06EE /* printFibonacci.ek */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = printFibonacci.ek; sourceTree = "<group>"; };
 		2B66172C2B6DB7E1006D06EE /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		2B76C1492B6DC8FE005B36A7 /* RecognizedInputs.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RecognizedInputs.cpp; sourceTree = "<group>"; };
+		2B76C14A2B6DC8FE005B36A7 /* RecognizedInputs.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RecognizedInputs.hpp; sourceTree = "<group>"; };
+		2B76C14E2B6EBFAE005B36A7 /* printFib.ek */ = {isa = PBXFileReference; lastKnownFileType = text; path = printFib.ek; sourceTree = "<group>"; };
 		2B7CC9832B546E6400D0D335 /* EucleiaNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EucleiaNode.cpp; sourceTree = "<group>"; };
 		2B7CC9842B546E6400D0D335 /* EucleiaNode.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EucleiaNode.hpp; sourceTree = "<group>"; };
 		2B7CC9952B54731900D0D335 /* EucleiaObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EucleiaObject.cpp; sourceTree = "<group>"; };
 		2B7CC9962B54731900D0D335 /* EucleiaObject.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EucleiaObject.hpp; sourceTree = "<group>"; };
 		2B7CC9992B547E1300D0D335 /* EucleiaScope.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EucleiaScope.cpp; sourceTree = "<group>"; };
 		2B7CC99A2B547E1300D0D335 /* EucleiaScope.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EucleiaScope.hpp; sourceTree = "<group>"; };
+		2B808DD62B6EF0A700EF20F8 /* eucleia */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = eucleia; path = "/Users/edward/Documents/Home/Computing/C/C Projects/eucleia/build/Debug/eucleia"; sourceTree = "<absolute>"; };
+		2B808DD72B6EF0A700EF20F8 /* eucleia-test.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "eucleia-test.xctest"; path = "/Users/edward/Documents/Home/Computing/C/C Projects/eucleia/build/Debug/eucleia-test.xctest"; sourceTree = "<absolute>"; };
 		2BBD60892B5C05110080D43C /* EucleiaParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EucleiaParser.cpp; sourceTree = "<group>"; };
 		2BBD608A2B5C05110080D43C /* EucleiaParser.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EucleiaParser.hpp; sourceTree = "<group>"; };
 		2BC4B0972B25214400104C1F /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
@@ -52,12 +54,11 @@
 		2BE417D22B59D13A000A0ED4 /* EucleiaTokenizer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EucleiaTokenizer.hpp; sourceTree = "<group>"; };
 		2BE417D42B59D5A0000A0ED4 /* EucleiaInputStream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EucleiaInputStream.cpp; sourceTree = "<group>"; };
 		2BE417D52B59D5A0000A0ED4 /* EucleiaInputStream.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EucleiaInputStream.hpp; sourceTree = "<group>"; };
-		2BF3A7392B012B8D001CFDC6 /* Eucleia */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Eucleia; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BF3A73C2B012B8D001CFDC6 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		2B6617192B6DA9D6006D06EE /* Frameworks */ = {
+		2B76C1532B6EC79B005B36A7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -85,6 +86,7 @@
 				2BBD60892B5C05110080D43C /* EucleiaParser.cpp */,
 				2BE417D12B59D13A000A0ED4 /* EucleiaTokenizer.cpp */,
 				2BE417D42B59D5A0000A0ED4 /* EucleiaInputStream.cpp */,
+				2B76C1492B6DC8FE005B36A7 /* RecognizedInputs.cpp */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -92,6 +94,7 @@
 		2B6617142B6DA6A0006D06EE /* include */ = {
 			isa = PBXGroup;
 			children = (
+				2B76C14A2B6DC8FE005B36A7 /* RecognizedInputs.hpp */,
 				2B7CC9962B54731900D0D335 /* EucleiaObject.hpp */,
 				2B7CC9842B546E6400D0D335 /* EucleiaNode.hpp */,
 				2B7CC99A2B547E1300D0D335 /* EucleiaScope.hpp */,
@@ -107,7 +110,7 @@
 		2B6617162B6DA839006D06EE /* examples */ = {
 			isa = PBXGroup;
 			children = (
-				2B6617282B6DB719006D06EE /* printFibonacci.ek */,
+				2B76C14E2B6EBFAE005B36A7 /* printFib.ek */,
 			);
 			path = examples;
 			sourceTree = "<group>";
@@ -118,45 +121,35 @@
 				2BC4B0972B25214400104C1F /* .gitignore */,
 				2B66172C2B6DB7E1006D06EE /* README.md */,
 				2B6617272B6DB54F006D06EE /* eucleia-formatting.plist */,
-				2B6617132B6DA68C006D06EE /* src */,
-				2B6617142B6DA6A0006D06EE /* include */,
 				2B6617162B6DA839006D06EE /* examples */,
-				2BF3A73A2B012B8D001CFDC6 /* Products */,
+				2B6617142B6DA6A0006D06EE /* include */,
+				2B6617132B6DA68C006D06EE /* src */,
 			);
-			sourceTree = "<group>";
-		};
-		2BF3A73A2B012B8D001CFDC6 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				2BF3A7392B012B8D001CFDC6 /* Eucleia */,
-				2B66171C2B6DA9D6006D06EE /* EucleiaTestTarget.xctest */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		2B66171B2B6DA9D6006D06EE /* EucleiaTestTarget */ = {
+		2B76C1552B6EC79B005B36A7 /* eucleia-test */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2B6617202B6DA9D6006D06EE /* Build configuration list for PBXNativeTarget "EucleiaTestTarget" */;
+			buildConfigurationList = 2B76C15A2B6EC79B005B36A7 /* Build configuration list for PBXNativeTarget "eucleia-test" */;
 			buildPhases = (
-				2B6617182B6DA9D6006D06EE /* Sources */,
-				2B6617192B6DA9D6006D06EE /* Frameworks */,
-				2B66171A2B6DA9D6006D06EE /* Resources */,
+				2B76C1522B6EC79B005B36A7 /* Sources */,
+				2B76C1532B6EC79B005B36A7 /* Frameworks */,
+				2B76C1542B6EC79B005B36A7 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = EucleiaTestTarget;
-			productName = EucleiaTestTarget;
-			productReference = 2B66171C2B6DA9D6006D06EE /* EucleiaTestTarget.xctest */;
+			name = "eucleia-test";
+			productName = "eucleia-test";
+			productReference = 2B808DD72B6EF0A700EF20F8 /* eucleia-test.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		2BF3A7382B012B8D001CFDC6 /* Eucleia */ = {
+		2BF3A7382B012B8D001CFDC6 /* eucleia */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2BF3A7402B012B8D001CFDC6 /* Build configuration list for PBXNativeTarget "Eucleia" */;
+			buildConfigurationList = 2BF3A7402B012B8D001CFDC6 /* Build configuration list for PBXNativeTarget "eucleia" */;
 			buildPhases = (
 				2BF3A7352B012B8D001CFDC6 /* Sources */,
 				2BF3A7362B012B8D001CFDC6 /* Frameworks */,
@@ -166,9 +159,9 @@
 			);
 			dependencies = (
 			);
-			name = Eucleia;
+			name = eucleia;
 			productName = WarpC;
-			productReference = 2BF3A7392B012B8D001CFDC6 /* Eucleia */;
+			productReference = 2B808DD62B6EF0A700EF20F8 /* eucleia */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -180,7 +173,7 @@
 				BuildIndependentTargetsInParallel = 1;
 				LastUpgradeCheck = 1520;
 				TargetAttributes = {
-					2B66171B2B6DA9D6006D06EE = {
+					2B76C1552B6EC79B005B36A7 = {
 						CreatedOnToolsVersion = 15.2;
 					};
 					2BF3A7382B012B8D001CFDC6 = {
@@ -197,30 +190,28 @@
 				Base,
 			);
 			mainGroup = 2BF3A7302B012B8D001CFDC6;
-			productRefGroup = 2BF3A73A2B012B8D001CFDC6 /* Products */;
+			productRefGroup = 2BF3A7302B012B8D001CFDC6;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				2BF3A7382B012B8D001CFDC6 /* Eucleia */,
-				2B66171B2B6DA9D6006D06EE /* EucleiaTestTarget */,
+				2BF3A7382B012B8D001CFDC6 /* eucleia */,
+				2B76C1552B6EC79B005B36A7 /* eucleia-test */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		2B66171A2B6DA9D6006D06EE /* Resources */ = {
+		2B76C1542B6EC79B005B36A7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2B66172D2B6DB7E1006D06EE /* README.md in Resources */,
-				2B6617292B6DB719006D06EE /* printFibonacci.ek in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		2B6617182B6DA9D6006D06EE /* Sources */ = {
+		2B76C1522B6EC79B005B36A7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -233,6 +224,7 @@
 			files = (
 				2B7CC9852B546E6400D0D335 /* EucleiaNode.cpp in Sources */,
 				2BE417D62B59D5A0000A0ED4 /* EucleiaInputStream.cpp in Sources */,
+				2B76C14B2B6DC8FE005B36A7 /* RecognizedInputs.cpp in Sources */,
 				2BBD608B2B5C05110080D43C /* EucleiaParser.cpp in Sources */,
 				2BE417D32B59D13A000A0ED4 /* EucleiaTokenizer.cpp in Sources */,
 				2B62DF6E2B62F920006009CD /* EucleiaInterpreter.cpp in Sources */,
@@ -245,7 +237,7 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		2B6617212B6DA9D6006D06EE /* Debug */ = {
+		2B76C15B2B6EC79B005B36A7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -255,7 +247,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Edward.EucleiaTestTarget;
+				PRODUCT_BUNDLE_IDENTIFIER = "Edward.eucleia-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -264,7 +256,7 @@
 			};
 			name = Debug;
 		};
-		2B6617222B6DA9D6006D06EE /* Release */ = {
+		2B76C15C2B6EC79B005B36A7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -274,7 +266,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Edward.EucleiaTestTarget;
+				PRODUCT_BUNDLE_IDENTIFIER = "Edward.eucleia-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -425,11 +417,11 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2B6617202B6DA9D6006D06EE /* Build configuration list for PBXNativeTarget "EucleiaTestTarget" */ = {
+		2B76C15A2B6EC79B005B36A7 /* Build configuration list for PBXNativeTarget "eucleia-test" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2B6617212B6DA9D6006D06EE /* Debug */,
-				2B6617222B6DA9D6006D06EE /* Release */,
+				2B76C15B2B6EC79B005B36A7 /* Debug */,
+				2B76C15C2B6EC79B005B36A7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -443,7 +435,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2BF3A7402B012B8D001CFDC6 /* Build configuration list for PBXNativeTarget "Eucleia" */ = {
+		2BF3A7402B012B8D001CFDC6 /* Build configuration list for PBXNativeTarget "eucleia" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2BF3A7412B012B8D001CFDC6 /* Debug */,

@@ -38,24 +38,6 @@ std::string Token::description() const
 
 Tokenizer::Tokenizer(const std::string & fpath) : InputStream(fpath)
 {
-	_allowedKeywords = {
-		"if",
-		"else",
-		"true",
-		"false",
-		"func",
-		"while",
-		"do",
-		"for",
-		"int",
-		"float",
-		"bool",
-		"array",
-		"struct",
-		"break",
-		"return"
-	};
-	
 	generateTokens();
 }
 
@@ -89,6 +71,11 @@ Token Tokenizer::next()
 	_tokens.pop();
 	
 	return next;
+}
+
+bool Tokenizer::isDataTypeToken()
+{
+	return recognizedInputs().isDataType(peek().value);
 }
 
 
@@ -287,6 +274,6 @@ Token Tokenizer::readOperator()
 
 bool Tokenizer::isKeyword(const std::string & possibleKeyword) const
 {
-	return _allowedKeywords.contains(possibleKeyword);
+	return recognizedInputs().isKeyword(possibleKeyword);
 }
 

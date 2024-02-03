@@ -10,12 +10,13 @@
 #include <stdio.h>
 #include <algorithm>
 #include "EucleiaUtility.hpp"
+#include "RecognizedInputs.hpp"
 
 static long getFileSize(FILE *fp);
 static const char *getFileContents(const char *fpath);
 
 
-InputStream::InputStream(const std::string & fpath)
+InputStream::InputStream(const std::string & fpath) : _recognizedInputs()
 {
 	const char *fileBuffer = getFileContents(fpath.c_str());
 	if (!fileBuffer)
@@ -24,9 +25,6 @@ InputStream::InputStream(const std::string & fpath)
 	}
 	
 	_current.ptr = (char *)fileBuffer;
-	
-	_allowedPunctuation = { ',', ';', '(', ')', '{', '}', '[', ']', ':', '.' };
-	_allowedOperators	= { '+', '-', '*', '/', '%', '&', '|', '<', '>', '=', '!' };
 }
 
 
@@ -72,13 +70,13 @@ bool InputStream::isComment() const
 			
 bool InputStream::isOperator() const
 {
-	return _allowedOperators.contains(peek());
+	return _recognizedInputs.isOperator(peek());
 }
 
 
 bool InputStream::isPunctuation() const
 {
-	return _allowedPunctuation.contains(peek());
+	return _recognizedInputs.isPunctuation(peek());
 }
 
 

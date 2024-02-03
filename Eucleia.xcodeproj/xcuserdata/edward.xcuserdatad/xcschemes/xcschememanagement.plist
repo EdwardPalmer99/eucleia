@@ -4,12 +4,7 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>EucleiaTestTarget.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>1</integer>
-		</dict>
-		<key>WarpC.xcscheme_^#shared#^_</key>
+		<key>eucleia.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
@@ -17,6 +12,16 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>2B66171B2B6DA9D6006D06EE</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>2B76C1552B6EC79B005B36A7</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>2BF3A7382B012B8D001CFDC6</key>
 		<dict>
 			<key>primary</key>
