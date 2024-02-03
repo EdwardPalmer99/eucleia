@@ -1,4 +1,3 @@
-*.pdf
-*.txt
-*.png
-*.webloc
+*.DS_Store
+*.o
+*.xcuserstate
