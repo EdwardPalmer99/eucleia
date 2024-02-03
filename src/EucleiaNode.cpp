@@ -368,7 +368,7 @@ std::shared_ptr<BaseObject> FunctionCallNode::evaluate(Scope & scope)
 	// arguments.
 	auto funcScope(scope);
 	
-	// TODO: - evaluate all of the function's parameters in function scope to create uninitiazed variables.
+	// TODO: - evaluate all of the function's parameters in function scope to create uninitialized variables.
 	// THen call setObject with all of the arguments to update the values and our type-checker will ensure
 	// that the object types are compatible.
 	

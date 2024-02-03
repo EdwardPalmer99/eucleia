@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2BF3A7382B012B8D001CFDC6"
-               BuildableName = "Eucleia"
-               BlueprintName = "Eucleia"
+               BuildableName = "eucleia"
+               BlueprintName = "eucleia"
                ReferencedContainer = "container:Eucleia.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -26,8 +26,13 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      shouldAutocreateTestPlan = "YES">
+      shouldUseLaunchSchemeArgsEnv = "YES">
+      <TestPlans>
+         <TestPlanReference
+            reference = "container:TestPlan.xctestplan"
+            default = "YES">
+         </TestPlanReference>
+      </TestPlans>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -45,14 +50,14 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2BF3A7382B012B8D001CFDC6"
-            BuildableName = "Eucleia"
-            BlueprintName = "Eucleia"
+            BuildableName = "eucleia"
+            BlueprintName = "eucleia"
             ReferencedContainer = "container:Eucleia.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = " /Users/edward/Desktop/test.txt"
+            argument = "/Users/edward/Documents/Home/Computing/C/C\ Projects/eucleia/examples/printFib.ek"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
@@ -68,8 +73,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2BF3A7382B012B8D001CFDC6"
-            BuildableName = "Eucleia"
-            BlueprintName = "Eucleia"
+            BuildableName = "eucleia"
+            BlueprintName = "eucleia"
             ReferencedContainer = "container:Eucleia.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

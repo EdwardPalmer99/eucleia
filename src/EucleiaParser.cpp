@@ -113,35 +113,42 @@ std::shared_ptr<BaseNode> Parser::parseBrackets()
 }
 
 
-/// [variableName] : int/float/bool/string/array (declaration -- adding new variable)
-/// [variableName] (variable name -- reference)
-std::shared_ptr<BaseNode> Parser::parseVariable()
+/// Variable definition:
+/// int/float/string/bool/array [VARIABLE_NAME]
+std::shared_ptr<BaseNode> Parser::parseVariableDefinition()
+{
+	Token typeToken = nextToken();
+	assert(typeToken.type == Token::Keyword);
+		
+	Token nameToken = nextToken();
+	assert(nameToken.type == Token::Variable);
+	
+	std::string & typeName = typeToken.value;
+	std::string & variableName = nameToken.value;
+	
+	// TODO: - add void typename for functions eventually.
+	if (typeName == "int")
+		return std::make_shared<VariableNode>(variableName, VariableNode::Type::Int);
+	else if (typeName == "float")
+		return std::make_shared<VariableNode>(variableName, VariableNode::Type::Float);
+	else if (typeName == "bool")
+		return std::make_shared<VariableNode>(variableName, VariableNode::Type::Bool);
+	else if (typeName == "string")
+		return std::make_shared<VariableNode>(variableName, VariableNode::Type::String);
+	else if (typeName == "array")
+		return std::make_shared<VariableNode>(variableName, VariableNode::Type::Array);
+	else
+		printWarpError("expected variable type for variable %s.\n", typeName.c_str());
+}
+
+
+/// [VARIABLE_NAME]
+std::shared_ptr<BaseNode> Parser::parseVariableName()
 {
 	Token token = nextToken();
-	
-	auto & varName = token.value;
-	
-	if (!isPunctuation(":"))	// [variableName] --> just referencing existing variable.
-	{
-		return std::make_shared<VariableNameNode>(varName);
-	}
-	
-	skipPunctuation(":");
-			
-	auto typeKeyword = nextToken().value;
-		
-	if (typeKeyword == "int")
-		return std::make_shared<VariableNode>(varName, VariableNode::Type::Int);
-	else if (typeKeyword == "float")
-		return std::make_shared<VariableNode>(varName, VariableNode::Type::Float);
-	else if (typeKeyword == "bool")
-		return std::make_shared<VariableNode>(varName, VariableNode::Type::Bool);
-	else if (typeKeyword == "string")
-		return std::make_shared<VariableNode>(varName, VariableNode::Type::String);
-	else if (typeKeyword == "array")
-		return std::make_shared<VariableNode>(varName, VariableNode::Type::Array);
-	else
-		printWarpError("expected variable type for variable %s.\n", token.value.c_str());
+	assert(token.type == Token::Variable);
+
+	return std::make_shared<VariableNameNode>(token.value);
 }
 
 
@@ -252,12 +259,12 @@ std::shared_ptr<ReturnNode> Parser::parseReturn()
 /// {
 ///		[BODY]
 /// };
-std::shared_ptr<FunctionNode> Parser::parseFunction()
+std::shared_ptr<FunctionNode> Parser::parseFunctionDefinition()
 {
 	skipKeyword("func");
 	
-	auto funcName = parseVariable();
-	auto funcArgs = parseDelimited("(", ")", ",", std::bind(&Parser::parseVariable, this));	// Func variables.
+	auto funcName = parseVariableName();
+	auto funcArgs = parseDelimited("(", ")", ",", std::bind(&Parser::parseVariableDefinition, this));	// Func variables.
 	auto funcBody = parseProgram();
 	
 	return std::make_shared<FunctionNode>(funcName, funcArgs, funcBody);
@@ -399,6 +406,7 @@ std::shared_ptr<BaseNode> Parser::parseAtomically()
 
 std::shared_ptr<BaseNode> Parser::parseAtomicallyExpression()
 {
+	// TODO: - breakup 
 	if (isPunctuation("("))
 		return parseBrackets();
 	else if (isPunctuation("["))
@@ -415,8 +423,10 @@ std::shared_ptr<BaseNode> Parser::parseAtomicallyExpression()
 		return parseFor();
 	else if (isKeyword("if"))
 		return parseIf();
-	else if (isKeyword("func"))
-		return parseFunction();
+	else if (isKeyword("func"))	// Functions should be defined as in C --> will need void type
+		return parseFunctionDefinition();
+	else if (isDataTypeKeyword())
+		return parseVariableDefinition();
 	else if (isKeyword("break"))
 		return parseBreak();
 	else if (isKeyword("return"))
@@ -427,7 +437,7 @@ std::shared_ptr<BaseNode> Parser::parseAtomicallyExpression()
 	switch (token.type)
 	{
 		case Token::Variable:
-			return parseVariable();
+			return parseVariableName();
 		case Token::String:
 			return parseString();
 		case Token::Int:
@@ -532,6 +542,12 @@ bool Parser::isKeyword(const std::string & keyword)
 	Token & token = peekToken();
 	
 	return (token.type == Token::Keyword && token.value == keyword);
+}
+
+
+bool Parser::isDataTypeKeyword()
+{
+	return (_tokenizer.isDataTypeToken());
 }
 
 
