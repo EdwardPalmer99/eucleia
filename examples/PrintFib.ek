@@ -1,6 +1,6 @@
 func printFib(int min, int max)
 {
-	for (int n = min; n < max; n = n + 1)
+	for (int n = min; n < max; ++n)
 	{
 		print(fib(n));
 	};
