@@ -12,6 +12,15 @@ RecognizedInputs::RecognizedInputs()
 	_punctuation = { ',', ';', '(', ')', '{', '}', '[', ']', '.' };
 	
 	_operators	= { '+', '-', '*', '/', '%', '&', '|', '<', '>', '=', '!' };
+		
+	_extraOperators = {
+		"-",	//
+		"++",	// prefix and postfix!
+		"--",
+		"!",
+		"+=",
+		"-="
+	};
 	
 	_keywords = {
 		"if",

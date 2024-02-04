@@ -1,0 +1,8 @@
+bool testVariable = true;
+print(testVariable, !testVariable);
+
+bool anotherTestVariable = !testVariable;
+print(anotherTestVariable);
+
+testVariable = !testVariable;
+print(testVariable);

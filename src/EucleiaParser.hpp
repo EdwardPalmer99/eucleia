@@ -46,6 +46,8 @@ protected:
 	std::shared_ptr<BreakNode> parseBreak();
 	std::shared_ptr<ReturnNode> parseReturn();
 	
+	std::shared_ptr<NotNode> parseNot();
+
 	std::shared_ptr<ArrayAccessNode> parseArrayAccessor(std::shared_ptr<BaseNode> lastExpression);
 
 	bool isKeyword(const std::string & keyword);

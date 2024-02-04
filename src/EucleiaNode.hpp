@@ -41,7 +41,8 @@ struct BaseNode
 		Variable,
 		VariableName,
 		Break,
-		Return
+		Return,
+		Not
 	};
 	
 	virtual inline NodeType type() const { return NodeType::None; }
@@ -327,8 +328,8 @@ struct BreakNode : BaseNode
 
 struct ReturnNode : BaseNode
 {
-	ReturnNode(SharedNode _returnValue = nullptr) :
-	returnNode{std::move(_returnValue)}
+	ReturnNode(SharedNode _returnValue = nullptr)
+	: returnNode{std::move(_returnValue)}
 	{}
 	
 	~ReturnNode() override {}
@@ -338,6 +339,25 @@ struct ReturnNode : BaseNode
 	std::shared_ptr<BaseObject> evaluate(Scope & scope) override;
 	
 	SharedNode returnNode{nullptr};
+};
+
+
+#pragma mark - *** Unary Nodes ***
+
+/// Unary not (!)
+/// Examples:
+/// !true --> false
+struct NotNode : BaseNode
+{
+	NotNode(SharedNode _body) 
+	: body{std::move(_body)}
+	{}
+	
+	inline NodeType type() const override { return NodeType::Not; }
+	
+	std::shared_ptr<BaseObject> evaluate(Scope & scope) override;
+	
+	SharedNode body{nullptr};
 };
 
 

@@ -57,7 +57,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Users/edward/Documents/Home/Computing/C/C\ Projects/eucleia/examples/printFib.ek"
+            argument = "/Users/edward/Documents/Home/Computing/C/C\ Projects/eucleia/examples/NotOperator.ek"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

@@ -7,6 +7,7 @@
 
 #include "EucleiaTokenizer.hpp"
 #include "EucleiaUtility.hpp"
+#include <iostream>
 
 std::string Token::description() const
 {
@@ -50,6 +51,7 @@ void Tokenizer::generateTokens()
 		
 		if (token.type != Token::None)
 		{
+			std::cout << token << std::endl;
 			_tokens.push(std::move(token));
 		}
 	}

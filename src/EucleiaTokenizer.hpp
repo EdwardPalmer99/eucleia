@@ -42,6 +42,12 @@ struct Token
 };
 
 
+inline std::ostream & operator <<(std::ostream & out, const Token & token)
+{
+	return (out << std::string("(" + token.description() + ", " + token.value + ")"));
+}
+
+
 class Tokenizer : public InputStream
 {
 public:

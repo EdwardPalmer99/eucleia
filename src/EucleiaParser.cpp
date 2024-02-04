@@ -432,6 +432,12 @@ std::shared_ptr<BaseNode> Parser::parseAtomicallyExpression()
 	else if (isKeyword("return"))
 		return parseReturn();
 	
+	// Parse unary operators.
+	else if (isOperator("!"))
+	{
+		return parseNot();
+	}
+	
 	Token & token = peekToken();
 	
 	switch (token.type)
@@ -450,6 +456,13 @@ std::shared_ptr<BaseNode> Parser::parseAtomicallyExpression()
 	}
 }
 	
+
+std::shared_ptr<NotNode> Parser::parseNot()
+{
+	skipOperator("!");
+		
+	return std::make_shared<NotNode>(parseAtomically());
+}
 
 /// parseDelimited
 ///

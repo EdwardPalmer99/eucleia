@@ -32,6 +32,9 @@ protected:
 private:
 	std::set<char> _punctuation;
 	std::set<char> _operators;
+	
+	std::set<std::string> _extraOperators;
+	
 	std::set<std::string> _keywords;
 	std::set<std::string> _dataTypes;
 };

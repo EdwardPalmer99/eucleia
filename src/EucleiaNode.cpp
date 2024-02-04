@@ -155,6 +155,22 @@ std::shared_ptr<BaseObject> IfNode::evaluate(Scope & scope)
 }
 
 
+#pragma mark - *** Unary Nodes ***
+
+std::shared_ptr<BaseObject> NotNode::evaluate(Scope & scope)
+{
+	auto bodyEvaluated = body->evaluate(scope);
+	assert(bodyEvaluated->type() == BaseObject::ObjectType::Bool);
+		
+	return std::make_shared<BoolObject>(!bodyEvaluated->boolCast());
+}
+
+
+
+
+#pragma mark -
+
+
 std::shared_ptr<BaseObject> BinaryNode::evaluate(Scope & scope)
 {
 	auto leftEvaluated	= left->evaluate(scope);
