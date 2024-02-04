@@ -166,6 +166,22 @@ std::shared_ptr<BaseObject> NotNode::evaluate(Scope & scope)
 }
 
 
+/// ++[intVariable]
+std::shared_ptr<BaseObject> PrefixIncrementNode::evaluate(Scope & scope)
+{
+	// 1. Body should be an already-declared variable.
+	assert(body->type() == BaseNode::VariableName);
+	auto variableNameNode = std::static_pointer_cast<VariableNameNode>(body);
+	
+	// 2. Object associated with variable name in scope must be an integer.
+	auto bodyEvaluated = body->evaluate(scope);
+	
+	// 3. Increment object (throws error if not supported on type).
+	bodyEvaluated->incrementValue();
+	
+	return bodyEvaluated;
+}
+
 
 
 #pragma mark -

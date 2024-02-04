@@ -11,6 +11,7 @@
 #include <string>
 #include <ostream>
 #include <assert.h>
+#include "EucleiaUtility.hpp"
 
 // Forwards declaration.
 class FunctionNode;
@@ -34,6 +35,12 @@ struct BaseObject
 	std::string description() const;
 
 	inline virtual ObjectType type() const { return ObjectType::None; }
+	
+	/// Increment value of object if defined.
+	inline virtual void incrementValue() 
+	{
+		printWarpError("Increment operator not defined for object of type '%s'.\n", description().c_str());
+	}
 		
 	double floatCast() const;
 	long intCast() const;
@@ -49,11 +56,13 @@ struct IntObject : public BaseObject
 	
 	inline ObjectType type() const override { return ObjectType::Int; }
 	
+	inline void incrementValue() override { value++; }
+	
 	long positiveValue() const;
 	long positiveOrZeroValue() const;
 	long nonzeroValue() const;
 
-	const long value{0};
+	long value{0};	// Remove const qualification so we can modify value.
 };
 
 
@@ -62,9 +71,11 @@ struct FloatObject : public BaseObject
 	FloatObject() = delete;
 	FloatObject(const double _value = 0.0) : value{_value} {}
 	
+	inline void incrementValue() override { value++; }
+
 	inline ObjectType type() const override { return ObjectType::Float; }
 	
-	const double value;
+	double value;
 };
 
 
@@ -72,7 +83,7 @@ struct BoolObject : public BaseObject
 {
 	BoolObject() = delete;
 	BoolObject(const bool _value = false) : value{_value} {}
-	
+
 	inline ObjectType type() const override { return ObjectType::Bool; }
 
 	const bool value;
@@ -94,7 +105,7 @@ struct ArrayObject : public BaseObject
 {
 	ArrayObject() = delete;
 	ArrayObject(const std::vector<std::shared_ptr<BaseObject>> values) : arrayValues{std::move(values)} {}
-
+	
 	inline ObjectType type() const override { return ObjectType::Array; }
 	
 	const std::vector<std::shared_ptr<BaseObject>> arrayValues;

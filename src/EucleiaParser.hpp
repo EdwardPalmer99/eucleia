@@ -47,6 +47,7 @@ protected:
 	std::shared_ptr<ReturnNode> parseReturn();
 	
 	std::shared_ptr<NotNode> parseNot();
+	std::shared_ptr<PrefixIncrementNode> parsePrefixIncrement();
 
 	std::shared_ptr<ArrayAccessNode> parseArrayAccessor(std::shared_ptr<BaseNode> lastExpression);
 

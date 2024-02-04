@@ -48,6 +48,7 @@
 		2B808DE42B6EF6B000EF20F8 /* eucleia */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = eucleia; path = "/Users/edward/Documents/Home/Computing/C/C Projects/eucleia/build/Debug/eucleia"; sourceTree = "<absolute>"; };
 		2B808DE52B6EF6B000EF20F8 /* eucleia-test.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "eucleia-test.xctest"; path = "/Users/edward/Documents/Home/Computing/C/C Projects/eucleia/build/Debug/eucleia-test.xctest"; sourceTree = "<absolute>"; };
 		2B808DE62B6FFF3400EF20F8 /* NotOperator.ek */ = {isa = PBXFileReference; lastKnownFileType = text; path = NotOperator.ek; sourceTree = "<group>"; };
+		2B808DE72B7003C700EF20F8 /* PrefixIncrementOperator.ek */ = {isa = PBXFileReference; lastKnownFileType = text; path = PrefixIncrementOperator.ek; sourceTree = "<group>"; };
 		2BBD60892B5C05110080D43C /* EucleiaParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EucleiaParser.cpp; sourceTree = "<group>"; };
 		2BBD608A2B5C05110080D43C /* EucleiaParser.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EucleiaParser.hpp; sourceTree = "<group>"; };
 		2BC4B0972B25214400104C1F /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
@@ -106,6 +107,7 @@
 			children = (
 				2B76C14E2B6EBFAE005B36A7 /* PrintFib.ek */,
 				2B808DE62B6FFF3400EF20F8 /* NotOperator.ek */,
+				2B808DE72B7003C700EF20F8 /* PrefixIncrementOperator.ek */,
 			);
 			path = examples;
 			sourceTree = "<group>";

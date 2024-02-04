@@ -42,7 +42,8 @@ struct BaseNode
 		VariableName,
 		Break,
 		Return,
-		Not
+		Not,
+		PrefixIncrement
 	};
 	
 	virtual inline NodeType type() const { return NodeType::None; }
@@ -354,6 +355,20 @@ struct NotNode : BaseNode
 	{}
 	
 	inline NodeType type() const override { return NodeType::Not; }
+	
+	std::shared_ptr<BaseObject> evaluate(Scope & scope) override;
+	
+	SharedNode body{nullptr};
+};
+
+
+struct PrefixIncrementNode : BaseNode
+{
+	PrefixIncrementNode(SharedNode _body)
+	: body{std::move(_body)}
+	{}
+	
+	inline NodeType type() const override { return NodeType::PrefixIncrement; }
 	
 	std::shared_ptr<BaseObject> evaluate(Scope & scope) override;
 	

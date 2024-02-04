@@ -434,9 +434,10 @@ std::shared_ptr<BaseNode> Parser::parseAtomicallyExpression()
 	
 	// Parse unary operators.
 	else if (isOperator("!"))
-	{
 		return parseNot();
-	}
+	// Parse prefix increment operator i.e.
+	else if (isOperator("++"))
+		return parsePrefixIncrement();
 	
 	Token & token = peekToken();
 	
@@ -463,6 +464,15 @@ std::shared_ptr<NotNode> Parser::parseNot()
 		
 	return std::make_shared<NotNode>(parseAtomically());
 }
+
+
+std::shared_ptr<PrefixIncrementNode> Parser::parsePrefixIncrement()
+{
+	skipOperator("++");
+	
+	return std::make_shared<PrefixIncrementNode>(parseAtomically());
+}
+
 
 /// parseDelimited
 ///
