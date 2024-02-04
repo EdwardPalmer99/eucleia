@@ -57,7 +57,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Users/edward/Documents/Home/Computing/C/C\ Projects/eucleia/examples/PrefixIncrementOperator.ek"
+            argument = "/Users/edward/Documents/Home/Computing/C/C\ Projects/eucleia/examples/PrefixDecrementOperator.ek"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

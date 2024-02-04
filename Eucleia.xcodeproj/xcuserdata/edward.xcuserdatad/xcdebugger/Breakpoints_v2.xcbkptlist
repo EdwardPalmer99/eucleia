@@ -964,8 +964,8 @@
             filePath = "src/EucleiaParser.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "436"
-            endingLineNumber = "436"
+            startingLineNumber = "437"
+            endingLineNumber = "437"
             landmarkName = "Parser::parseAtomicallyExpression()"
             landmarkType = "7">
          </BreakpointContent>
@@ -980,8 +980,8 @@
             filePath = "src/EucleiaParser.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "463"
-            endingLineNumber = "463"
+            startingLineNumber = "466"
+            endingLineNumber = "466"
             landmarkName = "Parser::parseNot()"
             landmarkType = "7">
          </BreakpointContent>

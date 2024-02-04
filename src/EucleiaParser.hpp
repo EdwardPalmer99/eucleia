@@ -10,6 +10,7 @@
 
 #include "EucleiaTokenizer.hpp"
 #include "EucleiaNode.hpp"
+#include "EucleiaUnaryOperatorNodes.hpp"
 
 class Parser
 {
@@ -48,6 +49,7 @@ protected:
 	
 	std::shared_ptr<NotNode> parseNot();
 	std::shared_ptr<PrefixIncrementNode> parsePrefixIncrement();
+	std::shared_ptr<PrefixDecrementNode> parsePrefixDecrement();
 
 	std::shared_ptr<ArrayAccessNode> parseArrayAccessor(std::shared_ptr<BaseNode> lastExpression);
 

@@ -13,6 +13,7 @@ RecognizedInputs::RecognizedInputs()
 	
 	_operators	= { '+', '-', '*', '/', '%', '&', '|', '<', '>', '=', '!' };
 		
+	// TODO: - remove --> not required.
 	_extraOperators = {
 		"-",	//
 		"++",	// prefix and postfix!

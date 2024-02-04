@@ -41,6 +41,11 @@ struct BaseObject
 	{
 		printWarpError("Increment operator not defined for object of type '%s'.\n", description().c_str());
 	}
+	
+	inline virtual void decrementValue()
+	{
+		printWarpError("Decrement operator not defined for object of type '%s'.\n", description().c_str());
+	}
 		
 	double floatCast() const;
 	long intCast() const;
@@ -56,7 +61,8 @@ struct IntObject : public BaseObject
 	
 	inline ObjectType type() const override { return ObjectType::Int; }
 	
-	inline void incrementValue() override { value++; }
+	inline void incrementValue() override { ++value; }
+	inline void decrementValue() override { --value; }
 	
 	long positiveValue() const;
 	long positiveOrZeroValue() const;
@@ -71,7 +77,8 @@ struct FloatObject : public BaseObject
 	FloatObject() = delete;
 	FloatObject(const double _value = 0.0) : value{_value} {}
 	
-	inline void incrementValue() override { value++; }
+	inline void incrementValue() override { ++value; }
+	inline void decrementValue() override { --value; }
 
 	inline ObjectType type() const override { return ObjectType::Float; }
 	
