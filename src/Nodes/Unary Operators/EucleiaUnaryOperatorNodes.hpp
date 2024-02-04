@@ -35,6 +35,17 @@ struct NotNode : UnaryOperatorBaseNode
 };
 
 
+/// Unary - operator (.e.g. -1).
+struct NegationNode : UnaryOperatorBaseNode
+{
+	NegationNode(SharedNode _body) : UnaryOperatorBaseNode(std::move(_body)) {}
+	
+	inline NodeType type() const override { return NodeType::Negation; }
+	
+	std::shared_ptr<BaseObject> evaluate(Scope & scope) override;
+};
+
+
 /// Unary prefix increment node (e.g. ++a).
 struct PrefixIncrementNode : UnaryOperatorBaseNode
 {

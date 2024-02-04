@@ -44,7 +44,8 @@ struct BaseNode
 		Return,
 		Not,
 		PrefixIncrement,
-		PrefixDecrement
+		PrefixDecrement,
+		Negation
 	};
 	
 	virtual inline NodeType type() const { return NodeType::None; }
@@ -342,10 +343,6 @@ struct ReturnNode : BaseNode
 	
 	SharedNode returnNode{nullptr};
 };
-
-
-#pragma mark - *** Unary Nodes ***
-
 
 
 struct AssignNode : BaseNode

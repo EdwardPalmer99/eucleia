@@ -16,6 +16,14 @@ std::shared_ptr<BaseObject> NotNode::evaluate(Scope & scope)
 }
 
 
+std::shared_ptr<BaseObject> NegationNode::evaluate(Scope & scope)
+{
+	auto bodyEvaluated = body->evaluate(scope);
+	
+	return bodyEvaluated->negateValue();
+}
+
+
 std::shared_ptr<BaseObject> PrefixIncrementNode::evaluate(Scope & scope)
 {
 	// 1. Body should be an already-declared variable.

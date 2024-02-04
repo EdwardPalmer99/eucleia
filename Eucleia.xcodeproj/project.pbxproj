@@ -53,6 +53,7 @@
 		2B808DE82B700A3700EF20F8 /* PrefixDecrementOperator.ek */ = {isa = PBXFileReference; lastKnownFileType = text; path = PrefixDecrementOperator.ek; sourceTree = "<group>"; };
 		2B808DEB2B700B1D00EF20F8 /* EucleiaUnaryOperatorNodes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EucleiaUnaryOperatorNodes.cpp; sourceTree = "<group>"; };
 		2B808DEC2B700B1D00EF20F8 /* EucleiaUnaryOperatorNodes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EucleiaUnaryOperatorNodes.hpp; sourceTree = "<group>"; };
+		2B808DEE2B70112F00EF20F8 /* NegationOperator.ek */ = {isa = PBXFileReference; lastKnownFileType = text; path = NegationOperator.ek; sourceTree = "<group>"; };
 		2BBD60892B5C05110080D43C /* EucleiaParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EucleiaParser.cpp; sourceTree = "<group>"; };
 		2BBD608A2B5C05110080D43C /* EucleiaParser.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EucleiaParser.hpp; sourceTree = "<group>"; };
 		2BC4B0972B25214400104C1F /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
@@ -112,6 +113,7 @@
 				2B808DE62B6FFF3400EF20F8 /* NotOperator.ek */,
 				2B808DE72B7003C700EF20F8 /* PrefixIncrementOperator.ek */,
 				2B808DE82B700A3700EF20F8 /* PrefixDecrementOperator.ek */,
+				2B808DEE2B70112F00EF20F8 /* NegationOperator.ek */,
 			);
 			path = examples;
 			sourceTree = "<group>";

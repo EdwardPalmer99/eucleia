@@ -15,6 +15,7 @@
 
 // Forwards declaration.
 class FunctionNode;
+class BaseObject;
 
 struct BaseObject
 {
@@ -46,6 +47,11 @@ struct BaseObject
 	{
 		printWarpError("Decrement operator not defined for object of type '%s'.\n", description().c_str());
 	}
+	
+	virtual std::shared_ptr<BaseObject> negateValue()
+	{
+		printWarpError("Negation operator not defined for object of type '%s'.\n", description().c_str());
+	}
 		
 	double floatCast() const;
 	long intCast() const;
@@ -64,6 +70,11 @@ struct IntObject : public BaseObject
 	inline void incrementValue() override { ++value; }
 	inline void decrementValue() override { --value; }
 	
+	std::shared_ptr<BaseObject> negateValue() override
+	{
+		return std::make_shared<IntObject>(-value);
+	}
+	
 	long positiveValue() const;
 	long positiveOrZeroValue() const;
 	long nonzeroValue() const;
@@ -80,6 +91,11 @@ struct FloatObject : public BaseObject
 	inline void incrementValue() override { ++value; }
 	inline void decrementValue() override { --value; }
 
+	std::shared_ptr<BaseObject> negateValue() override
+	{
+		return std::make_shared<FloatObject>(-value);
+	}
+	
 	inline ObjectType type() const override { return ObjectType::Float; }
 	
 	double value;

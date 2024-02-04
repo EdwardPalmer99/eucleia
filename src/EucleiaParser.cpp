@@ -441,6 +441,8 @@ std::shared_ptr<BaseNode> Parser::parseAtomicallyExpression()
 		return parsePrefixIncrement();
 	else if (isOperator("--"))
 		return parsePrefixDecrement();
+	else if (isOperator("-"))
+		return parseNegation();
 	
 	Token & token = peekToken();
 	
@@ -484,6 +486,13 @@ std::shared_ptr<PrefixDecrementNode> Parser::parsePrefixDecrement()
 	return std::make_shared<PrefixDecrementNode>(parseAtomically());
 }
 
+
+std::shared_ptr<NegationNode> Parser::parseNegation()
+{
+	skipOperator("-");
+	
+	return std::make_shared<NegationNode>(parseAtomically());
+}
 
 
 /// parseDelimited
