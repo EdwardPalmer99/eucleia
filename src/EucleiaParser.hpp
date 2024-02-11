@@ -74,6 +74,8 @@ protected:
 	
 	std::shared_ptr<FunctionCallNode> parseFunctionCall(std::shared_ptr<BaseNode> lastExpression);
 
+	void skipSemicolonLineEndingIfRequired(BaseNode::NodeType expressionType);
+
 private:
 	typedef std::function<std::shared_ptr<BaseNode>(void)> ParseMethod;
 	

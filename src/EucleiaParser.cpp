@@ -27,17 +27,7 @@ std::shared_ptr<ProgramNode> Parser::buildAbstractSymbolTree()
 			
 		nodes.push_back(std::move(node));
 		
-		// Special cases where we do not require a semi-colon.
-		if (nodeType == BaseNode::Function ||
-			nodeType == BaseNode::ForLoop ||
-			nodeType == BaseNode::While ||
-			nodeType == BaseNode::DoWhile ||
-			nodeType == BaseNode::If)
-		{
-			continue;
-		}
-		
-		skipPunctuation(";");	// Each line should end with semi-colon.
+		skipSemicolonLineEndingIfRequired(nodeType);
 	}
 	
 	nodes.shrink_to_fit();
@@ -565,17 +555,39 @@ std::shared_ptr<ProgramNode> Parser::parseDelimited(std::string start,
 }
 
 
+void Parser::skipSemicolonLineEndingIfRequired(BaseNode::NodeType expressionType)
+{
+	switch (expressionType)
+	{
+		case BaseNode::Program:
+		case BaseNode::If:
+		case BaseNode::While:
+		case BaseNode::DoWhile:
+		case BaseNode::ForLoop:
+		case BaseNode::Function:
+			break;
+		default:
+			skipPunctuation(";");
+			break;
+	}
+}
+
+
 std::shared_ptr<ProgramNode> Parser::parseProgramLines()
 {
 	skipPunctuation("{");
 	
 	std::vector<std::shared_ptr<BaseNode>> parsedNodes;
-	
+		
 	while (!_tokenizer.empty() && !isPunctuation("}"))
 	{
-		parsedNodes.push_back(parseExpression());
+		auto expression = parseExpression();
 		
-		skipPunctuation(";");
+		auto expressionType = expression ? expression->type() : BaseNode::None;
+		
+		parsedNodes.push_back(std::move(expression));
+		
+		skipSemicolonLineEndingIfRequired(expressionType);
 	}
 	
 	skipPunctuation("}");

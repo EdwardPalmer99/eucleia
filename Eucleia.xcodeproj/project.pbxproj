@@ -37,7 +37,6 @@
 		2B62DF712B66FEEA006009CD /* EucleiaUtility.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EucleiaUtility.hpp; sourceTree = "<group>"; };
 		2B6617272B6DB54F006D06EE /* eucleia-formatting.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "eucleia-formatting.plist"; sourceTree = "<group>"; };
 		2B66172C2B6DB7E1006D06EE /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		2B75F70C2B794C2C00D19835 /* PrintFibNoBrackets.ek */ = {isa = PBXFileReference; lastKnownFileType = text; path = PrintFibNoBrackets.ek; sourceTree = "<group>"; };
 		2B76C1492B6DC8FE005B36A7 /* RecognizedInputs.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RecognizedInputs.cpp; sourceTree = "<group>"; };
 		2B76C14A2B6DC8FE005B36A7 /* RecognizedInputs.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RecognizedInputs.hpp; sourceTree = "<group>"; };
 		2B76C14E2B6EBFAE005B36A7 /* PrintFib.ek */ = {isa = PBXFileReference; lastKnownFileType = text; path = PrintFib.ek; sourceTree = "<group>"; };
@@ -111,7 +110,6 @@
 			isa = PBXGroup;
 			children = (
 				2B76C14E2B6EBFAE005B36A7 /* PrintFib.ek */,
-				2B75F70C2B794C2C00D19835 /* PrintFibNoBrackets.ek */,
 				2B808DE62B6FFF3400EF20F8 /* NotOperator.ek */,
 				2B808DE72B7003C700EF20F8 /* PrefixIncrementOperator.ek */,
 				2B808DE82B700A3700EF20F8 /* PrefixDecrementOperator.ek */,
