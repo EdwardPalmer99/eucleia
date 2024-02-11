@@ -1,2 +1,0 @@
-int value = 0;
-print(value, ++value, value);
