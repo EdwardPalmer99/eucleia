@@ -19,9 +19,9 @@ public:
 	Parser(const std::string & fpath);
 	~Parser() = default;
 	
-	std::shared_ptr<ProgramNode> buildAbstractSymbolTree();
+	std::shared_ptr<FileNode> buildAbstractSymbolTree();
 	
-	static std::shared_ptr<ProgramNode> buildAbstractSymbolTree(const std::string & fpath);
+	static std::shared_ptr<FileNode> buildAbstractSymbolTree(const std::string & fpath);
 	
 protected:
 	std::shared_ptr<BoolNode> parseBool();
@@ -51,6 +51,8 @@ protected:
 	std::shared_ptr<PrefixIncrementNode> parsePrefixIncrement();
 	std::shared_ptr<PrefixDecrementNode> parsePrefixDecrement();
 	std::shared_ptr<NegationNode> parseNegation();
+	
+	std::shared_ptr<FileNode> parseImport();
 
 	std::shared_ptr<ArrayAccessNode> parseArrayAccessor(std::shared_ptr<BaseNode> lastExpression);
 
