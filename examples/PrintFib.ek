@@ -1,24 +1,10 @@
+import "/Users/edward/Documents/Home/Computing/C/C Projects/eucleia/examples/Fib.ek"
+
 func printFib(int min, int max)
 {
 	for (int n = min; n < max; ++n)
 	{
 		print(fib(n));
-	}
-}
-
-func fib(int n)
-{
-	if (n > 2)
-	{
-		return fib(n - 1) + fib(n - 2);
-	}
-	else if (n == 1 || n == 2)
-	{
-		return 1;
-	}
-	else
-	{
-		return 0;
 	}
 }
 

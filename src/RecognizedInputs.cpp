@@ -28,7 +28,8 @@ RecognizedInputs::RecognizedInputs()
 		"array",
 		"string",
 		"break",
-		"return"
+		"return",
+		"import"
 	};
 	
 	_dataTypes = {

@@ -45,7 +45,8 @@ struct BaseNode
 		Not,
 		PrefixIncrement,
 		PrefixDecrement,
-		Negation
+		Negation,
+		File
 	};
 	
 	virtual inline NodeType type() const { return NodeType::None; }
@@ -169,6 +170,18 @@ struct ProgramNode : BaseNode
 	std::shared_ptr<BaseObject> evaluate(Scope & scope) override;
 	
 	std::vector<std::shared_ptr<BaseNode>> nodes;
+};
+
+
+/// A program node for an entire file.
+struct FileNode : ProgramNode
+{
+	FileNode(std::vector<SharedNode> _nodes) : ProgramNode(std::move(_nodes)) {}
+	~FileNode() override {}
+	
+	std::shared_ptr<BaseObject> evaluate(Scope & globalScope) override;
+	
+	inline NodeType type() const override { return NodeType::File; }
 };
 
 

@@ -100,6 +100,20 @@ std::shared_ptr<BaseObject> ProgramNode::evaluate(Scope & scope)
 }
 
 
+/// Evaluates a file. Does NOT create an inner scope node in order to ensure that
+/// any functions declared in this file will be added to the master file by
+/// using the same global scope.
+std::shared_ptr<BaseObject> FileNode::evaluate(Scope & globalScope)
+{
+	for (const auto & node : nodes)
+	{
+		node->evaluate(globalScope);
+	}
+	
+	return nullptr;
+}
+
+
 /// Return the object associated with the variable name in the scope. This could
 /// be any of the core BaseObject types.
 std::shared_ptr<BaseObject> VariableNameNode::evaluate(Scope & scope)

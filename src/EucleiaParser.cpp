@@ -15,7 +15,7 @@ Parser::Parser(const std::string & fpath) : _tokenizer{fpath} {}
 
 #pragma mark -
 
-std::shared_ptr<ProgramNode> Parser::buildAbstractSymbolTree()
+std::shared_ptr<FileNode> Parser::buildAbstractSymbolTree()
 {
 	std::vector<std::shared_ptr<BaseNode>> nodes;
 		
@@ -32,17 +32,38 @@ std::shared_ptr<ProgramNode> Parser::buildAbstractSymbolTree()
 	
 	nodes.shrink_to_fit();
 	
-	return std::make_shared<ProgramNode>(nodes);
+	return std::make_shared<FileNode>(nodes);
 }
 
 
-std::shared_ptr<ProgramNode> Parser::buildAbstractSymbolTree(const std::string & fpath)
+std::shared_ptr<FileNode> Parser::buildAbstractSymbolTree(const std::string & fpath)
 {
 	Parser parser(fpath);
 	
 	return parser.buildAbstractSymbolTree();
 }
 
+
+
+/// import "path_to_some_file"
+///
+/// Imports a file and its functions into this scope.
+std::shared_ptr<FileNode> Parser::parseImport()
+{
+	skipKeyword("import");
+	
+	// Read the file path:
+	auto token = nextToken();
+	assert(token.type == Token::String);
+	
+	auto ast = Parser::buildAbstractSymbolTree(token.value);
+	if (!ast)
+	{
+		printWarpError("Failed to import file with path '%s'.", token.value.c_str());
+	}
+	
+	return ast;
+}
 
 
 #pragma mark - *** Simple Types ***
@@ -433,6 +454,8 @@ std::shared_ptr<BaseNode> Parser::parseAtomicallyExpression()
 		return parseFor();
 	else if (isKeyword("if"))
 		return parseIf();
+	else if (isKeyword("import"))
+		return parseImport();
 	else if (isKeyword("func"))	// Functions should be defined as in C --> will need void type
 		return parseFunctionDefinition();
 	else if (isDataTypeKeyword())
@@ -559,6 +582,7 @@ void Parser::skipSemicolonLineEndingIfRequired(BaseNode::NodeType expressionType
 {
 	switch (expressionType)
 	{
+		case BaseNode::File:
 		case BaseNode::Program:
 		case BaseNode::If:
 		case BaseNode::While:
