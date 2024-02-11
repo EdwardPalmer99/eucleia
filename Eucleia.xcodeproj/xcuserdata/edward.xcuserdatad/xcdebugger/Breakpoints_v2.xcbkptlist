@@ -964,8 +964,8 @@
             filePath = "src/EucleiaParser.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "470"
-            endingLineNumber = "470"
+            startingLineNumber = "503"
+            endingLineNumber = "503"
             landmarkName = "Parser::parseAtomicallyExpression()"
             landmarkType = "7">
          </BreakpointContent>
@@ -980,8 +980,8 @@
             filePath = "src/EucleiaParser.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "501"
-            endingLineNumber = "501"
+            startingLineNumber = "534"
+            endingLineNumber = "534"
             landmarkName = "Parser::parseNot()"
             landmarkType = "7">
          </BreakpointContent>
@@ -996,8 +996,8 @@
             filePath = "src/EucleiaParser.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "493"
-            endingLineNumber = "493"
+            startingLineNumber = "526"
+            endingLineNumber = "526"
             landmarkName = "Parser::parseAtomicallyExpression()"
             landmarkType = "7">
             <Locations>
@@ -1074,8 +1074,8 @@
             filePath = "src/EucleiaParser.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "420"
-            endingLineNumber = "420"
+            startingLineNumber = "453"
+            endingLineNumber = "453"
             landmarkName = "Parser::parseExpression()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1090,8 +1090,8 @@
             filePath = "src/EucleiaParser.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "28"
-            endingLineNumber = "28"
+            startingLineNumber = "32"
+            endingLineNumber = "32"
             landmarkName = "Parser::buildAbstractSymbolTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1106,8 +1106,8 @@
             filePath = "src/EucleiaParser.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "551"
-            endingLineNumber = "551"
+            startingLineNumber = "584"
+            endingLineNumber = "584"
             landmarkName = "Parser::parseDelimited(start, stop, separator, parseMethod)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1122,8 +1122,8 @@
             filePath = "src/EucleiaParser.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "706"
-            endingLineNumber = "706"
+            startingLineNumber = "739"
+            endingLineNumber = "739"
             landmarkName = "Parser::skipPunctuation(name)"
             landmarkType = "7">
             <Locations>
@@ -1215,8 +1215,8 @@
             filePath = "src/EucleiaParser.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "602"
-            endingLineNumber = "602"
+            startingLineNumber = "635"
+            endingLineNumber = "635"
             landmarkName = "Parser::parseProgramLines()"
             landmarkType = "7">
          </BreakpointContent>

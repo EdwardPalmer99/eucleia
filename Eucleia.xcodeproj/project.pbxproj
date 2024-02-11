@@ -38,6 +38,7 @@
 		2B6617272B6DB54F006D06EE /* eucleia-formatting.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "eucleia-formatting.plist"; sourceTree = "<group>"; };
 		2B66172C2B6DB7E1006D06EE /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		2B75F70D2B79582100D19835 /* Fib.ek */ = {isa = PBXFileReference; lastKnownFileType = text; path = Fib.ek; sourceTree = "<group>"; };
+		2B75F70F2B795D6500D19835 /* eucleia-test.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "eucleia-test.xctest"; path = "/Users/edward/Documents/Home/Computing/C/C Projects/eucleia/build/Debug/eucleia-test.xctest"; sourceTree = "<absolute>"; };
 		2B76C1492B6DC8FE005B36A7 /* RecognizedInputs.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RecognizedInputs.cpp; sourceTree = "<group>"; };
 		2B76C14A2B6DC8FE005B36A7 /* RecognizedInputs.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RecognizedInputs.hpp; sourceTree = "<group>"; };
 		2B76C14E2B6EBFAE005B36A7 /* PrintFib.ek */ = {isa = PBXFileReference; lastKnownFileType = text; path = PrintFib.ek; sourceTree = "<group>"; };
@@ -50,7 +51,6 @@
 		2B808DEB2B700B1D00EF20F8 /* EucleiaUnaryOperatorNodes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EucleiaUnaryOperatorNodes.cpp; sourceTree = "<group>"; };
 		2B808DEC2B700B1D00EF20F8 /* EucleiaUnaryOperatorNodes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EucleiaUnaryOperatorNodes.hpp; sourceTree = "<group>"; };
 		2B808DF12B7012DD00EF20F8 /* eucleia */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = eucleia; sourceTree = BUILT_PRODUCTS_DIR; };
-		2B808DF22B7012DD00EF20F8 /* eucleia-test.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "eucleia-test.xctest"; path = "/Users/edward/Documents/Home/Computing/C/C Projects/eucleia/build/Debug/eucleia-test.xctest"; sourceTree = "<absolute>"; };
 		2BBD60892B5C05110080D43C /* EucleiaParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EucleiaParser.cpp; sourceTree = "<group>"; };
 		2BBD608A2B5C05110080D43C /* EucleiaParser.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EucleiaParser.hpp; sourceTree = "<group>"; };
 		2BC4B0972B25214400104C1F /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
@@ -168,7 +168,7 @@
 			);
 			name = "eucleia-test";
 			productName = "eucleia-test";
-			productReference = 2B808DF22B7012DD00EF20F8 /* eucleia-test.xctest */;
+			productReference = 2B75F70F2B795D6500D19835 /* eucleia-test.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		2BF3A7382B012B8D001CFDC6 /* eucleia */ = {

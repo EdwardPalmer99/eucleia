@@ -10,7 +10,11 @@
 #include <stdlib.h>
 #include <assert.h>
 
-Parser::Parser(const std::string & fpath) : _tokenizer{fpath} {}
+Parser::Parser(const std::string & fpath) 
+	: _tokenizer{fpath}, 
+	  _parentDirectory{parentDirectory(fpath)}
+{
+}
 
 
 #pragma mark -
@@ -52,17 +56,46 @@ std::shared_ptr<FileNode> Parser::parseImport()
 {
 	skipKeyword("import");
 	
-	// Read the file path:
+	// File name token:
 	auto token = nextToken();
 	assert(token.type == Token::String);
 	
-	auto ast = Parser::buildAbstractSymbolTree(token.value);
+	// Build the file path:
+	auto filePath = _parentDirectory + token.value;
+		
+	auto ast = Parser::buildAbstractSymbolTree(filePath);
 	if (!ast)
 	{
-		printWarpError("Failed to import file with path '%s'.", token.value.c_str());
+		printWarpError("Failed to import file with path '%s'.", filePath.c_str());
 	}
 	
 	return ast;
+}
+
+/// Returns the string path corresponding to the parent directory from the
+/// file path.
+std::string Parser::parentDirectory(const std::string & fpath)
+{
+	// 1. Copy string to C buffer for easy manipulation.
+	char buffer[fpath.size() + 1];
+	
+	buffer[fpath.size()] = '\0';
+	memcpy(buffer, fpath.data(), fpath.size());
+	
+	for (long i = fpath.size(); i >= 0; i--)
+	{
+		char c = buffer[i];
+		
+		if (c == '/')	// Hit our first '/' (successfully stripped file name and extension).
+		{
+			buffer[i + 1] = '\0';	// Set terminating character.
+			break;
+		}
+	}
+	
+	auto output = std::string(buffer);
+	
+	return output;
 }
 
 

@@ -1,4 +1,4 @@
-import "/Users/edward/Documents/Home/Computing/C/C Projects/eucleia/examples/Fib.ek"
+import "Fib.ek"
 
 func printFib(int min, int max)
 {

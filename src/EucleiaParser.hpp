@@ -76,6 +76,9 @@ protected:
 	std::shared_ptr<FunctionCallNode> parseFunctionCall(std::shared_ptr<BaseNode> lastExpression);
 
 	void skipSemicolonLineEndingIfRequired(BaseNode::NodeType expressionType);
+	
+	std::string parentDirectory(const std::string & fpath);
+
 
 private:
 	typedef std::function<std::shared_ptr<BaseNode>(void)> ParseMethod;
@@ -107,6 +110,8 @@ private:
 
 		
 	Tokenizer _tokenizer;
+	
+	const std::string _parentDirectory;
 };
 
 #endif /* EucleiaParser_hpp */
