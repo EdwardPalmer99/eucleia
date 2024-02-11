@@ -229,7 +229,7 @@ std::shared_ptr<DoWhileNode> Parser::parseDoWhile()
 /// while ([condition is true])
 /// {
 /// 	[code]
-/// };
+/// }
 std::shared_ptr<WhileNode> Parser::parseWhile()
 {
 	skipKeyword("while");
@@ -244,7 +244,7 @@ std::shared_ptr<WhileNode> Parser::parseWhile()
 /// for ([start]; [condition]; [update])
 /// {
 /// 	[code]
-/// };
+/// }
 std::shared_ptr<ForLoopNode> Parser::parseFor()
 {
 	skipKeyword("for");
@@ -322,7 +322,7 @@ std::shared_ptr<ReturnNode> Parser::parseReturn()
 /// func test(a, b, c)
 /// {
 ///		[BODY]
-/// };
+/// }
 std::shared_ptr<FunctionNode> Parser::parseFunctionDefinition()
 {
 	skipKeyword("func");
