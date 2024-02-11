@@ -219,7 +219,7 @@ struct IfNode : BaseNode
 	
 	std::shared_ptr<BaseNode> ifCondition{nullptr};
 	std::shared_ptr<BaseNode> thenDo{nullptr};
-	std::shared_ptr<BaseNode> elseDo{nullptr};
+	std::shared_ptr<BaseNode> elseDo{nullptr};	// Links to next argument (if node!).
 };
 
 

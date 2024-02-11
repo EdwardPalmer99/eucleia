@@ -23,7 +23,19 @@ std::shared_ptr<ProgramNode> Parser::buildAbstractSymbolTree()
 	{
 		auto node = parseExpression();
 		
+		auto nodeType = node ? node->type() : BaseNode::None;
+			
 		nodes.push_back(std::move(node));
+		
+		// Special cases where we do not require a semi-colon.
+		if (nodeType == BaseNode::Function ||
+			nodeType == BaseNode::ForLoop ||
+			nodeType == BaseNode::While ||
+			nodeType == BaseNode::DoWhile ||
+			nodeType == BaseNode::If)
+		{
+			continue;
+		}
 		
 		skipPunctuation(";");	// Each line should end with semi-colon.
 	}
@@ -52,7 +64,7 @@ std::shared_ptr<ProgramNode> Parser::buildAbstractSymbolTree(const std::string &
 /// TODO: - add handling for no expressions within the brackets.
 std::shared_ptr<BaseNode> Parser::parseProgram()
 {
-	auto program = parseDelimited("{", "}", ";", std::bind(&Parser::parseExpression, this));
+	auto program = parseProgramLines();
 			
 	if (program->nodes.size() == 1)	// Return single node (more efficient).
 	{
@@ -218,12 +230,20 @@ std::shared_ptr<IfNode> Parser::parseIf()
 	
 	auto condition = parseBrackets();
 	auto thenDo = parseProgram();
+	
+	
 		
 	std::shared_ptr<BaseNode>elseDo{nullptr};	// Optional.
 	if (peekToken().value == "else")
 	{
 		skipKeyword("else");
-		elseDo = parseProgram();
+		
+		// Option 1: else if (condition) { [statement]; }
+		if (peekToken().value == "if")
+			elseDo = parseIf();
+		// Option 2: else { [statement]; }
+		else
+			elseDo = parseProgram();
 	}
 	
 	return std::make_shared<IfNode>(condition, thenDo, elseDo);
@@ -545,6 +565,25 @@ std::shared_ptr<ProgramNode> Parser::parseDelimited(std::string start,
 }
 
 
+std::shared_ptr<ProgramNode> Parser::parseProgramLines()
+{
+	skipPunctuation("{");
+	
+	std::vector<std::shared_ptr<BaseNode>> parsedNodes;
+	
+	while (!_tokenizer.empty() && !isPunctuation("}"))
+	{
+		parsedNodes.push_back(parseExpression());
+		
+		skipPunctuation(";");
+	}
+	
+	skipPunctuation("}");
+	
+	return std::make_shared<ProgramNode>(std::move(parsedNodes));
+}
+
+
 int Parser::getPrecedence()
 {
 	Token & token = peekToken();
@@ -652,7 +691,7 @@ void Parser::unexpectedToken()
 {
 	Token & token = peekToken();
 	
-	printWarpError("Unexpected token of type '%u' and value '%s'.\n", token.type, token.value.c_str());
+	printWarpError("Unexpected token of type '%s' and value '%s'.\n", token.description().c_str(), token.value.c_str());
 }
 
 

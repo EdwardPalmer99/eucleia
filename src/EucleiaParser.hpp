@@ -97,6 +97,7 @@ private:
 												std::string separator,
 												ParseMethod expression);
 	
+	std::shared_ptr<ProgramNode> parseProgramLines();
 	
 	std::shared_ptr<BaseNode> maybeBinary(std::shared_ptr<BaseNode> leftExpression, 
 										  int leftPrecedence);

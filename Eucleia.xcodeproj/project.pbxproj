@@ -37,6 +37,7 @@
 		2B62DF712B66FEEA006009CD /* EucleiaUtility.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EucleiaUtility.hpp; sourceTree = "<group>"; };
 		2B6617272B6DB54F006D06EE /* eucleia-formatting.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "eucleia-formatting.plist"; sourceTree = "<group>"; };
 		2B66172C2B6DB7E1006D06EE /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		2B75F70C2B794C2C00D19835 /* PrintFibNoBrackets.ek */ = {isa = PBXFileReference; lastKnownFileType = text; path = PrintFibNoBrackets.ek; sourceTree = "<group>"; };
 		2B76C1492B6DC8FE005B36A7 /* RecognizedInputs.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RecognizedInputs.cpp; sourceTree = "<group>"; };
 		2B76C14A2B6DC8FE005B36A7 /* RecognizedInputs.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RecognizedInputs.hpp; sourceTree = "<group>"; };
 		2B76C14E2B6EBFAE005B36A7 /* PrintFib.ek */ = {isa = PBXFileReference; lastKnownFileType = text; path = PrintFib.ek; sourceTree = "<group>"; };
@@ -46,14 +47,14 @@
 		2B7CC9962B54731900D0D335 /* EucleiaObject.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EucleiaObject.hpp; sourceTree = "<group>"; };
 		2B7CC9992B547E1300D0D335 /* EucleiaScope.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EucleiaScope.cpp; sourceTree = "<group>"; };
 		2B7CC99A2B547E1300D0D335 /* EucleiaScope.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EucleiaScope.hpp; sourceTree = "<group>"; };
-		2B808DE42B6EF6B000EF20F8 /* eucleia */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = eucleia; path = "/Users/edward/Documents/Home/Computing/C/C Projects/eucleia/build/Debug/eucleia"; sourceTree = "<absolute>"; };
-		2B808DE52B6EF6B000EF20F8 /* eucleia-test.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "eucleia-test.xctest"; path = "/Users/edward/Documents/Home/Computing/C/C Projects/eucleia/build/Debug/eucleia-test.xctest"; sourceTree = "<absolute>"; };
 		2B808DE62B6FFF3400EF20F8 /* NotOperator.ek */ = {isa = PBXFileReference; lastKnownFileType = text; path = NotOperator.ek; sourceTree = "<group>"; };
 		2B808DE72B7003C700EF20F8 /* PrefixIncrementOperator.ek */ = {isa = PBXFileReference; lastKnownFileType = text; path = PrefixIncrementOperator.ek; sourceTree = "<group>"; };
 		2B808DE82B700A3700EF20F8 /* PrefixDecrementOperator.ek */ = {isa = PBXFileReference; lastKnownFileType = text; path = PrefixDecrementOperator.ek; sourceTree = "<group>"; };
 		2B808DEB2B700B1D00EF20F8 /* EucleiaUnaryOperatorNodes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EucleiaUnaryOperatorNodes.cpp; sourceTree = "<group>"; };
 		2B808DEC2B700B1D00EF20F8 /* EucleiaUnaryOperatorNodes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EucleiaUnaryOperatorNodes.hpp; sourceTree = "<group>"; };
 		2B808DEE2B70112F00EF20F8 /* NegationOperator.ek */ = {isa = PBXFileReference; lastKnownFileType = text; path = NegationOperator.ek; sourceTree = "<group>"; };
+		2B808DF12B7012DD00EF20F8 /* eucleia */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = eucleia; sourceTree = BUILT_PRODUCTS_DIR; };
+		2B808DF22B7012DD00EF20F8 /* eucleia-test.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "eucleia-test.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BBD60892B5C05110080D43C /* EucleiaParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EucleiaParser.cpp; sourceTree = "<group>"; };
 		2BBD608A2B5C05110080D43C /* EucleiaParser.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EucleiaParser.hpp; sourceTree = "<group>"; };
 		2BC4B0972B25214400104C1F /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
@@ -110,6 +111,7 @@
 			isa = PBXGroup;
 			children = (
 				2B76C14E2B6EBFAE005B36A7 /* PrintFib.ek */,
+				2B75F70C2B794C2C00D19835 /* PrintFibNoBrackets.ek */,
 				2B808DE62B6FFF3400EF20F8 /* NotOperator.ek */,
 				2B808DE72B7003C700EF20F8 /* PrefixIncrementOperator.ek */,
 				2B808DE82B700A3700EF20F8 /* PrefixDecrementOperator.ek */,
@@ -124,6 +126,7 @@
 				2B7CC9832B546E6400D0D335 /* EucleiaNode.cpp */,
 				2B7CC9842B546E6400D0D335 /* EucleiaNode.hpp */,
 				2B808DEA2B700AE900EF20F8 /* Unary Operators */,
+				2B808DF32B7013C000EF20F8 /* Assignment Operators */,
 			);
 			path = Nodes;
 			sourceTree = "<group>";
@@ -137,6 +140,13 @@
 			path = "Unary Operators";
 			sourceTree = "<group>";
 		};
+		2B808DF32B7013C000EF20F8 /* Assignment Operators */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Assignment Operators";
+			sourceTree = "<group>";
+		};
 		2BF3A7302B012B8D001CFDC6 = {
 			isa = PBXGroup;
 			children = (
@@ -145,6 +155,8 @@
 				2B6617272B6DB54F006D06EE /* eucleia-formatting.plist */,
 				2B6617162B6DA839006D06EE /* examples */,
 				2B6617132B6DA68C006D06EE /* src */,
+				2B808DF12B7012DD00EF20F8 /* eucleia */,
+				2B808DF22B7012DD00EF20F8 /* eucleia-test.xctest */,
 			);
 			sourceTree = "<group>";
 		};
@@ -165,7 +177,7 @@
 			);
 			name = "eucleia-test";
 			productName = "eucleia-test";
-			productReference = 2B808DE52B6EF6B000EF20F8 /* eucleia-test.xctest */;
+			productReference = 2B808DF22B7012DD00EF20F8 /* eucleia-test.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		2BF3A7382B012B8D001CFDC6 /* eucleia */ = {
@@ -182,7 +194,7 @@
 			);
 			name = eucleia;
 			productName = WarpC;
-			productReference = 2B808DE42B6EF6B000EF20F8 /* eucleia */;
+			productReference = 2B808DF12B7012DD00EF20F8 /* eucleia */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */

@@ -337,7 +337,7 @@ std::shared_ptr<BaseObject> evaluatePrintFunction(ProgramNode & callArgs, Scope 
 		
 		if (node != callArgs.nodes.back())
 		{
-			std::cout << ", ";
+			std::cout << " ";
 		}
 	}
 	
