@@ -53,7 +53,7 @@
 		2B808DEC2B700B1D00EF20F8 /* EucleiaUnaryOperatorNodes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EucleiaUnaryOperatorNodes.hpp; sourceTree = "<group>"; };
 		2B808DEE2B70112F00EF20F8 /* NegationOperator.ek */ = {isa = PBXFileReference; lastKnownFileType = text; path = NegationOperator.ek; sourceTree = "<group>"; };
 		2B808DF12B7012DD00EF20F8 /* eucleia */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = eucleia; sourceTree = BUILT_PRODUCTS_DIR; };
-		2B808DF22B7012DD00EF20F8 /* eucleia-test.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "eucleia-test.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2B808DF22B7012DD00EF20F8 /* eucleia-test.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "eucleia-test.xctest"; path = "/Users/edward/Documents/Home/Computing/C/C Projects/eucleia/build/Debug/eucleia-test.xctest"; sourceTree = "<absolute>"; };
 		2BBD60892B5C05110080D43C /* EucleiaParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EucleiaParser.cpp; sourceTree = "<group>"; };
 		2BBD608A2B5C05110080D43C /* EucleiaParser.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = EucleiaParser.hpp; sourceTree = "<group>"; };
 		2BC4B0972B25214400104C1F /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
@@ -154,7 +154,6 @@
 				2B6617162B6DA839006D06EE /* examples */,
 				2B6617132B6DA68C006D06EE /* src */,
 				2B808DF12B7012DD00EF20F8 /* eucleia */,
-				2B808DF22B7012DD00EF20F8 /* eucleia-test.xctest */,
 			);
 			sourceTree = "<group>";
 		};

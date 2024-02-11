@@ -52,7 +52,6 @@ protected:
 	std::shared_ptr<PrefixDecrementNode> parsePrefixDecrement();
 	std::shared_ptr<NegationNode> parseNegation();
 
-
 	std::shared_ptr<ArrayAccessNode> parseArrayAccessor(std::shared_ptr<BaseNode> lastExpression);
 
 	bool isKeyword(const std::string & keyword);
