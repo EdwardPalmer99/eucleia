@@ -964,8 +964,8 @@
             filePath = "src/EucleiaParser.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "503"
-            endingLineNumber = "503"
+            startingLineNumber = "538"
+            endingLineNumber = "538"
             landmarkName = "Parser::parseAtomicallyExpression()"
             landmarkType = "7">
          </BreakpointContent>
@@ -980,8 +980,8 @@
             filePath = "src/EucleiaParser.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "534"
-            endingLineNumber = "534"
+            startingLineNumber = "569"
+            endingLineNumber = "569"
             landmarkName = "Parser::parseNot()"
             landmarkType = "7">
          </BreakpointContent>
@@ -996,8 +996,8 @@
             filePath = "src/EucleiaParser.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "526"
-            endingLineNumber = "526"
+            startingLineNumber = "561"
+            endingLineNumber = "561"
             landmarkName = "Parser::parseAtomicallyExpression()"
             landmarkType = "7">
             <Locations>
@@ -1061,6 +1061,51 @@
                   endingLineNumber = "493"
                   offsetFromSymbolStart = "3289">
                </Location>
+               <Location
+                  uuid = "2049FB59-7F7B-496E-95C7-ED521603176D - 3bd5499e6ef45b05"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Parser::parseAtomicallyExpression()"
+                  moduleName = "eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/eucleia/src/EucleiaParser.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "526"
+                  endingLineNumber = "526"
+                  offsetFromSymbolStart = "3289">
+               </Location>
+               <Location
+                  uuid = "2049FB59-7F7B-496E-95C7-ED521603176D - 3bd5499e6ef45659"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Parser::parseAtomicallyExpression()"
+                  moduleName = "eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/eucleia/src/EucleiaParser.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "562"
+                  endingLineNumber = "562"
+                  offsetFromSymbolStart = "3258">
+               </Location>
+               <Location
+                  uuid = "2049FB59-7F7B-496E-95C7-ED521603176D - 3bd5499e6ef45678"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Parser::parseAtomicallyExpression()"
+                  moduleName = "eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/eucleia/src/EucleiaParser.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "561"
+                  endingLineNumber = "561"
+                  offsetFromSymbolStart = "3258">
+               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
@@ -1074,8 +1119,8 @@
             filePath = "src/EucleiaParser.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "453"
-            endingLineNumber = "453"
+            startingLineNumber = "488"
+            endingLineNumber = "488"
             landmarkName = "Parser::parseExpression()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1090,8 +1135,8 @@
             filePath = "src/EucleiaParser.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "32"
-            endingLineNumber = "32"
+            startingLineNumber = "33"
+            endingLineNumber = "33"
             landmarkName = "Parser::buildAbstractSymbolTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1106,8 +1151,8 @@
             filePath = "src/EucleiaParser.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "584"
-            endingLineNumber = "584"
+            startingLineNumber = "619"
+            endingLineNumber = "619"
             landmarkName = "Parser::parseDelimited(start, stop, separator, parseMethod)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1122,8 +1167,8 @@
             filePath = "src/EucleiaParser.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "739"
-            endingLineNumber = "739"
+            startingLineNumber = "775"
+            endingLineNumber = "775"
             landmarkName = "Parser::skipPunctuation(name)"
             landmarkType = "7">
             <Locations>
@@ -1202,6 +1247,51 @@
                   endingLineNumber = "705"
                   offsetFromSymbolStart = "41">
                </Location>
+               <Location
+                  uuid = "A5409442-6A26-4F32-A2E8-0E7886E8246D - 831399971ead395d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Parser::skipPunctuation(std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt;&gt; const&amp;)"
+                  moduleName = "eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/eucleia/src/EucleiaParser.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "739"
+                  endingLineNumber = "739"
+                  offsetFromSymbolStart = "41">
+               </Location>
+               <Location
+                  uuid = "A5409442-6A26-4F32-A2E8-0E7886E8246D - 831399971ead3e39"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Parser::skipPunctuation(std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt;&gt; const&amp;)"
+                  moduleName = "eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/eucleia/src/EucleiaParser.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "775"
+                  endingLineNumber = "775"
+                  offsetFromSymbolStart = "41">
+               </Location>
+               <Location
+                  uuid = "A5409442-6A26-4F32-A2E8-0E7886E8246D - 831399971ead3eda"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Parser::skipPunctuation(std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt;&gt; const&amp;)"
+                  moduleName = "eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/eucleia/src/EucleiaParser.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "774"
+                  endingLineNumber = "774"
+                  offsetFromSymbolStart = "41">
+               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
@@ -1215,8 +1305,8 @@
             filePath = "src/EucleiaParser.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "635"
-            endingLineNumber = "635"
+            startingLineNumber = "671"
+            endingLineNumber = "671"
             landmarkName = "Parser::parseProgramLines()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1225,16 +1315,400 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "4610365F-C41E-423A-B2A5-9D50A1557D1E"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/EucleiaInterpreter.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "23"
-            endingLineNumber = "23"
+            startingLineNumber = "24"
+            endingLineNumber = "24"
             landmarkName = "Interpreter::evaluateFile(fpath)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B8093841-ACBC-40B0-BDB1-AFEBC7984491"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/Nodes/EucleiaNode.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "346"
+            endingLineNumber = "346"
+            landmarkName = "FunctionCallNode::evaluate(scope)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EB005FF1-497B-423E-941B-343391BCAD00"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/EucleiaParser.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "97"
+            endingLineNumber = "97"
+            landmarkName = "Parser::parseLibraryImport()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D45DD992-4B7B-4F21-AE18-7B4B4C3D821B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/EucleiaParser.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "104"
+            endingLineNumber = "104"
+            landmarkName = "Parser::parseLibraryImport()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "012559BB-E111-48E3-9C7F-AF345CB35AD4"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/EucleiaParser.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "99"
+            endingLineNumber = "99"
+            landmarkName = "Parser::parseLibraryImport()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "AEA60231-AC4F-4A47-A418-15C94CE88B64"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/Nodes/EucleiaNode.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "350"
+            endingLineNumber = "350"
+            landmarkName = "FunctionCallNode::evaluate(scope)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5F3C0331-4A31-4755-9145-0F737A7A0DB0"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/Nodes/EucleiaNode.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "347"
+            endingLineNumber = "347"
+            landmarkName = "FunctionCallNode::evaluate(scope)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A08AF3F8-E0AC-49A7-9731-F59F67E35CFD"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/Nodes/EucleiaNode.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "348"
+            endingLineNumber = "348"
+            landmarkName = "FunctionCallNode::evaluate(scope)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5FC92A4F-CF7B-403D-8BB4-0A34EDA11CEC"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/EucleiaScope.hpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "45"
+            endingLineNumber = "45"
+            landmarkName = "getOptionalObject(name)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F3413746-BD21-4281-A319-ED954CC8AE03"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/Nodes/EucleiaLibraries.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "19"
+            endingLineNumber = "19"
+            landmarkName = "LibraryNode::evaluate(scope)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "F3413746-BD21-4281-A319-ED954CC8AE03 - f62506b3b22c1877"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "LibraryNode::evaluate(Scope&amp;)"
+                  moduleName = "eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/eucleia/src/Nodes/EucleiaLibraries.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "17"
+                  endingLineNumber = "17"
+                  offsetFromSymbolStart = "41">
+               </Location>
+               <Location
+                  uuid = "F3413746-BD21-4281-A319-ED954CC8AE03 - f62506b3b22c1877"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "LibraryNode::evaluate(Scope&amp;)"
+                  moduleName = "eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/eucleia/src/Nodes/EucleiaLibraries.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "17"
+                  endingLineNumber = "17"
+                  offsetFromSymbolStart = "105">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6FB34C0D-E44A-4A86-8081-88F856C121B1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/Nodes/EucleiaLibraries.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "110"
+            endingLineNumber = "110"
+            landmarkName = "EucleiaLibraries::buildDefaultLibraries()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FCCC1A54-37E0-4951-942A-31EC883AFD30"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/Nodes/EucleiaLibraries.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "30"
+            endingLineNumber = "30"
+            landmarkName = "LibraryNode::defineFunction(name, function)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "FCCC1A54-37E0-4951-942A-31EC883AFD30 - 5fb34f02bd7112bf"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "LibraryNode::defineFunction(std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt;&gt; const&amp;, std::__1::function&lt;std::__1::shared_ptr&lt;BaseObject&gt; (ProgramNode&amp;, Scope&amp;)&gt;)"
+                  moduleName = "eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/eucleia/src/Nodes/EucleiaLibraries.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "28"
+                  endingLineNumber = "28"
+                  offsetFromSymbolStart = "28">
+               </Location>
+               <Location
+                  uuid = "FCCC1A54-37E0-4951-942A-31EC883AFD30 - 5fb34f02bd7112f1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "LibraryNode::defineFunction(std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt;&gt; const&amp;, std::__1::function&lt;std::__1::shared_ptr&lt;BaseObject&gt; (ProgramNode&amp;, Scope&amp;)&gt;)"
+                  moduleName = "eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/eucleia/src/Nodes/EucleiaLibraries.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "30"
+                  endingLineNumber = "30"
+                  offsetFromSymbolStart = "28">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "753A35FD-0638-49BF-B35A-DF8C6E256F79"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/Nodes/EucleiaLibraries.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "50"
+            endingLineNumber = "50"
+            landmarkName = "MathLibraryNode::defineFunctions()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "753A35FD-0638-49BF-B35A-DF8C6E256F79 - fede4ab535db3c5b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MathLibraryNode::defineFunctions()"
+                  moduleName = "eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/eucleia/src/Nodes/EucleiaLibraries.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "41"
+                  endingLineNumber = "41"
+                  offsetFromSymbolStart = "44">
+               </Location>
+               <Location
+                  uuid = "753A35FD-0638-49BF-B35A-DF8C6E256F79 - fede4ab535db3e2b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MathLibraryNode::defineFunctions()"
+                  moduleName = "eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/eucleia/src/Nodes/EucleiaLibraries.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "57"
+                  endingLineNumber = "57"
+                  offsetFromSymbolStart = "40">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6643353A-42F2-4D87-A2A4-23844460ADBE"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/Nodes/EucleiaLibraries.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "64"
+            endingLineNumber = "64"
+            landmarkName = "MathLibraryNode::defineFunctions()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "6643353A-42F2-4D87-A2A4-23844460ADBE - ff5a7bc846997233"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MathLibraryNode::defineFunctions()::$_1::operator()(ProgramNode&amp;, Scope&amp;) const"
+                  moduleName = "eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/eucleia/src/Nodes/EucleiaLibraries.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "71"
+                  endingLineNumber = "71"
+                  offsetFromSymbolStart = "170">
+               </Location>
+               <Location
+                  uuid = "6643353A-42F2-4D87-A2A4-23844460ADBE - ff5a7bc84699750a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MathLibraryNode::defineFunctions()::$_1::operator()(ProgramNode&amp;, Scope&amp;) const"
+                  moduleName = "eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/eucleia/src/Nodes/EucleiaLibraries.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "64"
+                  endingLineNumber = "64"
+                  offsetFromSymbolStart = "170">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "50081A7E-4E7B-4FF5-A0CA-957CEED96323"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/Nodes/EucleiaLibraries.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "65"
+            endingLineNumber = "65"
+            landmarkName = "MathLibraryNode::defineFunctions()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "50081A7E-4E7B-4FF5-A0CA-957CEED96323 - ff5a7bc846997212"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MathLibraryNode::defineFunctions()::$_1::operator()(ProgramNode&amp;, Scope&amp;) const"
+                  moduleName = "eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/eucleia/src/Nodes/EucleiaLibraries.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "72"
+                  endingLineNumber = "72"
+                  offsetFromSymbolStart = "234">
+               </Location>
+               <Location
+                  uuid = "50081A7E-4E7B-4FF5-A0CA-957CEED96323 - ff5a7bc84699756d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "MathLibraryNode::defineFunctions()::$_1::operator()(ProgramNode&amp;, Scope&amp;) const"
+                  moduleName = "eucleia"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/edward/Documents/Home/Computing/C/C%20Projects/eucleia/src/Nodes/EucleiaLibraries.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "65"
+                  endingLineNumber = "65"
+                  offsetFromSymbolStart = "242">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

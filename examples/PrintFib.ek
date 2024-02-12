@@ -1,4 +1,5 @@
 import "Fib.ek"
+import <io>
 
 func printFib(int min, int max)
 {

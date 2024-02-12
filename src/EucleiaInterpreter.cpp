@@ -10,6 +10,7 @@
 #include "EucleiaScope.hpp"
 #include "EucleiaInterpreter.hpp"
 #include "EucleiaNode.hpp"
+#include "EucleiaLibraries.hpp"
 #include <iostream>
 #include <sstream>
 

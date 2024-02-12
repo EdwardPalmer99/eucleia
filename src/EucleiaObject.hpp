@@ -12,6 +12,13 @@
 #include <ostream>
 #include <assert.h>
 #include "EucleiaUtility.hpp"
+#include <map>
+#include <functional>
+
+struct BaseObject;
+class ProgramNode;
+class Scope;
+
 
 // Forwards declaration.
 class FunctionNode;
@@ -30,7 +37,8 @@ struct BaseObject
 		Float,
 		String,
 		Array,
-		Function	// Function definition.
+		Function,	// Function definition.
+		LibraryFunction
 	};
 	
 	std::string description() const;
@@ -146,6 +154,22 @@ struct FunctionObject : public BaseObject
 	inline ObjectType type() const override { return ObjectType::Function; }
 	
 	std::shared_ptr<FunctionNode> functionValue{nullptr};
+};
+
+
+/// Library function allows us to define lambdas which wrap around existing stdlib
+/// functions. These can then be added to a global scope after seeing "import <...>"
+/// with angled-brackets.
+struct LibraryFunctionObject : public BaseObject
+{
+	using LibraryFunction = std::function<std::shared_ptr<BaseObject>(ProgramNode &, Scope &)>;
+
+	LibraryFunctionObject() = delete;
+	LibraryFunctionObject(LibraryFunction function) : evaluate{std::move(function)} {}
+	
+	inline ObjectType type() const override { return ObjectType::LibraryFunction; }
+		
+	LibraryFunction evaluate{nullptr};
 };
 
 

@@ -341,31 +341,13 @@ std::shared_ptr<BaseObject> FunctionCallNode::evaluateFunctionBody(BaseNode & fu
 
 #pragma mark -
 
-std::shared_ptr<BaseObject> evaluatePrintFunction(ProgramNode & callArgs, Scope & scope)
-{
-	for (const auto & node : callArgs.nodes)
-	{
-		auto evaluatedNode = node->evaluate(scope);
-		
-		std::cout << *evaluatedNode;
-		
-		if (node != callArgs.nodes.back())
-		{
-			std::cout << " ";
-		}
-	}
-	
-	std::cout << std::endl;
-	
-	return nullptr;
-}
-
 std::shared_ptr<BaseObject> FunctionCallNode::evaluate(Scope & scope)
 {
-	// 0. Any special-case system functions that we want to evalute.
-	if (funcName->variableName == "print")
+	// 0. Any library functions that we wish to evaluate.
+	auto libraryFunc = scope.getOptionalObject<LibraryFunctionObject>(funcName->variableName);
+	if (libraryFunc)
 	{
-		return evaluatePrintFunction(*funcArgs, scope);
+		return libraryFunc->evaluate(*funcArgs, scope);
 	}
 	
 	// 1. Get a shared pointer to the function node stored in this scope.

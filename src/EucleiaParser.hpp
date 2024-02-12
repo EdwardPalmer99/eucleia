@@ -10,6 +10,7 @@
 
 #include "EucleiaTokenizer.hpp"
 #include "EucleiaNode.hpp"
+#include "EucleiaLibraries.hpp"
 #include "EucleiaUnaryOperatorNodes.hpp"
 
 class Parser
@@ -52,7 +53,9 @@ protected:
 	std::shared_ptr<PrefixDecrementNode> parsePrefixDecrement();
 	std::shared_ptr<NegationNode> parseNegation();
 	
-	std::shared_ptr<FileNode> parseImport();
+	std::shared_ptr<LibraryNode> parseLibraryImport();
+	std::shared_ptr<FileNode> parseFileImport();
+	std::shared_ptr<BaseNode> parseImport();
 
 	std::shared_ptr<ArrayAccessNode> parseArrayAccessor(std::shared_ptr<BaseNode> lastExpression);
 

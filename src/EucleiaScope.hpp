@@ -34,7 +34,17 @@ public:
 	{
 		auto ownedObject = getObject(name);
 		
-		return ownedObject ? std::static_pointer_cast<T>(ownedObject) : nullptr;
+		return std::static_pointer_cast<T>(ownedObject);
+	}
+	
+	/// Get an object and cast to the desired type. Returns null if not found or
+	/// cast fails.
+	template <typename T>
+	std::shared_ptr<T> getOptionalObject(const std::string & name) const
+	{
+		if (!hasObject(name)) return nullptr;
+
+		return std::dynamic_pointer_cast<T>(getObject(name));
 	}
 	
 	/// Create a new object in the current scope.

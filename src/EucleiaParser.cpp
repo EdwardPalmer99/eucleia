@@ -9,6 +9,7 @@
 #include "EucleiaUtility.hpp"
 #include <stdlib.h>
 #include <assert.h>
+#include "EucleiaLibraries.hpp"
 
 Parser::Parser(const std::string & fpath) 
 	: _tokenizer{fpath}, 
@@ -48,14 +49,29 @@ std::shared_ptr<FileNode> Parser::buildAbstractSymbolTree(const std::string & fp
 }
 
 
+std::shared_ptr<BaseNode> Parser::parseImport()
+{
+	skipKeyword("import");
+	
+	auto token = peekToken();
+	
+	if (token.type == Token::String)
+		return parseFileImport();
+	else if (isOperator("<"))
+		return parseLibraryImport();
+	else
+	{
+		unexpectedToken();
+		exit(0);
+	}
+		
+}
 
 /// import "path_to_some_file"
 ///
 /// Imports a file and its functions into this scope.
-std::shared_ptr<FileNode> Parser::parseImport()
+std::shared_ptr<FileNode> Parser::parseFileImport()
 {
-	skipKeyword("import");
-	
 	// File name token:
 	auto token = nextToken();
 	assert(token.type == Token::String);
@@ -71,6 +87,25 @@ std::shared_ptr<FileNode> Parser::parseImport()
 	
 	return ast;
 }
+
+/// import <io> or import <math>
+///
+/// This is for importing functions from a stdlib as opposed to user-defined functions
+/// into this scope.
+std::shared_ptr<LibraryNode> Parser::parseLibraryImport()
+{
+	skipOperator("<");
+	
+	auto token = nextToken();
+	assert(token.type == Token::Variable);
+	
+	skipOperator(">");
+	
+	auto libraryName = token.value;
+
+	return EucleiaLibraries::getLibraryInstance(libraryName);
+}
+
 
 /// Returns the string path corresponding to the parent directory from the
 /// file path.
@@ -615,6 +650,7 @@ void Parser::skipSemicolonLineEndingIfRequired(BaseNode::NodeType expressionType
 {
 	switch (expressionType)
 	{
+		case BaseNode::Library:
 		case BaseNode::File:
 		case BaseNode::Program:
 		case BaseNode::If:

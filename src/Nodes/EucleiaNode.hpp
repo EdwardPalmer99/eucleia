@@ -46,7 +46,8 @@ struct BaseNode
 		PrefixIncrement,
 		PrefixDecrement,
 		Negation,
-		File
+		File,
+		Library
 	};
 	
 	virtual inline NodeType type() const { return NodeType::None; }
@@ -304,7 +305,6 @@ struct FunctionCallNode : BaseNode
 	std::shared_ptr<BaseObject> evaluate(Scope & scope) override;
 	
 	std::shared_ptr<BaseObject> evaluateFunctionBody(BaseNode & funcBody, Scope & funcScope);
-
 	
 	std::shared_ptr<VariableNode> funcName{nullptr};
 	std::shared_ptr<ProgramNode> funcArgs{nullptr};

@@ -45,7 +45,7 @@ int main(int argc, const char * argv[])
 	clock_t tick = clock();
 	Interpreter::evaluateFile(std::string(fpath));
 	clock_t tock = clock();
-
+	
 	fprintf(stdout, "run time: %d ms\n", (int)((1000.0 * (double)(tock - tick)) / (double)CLOCKS_PER_SEC));
 	return EXIT_SUCCESS;
 }

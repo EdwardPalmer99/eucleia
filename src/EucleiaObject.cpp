@@ -6,7 +6,6 @@
 //
 
 #include "EucleiaObject.hpp"
-//#include "EucleiaNode.hpp"
 #include "EucleiaUtility.hpp"
 #include <assert.h>
 
