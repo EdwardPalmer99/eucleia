@@ -14,7 +14,7 @@
 
 #define printWarpError(fmt, args...)\
 ({\
-	fprintf(stderr, "%s:%d:%s(): error: " fmt, __FILE_NAME__, __LINE__, __func__, args);\
+	fprintf(stderr, "%s:%d:%s(): error: " fmt, __FILE__, __LINE__, __func__, args);\
 	exit(EXIT_FAILURE);\
 })
 
