@@ -1,5 +1,5 @@
 *.DS_Store
-bazel-*
 *.xcodeproj
-*MODULE.bazel.lock
+*eucleia
+*.o
 /.vscode/
