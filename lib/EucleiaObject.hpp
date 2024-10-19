@@ -11,6 +11,7 @@
 #include <string>
 #include <ostream>
 #include <assert.h>
+#include <vector>
 #include "EucleiaUtility.hpp"
 #include <map>
 #include <functional>
@@ -18,7 +19,6 @@
 struct BaseObject;
 class ProgramNode;
 class Scope;
-
 
 // Forwards declaration.
 class FunctionNode;
@@ -28,7 +28,7 @@ struct BaseObject
 {
 	BaseObject() = default;
 	virtual ~BaseObject() {}
-	
+
 	enum class ObjectType
 	{
 		None,
@@ -37,65 +37,62 @@ struct BaseObject
 		Float,
 		String,
 		Array,
-		Function,	// Function definition.
+		Function, // Function definition.
 		LibraryFunction
 	};
-	
+
 	std::string description() const;
 
 	inline virtual ObjectType type() const { return ObjectType::None; }
-	
+
 	/// Increment value of object if defined.
-	inline virtual void incrementValue() 
+	inline virtual void incrementValue()
 	{
 		printWarpError("Increment operator not defined for object of type '%s'.\n", description().c_str());
 	}
-	
+
 	inline virtual void decrementValue()
 	{
 		printWarpError("Decrement operator not defined for object of type '%s'.\n", description().c_str());
 	}
-	
+
 	virtual std::shared_ptr<BaseObject> negateValue()
 	{
 		printWarpError("Negation operator not defined for object of type '%s'.\n", description().c_str());
 	}
-		
+
 	double floatCast() const;
 	long intCast() const;
 	bool boolCast() const;
 };
 
-
-
 struct IntObject : public BaseObject
 {
 	IntObject() = delete;
 	IntObject(const long _value = 0) : value{_value} {}
-	
+
 	inline ObjectType type() const override { return ObjectType::Int; }
-	
+
 	inline void incrementValue() override { ++value; }
 	inline void decrementValue() override { --value; }
-	
+
 	std::shared_ptr<BaseObject> negateValue() override
 	{
 		return std::make_shared<IntObject>(-value);
 	}
-	
+
 	long positiveValue() const;
 	long positiveOrZeroValue() const;
 	long nonzeroValue() const;
 
-	long value{0};	// Remove const qualification so we can modify value.
+	long value{0}; // Remove const qualification so we can modify value.
 };
-
 
 struct FloatObject : public BaseObject
 {
 	FloatObject() = delete;
 	FloatObject(const double _value = 0.0) : value{_value} {}
-	
+
 	inline void incrementValue() override { ++value; }
 	inline void decrementValue() override { --value; }
 
@@ -103,12 +100,11 @@ struct FloatObject : public BaseObject
 	{
 		return std::make_shared<FloatObject>(-value);
 	}
-	
+
 	inline ObjectType type() const override { return ObjectType::Float; }
-	
+
 	double value;
 };
-
 
 struct BoolObject : public BaseObject
 {
@@ -120,28 +116,25 @@ struct BoolObject : public BaseObject
 	const bool value;
 };
 
-
 struct StringObject : public BaseObject
 {
 	StringObject() = delete;
-	StringObject(const std::string & value = "") : stringValue{value} {}
-	
+	StringObject(const std::string &value = "") : stringValue{value} {}
+
 	inline ObjectType type() const override { return ObjectType::String; }
 
 	const std::string stringValue;
 };
 
-
 struct ArrayObject : public BaseObject
 {
 	ArrayObject() = delete;
 	ArrayObject(const std::vector<std::shared_ptr<BaseObject>> values) : arrayValues{std::move(values)} {}
-	
+
 	inline ObjectType type() const override { return ObjectType::Array; }
-	
+
 	const std::vector<std::shared_ptr<BaseObject>> arrayValues;
 };
-
 
 /// FunctionObject contains a pointer to the original function definition which
 /// allows us to call its evaluate() method and perform type-checking of the
@@ -150,12 +143,11 @@ struct FunctionObject : public BaseObject
 {
 	FunctionObject() = delete;
 	FunctionObject(std::shared_ptr<FunctionNode> function);
-	
+
 	inline ObjectType type() const override { return ObjectType::Function; }
-	
+
 	std::shared_ptr<FunctionNode> functionValue{nullptr};
 };
-
 
 /// Library function allows us to define lambdas which wrap around existing stdlib
 /// functions. These can then be added to a global scope after seeing "import <...>"
@@ -166,80 +158,73 @@ struct LibraryFunctionObject : public BaseObject
 
 	LibraryFunctionObject() = delete;
 	LibraryFunctionObject(LibraryFunction function) : evaluate{std::move(function)} {}
-	
+
 	inline ObjectType type() const override { return ObjectType::LibraryFunction; }
-		
+
 	LibraryFunction evaluate{nullptr};
 };
 
-
 #pragma mark -
 
-inline std::ostream & operator<<(std::ostream & out, const IntObject & object)
+inline std::ostream &operator<<(std::ostream &out, const IntObject &object)
 {
 	return (out << object.value);
 }
 
-
-inline std::ostream & operator<<(std::ostream & out, const FloatObject & object)
+inline std::ostream &operator<<(std::ostream &out, const FloatObject &object)
 {
 	return (out << object.value);
 }
 
-
-inline std::ostream & operator<<(std::ostream & out, const BoolObject & object)
+inline std::ostream &operator<<(std::ostream &out, const BoolObject &object)
 {
 	return (out << (object.value ? "true" : "false"));
 }
 
-
-inline std::ostream & operator<<(std::ostream & out, const StringObject & object)
+inline std::ostream &operator<<(std::ostream &out, const StringObject &object)
 {
 	return (out << object.stringValue);
 }
 
-
-inline std::ostream & operator<<(std::ostream & out, const ArrayObject & object)
+inline std::ostream &operator<<(std::ostream &out, const ArrayObject &object)
 {
-   out << "[";
-   for (const auto & value : object.arrayValues)
-   {
-	   out << value;	// BUG
-	   
-	   if (value != object.arrayValues.back())
-	   {
-		   out << ", ";
-	   }
-   }
-   out << "]";
-   
-   return out;
+	out << "[";
+	for (const auto &value : object.arrayValues)
+	{
+		out << value; // BUG
+
+		if (value != object.arrayValues.back())
+		{
+			out << ", ";
+		}
+	}
+	out << "]";
+
+	return out;
 }
 
-
-inline std::ostream & operator<<(std::ostream & out, const BaseObject & object)
+inline std::ostream &operator<<(std::ostream &out, const BaseObject &object)
 {
 	switch (object.type())
 	{
-		case BaseObject::ObjectType::Int:
-			return (out << *static_cast<const IntObject *>(&object));
-		case BaseObject::ObjectType::Float:
-			return (out << *static_cast<const FloatObject *>(&object));
-		case BaseObject::ObjectType::Bool:
-			return (out << *static_cast<const BoolObject *>(&object));
-		case BaseObject::ObjectType::String:
-			return (out << *static_cast<const StringObject *>(&object));
-		case BaseObject::ObjectType::Array:
-			return (out << *static_cast<const ArrayObject *>(&object));
-		default:
-			return out;	// Don't add anything.
+	case BaseObject::ObjectType::Int:
+		return (out << *static_cast<const IntObject *>(&object));
+	case BaseObject::ObjectType::Float:
+		return (out << *static_cast<const FloatObject *>(&object));
+	case BaseObject::ObjectType::Bool:
+		return (out << *static_cast<const BoolObject *>(&object));
+	case BaseObject::ObjectType::String:
+		return (out << *static_cast<const StringObject *>(&object));
+	case BaseObject::ObjectType::Array:
+		return (out << *static_cast<const ArrayObject *>(&object));
+	default:
+		return out; // Don't add anything.
 	}
 }
 
-
 #pragma mark -
 
-inline const IntObject & castToInt(const BaseObject & object)
+inline const IntObject &castToInt(const BaseObject &object)
 {
 	assert(object.type() == BaseObject::ObjectType::Int);
 
@@ -247,8 +232,7 @@ inline const IntObject & castToInt(const BaseObject & object)
 	return *ptr;
 }
 
-
-inline const FloatObject & castToFloat(const BaseObject & object)
+inline const FloatObject &castToFloat(const BaseObject &object)
 {
 	assert(object.type() == BaseObject::ObjectType::Float);
 
@@ -256,8 +240,7 @@ inline const FloatObject & castToFloat(const BaseObject & object)
 	return *ptr;
 }
 
-
-inline const BoolObject & castToBool(const BaseObject & object)
+inline const BoolObject &castToBool(const BaseObject &object)
 {
 	assert(object.type() == BaseObject::ObjectType::Bool);
 
@@ -265,6 +248,4 @@ inline const BoolObject & castToBool(const BaseObject & object)
 	return *ptr;
 }
 
-
 #endif /* EucleiaObject_hpp */
-

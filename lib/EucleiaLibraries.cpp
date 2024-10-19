@@ -53,7 +53,7 @@ void MathLibraryNode::defineFunctions()
 		assert(argValues.size() == 1);
 		
 		auto first = argValues.front()->floatCast();
-		return std::make_shared<FloatObject>(std::sqrt(first));
+		return std::make_shared<FloatObject>(sqrt(first));
 	});
 	
 	defineFunction("pow", [=](ProgramNode & callArgs, Scope & scope) -> std::shared_ptr<BaseObject>
@@ -64,7 +64,7 @@ void MathLibraryNode::defineFunctions()
 		auto first = argValues.at(0)->floatCast();
 		auto second = argValues.at(1)->floatCast();
 		
-		return std::make_shared<FloatObject>(std::pow(first, second));
+		return std::make_shared<FloatObject>(pow(first, second));
 	});
 }
 
