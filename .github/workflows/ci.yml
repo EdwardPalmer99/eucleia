@@ -1,17 +1,18 @@
-name: CI
+name: C++ Build
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
 
 jobs:
-  test:
-    # virtual environments: https://github.com/actions/virtual-environments
-    runs-on: ubuntu-20.04
+  build:
+
+    runs-on: ubuntu-latest
 
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, which is the CWD for
-      # the rest of the steps
-      - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
+    - name: make
+      run: make
 
-      # build
-      - name: Build the code
-        run: bazel build //...
