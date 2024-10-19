@@ -15,6 +15,7 @@
 #include "EucleiaUtility.hpp"
 #include <map>
 #include <functional>
+#include <memory>
 
 struct BaseObject;
 class ProgramNode;
