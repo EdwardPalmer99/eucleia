@@ -9,11 +9,11 @@
 #include <string>
 #include <iostream>
 
-#include "lib/EucleiaUtility.hpp"
-#include "lib/EucleiaInterpreter.hpp"
-#include "lib/EucleiaTokenizer.hpp"
-#include "lib/EucleiaInputStream.hpp"
-#include "lib/EucleiaParser.hpp"
+#include "EucleiaUtility.hpp"
+#include "EucleiaInterpreter.hpp"
+#include "EucleiaTokenizer.hpp"
+#include "EucleiaInputStream.hpp"
+#include "EucleiaParser.hpp"
 
 int main(int argc, const char * argv[])
 {
