@@ -1,16 +1,21 @@
 # Reference: https://makefiletutorial.com/#the-all-target
 
 CXX 		:= g++
-CXXFLAGS	:= -std=c++2a -g
+CXXFLAGS	:= -std=c++2a -g -O0
 
-TARGET_EXEC := eucleia 
+# TODO: - need a release version.
+TARGET_EXEC := eucleia
+
+INSTALL_DIR	:= install
+BUILD_DIR	:= build
 SRC_DIR 	:= src
 
 # Find all source files.
 SRCS	:= $(shell find $(SRC_DIR) -name '*.cpp')
 
 # Find all object files.
-OBJS	:= $(patsubst %.cpp, %.o, $(SRCS))
+_OBJS	:= $(patsubst %.cpp, %.o, $(SRCS))
+OBJS	:= $(addprefix $(BUILD_DIR)/, $(_OBJS))
 
 # Find all directories so compiler can find headers.
 INC_DIRS := $(shell find $(SRC_DIR) -type d)
@@ -22,11 +27,13 @@ INC_FLAGS := $(addprefix -I, $(INC_DIRS))
 LDFLAGS := $(INC_FLAGS)
 
 # Final build step. Run on all object files.
-$(TARGET_EXEC): $(OBJS)
+$(INSTALL_DIR)/$(TARGET_EXEC): $(OBJS)
+	mkdir -p $(INSTALL_DIR)
 	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
 
 # Build step for cpp source files. Run on all source files.
-$(OBJS): %.o: %.cpp 
+$(BUILD_DIR)/%.o: %.cpp 
+	mkdir -p $(BUILD_DIR)/$(SRC_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 all: $(TARGET)
@@ -37,4 +44,4 @@ debug:
 
 .PHONY: clean 
 clean: 
-	rm -r $(OBJS) $(TARGET_EXEC)
+	rm -rf $(BUILD_DIR) $(INSTALL_DIR)
