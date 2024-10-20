@@ -8,6 +8,7 @@
 #include "EucleiaInputStream.hpp"
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include <algorithm>
 #include "EucleiaUtility.hpp"
 #include "RecognizedInputs.hpp"
