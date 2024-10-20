@@ -9,6 +9,8 @@
 #include "EucleiaUtility.hpp"
 #include <stdlib.h>
 #include <assert.h>
+#include <cstring>
+#include <memory>
 #include "EucleiaLibraries.hpp"
 
 Parser::Parser(const std::string & fpath) 
