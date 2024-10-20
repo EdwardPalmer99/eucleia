@@ -29,12 +29,12 @@ LDFLAGS := $(INC_FLAGS)
 # Final build step. Run on all object files.
 $(INSTALL_DIR)/$(TARGET_EXEC): $(OBJS)
 	mkdir -p $(INSTALL_DIR)
-	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
+	$(CXX) $(OBJS) -o $@
 
 # Build step for cpp source files. Run on all source files.
 $(BUILD_DIR)/%.o: %.cpp 
-	mkdir -p $(BUILD_DIR)/$(SRC_DIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -c $< -o $@ $(LDFLAGS)
 
 all: $(TARGET)
 
