@@ -7,6 +7,8 @@
 
 #include "EucleiaLibraries.hpp"
 #include <iostream>
+#include <cmath>
+#include <memory>
 
 std::unique_ptr<EucleiaLibraries> EucleiaLibraries::_instance = nullptr;
 
