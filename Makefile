@@ -36,7 +36,10 @@ $(BUILD_DIR)/%.o: %.cpp
 	mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@ $(LDFLAGS)
 
-all: $(TARGET)
+all: $(INSTALL_DIR)/$(TARGET_EXEC)
+
+test: $(INSTALL_DIR)/$(TARGET_EXEC)
+	$(INSTALL_DIR)/$(TARGET_EXEC) --test
 
 debug:
 	@echo "srcs: $(SRCS)"

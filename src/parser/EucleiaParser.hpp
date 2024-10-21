@@ -17,12 +17,17 @@ class Parser
 {
 public:
 	Parser() = delete;
+
 	Parser(const std::string & fpath);
+	Parser(const std::string fileContents, const std::string parentFilePath);
+
 	~Parser() = default;
 	
 	std::shared_ptr<FileNode> buildAbstractSymbolTree();
 	
 	static std::shared_ptr<FileNode> buildAbstractSymbolTree(const std::string & fpath);
+
+	static std::shared_ptr<FileNode> buildAbstractSymbolTreeFromString(const std::string fileContents);
 	
 protected:
 	std::shared_ptr<BoolNode> parseBool();

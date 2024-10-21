@@ -38,21 +38,25 @@ void Interpreter::evaluateFile(const std::string & fpath)
 }
 
 
-std::string Interpreter::evaluateTestFile(const std::string & fpath)
+std::string Interpreter::evaluateString(const std::string fileContents)
 {
-	// 1. Redirect std::out to oss.
+	auto ast = Parser::buildAbstractSymbolTreeFromString(std::move(fileContents));
+
+	Scope globalScope;
+
+	// Redirect std::out to oss.
 	auto * bufferPtr = std::cout.rdbuf();
 
 	std::ostringstream oss;
+
 	std::cout.rdbuf(oss.rdbuf());
-	
-	// 2. Evaluate file.
-	Interpreter::evaluateFile(fpath);
-	
-	// 3. Restore std::out buffer.
+
+	ast->evaluate(globalScope);
+
+	// Restore std::out buffer.
 	std::cout.rdbuf(bufferPtr);
 
-	// 4. Return string.
+	// Return string.
 	return oss.str();
 }
 

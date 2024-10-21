@@ -14,9 +14,18 @@
 #include "EucleiaLibraries.hpp"
 
 Parser::Parser(const std::string & fpath) 
-	: _tokenizer{fpath}, 
-	  _parentDirectory{parentDirectory(fpath)}
+	: _tokenizer(Tokenizer::loadFromFile(fpath)),
+	  _parentDirectory(parentDirectory(fpath))
 {
+}
+
+// TODO: - to be used for testing purposes.
+// TODO: - add checks if no parent directory specified.
+Parser::Parser(const std::string fileContents, const std::string parentFilePath) :
+	_tokenizer(std::move(fileContents)),
+	_parentDirectory(parentFilePath)
+{
+
 }
 
 
@@ -49,6 +58,15 @@ std::shared_ptr<FileNode> Parser::buildAbstractSymbolTree(const std::string & fp
 	
 	return parser.buildAbstractSymbolTree();
 }
+
+
+std::shared_ptr<FileNode> Parser::buildAbstractSymbolTreeFromString(const std::string fileContents)
+{
+	Parser parser(std::move(fileContents), "");
+
+	return parser.buildAbstractSymbolTree();
+}
+
 
 
 std::shared_ptr<BaseNode> Parser::parseImport()

@@ -24,8 +24,7 @@ class InputStream
 {
 public:
 	InputStream() = delete;
-	InputStream(const std::string & fpath);
-	~InputStream();
+	InputStream(const std::string fileString);
 	
 	char next();
 	char peek() const;
@@ -42,7 +41,6 @@ protected:
 	bool isOperator() const;
 	bool isID() const;
 
-	void destroy();
 	void reportError(const char *format, ...);
 	
 	inline const RecognizedInputs & recognizedInputs() const { return _recognizedInputs; }
@@ -54,6 +52,8 @@ private:
 	StreamPoint _current;
 	
 	RecognizedInputs _recognizedInputs;
+
+	const std::string _fileContents;
 };
 
 

@@ -15,15 +15,26 @@
 #include "EucleiaTokenizer.hpp"
 #include "EucleiaInputStream.hpp"
 #include "EucleiaParser.hpp"
+#include "EucleiaTestPlan.hpp"
+
 
 int main(int argc, const char * argv[])
 {
-	if (argc == 2 && strcmp(argv[1], "--help") == 0)
+	if (argc == 2)
 	{
-		printf("usage: %s [file] [options]\noptions:\n%s\n",
-				argv[0],
-			   "");
-		return EXIT_SUCCESS;
+		if (strcmp(argv[1], "--help") == 0)
+		{
+			printf("usage: %s [file] [options]\noptions:\n%s\n",
+					argv[0],
+				"");
+			return EXIT_SUCCESS;
+		}
+		else if (strcmp(argv[1], "--test") == 0)
+		{
+			executeTestPlan();
+			return EXIT_SUCCESS;
+		}
+		// Allow fallthrough.
 	}
 		
 	const char *fpath = nullptr;
