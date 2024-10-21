@@ -52,8 +52,11 @@ class Tokenizer : public InputStream
 {
 public:
 	Tokenizer() = delete;
-	Tokenizer(const std::string & fpath);
+	Tokenizer(const std::string fileString);
 	~Tokenizer() = default;
+
+	/// Create a tokenizer instance from a file path.
+	static Tokenizer loadFromFile(const std::string & fpath);
 	
 	Token & peek();
 	Token next();

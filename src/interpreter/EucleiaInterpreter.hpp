@@ -17,8 +17,8 @@ public:
 	/// Prints output to std::out.
 	static void evaluateFile(const std::string & fpath);
 	
-	/// Redirects std::out and return s a string containing all output.
-	static std::string evaluateTestFile(const std::string & fpath);
+	/// Redirects std::out and returns a string containing all output.
+	static std::string evaluateString(const std::string fileContents);
 };
 
 #endif /* EucleiaInterpreter_hpp */

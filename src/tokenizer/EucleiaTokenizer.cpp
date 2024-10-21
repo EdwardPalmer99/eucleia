@@ -7,7 +7,18 @@
 
 #include "EucleiaTokenizer.hpp"
 #include "EucleiaUtility.hpp"
+#include "EucleiaFileReader.hpp"
 #include <iostream>
+
+Tokenizer Tokenizer::loadFromFile(const std::string & fpath)
+{
+	using namespace eucleia;
+
+	EucleiaFileReader fileReader;
+
+	return Tokenizer(fileReader.readFile(fpath));
+}
+
 
 std::string Token::description() const
 {
@@ -37,7 +48,7 @@ std::string Token::description() const
 }
 
 
-Tokenizer::Tokenizer(const std::string & fpath) : InputStream(fpath)
+Tokenizer::Tokenizer(const std::string fileString) : InputStream(std::move(fileString))
 {
 	generateTokens();
 }
@@ -55,9 +66,6 @@ void Tokenizer::generateTokens()
 			_tokens.push(std::move(token));
 		}
 	}
-		
-	// No longer require C-allocated input stream.
-	InputStream::destroy();
 }
 
 

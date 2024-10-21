@@ -17,32 +17,11 @@ static long getFileSize(FILE *fp);
 static const char *getFileContents(const char *fpath);
 
 
-InputStream::InputStream(const std::string & fpath) : _recognizedInputs()
+InputStream::InputStream(const std::string fileContents) : 
+	_recognizedInputs(), 
+	_fileContents(std::move(fileContents))
 {
-	const char *fileBuffer = getFileContents(fpath.c_str());
-	if (!fileBuffer)
-	{
-		printWarpError("Failed to extract an input stream from %s.", fpath.c_str());
-	}
-	
-	_current.ptr = (char *)fileBuffer;
-}
-
-
-void InputStream::destroy()
-{
-	if (_basePtr)
-	{
-		free(_basePtr);
-		
-		_basePtr = _current.ptr = nullptr;
-	}
-}
-
-
-InputStream::~InputStream()
-{
-	destroy();
+	_current.ptr = (char *)_fileContents.c_str();
 }
 
 
