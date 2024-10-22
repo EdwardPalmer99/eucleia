@@ -17,7 +17,7 @@
         assert(argValues.size() == 1);
 
         auto result = argValues.at(0)->boolCast();
-        assert(result);
+        if (!result) abort();
 
         return nullptr;
     });
@@ -30,7 +30,10 @@
         StringObject & str1 = static_cast<StringObject &>(*argValues.at(0));
         StringObject & str2 = static_cast<StringObject &>(*argValues.at(1));
 
-        assert(str1.stringValue == str2.stringValue);
+        if (str1.stringValue != str2.stringValue) 
+        {
+            abort();
+        }
 
         return nullptr;
     });

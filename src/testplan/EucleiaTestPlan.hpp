@@ -23,7 +23,6 @@ public:
     void addTestSuite(TestSuite testSuite);
     
     const std::string name;
-    const std::string description;
 
 protected:
     std::vector<TestSuite> testSuites;

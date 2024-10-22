@@ -17,15 +17,13 @@ class TestSuite
 {
 public:
     TestSuite() = delete;
-    TestSuite(const std::string name_, const std::string description_ = "") 
-        : name(std::move(name_)), description(std::move(description_)) {}
+    TestSuite(const std::string name_) : name(std::move(name_)) {}
 
     void execute();
 
-    void addTestCase(const std::string name_, const std::string input_, const std::string expected_);
+    void addTestCase(const std::string name_, const std::string input_);
     
     const std::string name;
-    const std::string description;
 
 protected:
     std::vector<TestCase> testCases;

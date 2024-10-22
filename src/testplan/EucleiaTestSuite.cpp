@@ -11,9 +11,9 @@ void TestSuite::execute()
 }
 
 
-void TestSuite::addTestCase(const std::string name_, const std::string input_, const std::string expected_)
+void TestSuite::addTestCase(const std::string name_, const std::string input_)
 {
-    auto testCase = TestCase(std::move(name_), std::move(input_), std::move(expected_));
+    auto testCase = TestCase(std::move(name_), std::move(input_));
 
     testCases.push_back(std::move(testCase));
 }
