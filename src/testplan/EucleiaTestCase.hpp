@@ -15,14 +15,13 @@ class TestCase
 public:
     TestCase() = delete;
 
-    explicit TestCase(const std::string name_, const std::string input_, const std::string expected_) 
-        : name(std::move(name_)), input(std::move(input_)), expected(std::move(expected_)) {}
+    explicit TestCase(const std::string name_, const std::string input_) 
+        : name(std::move(name_)), input(std::move(input_)) {}
 
-    void execute();
+    int execute();
     
     const std::string name;
     const std::string input;
-    const std::string expected;
 };
 
 #endif

@@ -12,7 +12,6 @@
 #include "EucleiaNode.hpp"
 #include "EucleiaLibraries.hpp"
 #include <iostream>
-#include <sstream>
 
 // TODO: - Parser() should have empty constructor. Should call parseFile method with string to run parser.
 void Interpreter::evaluateFile(const std::string & fpath)
@@ -60,5 +59,27 @@ std::string Interpreter::evaluateString(const std::string fileContents)
 	return oss.str();
 }
 
+
+void Interpreter::evaluateString(const std::string fileContents, 
+								 std::ostringstream & out, 
+								 std::ostringstream & err)
+{
+	auto ast = Parser::buildAbstractSymbolTreeFromString(std::move(fileContents));
+
+	Scope globalScope;
+
+	// Redirect std::out to oss.
+	auto * bufferOut = std::cout.rdbuf();
+	auto * bufferErr = std::cerr.rdbuf();
+
+	std::cout.rdbuf(out.rdbuf());
+	std::cerr.rdbuf(err.rdbuf());
+
+	ast->evaluate(globalScope);
+
+	// Restore std::out buffer.
+	std::cout.rdbuf(bufferOut);
+	std::cerr.rdbuf(bufferErr);
+}
 
 #pragma mark -

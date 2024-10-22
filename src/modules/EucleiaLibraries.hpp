@@ -26,7 +26,7 @@ public:
 	inline NodeType type() const override { return NodeType::Library; }
 	
 	/// Add all library functions to the scope this is evaluated in.
-	std::shared_ptr<BaseObject> evaluate(Scope & scope) override;
+	std::shared_ptr<BaseObject> evaluate(Scope & scope) final;
 
 protected:
 	void defineFunction(const std::string & name, Function function);

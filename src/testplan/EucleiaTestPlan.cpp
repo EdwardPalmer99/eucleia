@@ -1,8 +1,42 @@
 #include "EucleiaTestPlan.hpp"
+#include "EucleiaUtility.hpp"
+#include <dirent.h>
+#include <cstring>
 
-TestSuite integerTestSuite();
-TestSuite stringTestSuite();
-TestSuite loopTestSuite();
+
+TestPlan TestPlan::loadTestSuites(const std::string & testplanDir)
+{
+    DIR *dir = opendir(testplanDir.c_str());
+    if (!dir)
+    {
+        printWarpError("Failed to open directory %s\n", testplanDir.c_str());
+    }
+
+    struct dirent *entry = nullptr;
+
+    TestPlan testplan;
+
+    // TODO: - add safety checking. Handle case where we have a directory of
+    // directories.
+    char filePath[1024];
+
+    while ((entry = readdir(dir)) != nullptr)
+    {
+        const char *fileName = entry->d_name;
+        if (strcmp(fileName, ".") == 0 || strcmp(fileName, "..") == 0)
+        {
+            continue;
+        }
+
+        sprintf(filePath, "%s/%s", testplanDir.c_str(), fileName);
+
+        testplan.addTestSuite(TestSuite::loadTestSuite(std::string(filePath)));
+    }
+
+    closedir(dir);
+
+    return testplan;
+}
 
 
 void TestPlan::addTestSuite(TestSuite testSuite)
@@ -11,59 +45,19 @@ void TestPlan::addTestSuite(TestSuite testSuite)
 }
 
 
-void TestPlan::execute()
+int TestPlan::execute()
 {
+    int testPlanStatus = EXIT_SUCCESS;
+
     for (auto & testSuite : testSuites)
     {
-        testSuite.execute();
+        int testSuiteStatus = testSuite.execute();
+
+        if (testSuiteStatus != EXIT_SUCCESS)
+        {
+            testPlanStatus = EXIT_FAILURE;
+        }
     }
-}
 
-
-TestSuite integerTestSuite()
-{
-    TestSuite suite("integers");
-
-    suite.addTestCase("intAddition", "import <io>\nprint(3 + 2);", "5\n");
-    suite.addTestCase("intSubtraction", "import <io>\nprint(3 + 2);", "5\n");
-    suite.addTestCase("intMultiply", "import <io>\nprint(3 * 2);", "6\n");
-    //suite.addTestCase("intDivision", "import <io>\n; a = 2.1 / 3;print(4 / 2);", "1\n");
-
-    return suite;
-}
-
-
-TestSuite stringTestSuite()
-{
-    TestSuite suite("strings");
-
-    suite.addTestCase("stringAddition", "import <io>\nprint(\"hello, world!\");", "hello, world!\n");
-
-    return suite;
-}
-
-
-TestSuite loopTestSuite()
-{
-    TestSuite suite("loops");
-
-    suite.addTestCase(
-        "forLoop", 
-        "import <io>\nfor (int i = 0; i < 2; ++i)\n{\n\tprint(i);\n}", 
-        "0\n1\n"
-    );
-
-    return suite;
-}
-
-
-void executeTestPlan()
-{
-    TestPlan plan;
-
-    plan.addTestSuite(stringTestSuite());
-    plan.addTestSuite(integerTestSuite());
-    plan.addTestSuite(loopTestSuite());
-
-    plan.execute();
+    return testPlanStatus;
 }
