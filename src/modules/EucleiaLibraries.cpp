@@ -6,6 +6,7 @@
 //
 
 #include "EucleiaLibraries.hpp"
+#include "TestModule.hpp"
 #include <iostream>
 #include <cmath>
 #include <memory>
@@ -111,4 +112,6 @@ void EucleiaLibraries::buildDefaultLibraries()
 {
 	_libraries["io"] = std::make_shared<IOLibraryNode>();
 	_libraries["math"] = std::make_shared<MathLibraryNode>();
+	_libraries["test"] = std::make_shared<TestModule>();
+	// Add test library.
 }

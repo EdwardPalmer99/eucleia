@@ -3,6 +3,7 @@
 TestSuite integerTestSuite();
 TestSuite stringTestSuite();
 TestSuite loopTestSuite();
+TestSuite assertTestSuite();
 
 
 void TestPlan::addTestSuite(TestSuite testSuite)
@@ -38,7 +39,7 @@ TestSuite stringTestSuite()
     TestSuite suite("strings");
 
     suite.addTestCase("stringAddition", "import <io>\nprint(\"hello, world!\");", "hello, world!\n");
-
+    
     return suite;
 }
 
@@ -57,6 +58,19 @@ TestSuite loopTestSuite()
 }
 
 
+TestSuite assertTestSuite()
+{
+    TestSuite suite("assertions");
+
+    suite.addTestCase(
+        "assertString", 
+        "import <test>\nASSERT_STR_EQUAL(\"hello\", \"hello\");", ""
+    );
+
+    return suite;
+}
+
+
 void executeTestPlan()
 {
     TestPlan plan;
@@ -64,6 +78,7 @@ void executeTestPlan()
     plan.addTestSuite(stringTestSuite());
     plan.addTestSuite(integerTestSuite());
     plan.addTestSuite(loopTestSuite());
+    plan.addTestSuite(assertTestSuite());
 
     plan.execute();
 }
