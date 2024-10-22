@@ -18,19 +18,16 @@ class TestPlan
 public:
     TestPlan() = default;
 
-    void execute();
+    int execute();
 
     void addTestSuite(TestSuite testSuite);
+
+    static TestPlan loadTestSuites(const std::string & testplanDir);
     
     const std::string name;
 
 protected:
     std::vector<TestSuite> testSuites;
 };
-
-/**
- * @brief Runs a default testplan.
- */
-void executeTestPlan();
 
 #endif

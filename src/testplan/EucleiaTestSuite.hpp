@@ -19,7 +19,18 @@ public:
     TestSuite() = delete;
     TestSuite(const std::string name_) : name(std::move(name_)) {}
 
-    void execute();
+    int execute();
+
+    /**
+     * @brief Load a test suite from a file.
+     *
+     * File format:
+     *
+     * @start: testSuiteName
+     * <code here>
+     * @end
+     */
+    static TestSuite loadTestSuite(const std::string &fpath);
 
     void addTestCase(const std::string name_, const std::string input_);
     

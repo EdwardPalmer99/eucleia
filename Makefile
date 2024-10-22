@@ -4,11 +4,11 @@ CXX 		:= g++
 CXXFLAGS	:= -std=c++2a -g -O0
 
 # TODO: - need a release version.
-TARGET_EXEC := eucleia
-
-INSTALL_DIR	:= install
-BUILD_DIR	:= build
-SRC_DIR 	:= src
+TARGET_EXEC 	:= eucleia
+TESTPLAN_DIR 	:= test
+INSTALL_DIR		:= install
+BUILD_DIR		:= build
+SRC_DIR 		:= src
 
 # Find all source files.
 SRCS	:= $(shell find $(SRC_DIR) -name '*.cpp')
@@ -38,8 +38,9 @@ $(BUILD_DIR)/%.o: %.cpp
 
 all: $(INSTALL_DIR)/$(TARGET_EXEC)
 
+.PHONY: test
 test: $(INSTALL_DIR)/$(TARGET_EXEC)
-	$(INSTALL_DIR)/$(TARGET_EXEC) --test
+	$(INSTALL_DIR)/$(TARGET_EXEC) --testplan $(TESTPLAN_DIR)
 
 debug:
 	@echo "srcs: $(SRCS)"

@@ -6,11 +6,11 @@
 #include "EucleiaInterpreter.hpp"
 #include "EucleiaUtility.hpp"
 
-void TestCase::execute()
+int TestCase::execute()
 {
     // Create a fork of the process so we can identify failures.
-    int pid = fork();
     int status;
+    int pid = fork();
 
     if (pid == 0)   // Child -> execute.
     {
@@ -26,4 +26,6 @@ void TestCase::execute()
 
     fprintf(stdout, "%-40s %s\n", name.c_str(), 
             (status == 0) ? "\033[92mPASSED\033[0m" : "\033[91mFAILED\033[0m");
+
+    return (status == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
 }

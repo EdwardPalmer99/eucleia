@@ -16,48 +16,56 @@
 #include "EucleiaInputStream.hpp"
 #include "EucleiaParser.hpp"
 #include "EucleiaTestPlan.hpp"
+#include "EucleiaTestSuite.hpp"
+#include "EucleiaTestCase.hpp"
+
+void printUsage(const char *argv[])
+{
+	printf("usage: %s [--help] [--file FILE] [--testplan DIR] [--testsuite FILE]\n\n"
+	       "options:\n"
+	       "--help            show this message and exit\n"
+	       "--file FILE       run Eucleia file\n"
+	       "--testplan DIR    run testsuites in directory\n"
+	       "--testsuite FILE  run testsuite\n",
+			argv[0]);
+}
 
 
 int main(int argc, const char * argv[])
 {
-	if (argc == 2)
+	if (argc == 2 && strcmp(argv[1], "--help") == 0)
 	{
-		if (strcmp(argv[1], "--help") == 0)
-		{
-			printf("usage: %s [file] [options]\noptions:\n%s\n",
-					argv[0],
-				"");
-			return EXIT_SUCCESS;
-		}
-		else if (strcmp(argv[1], "--test") == 0)
-		{
-			executeTestPlan();
-			return EXIT_SUCCESS;
-		}
-		// Allow fallthrough.
+		printUsage(argv);
+		return EXIT_SUCCESS;
 	}
-		
-	const char *fpath = nullptr;
-	
-	for (int i = 1; i < argc; i++)	// Skip execuatable path.
+	else if (argc == 3 && strcmp(argv[1], "--file") == 0)
 	{
-		const char *argument = argv[i];
+		const char *fpath = argv[2];
 
-		if (!fpath)
-			fpath = argument;
-		else
-			printWarpError("unknown argument '%s'.\n", argument);
+		clock_t tick = clock();
+		Interpreter::evaluateFile(std::string(fpath));
+		clock_t tock = clock();
+		
+		fprintf(stdout, "run time: %d ms\n", (int)((1000.0 * (double)(tock - tick)) / (double)CLOCKS_PER_SEC));
+		return EXIT_SUCCESS;
 	}
-	
-	if (!fpath)
+	else if (argc == 3 && strcmp(argv[1], "--testplan") == 0)
 	{
-		printWarpError("%s", "missing file path.\n");
+		const char *testPath = argv[2];
+
+		TestPlan testplan = TestPlan::loadTestSuites(std::string(testPath));
+		return testplan.execute();
 	}
-	
-	clock_t tick = clock();
-	Interpreter::evaluateFile(std::string(fpath));
-	clock_t tock = clock();
-	
-	fprintf(stdout, "run time: %d ms\n", (int)((1000.0 * (double)(tock - tick)) / (double)CLOCKS_PER_SEC));
-	return EXIT_SUCCESS;
+	else if (argc == 3 && strcmp(argv[1], "--testsuite") == 0)
+	{
+		const char *testPath = argv[2];
+
+		TestSuite testSuite = TestSuite::loadTestSuite(std::string(testPath));
+		return testSuite.execute();
+	}
+	else 
+	{
+		printUsage(argv);
+		return EXIT_FAILURE;
+	}
 }
