@@ -24,5 +24,5 @@ make test
 Using Eucleia
 -------------
 ```
-eucleia [path to eucleia file]
+eucleia --file [file path]
 ```
