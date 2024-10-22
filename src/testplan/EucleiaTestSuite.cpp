@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <libgen.h>
 #include <iostream>
+#include <cstring>
 
 int TestSuite::execute()
 {

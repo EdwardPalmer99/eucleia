@@ -1,6 +1,7 @@
 #include "EucleiaTestPlan.hpp"
 #include "EucleiaUtility.hpp"
 #include <dirent.h>
+#include <cstring>
 
 
 TestPlan TestPlan::loadTestSuites(const std::string & testplanDir)
@@ -47,7 +48,7 @@ void TestPlan::addTestSuite(TestSuite testSuite)
 int TestPlan::execute()
 {
     int testPlanStatus = EXIT_SUCCESS;
-    
+
     for (auto & testSuite : testSuites)
     {
         int testSuiteStatus = testSuite.execute();
