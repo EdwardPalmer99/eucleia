@@ -1,0 +1,54 @@
+import <io>
+import <test>
+
+func main() // Test entry-point.
+{
+    intTestCase();
+    operationOrderTestCase();
+    arrayAccessTestCase();
+    arrayModificationTestCase();
+}
+
+func intTestCase()
+{
+    {
+        TEST((4 + 3) == 7, "i + i");
+        TEST((4 - 3) == 1, "i - i");
+        TEST((3 * 2) == 6, "i * i");
+        //TEST((3 / 2) == 1, "i / i");
+    }
+
+    {
+        int a = 1;
+        TEST(a == 1, "a == 1");
+
+        int b = (a + 1);
+        TEST(b == 2 && a == 1, "b = (a + 1)");
+
+        int c = ++a;
+        TEST(c == 2 && a == 2, "c = ++a");
+    }
+}
+
+func arrayAccessTestCase()
+{
+    array test = [1, 2, 3];
+    TEST(test[0] == 1 && test[1] == 2, "array access");
+}
+
+func arrayModificationTestCase()
+{
+    //array test = [1, 2, 3];
+
+    //test[0] = 100;
+    //TEST(test[0] == 100 && test[1] == 2, "array modification");
+}
+
+func operationOrderTestCase()
+{
+    //int result = (((3 * 2) / 3 + 4) - 1) / (4 + 1);
+    //print(result);
+    //TEST(result == 5, "operation order");
+}
+
+main();

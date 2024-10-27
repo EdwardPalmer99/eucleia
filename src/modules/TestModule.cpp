@@ -9,16 +9,38 @@
 
  #include "TestModule.hpp"
 
+ static const char *kClearColor     = "\033[0m";
+ static const char *kFailColor      = "\033[91m";
+ static const char *kOkGreenColor   = "\033[92m";
+
+
  void TestModule::defineFunctions()
  {
+    defineFunction("TEST", [=](ProgramNode  & callArgs, Scope & scope) -> std::shared_ptr<BaseObject>
+    {
+        auto argValues = evaluateArgs(callArgs, scope);
+        assert(argValues.size() == 2);
+
+        auto result = argValues.at(0)->boolCast();
+        auto description = static_cast<StringObject &>(*argValues.at(1));
+
+        // Print pass or fail depending on the test case.
+        const char *statusString = result ? "PASSED" : "FAILED";
+        const char *statusColor  = result ? kOkGreenColor : kFailColor;
+
+        fflush(stdout);
+        fprintf(stdout, "%-50s %s%s%s\n", description.stringValue.c_str(), statusColor, statusString,  kClearColor);
+        if (!result) exit(EXIT_FAILURE);
+        return nullptr;
+    });
+
     defineFunction("ASSERT", [=](ProgramNode  & callArgs, Scope & scope) -> std::shared_ptr<BaseObject>
     {
         auto argValues = evaluateArgs(callArgs, scope);
         assert(argValues.size() == 1);
 
         auto result = argValues.at(0)->boolCast();
-        if (!result) abort();
-
+        assert(result);
         return nullptr;
     });
 
