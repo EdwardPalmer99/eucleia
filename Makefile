@@ -5,7 +5,7 @@ CXXFLAGS	:= -std=c++2a -g -O0
 
 # TODO: - need a release version.
 TARGET_EXEC 	:= eucleia
-TESTPLAN_DIR 	:= test
+TESTPLAN_MAIN 	:= test/TestPlan.ek
 INSTALL_DIR		:= install
 BUILD_DIR		:= build
 SRC_DIR 		:= src
@@ -40,7 +40,7 @@ all: $(INSTALL_DIR)/$(TARGET_EXEC)
 
 .PHONY: test
 test: $(INSTALL_DIR)/$(TARGET_EXEC)
-	$(INSTALL_DIR)/$(TARGET_EXEC) --testplan $(TESTPLAN_DIR)
+	$(INSTALL_DIR)/$(TARGET_EXEC) $(TESTPLAN_MAIN)
 
 debug:
 	@echo "srcs: $(SRCS)"
