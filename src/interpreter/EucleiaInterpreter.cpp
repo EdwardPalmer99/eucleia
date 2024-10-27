@@ -5,81 +5,81 @@
 //  Created by Edward on 25/01/2024.
 //
 
-#include "EucleiaParser.hpp"
-#include "EucleiaObject.hpp"
-#include "EucleiaScope.hpp"
 #include "EucleiaInterpreter.hpp"
+#include "EucleiaModules.hpp"
 #include "EucleiaNode.hpp"
-#include "EucleiaLibraries.hpp"
+#include "EucleiaObject.hpp"
+#include "EucleiaParser.hpp"
+#include "EucleiaScope.hpp"
 #include <iostream>
 
 // TODO: - Parser() should have empty constructor. Should call parseFile method with string to run parser.
-void Interpreter::evaluateFile(const std::string & fpath)
+void Interpreter::evaluateFile(const std::string &fpath)
 {
-	// 1. Generate abstract symbol tree.
-	auto ast = Parser::buildAbstractSymbolTree(fpath);
-	
-	// 2. Create global scope.
-	Scope globalScope;
-	
-	// 3. Evaluate abstract symbol tree.
-	std::ostringstream oss;
-	
-	auto * bufferPtr = std::cout.rdbuf();
-	
-	std::cout.rdbuf(oss.rdbuf());
-	
-	ast->evaluate(globalScope);
-	
-	std::cout.rdbuf(bufferPtr);
-	
-	std::cout << oss.str();
+    // 1. Generate abstract symbol tree.
+    auto ast = Parser::buildAbstractSymbolTree(fpath);
+
+    // 2. Create global scope.
+    Scope globalScope;
+
+    // 3. Evaluate abstract symbol tree.
+    std::ostringstream oss;
+
+    auto *bufferPtr = std::cout.rdbuf();
+
+    std::cout.rdbuf(oss.rdbuf());
+
+    ast->evaluate(globalScope);
+
+    std::cout.rdbuf(bufferPtr);
+
+    std::cout << oss.str();
 }
 
 
 std::string Interpreter::evaluateString(const std::string fileContents)
 {
-	auto ast = Parser::buildAbstractSymbolTreeFromString(std::move(fileContents));
+    auto ast = Parser::buildAbstractSymbolTreeFromString(std::move(fileContents));
 
-	Scope globalScope;
+    Scope globalScope;
 
-	// Redirect std::out to oss.
-	auto * bufferPtr = std::cout.rdbuf();
+    // Redirect std::out to oss.
+    auto *bufferPtr = std::cout.rdbuf();
 
-	std::ostringstream oss;
+    std::ostringstream oss;
 
-	std::cout.rdbuf(oss.rdbuf());
+    std::cout.rdbuf(oss.rdbuf());
 
-	ast->evaluate(globalScope);
+    ast->evaluate(globalScope);
 
-	// Restore std::out buffer.
-	std::cout.rdbuf(bufferPtr);
+    // Restore std::out buffer.
+    std::cout.rdbuf(bufferPtr);
 
-	// Return string.
-	return oss.str();
+    // Return string.
+    return oss.str();
 }
 
 
-void Interpreter::evaluateString(const std::string fileContents, 
-								 std::ostringstream & out, 
-								 std::ostringstream & err)
+void Interpreter::evaluateString(const std::string fileContents,
+                                 std::ostringstream &out,
+                                 std::ostringstream &err)
 {
-	auto ast = Parser::buildAbstractSymbolTreeFromString(std::move(fileContents));
+    auto ast = Parser::buildAbstractSymbolTreeFromString(std::move(fileContents));
 
-	Scope globalScope;
+    Scope globalScope;
 
-	// Redirect std::out to oss.
-	auto * bufferOut = std::cout.rdbuf();
-	auto * bufferErr = std::cerr.rdbuf();
+    // Redirect std::out to oss.
+    auto *bufferOut = std::cout.rdbuf();
+    auto *bufferErr = std::cerr.rdbuf();
 
-	std::cout.rdbuf(out.rdbuf());
-	std::cerr.rdbuf(err.rdbuf());
+    std::cout.rdbuf(out.rdbuf());
+    std::cerr.rdbuf(err.rdbuf());
 
-	ast->evaluate(globalScope);
+    ast->evaluate(globalScope);
 
-	// Restore std::out buffer.
-	std::cout.rdbuf(bufferOut);
-	std::cerr.rdbuf(bufferErr);
+    // Restore std::out buffer.
+    std::cout.rdbuf(bufferOut);
+    std::cerr.rdbuf(bufferErr);
 }
 
 #pragma mark -

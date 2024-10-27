@@ -10,24 +10,24 @@
 #ifndef EucleiaFileReader_hpp
 #define EucleiaFileReader_hpp
 
-#include <string>
 #include <cstdio>
+#include <string>
 
-namespace eucleia 
+namespace eucleia
 {
 
 class EucleiaFileReader
 {
-public:
+  public:
     /// Returns a std::string for a file path.
-    std::string readFile(const std::string & fpath);
+    std::string readFile(const std::string &fpath);
 
-protected:
+  protected:
     /// Returns the size of a file in bytes.
-    long fileSize(FILE * fp) const;
+    long fileSize(FILE *fp) const;
 };
 
 
-}
+} // namespace eucleia
 
-#endif  // EucleiaFileReader_hpp
+#endif // EucleiaFileReader_hpp

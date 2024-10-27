@@ -12,10 +12,12 @@
 
 // TODO: - throw C++ exception instead.
 
+// clang-format off
 #define printWarpError(fmt, args...)\
 ({\
 	fprintf(stderr, "%s:%d:%s(): error: " fmt, __FILE__, __LINE__, __func__, args);\
 	exit(EXIT_FAILURE);\
 })
+// clang-format on
 
 #endif /* EucleiaUtility_hpp */
