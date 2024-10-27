@@ -1,12 +1,12 @@
 //
-//  EucleiaLibraries.hpp
+//  EucleiaModuleLoader.hpp
 //  Eucleia
 //
 //  Created by Edward on 11/02/2024.
 //
 
-#ifndef EucleiaLibraries_hpp
-#define EucleiaLibraries_hpp
+#ifndef EucleiaModules_hpp
+#define EucleiaModules_hpp
 
 #include "EucleiaScope.hpp"
 #include "EucleiaObject.hpp"
@@ -15,13 +15,13 @@
 #include <string>
 #include <memory>
 
-class LibraryNode : public BaseNode
+class ModuleNode : public BaseNode
 {
 public:
 	using Function = std::function<std::shared_ptr<BaseObject>(ProgramNode & callArgs, Scope & scope)>;
 	
-	LibraryNode() = default;
-	~LibraryNode() = default;
+	ModuleNode() = default;
+	~ModuleNode() = default;
 	
 	inline NodeType type() const override { return NodeType::Library; }
 	
@@ -41,11 +41,11 @@ private:
 
 
 /// Library functions for maths.
-class MathLibraryNode : public LibraryNode
+class MathModuleNode : public ModuleNode
 {
 public:
-	MathLibraryNode() = default;
-	~MathLibraryNode() = default;
+	MathModuleNode() = default;
+	~MathModuleNode() = default;
 		
 protected:
 	void defineFunctions() override;
@@ -53,46 +53,46 @@ protected:
 
 
 /// Library functions for input/output.
-class IOLibraryNode : public LibraryNode
+class IOModuleNode : public ModuleNode
 {
 public:
-	IOLibraryNode() = default;
-	~IOLibraryNode() = default;
+	IOModuleNode() = default;
+	~IOModuleNode() = default;
 	
 protected:
 	void defineFunctions() override;
 };
 
 /// Singleton store of libraries.
-class EucleiaLibraries
+class EucleiaModuleLoader
 {
 public:
-	static EucleiaLibraries & getInstance()
+	static EucleiaModuleLoader & getInstance()
 	{
 		if (!_instance)
 		{
-			_instance = std::make_unique<EucleiaLibraries>();
+			_instance = std::make_unique<EucleiaModuleLoader>();
 			_instance->buildDefaultLibraries();
 		}
 		
 		return *_instance;
 	}
 	
-	static std::shared_ptr<LibraryNode> getLibraryInstance(const std::string & name)
+	static std::shared_ptr<ModuleNode> getModuleInstance(const std::string & name)
 	{
-		return getInstance().getLibrary(name);
+		return getInstance().getModule(name);
 	}
 		
-	static std::unique_ptr<EucleiaLibraries> _instance;
+	static std::unique_ptr<EucleiaModuleLoader> _instance;
 
 protected:
 	void buildDefaultLibraries();
 		
-	std::shared_ptr<LibraryNode> getLibrary(const std::string & name) const;
+	std::shared_ptr<ModuleNode> getModule(const std::string & name) const;
 
 private:
-	std::map<std::string, std::shared_ptr<LibraryNode>> _libraries;
+	std::map<std::string, std::shared_ptr<ModuleNode>> _modules;
 };
 
 
-#endif /* EucleiaLibraries_hpp */
+#endif /* EucleiaModules_hpp */

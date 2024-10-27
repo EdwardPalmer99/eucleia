@@ -11,9 +11,9 @@
 #ifndef TestModule_hpp
 #define TestModule_hpp
 
-#include "EucleiaLibraries.hpp"
+#include "EucleiaModules.hpp"
 
-class TestModule : public LibraryNode 
+class TestModule : public ModuleNode 
 {
 protected:
     void defineFunctions() override;

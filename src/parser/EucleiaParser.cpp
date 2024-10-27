@@ -11,7 +11,7 @@
 #include <assert.h>
 #include <cstring>
 #include <memory>
-#include "EucleiaLibraries.hpp"
+#include "EucleiaModules.hpp"
 
 Parser::Parser(const std::string & fpath) 
 	: _tokenizer(Tokenizer::loadFromFile(fpath)),
@@ -112,7 +112,7 @@ std::shared_ptr<FileNode> Parser::parseFileImport()
 ///
 /// This is for importing functions from a stdlib as opposed to user-defined functions
 /// into this scope.
-std::shared_ptr<LibraryNode> Parser::parseLibraryImport()
+std::shared_ptr<ModuleNode> Parser::parseLibraryImport()
 {
 	skipOperator("<");
 	
@@ -123,7 +123,7 @@ std::shared_ptr<LibraryNode> Parser::parseLibraryImport()
 	
 	auto libraryName = token.value;
 
-	return EucleiaLibraries::getLibraryInstance(libraryName);
+	return EucleiaModuleLoader::getModuleInstance(libraryName);
 }
 
 

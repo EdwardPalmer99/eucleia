@@ -1,20 +1,20 @@
 //
-//  EucleiaLibraries.cpp
+//  EucleiaModuleLoader.cpp
 //  Eucleia
 //
 //  Created by Edward on 11/02/2024.
 //
 
-#include "EucleiaLibraries.hpp"
+#include "EucleiaModules.hpp"
 #include "TestModule.hpp"
 #include <iostream>
 #include <cmath>
 #include <memory>
 
-std::unique_ptr<EucleiaLibraries> EucleiaLibraries::_instance = nullptr;
+std::unique_ptr<EucleiaModuleLoader> EucleiaModuleLoader::_instance = nullptr;
 
 
-std::shared_ptr<BaseObject> LibraryNode::evaluate(Scope & scope)
+std::shared_ptr<BaseObject> ModuleNode::evaluate(Scope & scope)
 {
 	defineFunctions();
 	
@@ -28,13 +28,13 @@ std::shared_ptr<BaseObject> LibraryNode::evaluate(Scope & scope)
 }
 
 
-void LibraryNode::defineFunction(const std::string & name, Function function)
+void ModuleNode::defineFunction(const std::string & name, Function function)
 {
 	_functionsMap[name] = std::move(function);
 }
 
 
-std::vector<std::shared_ptr<BaseObject>> LibraryNode::evaluateArgs(ProgramNode & args, Scope & scope) const
+std::vector<std::shared_ptr<BaseObject>> ModuleNode::evaluateArgs(ProgramNode & args, Scope & scope) const
 {
 	std::vector<std::shared_ptr<BaseObject>> out(args.nodes.size());
 	
@@ -48,7 +48,7 @@ std::vector<std::shared_ptr<BaseObject>> LibraryNode::evaluateArgs(ProgramNode &
 }
 
 
-void MathLibraryNode::defineFunctions()
+void MathModuleNode::defineFunctions()
 {
 	defineFunction("sqrt", [=](ProgramNode & callArgs, Scope & scope) -> std::shared_ptr<BaseObject>
 	{
@@ -72,7 +72,7 @@ void MathLibraryNode::defineFunctions()
 }
 
 
-void IOLibraryNode::defineFunctions()
+void IOModuleNode::defineFunctions()
 {
 	auto closure = [](ProgramNode & callArgs, Scope & scope) -> std::shared_ptr<BaseObject>
 	{
@@ -96,10 +96,10 @@ void IOLibraryNode::defineFunctions()
 }
 
 
-std::shared_ptr<LibraryNode> EucleiaLibraries::getLibrary(const std::string & name) const
+std::shared_ptr<ModuleNode> EucleiaModuleLoader::getModule(const std::string & name) const
 {
-	auto it = _libraries.find(name);
-	if (it == _libraries.end())
+	auto it = _modules.find(name);
+	if (it == _modules.end())
 	{
 		printWarpError("No library with name '%s'.\n", name.c_str());
 	}
@@ -108,10 +108,10 @@ std::shared_ptr<LibraryNode> EucleiaLibraries::getLibrary(const std::string & na
 }
 
 
-void EucleiaLibraries::buildDefaultLibraries()
+void EucleiaModuleLoader::buildDefaultLibraries()
 {
-	_libraries["io"] = std::make_shared<IOLibraryNode>();
-	_libraries["math"] = std::make_shared<MathLibraryNode>();
-	_libraries["test"] = std::make_shared<TestModule>();
+	_modules["io"] = std::make_shared<IOModuleNode>();
+	_modules["math"] = std::make_shared<MathModuleNode>();
+	_modules["test"] = std::make_shared<TestModule>();
 	// Add test library.
 }
