@@ -1,13 +1,13 @@
 //
-//  RecognizedInputs.cpp
+//  EucleiaGrammar.cpp
 //  Eucleia
 //
 //  Created by Edward on 03/02/2024.
 //
 
-#include "RecognizedInputs.hpp"
+#include "EucleiaGrammar.hpp"
 
-RecognizedInputs::RecognizedInputs()
+EucleiaGrammar::EucleiaGrammar()
 {
 	_punctuation = { ',', ';', '(', ')', '{', '}', '[', ']', '.' };
 	

@@ -11,14 +11,14 @@
 #include <stdarg.h>
 #include <algorithm>
 #include "EucleiaUtility.hpp"
-#include "RecognizedInputs.hpp"
+#include "EucleiaGrammar.hpp"
 
 static long getFileSize(FILE *fp);
 static const char *getFileContents(const char *fpath);
 
 
 InputStream::InputStream(const std::string fileContents) : 
-	_recognizedInputs(), 
+	_grammar(), 
 	_fileContents(std::move(fileContents))
 {
 	_current.ptr = (char *)_fileContents.c_str();
@@ -50,13 +50,13 @@ bool InputStream::isComment() const
 			
 bool InputStream::isOperator() const
 {
-	return _recognizedInputs.isOperator(peek());
+	return _grammar.isOperator(peek());
 }
 
 
 bool InputStream::isPunctuation() const
 {
-	return _recognizedInputs.isPunctuation(peek());
+	return _grammar.isPunctuation(peek());
 }
 
 

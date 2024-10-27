@@ -1,27 +1,27 @@
 //
-//  RecognizedInputs.hpp
+//  EucleiaGrammar.hpp
 //  Eucleia
 //
 //  Created by Edward on 03/02/2024.
 //
 
-#ifndef RecognizedInputs_hpp
-#define RecognizedInputs_hpp
+#ifndef EucleiaGrammar_hpp
+#define EucleiaGrammar_hpp
 
 #include <memory>
 #include <set>
 #include <string>
 
-class RecognizedInputs
+class EucleiaGrammar
 {
 public:
-	RecognizedInputs();
-	~RecognizedInputs() = default;
+	EucleiaGrammar();
+	~EucleiaGrammar() = default;
 	
-	inline bool isDataType(const std::string & value) const { return _dataTypes.contains(value); }
-	inline bool isKeyword(const std::string & value) const { return _keywords.contains(value); }
-	inline bool isOperator(char c) const { return _operators.contains(c); }
-	inline bool isPunctuation(char c) const { return _punctuation.contains(c); }
+	inline bool isDataType(const std::string & value) const { return _dataTypes.count(value); }
+	inline bool isKeyword(const std::string & value) const { return _keywords.count(value); }
+	inline bool isOperator(char c) const { return _operators.count(c); }
+	inline bool isPunctuation(char c) const { return _punctuation.count(c); }
 
 protected:
 	inline const std::set<char> & punctuation() const { return _punctuation; }
@@ -37,6 +37,6 @@ private:
 	std::set<std::string> _dataTypes;
 };
 
-#endif /* RecognizedInputs_hpp */
+#endif /* EucleiaGrammar_hpp */
 
 

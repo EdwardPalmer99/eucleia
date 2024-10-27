@@ -10,7 +10,7 @@
 
 #include <string>
 #include <set>
-#include "RecognizedInputs.hpp"
+#include "EucleiaGrammar.hpp"
 
 struct StreamPoint
 {
@@ -43,7 +43,7 @@ protected:
 
 	void reportError(const char *format, ...);
 	
-	inline const RecognizedInputs & recognizedInputs() const { return _recognizedInputs; }
+	inline const EucleiaGrammar & grammar() const { return _grammar; }
 
 private:
 	void consume();
@@ -51,7 +51,7 @@ private:
 	char *_basePtr{nullptr};
 	StreamPoint _current;
 	
-	RecognizedInputs _recognizedInputs;
+	EucleiaGrammar _grammar;
 
 	const std::string _fileContents;
 };
