@@ -2,22 +2,22 @@
  * @file TestModule.cpp
  * @author Edward Palmer
  * @date 2024-10-22
- * 
+ *
  * @copyright Copyright (c) 2024
- * 
+ *
  */
 
- #include "TestModule.hpp"
+#include "TestModule.hpp"
 
- static const char *kClearColor     = "\033[0m";
- static const char *kFailColor      = "\033[91m";
- static const char *kOkGreenColor   = "\033[92m";
+static const char *kClearColor = "\033[0m";
+static const char *kFailColor = "\033[91m";
+static const char *kOkGreenColor = "\033[92m";
 
 
- void TestModule::defineFunctions()
- {
-    defineFunction("TEST", [=](ProgramNode  & callArgs, Scope & scope) -> std::shared_ptr<BaseObject>
-    {
+void TestModule::defineFunctions()
+{
+    defineFunction("TEST", [=](ProgramNode &callArgs, Scope &scope) -> std::shared_ptr<BaseObject>
+                   {
         auto argValues = evaluateArgs(callArgs, scope);
         assert(argValues.size() == 2);
 
@@ -31,21 +31,19 @@
         fflush(stdout);
         fprintf(stdout, "%-50s %s%s%s\n", description.stringValue.c_str(), statusColor, statusString,  kClearColor);
         if (!result) exit(EXIT_FAILURE);
-        return nullptr;
-    });
+        return nullptr; });
 
-    defineFunction("ASSERT", [=](ProgramNode  & callArgs, Scope & scope) -> std::shared_ptr<BaseObject>
-    {
+    defineFunction("ASSERT", [=](ProgramNode &callArgs, Scope &scope) -> std::shared_ptr<BaseObject>
+                   {
         auto argValues = evaluateArgs(callArgs, scope);
         assert(argValues.size() == 1);
 
         auto result = argValues.at(0)->boolCast();
         assert(result);
-        return nullptr;
-    });
+        return nullptr; });
 
-    defineFunction("ASSERT_STR_EQUAL", [=](ProgramNode  & callArgs, Scope & scope) -> std::shared_ptr<BaseObject>
-    {
+    defineFunction("ASSERT_STR_EQUAL", [=](ProgramNode &callArgs, Scope &scope) -> std::shared_ptr<BaseObject>
+                   {
         auto argValues = evaluateArgs(callArgs, scope);
         assert(argValues.size() == 2);
 
@@ -57,26 +55,23 @@
             abort();
         }
 
-        return nullptr;
-    });
+        return nullptr; });
 
-    defineFunction("abort", [=](ProgramNode  & callArgs, Scope & scope) -> std::shared_ptr<BaseObject>
-    {
+    defineFunction("abort", [=](ProgramNode &callArgs, Scope &scope) -> std::shared_ptr<BaseObject>
+                   {
         auto argValues = evaluateArgs(callArgs, scope);
         assert(argValues.size() == 0);
 
         abort();
-        return nullptr;
-    });
+        return nullptr; });
 
-    defineFunction("exit", [=](ProgramNode  & callArgs, Scope & scope) -> std::shared_ptr<BaseObject>
-    {
+    defineFunction("exit", [=](ProgramNode &callArgs, Scope &scope) -> std::shared_ptr<BaseObject>
+                   {
         auto argValues = evaluateArgs(callArgs, scope);
         assert(argValues.size() == 1);
 
         auto exitCode = argValues.at(0)->intCast();
         exit(exitCode);
 
-        return nullptr;
-    });
- }
+        return nullptr; });
+}
