@@ -400,8 +400,8 @@ struct ForLoopNode : BaseNode
 struct FunctionCallNode : BaseNode
 {
     FunctionCallNode(SharedNode _funcName, SharedNode _funcArgs)
-        : funcName{static_pointer_cast<VariableNode>(_funcName)},
-          funcArgs{static_pointer_cast<ProgramNode>(_funcArgs)}
+        : funcName{std::static_pointer_cast<VariableNode>(_funcName)},
+          funcArgs{std::static_pointer_cast<ProgramNode>(_funcArgs)}
     {
     }
 
@@ -427,7 +427,7 @@ struct FunctionNode : FunctionCallNode, public std::enable_shared_from_this<Func
 {
     FunctionNode(SharedNode _funcName, SharedNode _funcArgs, SharedNode _funcBody)
         : FunctionCallNode(std::move(_funcName), std::move(_funcArgs)),
-          funcBody{static_pointer_cast<ProgramNode>(_funcBody)}
+          funcBody{std::static_pointer_cast<ProgramNode>(_funcBody)}
     {
     }
 
@@ -516,9 +516,9 @@ struct AssignNode : BaseNode
 
 struct BinaryNode : AssignNode
 {
-    BinaryNode(SharedNode _left, SharedNode _right, std::string _binaryOperator)
-        : AssignNode(std::move(_left), std::move(_right)),
-          binaryOperator{std::move(_binaryOperator)}
+    BinaryNode(SharedNode left_, SharedNode right_, std::string binaryOperator_)
+        : AssignNode(std::move(left_), std::move(right_)),
+          binaryOperator(std::move(binaryOperator_))
     {
     }
 
