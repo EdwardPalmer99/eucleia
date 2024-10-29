@@ -18,9 +18,7 @@ struct BaseNode
     typedef std::shared_ptr<BaseNode> SharedNode;
 
     BaseNode() = default;
-    virtual ~BaseNode()
-    {
-    }
+    virtual ~BaseNode() = default;
 
     enum NodeType
     {
@@ -73,9 +71,6 @@ struct BoolNode : BaseNode
         : boolValue{state}
     {
     }
-    ~BoolNode() override
-    {
-    }
 
     inline NodeType type() const override
     {
@@ -92,9 +87,6 @@ struct StringNode : BaseNode
 {
     StringNode(std::string &string)
         : stringValue{string}
-    {
-    }
-    ~StringNode() override
     {
     }
 
@@ -114,9 +106,6 @@ struct VariableNameNode : BaseNode
 {
     VariableNameNode(std::string &name)
         : variableName{name}
-    {
-    }
-    ~VariableNameNode() override
     {
     }
 
@@ -152,10 +141,6 @@ struct VariableNode : VariableNameNode
     {
     }
 
-    ~VariableNode() override
-    {
-    }
-
     inline NodeType type() const override
     {
         return NodeType::Variable;
@@ -176,9 +161,6 @@ struct IntNode : BaseNode
         : numberValue{number}
     {
     }
-    ~IntNode() override
-    {
-    }
 
     inline NodeType type() const override
     {
@@ -197,9 +179,6 @@ struct FloatNode : BaseNode
         : numberValue{number}
     {
     }
-    ~FloatNode() override
-    {
-    }
 
     inline NodeType type() const override
     {
@@ -216,9 +195,6 @@ struct ProgramNode : BaseNode
 {
     ProgramNode(std::vector<SharedNode> _nodes)
         : nodes{std::move(_nodes)}
-    {
-    }
-    ~ProgramNode() override
     {
     }
 
@@ -240,9 +216,6 @@ struct FileNode : ProgramNode
         : ProgramNode(std::move(_nodes))
     {
     }
-    ~FileNode() override
-    {
-    }
 
     std::shared_ptr<BaseObject> evaluate(Scope &globalScope) override;
 
@@ -261,10 +234,6 @@ struct ArrayNode : ProgramNode
     }
     ArrayNode(ProgramNode &_program)
         : ProgramNode(std::move(_program))
-    {
-    }
-
-    ~ArrayNode() override
     {
     }
 
@@ -308,10 +277,6 @@ struct IfNode : BaseNode
     {
     }
 
-    ~IfNode() override
-    {
-    }
-
     inline NodeType type() const override
     {
         return NodeType::If;
@@ -330,10 +295,6 @@ struct DoWhileNode : BaseNode
     DoWhileNode(SharedNode _condition, SharedNode _body)
         : condition{std::move(_condition)},
           body{std::move(_body)}
-    {
-    }
-
-    ~DoWhileNode() override
     {
     }
 
@@ -356,10 +317,6 @@ struct WhileNode : DoWhileNode
     {
     }
 
-    ~WhileNode() override
-    {
-    }
-
     std::shared_ptr<BaseObject> evaluate(Scope &scope) override;
 
     inline NodeType type() const override
@@ -376,10 +333,6 @@ struct ForLoopNode : BaseNode
           condition{std::move(_condition)},
           update{std::move(_update)},
           body{std::move(_body)}
-    {
-    }
-
-    ~ForLoopNode() override
     {
     }
 
@@ -400,12 +353,8 @@ struct ForLoopNode : BaseNode
 struct FunctionCallNode : BaseNode
 {
     FunctionCallNode(SharedNode _funcName, SharedNode _funcArgs)
-        : funcName{static_pointer_cast<VariableNode>(_funcName)},
-          funcArgs{static_pointer_cast<ProgramNode>(_funcArgs)}
-    {
-    }
-
-    ~FunctionCallNode() override
+        : funcName{std::static_pointer_cast<VariableNode>(_funcName)},
+          funcArgs{std::static_pointer_cast<ProgramNode>(_funcArgs)}
     {
     }
 
@@ -427,11 +376,7 @@ struct FunctionNode : FunctionCallNode, public std::enable_shared_from_this<Func
 {
     FunctionNode(SharedNode _funcName, SharedNode _funcArgs, SharedNode _funcBody)
         : FunctionCallNode(std::move(_funcName), std::move(_funcArgs)),
-          funcBody{static_pointer_cast<ProgramNode>(_funcBody)}
-    {
-    }
-
-    ~FunctionNode() override
+          funcBody{std::static_pointer_cast<ProgramNode>(_funcBody)}
     {
     }
 
@@ -453,14 +398,6 @@ struct FunctionNode : FunctionCallNode, public std::enable_shared_from_this<Func
 
 struct BreakNode : BaseNode
 {
-    BreakNode()
-    {
-    }
-
-    ~BreakNode() override
-    {
-    }
-
     inline NodeType type() const override
     {
         return NodeType::Break;
@@ -474,10 +411,6 @@ struct ReturnNode : BaseNode
 {
     ReturnNode(SharedNode _returnValue = nullptr)
         : returnNode{std::move(_returnValue)}
-    {
-    }
-
-    ~ReturnNode() override
     {
     }
 
@@ -516,9 +449,9 @@ struct AssignNode : BaseNode
 
 struct BinaryNode : AssignNode
 {
-    BinaryNode(SharedNode _left, SharedNode _right, std::string _binaryOperator)
-        : AssignNode(std::move(_left), std::move(_right)),
-          binaryOperator{std::move(_binaryOperator)}
+    BinaryNode(SharedNode left_, SharedNode right_, std::string binaryOperator_)
+        : AssignNode(std::move(left_), std::move(right_)),
+          binaryOperator(std::move(binaryOperator_))
     {
     }
 

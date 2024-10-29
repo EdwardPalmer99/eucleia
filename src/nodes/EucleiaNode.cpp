@@ -71,7 +71,7 @@ std::shared_ptr<BaseObject> ArrayNode::evaluate(Scope &scope)
 /// Create a new FunctionObject from a FunctionNode and register in current scope.
 std::shared_ptr<BaseObject> FunctionNode::evaluate(Scope &scope)
 {
-    auto funcNameNode = static_pointer_cast<VariableNode>(funcName);
+    auto funcNameNode = std::static_pointer_cast<VariableNode>(funcName);
 
     auto functionObject = std::make_shared<FunctionObject>(getShared());
 
@@ -205,7 +205,7 @@ std::shared_ptr<BaseObject> AssignNode::evaluate(Scope &scope)
     auto rightEvaluated = right->evaluate(scope);
 
     // 3. Update value of variable object.
-    auto leftVariableName = static_pointer_cast<VariableNameNode>(left);
+    auto leftVariableName = std::static_pointer_cast<VariableNameNode>(left);
     scope.updateObject(leftVariableName->variableName, rightEvaluated);
 
     return nullptr;
