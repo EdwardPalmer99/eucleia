@@ -28,9 +28,7 @@ class BaseObject;
 struct BaseObject
 {
     BaseObject() = default;
-    virtual ~BaseObject()
-    {
-    }
+    virtual ~BaseObject() = default;
 
     enum class ObjectType
     {
