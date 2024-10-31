@@ -15,21 +15,14 @@
 
 class Parser
 {
-  public:
-    Parser() = delete;
+public:
+    static std::shared_ptr<FileNode> buildAST(const std::string &fpath);
 
+protected:
     Parser(const std::string &fpath);
-    Parser(const std::string fileContents, const std::string parentFilePath);
 
-    ~Parser() = default;
+    std::shared_ptr<FileNode> buildAST();
 
-    std::shared_ptr<FileNode> buildAbstractSymbolTree();
-
-    static std::shared_ptr<FileNode> buildAbstractSymbolTree(const std::string &fpath);
-
-    static std::shared_ptr<FileNode> buildAbstractSymbolTreeFromString(const std::string fileContents);
-
-  protected:
     std::shared_ptr<BoolNode> parseBool();
     std::shared_ptr<StringNode> parseString();
     std::shared_ptr<IntNode> parseInt();
@@ -74,19 +67,9 @@ class Parser
     void skipPunctuation(const std::string &punctuation);
     void skipOperator(const std::string &operatorName);
 
-
-    inline Token &peekToken()
-    {
-        return _tokenizer.peek();
-    }
-    inline Token nextToken()
-    {
-        return _tokenizer.next();
-    }
-    inline void skipToken()
-    {
-        _tokenizer.next();
-    }
+    Token &peekToken() { return tokenizer.peek(); }
+    Token nextToken() { return tokenizer.next(); }
+    void skipToken() { (void)tokenizer.next(); }
 
     void unexpectedToken();
 
@@ -97,8 +80,8 @@ class Parser
     std::string parentDirectory(const std::string &fpath);
 
 
-  private:
-    typedef std::function<std::shared_ptr<BaseNode>(void)> ParseMethod;
+private:
+    using ParseMethod = std::function<std::shared_ptr<BaseNode>(void)>;
 
     std::shared_ptr<BaseNode> parseExpression();
     std::shared_ptr<BaseNode> parseExpressionHelper();
@@ -125,10 +108,9 @@ class Parser
     std::shared_ptr<BaseNode> maybeBinary(std::shared_ptr<BaseNode> leftExpression,
                                           int leftPrecedence);
 
+    Tokenizer tokenizer;
 
-    Tokenizer _tokenizer;
-
-    const std::string _parentDirectory;
+    const std::string parentDir;
 };
 
 #endif /* EucleiaParser_hpp */

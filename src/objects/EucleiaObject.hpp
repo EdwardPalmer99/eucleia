@@ -52,17 +52,17 @@ struct BaseObject
     /// Increment value of object if defined.
     inline virtual void incrementValue()
     {
-        printWarpError("Increment operator not defined for object of type '%s'.\n", description().c_str());
+        printEucleiaError("Increment operator not defined for object of type '%s'.\n", description().c_str());
     }
 
     inline virtual void decrementValue()
     {
-        printWarpError("Decrement operator not defined for object of type '%s'.\n", description().c_str());
+        printEucleiaError("Decrement operator not defined for object of type '%s'.\n", description().c_str());
     }
 
     virtual std::shared_ptr<BaseObject> negateValue()
     {
-        printWarpError("Negation operator not defined for object of type '%s'.\n", description().c_str());
+        printEucleiaError("Negation operator not defined for object of type '%s'.\n", description().c_str());
     }
 
     double floatCast() const;

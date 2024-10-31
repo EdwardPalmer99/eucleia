@@ -44,7 +44,7 @@ std::shared_ptr<BaseObject> Scope::getObject(const std::string &name) const
     auto it = objects.find(name);
     if (it == objects.end())
     {
-        printWarpError("undefined variable '%s'.\n", name.c_str());
+        printEucleiaError("undefined variable '%s'.\n", name.c_str());
     }
 
     return (it->second);
@@ -77,8 +77,8 @@ void Scope::updateObject(const std::string &name, std::shared_ptr<BaseObject> ob
     // NB: None type means it has not yet been initialized.
     if (existingObject->type() != object->type())
     {
-        printWarpError("Setting object of type %s with incompatible type %s",
-                       existingObject->description().c_str(), object->description().c_str());
+        printEucleiaError("Setting object of type %s with incompatible type %s",
+                          existingObject->description().c_str(), object->description().c_str());
     }
 
     // If the creationScope != this then the variable was defined in a parent
@@ -99,7 +99,7 @@ void Scope::checkForVariableNameClash(const std::string &name) const
 {
     if (objectCreatedInScope(name))
     {
-        printWarpError("Multiple variables defined in scope with the same name '%s'.", name.c_str());
+        printEucleiaError("Multiple variables defined in scope with the same name '%s'.", name.c_str());
     }
 }
 

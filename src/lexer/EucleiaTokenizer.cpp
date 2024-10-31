@@ -180,7 +180,7 @@ Token Tokenizer::readString()
             void *tempPtr = realloc(value, sizeof(char) * capacity);
             if (!tempPtr) // Failed to resize array.
             {
-                printWarpError("%s", "failed to resize array.");
+                printEucleiaError("%s", "failed to resize array.");
             }
 
             value = (char *)tempPtr; // Resized array.

@@ -99,7 +99,7 @@ std::shared_ptr<ModuleNode> EucleiaModuleLoader::getModule(const std::string &na
     auto it = _modules.find(name);
     if (it == _modules.end())
     {
-        printWarpError("No library with name '%s'.\n", name.c_str());
+        printEucleiaError("No library with name '%s'.\n", name.c_str());
     }
 
     return it->second;

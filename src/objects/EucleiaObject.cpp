@@ -44,7 +44,7 @@ double BaseObject::floatCast() const
         case ObjectType::Bool:
             return (double)castToBool(*this).value;
         default:
-            printWarpError("%s", "invalid object type.\n");
+            printEucleiaError("%s", "invalid object type.\n");
     }
 }
 
@@ -60,7 +60,7 @@ long BaseObject::intCast() const
         case ObjectType::Bool:
             return (long)castToBool(*this).value;
         default:
-            printWarpError("%s", "invalid object type.\n");
+            printEucleiaError("%s", "invalid object type.\n");
     }
 }
 
@@ -75,7 +75,7 @@ long IntObject::positiveValue() const
 {
     if (value <= 0)
     {
-        printWarpError("%s", "int value is zero or negative.\n");
+        printEucleiaError("%s", "int value is zero or negative.\n");
     }
 
     return value;
@@ -86,7 +86,7 @@ long IntObject::nonzeroValue() const
 {
     if (value == 0)
     {
-        printWarpError("%s", "int value is zero.\n");
+        printEucleiaError("%s", "int value is zero.\n");
     }
 
     return value;
@@ -97,7 +97,7 @@ long IntObject::positiveOrZeroValue() const
 {
     if (value < 0)
     {
-        printWarpError("%s", "int value is negative.\n");
+        printEucleiaError("%s", "int value is negative.\n");
     }
 
     return value;

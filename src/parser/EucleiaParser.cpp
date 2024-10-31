@@ -14,27 +14,18 @@
 #include <stdlib.h>
 
 Parser::Parser(const std::string &fpath)
-    : _tokenizer(Tokenizer::loadFromFile(fpath)),
-      _parentDirectory(parentDirectory(fpath))
+    : tokenizer(Tokenizer::loadFromFile(fpath)),
+      parentDir(parentDirectory(fpath))
 {
 }
-
-// TODO: - to be used for testing purposes.
-// TODO: - add checks if no parent directory specified.
-Parser::Parser(const std::string fileContents, const std::string parentFilePath)
-    : _tokenizer(std::move(fileContents)),
-      _parentDirectory(parentFilePath)
-{
-}
-
 
 #pragma mark -
 
-std::shared_ptr<FileNode> Parser::buildAbstractSymbolTree()
+std::shared_ptr<FileNode> Parser::buildAST()
 {
     std::vector<std::shared_ptr<BaseNode>> nodes;
 
-    while (!_tokenizer.empty() && peekToken().type != Token::None)
+    while (!tokenizer.empty() && peekToken().type != Token::None)
     {
         auto node = parseExpression();
 
@@ -51,19 +42,11 @@ std::shared_ptr<FileNode> Parser::buildAbstractSymbolTree()
 }
 
 
-std::shared_ptr<FileNode> Parser::buildAbstractSymbolTree(const std::string &fpath)
+std::shared_ptr<FileNode> Parser::buildAST(const std::string &fpath)
 {
     Parser parser(fpath);
 
-    return parser.buildAbstractSymbolTree();
-}
-
-
-std::shared_ptr<FileNode> Parser::buildAbstractSymbolTreeFromString(const std::string fileContents)
-{
-    Parser parser(std::move(fileContents), "");
-
-    return parser.buildAbstractSymbolTree();
+    return parser.buildAST();
 }
 
 
@@ -94,12 +77,12 @@ std::shared_ptr<FileNode> Parser::parseFileImport()
     assert(token.type == Token::String);
 
     // Build the file path:
-    auto filePath = _parentDirectory + token.value;
+    auto filePath = parentDir + token.value;
 
-    auto ast = Parser::buildAbstractSymbolTree(filePath);
+    auto ast = Parser::buildAST(filePath);
     if (!ast)
     {
-        printWarpError("Failed to import file with path '%s'.", filePath.c_str());
+        printEucleiaError("Failed to import file with path '%s'.", filePath.c_str());
     }
 
     return ast;
@@ -246,7 +229,7 @@ std::shared_ptr<BaseNode> Parser::parseVariableDefinition()
     else if (typeName == "array")
         return std::make_shared<VariableNode>(variableName, VariableNode::Type::Array);
     else
-        printWarpError("expected variable type for variable %s.\n", typeName.c_str());
+        printEucleiaError("expected variable type for variable %s.\n", typeName.c_str());
 }
 
 
@@ -305,7 +288,7 @@ std::shared_ptr<ForLoopNode> Parser::parseFor()
 
     if (brackets->nodes.size() != 3)
     {
-        printWarpError("Expected 3 arguments for for-loop but got %ld\n", brackets->nodes.size());
+        printEucleiaError("Expected 3 arguments for for-loop but got %ld\n", brackets->nodes.size());
     }
 
     auto start = brackets->nodes[0];
@@ -632,7 +615,7 @@ std::shared_ptr<ProgramNode> Parser::parseDelimited(std::string start,
     // Iterate while we still have tokens and haven't reached stop token.
     bool firstCall = true;
 
-    while (!_tokenizer.empty() && !isPunctuation(stop))
+    while (!tokenizer.empty() && !isPunctuation(stop))
     {
         // Skip separator on each subsequent call (i.e. a, b)
         if (firstCall)
@@ -688,7 +671,7 @@ std::shared_ptr<ProgramNode> Parser::parseProgramLines()
 
     std::vector<std::shared_ptr<BaseNode>> parsedNodes;
 
-    while (!_tokenizer.empty() && !isPunctuation("}"))
+    while (!tokenizer.empty() && !isPunctuation("}"))
     {
         auto expression = parseExpression();
 
@@ -751,7 +734,7 @@ bool Parser::isKeyword(const std::string &keyword)
 
 bool Parser::isDataTypeKeyword()
 {
-    return (_tokenizer.isDataTypeToken());
+    return (tokenizer.isDataTypeToken());
 }
 
 
@@ -777,7 +760,7 @@ void Parser::skipKeyword(const std::string &name)
 {
     if (!isKeyword(name))
     {
-        printWarpError("expected keyword '%s'.\n", name.c_str());
+        printEucleiaError("expected keyword '%s'.\n", name.c_str());
     }
 
     skipToken();
@@ -788,7 +771,7 @@ void Parser::skipPunctuation(const std::string &name)
 {
     if (!isPunctuation(name))
     {
-        printWarpError("expected punctuation '%s'.\n", name.c_str());
+        printEucleiaError("expected punctuation '%s'.\n", name.c_str());
     }
 
     skipToken();
@@ -799,7 +782,7 @@ void Parser::skipOperator(const std::string &name)
 {
     if (!isOperator(name))
     {
-        printWarpError("expected operator '%s'.\n", name.c_str());
+        printEucleiaError("expected operator '%s'.\n", name.c_str());
     }
 
     skipToken();
@@ -812,7 +795,7 @@ void Parser::unexpectedToken()
 {
     Token &token = peekToken();
 
-    printWarpError("Unexpected token of type '%s' and value '%s'.\n", token.description().c_str(), token.value.c_str());
+    printEucleiaError("Unexpected token of type '%s' and value '%s'.\n", token.description().c_str(), token.value.c_str());
 }
 
 

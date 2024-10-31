@@ -15,7 +15,7 @@
 
 class TestModule : public ModuleNode
 {
-  protected:
+protected:
     void defineFunctions() override;
 };
 

@@ -17,7 +17,7 @@
 void Interpreter::evaluateFile(const std::string &fpath)
 {
     // 1. Generate abstract symbol tree.
-    auto ast = Parser::buildAbstractSymbolTree(fpath);
+    auto ast = Parser::buildAST(fpath);
 
     // 2. Create global scope.
     Scope globalScope;
@@ -34,27 +34,4 @@ void Interpreter::evaluateFile(const std::string &fpath)
     std::cout.rdbuf(bufferPtr);
 
     std::cout << oss.str();
-}
-
-
-std::string Interpreter::evaluateString(const std::string fileContents)
-{
-    auto ast = Parser::buildAbstractSymbolTreeFromString(std::move(fileContents));
-
-    Scope globalScope;
-
-    // Redirect std::out to oss.
-    auto *bufferPtr = std::cout.rdbuf();
-
-    std::ostringstream oss;
-
-    std::cout.rdbuf(oss.rdbuf());
-
-    ast->evaluate(globalScope);
-
-    // Restore std::out buffer.
-    std::cout.rdbuf(bufferPtr);
-
-    // Return string.
-    return oss.str();
 }
