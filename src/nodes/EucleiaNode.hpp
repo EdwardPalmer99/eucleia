@@ -194,7 +194,7 @@ struct FloatNode : BaseNode
 struct ProgramNode : BaseNode
 {
     ProgramNode(std::vector<SharedNode> _nodes)
-        : nodes{std::move(_nodes)}
+        : nodes(std::move(_nodes))
     {
     }
 
@@ -249,8 +249,8 @@ struct ArrayNode : ProgramNode
 struct ArrayAccessNode : BaseNode
 {
     ArrayAccessNode(std::shared_ptr<BaseNode> _arrayName, std::shared_ptr<BaseNode> _arrayIndex)
-        : arrayName{std::static_pointer_cast<VariableNode>(_arrayName)},
-          arrayIndex{std::static_pointer_cast<IntNode>(_arrayIndex)}
+        : arrayName(std::static_pointer_cast<VariableNode>(_arrayName)),
+          arrayIndex(std::static_pointer_cast<IntNode>(_arrayIndex))
     {
     }
 
@@ -293,8 +293,8 @@ struct IfNode : BaseNode
 struct DoWhileNode : BaseNode
 {
     DoWhileNode(SharedNode _condition, SharedNode _body)
-        : condition{std::move(_condition)},
-          body{std::move(_body)}
+        : condition(std::move(_condition)),
+          body(std::move(_body))
     {
     }
 
@@ -329,10 +329,10 @@ struct WhileNode : DoWhileNode
 struct ForLoopNode : BaseNode
 {
     ForLoopNode(SharedNode _start, SharedNode _condition, SharedNode _update, SharedNode _body)
-        : start{std::move(_start)},
-          condition{std::move(_condition)},
-          update{std::move(_update)},
-          body{std::move(_body)}
+        : start(std::move(_start)),
+          condition(std::move(_condition)),
+          update(std::move(_update)),
+          body(std::move(_body))
     {
     }
 
@@ -353,8 +353,8 @@ struct ForLoopNode : BaseNode
 struct FunctionCallNode : BaseNode
 {
     FunctionCallNode(SharedNode _funcName, SharedNode _funcArgs)
-        : funcName{std::static_pointer_cast<VariableNode>(_funcName)},
-          funcArgs{std::static_pointer_cast<ProgramNode>(_funcArgs)}
+        : funcName(std::static_pointer_cast<VariableNode>(_funcName)),
+          funcArgs(std::static_pointer_cast<ProgramNode>(_funcArgs))
     {
     }
 
@@ -376,7 +376,7 @@ struct FunctionNode : FunctionCallNode, public std::enable_shared_from_this<Func
 {
     FunctionNode(SharedNode _funcName, SharedNode _funcArgs, SharedNode _funcBody)
         : FunctionCallNode(std::move(_funcName), std::move(_funcArgs)),
-          funcBody{std::static_pointer_cast<ProgramNode>(_funcBody)}
+          funcBody(std::static_pointer_cast<ProgramNode>(_funcBody))
     {
     }
 
@@ -410,7 +410,7 @@ struct BreakNode : BaseNode
 struct ReturnNode : BaseNode
 {
     ReturnNode(SharedNode _returnValue = nullptr)
-        : returnNode{std::move(_returnValue)}
+        : returnNode(std::move(_returnValue))
     {
     }
 
@@ -428,8 +428,8 @@ struct ReturnNode : BaseNode
 struct AssignNode : BaseNode
 {
     AssignNode(SharedNode _left, SharedNode _right)
-        : left{std::move(_left)},
-          right{std::move(_right)}
+        : left(std::move(_left)),
+          right(std::move(_right))
     {
     }
 

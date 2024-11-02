@@ -33,9 +33,6 @@ std::shared_ptr<BaseObject> PrefixIncrementNode::evaluate(Scope &scope)
     // 2. Object associated with variable name in scope must be an integer.
     auto bodyEvaluated = body->evaluate(scope);
 
-    // 3. Increment object (throws error if not supported on type).
-    bodyEvaluated->incrementValue();
-
     return bodyEvaluated;
 }
 

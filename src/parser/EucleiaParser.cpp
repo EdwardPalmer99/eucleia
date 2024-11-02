@@ -82,7 +82,7 @@ std::shared_ptr<FileNode> Parser::parseFileImport()
     auto ast = Parser::buildAST(filePath);
     if (!ast)
     {
-        printEucleiaError("Failed to import file with path '%s'.", filePath.c_str());
+        printWarpError("Failed to import file with path '%s'.", filePath.c_str());
     }
 
     return ast;
@@ -229,7 +229,7 @@ std::shared_ptr<BaseNode> Parser::parseVariableDefinition()
     else if (typeName == "array")
         return std::make_shared<VariableNode>(variableName, VariableNode::Type::Array);
     else
-        printEucleiaError("expected variable type for variable %s.\n", typeName.c_str());
+        printWarpError("expected variable type for variable %s.\n", typeName.c_str());
 }
 
 
@@ -288,7 +288,7 @@ std::shared_ptr<ForLoopNode> Parser::parseFor()
 
     if (brackets->nodes.size() != 3)
     {
-        printEucleiaError("Expected 3 arguments for for-loop but got %ld\n", brackets->nodes.size());
+        printWarpError("Expected 3 arguments for for-loop but got %ld\n", brackets->nodes.size());
     }
 
     auto start = brackets->nodes[0];
@@ -760,7 +760,7 @@ void Parser::skipKeyword(const std::string &name)
 {
     if (!isKeyword(name))
     {
-        printEucleiaError("expected keyword '%s'.\n", name.c_str());
+        printWarpError("expected keyword '%s'.\n", name.c_str());
     }
 
     skipToken();
@@ -771,7 +771,7 @@ void Parser::skipPunctuation(const std::string &name)
 {
     if (!isPunctuation(name))
     {
-        printEucleiaError("expected punctuation '%s'.\n", name.c_str());
+        printWarpError("expected punctuation '%s'.\n", name.c_str());
     }
 
     skipToken();
@@ -782,7 +782,7 @@ void Parser::skipOperator(const std::string &name)
 {
     if (!isOperator(name))
     {
-        printEucleiaError("expected operator '%s'.\n", name.c_str());
+        printWarpError("expected operator '%s'.\n", name.c_str());
     }
 
     skipToken();
@@ -795,7 +795,7 @@ void Parser::unexpectedToken()
 {
     Token &token = peekToken();
 
-    printEucleiaError("Unexpected token of type '%s' and value '%s'.\n", token.description().c_str(), token.value.c_str());
+    printWarpError("Unexpected token of type '%s' and value '%s'.\n", token.description().c_str(), token.value.c_str());
 }
 
 

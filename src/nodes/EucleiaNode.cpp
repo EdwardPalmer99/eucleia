@@ -233,7 +233,7 @@ std::shared_ptr<BaseObject> ReturnNode::evaluate(Scope &scope)
     }
 
     longjmp(*gEnvironmentContext.returnJumpPoint, 1);
-    return NULL;
+    return nullptr;
 }
 
 
@@ -356,10 +356,10 @@ std::shared_ptr<BaseObject> FunctionCallNode::evaluate(Scope &scope)
     // function we are calling.
     if (funcArgs->nodes.size() != funcNode->funcArgs->nodes.size())
     {
-        printEucleiaError("expected %ld arguments but got %ld arguments for function '%s'.\n",
-                          funcNode->funcArgs->nodes.size(),
-                          funcArgs->nodes.size(),
-                          funcName->variableName.c_str());
+        printWarpError("expected %ld arguments but got %ld arguments for function '%s'.\n",
+                       funcNode->funcArgs->nodes.size(),
+                       funcArgs->nodes.size(),
+                       funcName->variableName.c_str());
     }
 
     // 3. Extend current scope (outside function) with names and values of function
@@ -382,10 +382,10 @@ std::shared_ptr<BaseObject> FunctionCallNode::evaluate(Scope &scope)
 
         if (!argVariable->passesAssignmentTypeCheck(*evaluatedArg))
         {
-            printEucleiaError("incorrect type for argument '%s' of function '%s'. Expected type '%s'.\n",
-                              argVariable->variableName.c_str(),
-                              funcName->variableName.c_str(),
-                              argVariable->description().c_str());
+            printWarpError("incorrect type for argument '%s' of function '%s'. Expected type '%s'.\n",
+                           argVariable->variableName.c_str(),
+                           funcName->variableName.c_str(),
+                           argVariable->description().c_str());
         }
 
         // Define variable in the function's scope.
@@ -510,7 +510,7 @@ std::shared_ptr<BaseObject> BinaryNode::applyOperator(std::shared_ptr<BaseObject
     }
     else
     {
-        printEucleiaError("cannot apply operator %s.\n", binaryOperator.c_str());
+        printWarpError("cannot apply operator %s.\n", binaryOperator.c_str());
     }
 }
 

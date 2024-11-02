@@ -52,17 +52,17 @@ struct BaseObject
     /// Increment value of object if defined.
     inline virtual void incrementValue()
     {
-        printEucleiaError("Increment operator not defined for object of type '%s'.\n", description().c_str());
+        printWarpError("Increment operator not defined for object of type '%s'.\n", description().c_str());
     }
 
     inline virtual void decrementValue()
     {
-        printEucleiaError("Decrement operator not defined for object of type '%s'.\n", description().c_str());
+        printWarpError("Decrement operator not defined for object of type '%s'.\n", description().c_str());
     }
 
     virtual std::shared_ptr<BaseObject> negateValue()
     {
-        printEucleiaError("Negation operator not defined for object of type '%s'.\n", description().c_str());
+        printWarpError("Negation operator not defined for object of type '%s'.\n", description().c_str());
     }
 
     double floatCast() const;
@@ -83,13 +83,17 @@ struct IntObject : public BaseObject
         return ObjectType::Int;
     }
 
-    inline void incrementValue() override
+    // Prefix operations.
+    IntObject &operator++()
     {
         ++value;
+        return *this;
     }
-    inline void decrementValue() override
+
+    IntObject &operator--()
     {
         --value;
+        return *this;
     }
 
     std::shared_ptr<BaseObject> negateValue() override
