@@ -23,8 +23,6 @@ class Scope;
 
 // Forwards declaration.
 class FunctionNode;
-
-class BaseObject;
 class FloatObject;
 
 /**
