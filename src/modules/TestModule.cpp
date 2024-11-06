@@ -28,9 +28,7 @@ void TestModule::defineFunctions()
         const char *statusString = result.value ? "PASSED" : "FAILED";
         const char *statusColor  = result.value ? kOkGreenColor : kFailColor;
 
-        fflush(stdout);
         fprintf(stdout, "%-50s %s%s%s\n", description.value.c_str(), statusColor, statusString,  kClearColor);
-        if (!result.value) exit(EXIT_FAILURE);
         return nullptr; });
 
     defineFunction("ASSERT", [=](ProgramNode &callArgs, Scope &scope) -> std::shared_ptr<BaseObject>

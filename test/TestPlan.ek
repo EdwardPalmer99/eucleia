@@ -1,14 +1,6 @@
 import <io>
 import <test>
 
-func main() // Test entry-point.
-{
-    intTestCase();
-    operationOrderTestCase();
-    arrayAccessTestCase();
-    arrayModificationTestCase();
-}
-
 func intTestCase()
 {
     {
@@ -30,19 +22,26 @@ func intTestCase()
     }
 }
 
+
 func arrayAccessTestCase()
 {
     array test = [1, 2, 3];
     TEST(test[0] == 1 && test[1] == 2, "array access");
 }
 
+
 func arrayModificationTestCase()
 {
-    //array test = [1, 2, 3];
+    array intArray = [1, 2, 3];
+    TEST(intArray[0] == 1 && intArray[1] == 2, "array indexing");
+
+    int index = 0;
+    TEST(intArray[index] == 1, "index using variable");
 
     //test[0] = 100;
     //TEST(test[0] == 100 && test[1] == 2, "array modification");
 }
+
 
 func operationOrderTestCase()
 {
@@ -51,4 +50,20 @@ func operationOrderTestCase()
     //TEST(result == 5, "operation order");
 }
 
-main();
+
+func stringTestCase()
+{
+    TEST("a" != "b", "string !=");
+    TEST("a" == "a", "string ==");
+    TEST(("a" + "b") == "ab", "string +");
+}
+
+
+// Entry-point for tests:
+{
+    intTestCase();
+    operationOrderTestCase();
+    arrayAccessTestCase();
+    arrayModificationTestCase();
+    stringTestCase();
+}

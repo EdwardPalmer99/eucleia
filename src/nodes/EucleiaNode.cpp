@@ -28,7 +28,7 @@ GlobalEnvRec gEnvironmentContext;
 /// Create a new BoolObject from a BoolNode.
 std::shared_ptr<BaseObject> BoolNode::evaluate(Scope &scope)
 {
-    return std::make_shared<BoolObject>(boolValue);
+    return std::make_shared<IntObject>(boolValue);
 }
 
 
@@ -64,23 +64,20 @@ std::shared_ptr<BaseObject> ArrayNode::evaluate(Scope &scope)
 
     evaluatedObjects.shrink_to_fit();
 
-    return nullptr; // TODO: - implement.
-    // return std::make_shared<ArrayObject>(evaluatedObjects);
+    return std::make_shared<ArrayObject>(evaluatedObjects);
 }
 
 
 /// Create a new FunctionObject from a FunctionNode and register in current scope.
 std::shared_ptr<BaseObject> FunctionNode::evaluate(Scope &scope)
 {
-    return nullptr;
+    auto funcNameNode = std::static_pointer_cast<VariableNode>(funcName);
 
-    // auto funcNameNode = std::static_pointer_cast<VariableNode>(funcName);
+    auto functionObject = std::make_shared<FunctionObject>(getShared());
 
-    // auto functionObject = std::make_shared<FunctionObject>(getShared());
+    scope.defineObject(funcNameNode->variableName, functionObject);
 
-    // scope.defineObject(funcNameNode->variableName, functionObject);
-
-    // return functionObject;
+    return functionObject;
 }
 
 
@@ -345,61 +342,59 @@ std::shared_ptr<BaseObject> FunctionCallNode::evaluateFunctionBody(BaseNode &fun
 
 std::shared_ptr<BaseObject> FunctionCallNode::evaluate(Scope &scope)
 {
-    return nullptr;
-
     // 0. Any library functions that we wish to evaluate.   // TODO: - implement.
-    // auto libraryFunc = scope.getOptionalObject<LibraryFunctionObject>(funcName->variableName);
-    // if (libraryFunc)
-    // {
-    //     return libraryFunc->evaluate(*funcArgs, scope);
-    // }
+    auto libraryFunc = scope.getOptionalObject<LibraryFunctionObject>(funcName->variableName);
+    if (libraryFunc)
+    {
+        return libraryFunc->evaluate(*funcArgs, scope);
+    }
 
     // 1. Get a shared pointer to the function node stored in this scope.
-    // auto funcNode = scope.getObject<FunctionObject>(funcName->variableName)->functionValue;
+    auto funcNode = scope.getObject<FunctionObject>(funcName->variableName)->functionValue;
 
-    // // 2. Verify that the number of arguments matches those required for the
-    // // function we are calling.
-    // if (funcArgs->nodes.size() != funcNode->funcArgs->nodes.size())
-    // {
-    //     printWarpError("expected %ld arguments but got %ld arguments for function '%s'.\n",
-    //                    funcNode->funcArgs->nodes.size(),
-    //                    funcArgs->nodes.size(),
-    //                    funcName->variableName.c_str());
-    // }
+    // 2. Verify that the number of arguments matches those required for the
+    // function we are calling.
+    if (funcArgs->nodes.size() != funcNode->funcArgs->nodes.size())
+    {
+        printWarpError("expected %ld arguments but got %ld arguments for function '%s'.\n",
+                       funcNode->funcArgs->nodes.size(),
+                       funcArgs->nodes.size(),
+                       funcName->variableName.c_str());
+    }
 
-    // // 3. Extend current scope (outside function) with names and values of function
-    // // arguments.
-    // auto funcScope(scope);
+    // 3. Extend current scope (outside function) with names and values of function
+    // arguments.
+    auto funcScope(scope);
 
-    // // TODO: - evaluate all of the function's parameters in function scope to create uninitialized variables.
-    // // THen call setObject with all of the arguments to update the values and our type-checker will ensure
-    // // that the object types are compatible.
+    // TODO: - evaluate all of the function's parameters in function scope to create uninitialized variables.
+    // THen call setObject with all of the arguments to update the values and our type-checker will ensure
+    // that the object types are compatible.
 
-    // int iarg = 0;
-    // for (const auto &argNode : funcArgs->nodes)
-    // {
-    //     // Evaluate all function arguments in external scope (outside function).
-    //     auto evaluatedArg = argNode->evaluate(scope);
+    int iarg = 0;
+    for (const auto &argNode : funcArgs->nodes)
+    {
+        // Evaluate all function arguments in external scope (outside function).
+        auto evaluatedArg = argNode->evaluate(scope);
 
-    //     // Check that the evaluatedArg type (RHS) is compatible with the corresponding
-    //     // (LHS) variable.
-    //     auto argVariable = std::static_pointer_cast<VariableNode>(funcNode->funcArgs->nodes[iarg++]);
+        // Check that the evaluatedArg type (RHS) is compatible with the corresponding
+        // (LHS) variable.
+        auto argVariable = std::static_pointer_cast<VariableNode>(funcNode->funcArgs->nodes[iarg++]);
 
-    //     if (!argVariable->passesAssignmentTypeCheck(*evaluatedArg))
-    //     {
-    //         printWarpError("incorrect type for argument '%s' of function '%s'. Expected type '%s'.\n",
-    //                        argVariable->variableName.c_str(),
-    //                        funcName->variableName.c_str(),
-    //                        argVariable->description().c_str());
-    //     }
+        if (!argVariable->passesAssignmentTypeCheck(*evaluatedArg))
+        {
+            printWarpError("incorrect type for argument '%s' of function '%s'. Expected type '%s'.\n",
+                           argVariable->variableName.c_str(),
+                           funcName->variableName.c_str(),
+                           argVariable->description().c_str());
+        }
 
-    //     // Define variable in the function's scope.
-    //     funcScope.defineObject(argVariable->variableName, evaluatedArg);
-    // }
+        // Define variable in the function's scope.
+        funcScope.defineObject(argVariable->variableName, evaluatedArg);
+    }
 
-    // // Evaluate the function body in our function scope now that we've added the
-    // // call arguments.
-    // return evaluateFunctionBody(*funcNode->funcBody, funcScope);
+    // Evaluate the function body in our function scope now that we've added the
+    // call arguments.
+    return evaluateFunctionBody(*funcNode->funcBody, funcScope);
 }
 
 
@@ -428,106 +423,112 @@ std::shared_ptr<BaseObject> AssignNode::evaluateArrayAccess(Scope &scope)
 
 std::shared_ptr<BaseObject> ArrayAccessNode::evaluate(Scope &scope)
 {
-    return nullptr;
+    // Get shared pointer to array.
+    std::shared_ptr<BaseObject> evaluatedObject = arrayName->evaluate(scope);
 
-    // // Get shared pointer to array.
-    // std::shared_ptr<BaseObject> evaluatedObject = arrayName->evaluate(scope);
-    // assert(evaluatedObject->isObjectType<ArrayObject);
+    auto arrayObject = evaluatedObject->castObject<ArrayObject>();
 
-    // auto array = std::static_pointer_cast<ArrayObject>(evaluatedObject);
-
-    // const long index = arrayIndex->numberValue;
-    // assert(index >= 0 && index < array->arrayValues.size());
-
-    // return (array->arrayValues.at(index));
+    const long index = arrayIndex->numberValue;
+    return arrayObject[index];
 }
 
 
 #pragma mark - *** Helper ***
 
-IntObject BinaryNode::applyOperator(const IntObject &left, const IntObject &right) const
+std::shared_ptr<BaseObject> BinaryNode::applyOperator(const IntObject &left, const IntObject &right) const
 {
     if (binaryOperator == "+")
-        return (left + right);
+        return std::make_shared<IntObject>(left + right);
     else if (binaryOperator == "-")
-        return (left - right);
+        return std::make_shared<IntObject>(left - right);
     else if (binaryOperator == "*")
-        return (left * right);
+        return std::make_shared<IntObject>(left * right);
     else if (binaryOperator == "/")
-        return (left / right);
+        return std::make_shared<IntObject>(left / right);
     else if (binaryOperator == "==")
-        return (left == right);
+        return std::make_shared<BoolObject>(left == right);
     else if (binaryOperator == "!=")
-        return (left != right);
+        return std::make_shared<BoolObject>(left != right);
     else if (binaryOperator == ">=")
-        return (left >= right);
+        return std::make_shared<BoolObject>(left >= right);
     else if (binaryOperator == ">")
-        return (left > right);
+        return std::make_shared<BoolObject>(left > right);
     else if (binaryOperator == "<=")
-        return (left <= right);
+        return std::make_shared<BoolObject>(left <= right);
     else if (binaryOperator == "<")
-        return (left < right);
+        return std::make_shared<BoolObject>(left < right);
     else if (binaryOperator == "%")
-        return (left % right);
+        return std::make_shared<IntObject>(left % right);
     else if (binaryOperator == "&&")
-        return (left && right);
+        return std::make_shared<BoolObject>(left && right);
     else if (binaryOperator == "||")
-        return (left || right);
+        return std::make_shared<BoolObject>(left || right);
     else
         printWarpError("cannot apply operator '%s' to types Int, Int.\n", binaryOperator.c_str());
 }
 
 
-FloatObject BinaryNode::applyOperator(const FloatObject &left, const FloatObject &right) const
+std::shared_ptr<BaseObject> BinaryNode::applyOperator(const FloatObject &left, const FloatObject &right) const
 {
     if (binaryOperator == "+")
-        return (left + right);
+        return std::make_shared<FloatObject>(left + right);
     else if (binaryOperator == "-")
-        return (left - right);
+        return std::make_shared<FloatObject>(left - right);
     else if (binaryOperator == "*")
-        return (left * right);
+        return std::make_shared<FloatObject>(left * right);
     else if (binaryOperator == "/")
-        return (left / right);
+        return std::make_shared<FloatObject>(left / right);
     else if (binaryOperator == "==")
-        return (left == right);
+        return std::make_shared<BoolObject>(left == right);
     else if (binaryOperator == "!=")
-        return (left != right);
+        return std::make_shared<BoolObject>(left != right);
     else if (binaryOperator == ">=")
-        return (left >= right);
+        return std::make_shared<BoolObject>(left >= right);
     else if (binaryOperator == ">")
-        return (left > right);
+        return std::make_shared<BoolObject>(left > right);
     else if (binaryOperator == "<=")
-        return (left <= right);
+        return std::make_shared<BoolObject>(left <= right);
     else if (binaryOperator == "<")
-        return (left < right);
+        return std::make_shared<BoolObject>(left < right);
     else
         printWarpError("cannot apply operator '%s' to types Int, Int.\n", binaryOperator.c_str());
+}
+
+
+std::shared_ptr<BaseObject> BinaryNode::applyOperator(const StringObject &left, const StringObject &right) const
+{
+    if (binaryOperator == "+")
+        return std::make_shared<StringObject>(left + right);
+    else if (binaryOperator == "==")
+        return std::make_shared<BoolObject>(left == right);
+    else if (binaryOperator == "!=")
+        return std::make_shared<BoolObject>(left != right);
+    else
+        printWarpError("cannot apply operator '%s' to types String, String.\n", binaryOperator.c_str());
 }
 
 
 std::shared_ptr<BaseObject> BinaryNode::applyOperator(std::shared_ptr<BaseObject> left, std::shared_ptr<BaseObject> right)
 {
-    // TODO: - add string operators here...
-
     if (left->isObjectType<IntObject>() && right->isObjectType<IntObject>())
     {
-        IntObject result = applyOperator(left->castObject<IntObject>(), right->castObject<IntObject>());
-        return std::make_shared<IntObject>(result);
+        return applyOperator(left->castObject<IntObject>(), right->castObject<IntObject>());
     }
     else if (left->isObjectType<FloatObject>() && right->isObjectType<FloatObject>())
     {
-        FloatObject result = applyOperator(left->castObject<FloatObject>(), right->castObject<FloatObject>());
-        return std::make_shared<FloatObject>(result);
+        return applyOperator(left->castObject<FloatObject>(), right->castObject<FloatObject>());
     }
     else if (left->isObjectType<IntObject>() && right->isObjectType<FloatObject>())
     {
-        FloatObject result = applyOperator(left->castObject<IntObject>().castToFloat(), right->castObject<FloatObject>());
-        return std::make_shared<FloatObject>(result);
+        return applyOperator(left->castObject<IntObject>().castToFloat(), right->castObject<FloatObject>());
     }
     else if (left->isObjectType<FloatObject>() && right->isObjectType<IntObject>())
     {
-        FloatObject result = applyOperator(left->castObject<FloatObject>(), right->castObject<IntObject>().castToFloat());
-        return std::make_shared<FloatObject>(result);
+        return applyOperator(left->castObject<FloatObject>(), right->castObject<IntObject>().castToFloat());
+    }
+    else if (left->isObjectType<StringObject>() && right->isObjectType<StringObject>())
+    {
+        return applyOperator(left->castObject<StringObject>(), right->castObject<StringObject>());
     }
     else
     {
@@ -544,15 +545,15 @@ bool VariableNode::passesAssignmentTypeCheck(const BaseObject &assignObject) con
     switch (variableType)
     {
         case Int:
-            return typeid(assignObject) == typeid(IntObject);
+            return assignObject.isObjectType<IntObject>();
         case Float:
-            return typeid(assignObject) == typeid(FloatObject);
+            return assignObject.isObjectType<FloatObject>();
         case Bool:
-            return typeid(assignObject) == typeid(BoolObject);
+            return assignObject.isObjectType<BoolObject>();
         case String:
-            return typeid(assignObject) == typeid(StringObject);
-        // case Array:
-        //     return typeid(assignObject) == typeid(ArrayObject);
+            return assignObject.isObjectType<StringObject>();
+        case Array:
+            return assignObject.isObjectType<ArrayObject>();
         default:
             return false;
     }
@@ -571,8 +572,8 @@ std::string VariableNode::description() const
             return "Float";
         case String:
             return "String";
-        // case Array:
-        //     return "Array";
+        case Array:
+            return "Array";
         default:
             return "Unknown";
     }
