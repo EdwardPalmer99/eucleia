@@ -352,6 +352,7 @@ inline std::ostream &operator<<(std::ostream &out, const BaseObject &object)
         {
             out << *arrayObject[i] << ", ";
         }
+        out << "]";
         return out;
     }
     else
