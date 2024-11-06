@@ -18,11 +18,11 @@ std::shared_ptr<BaseObject> ModuleNode::evaluate(Scope &scope)
 {
     defineFunctions();
 
-    // Iterate over functions and add to scope.
-    for (const auto &[name, function] : _functionsMap)
-    {
-        scope.defineObject(name, std::make_shared<LibraryFunctionObject>(function));
-    }
+    // // Iterate over functions and add to scope.
+    // for (const auto &[name, function] : _functionsMap)
+    // {
+    //     scope.defineObject(name, std::make_shared<LibraryFunctionObject>(function));
+    // }
 
     return nullptr;
 }
@@ -50,23 +50,23 @@ std::vector<std::shared_ptr<BaseObject>> ModuleNode::evaluateArgs(ProgramNode &a
 
 void MathModuleNode::defineFunctions()
 {
-    defineFunction("sqrt", [=](ProgramNode &callArgs, Scope &scope) -> std::shared_ptr<BaseObject>
-                   {
-		auto argValues = evaluateArgs(callArgs, scope);
-		assert(argValues.size() == 1);
-		
-		auto first = argValues.front()->floatCast();
-		return std::make_shared<FloatObject>(sqrt(first)); });
+    // defineFunction("sqrt", [=](ProgramNode &callArgs, Scope &scope) -> std::shared_ptr<BaseObject>
+    //                {
+    // 	auto argValues = evaluateArgs(callArgs, scope);
+    // 	assert(argValues.size() == 1);
 
-    defineFunction("pow", [=](ProgramNode &callArgs, Scope &scope) -> std::shared_ptr<BaseObject>
-                   {
-		auto argValues = evaluateArgs(callArgs, scope);
-		assert(argValues.size() == 2);
-		
-		auto first = argValues.at(0)->floatCast();
-		auto second = argValues.at(1)->floatCast();
-		
-		return std::make_shared<FloatObject>(pow(first, second)); });
+    // 	auto first = argValues.front()->floatCast();
+    // 	return std::make_shared<FloatObject>(sqrt(first)); });
+
+    // defineFunction("pow", [=](ProgramNode &callArgs, Scope &scope) -> std::shared_ptr<BaseObject>
+    //                {
+    // 	auto argValues = evaluateArgs(callArgs, scope);
+    // 	assert(argValues.size() == 2);
+
+    // 	auto first = argValues.at(0)->floatCast();
+    // 	auto second = argValues.at(1)->floatCast();
+
+    // 	return std::make_shared<FloatObject>(pow(first, second)); });
 }
 
 

@@ -75,10 +75,10 @@ void Scope::updateObject(const std::string &name, std::shared_ptr<BaseObject> ob
     auto &existingObject = objects[name];
 
     // NB: None type means it has not yet been initialized.
-    if (existingObject->type() != object->type())
+    if (!existingObject->typesMatch((*object)))
     {
         printWarpError("Setting object of type %s with incompatible type %s",
-                       existingObject->description().c_str(), object->description().c_str());
+                       existingObject->typeName().c_str(), object->typeName().c_str());
     }
 
     // If the creationScope != this then the variable was defined in a parent

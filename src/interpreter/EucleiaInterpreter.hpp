@@ -14,12 +14,9 @@
 
 class Interpreter // TODO: - just make a static class.
 {
-  public:
+public:
     /// Prints output to std::out.
     static void evaluateFile(const std::string &fpath);
-
-    /// Redirects std::out and returns a string containing all output.
-    static std::string evaluateString(const std::string fileContents);  
 };
 
 #endif /* EucleiaInterpreter_hpp */
