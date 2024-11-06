@@ -52,21 +52,21 @@ void MathModuleNode::defineFunctions()
 {
     defineFunction("sqrt", [=](ProgramNode &callArgs, Scope &scope) -> std::shared_ptr<BaseObject>
                    {
-		auto argValues = evaluateArgs(callArgs, scope);
-		assert(argValues.size() == 1);
-		
-		auto first = argValues.front()->floatCast();
-		return std::make_shared<FloatObject>(sqrt(first)); });
+    	auto argValues = evaluateArgs(callArgs, scope);
+    	assert(argValues.size() == 1);
+
+    	auto & first = argValues.front()->castObject<FloatObject>();
+    	return std::make_shared<FloatObject>(sqrt(first.value)); });
 
     defineFunction("pow", [=](ProgramNode &callArgs, Scope &scope) -> std::shared_ptr<BaseObject>
                    {
-		auto argValues = evaluateArgs(callArgs, scope);
-		assert(argValues.size() == 2);
-		
-		auto first = argValues.at(0)->floatCast();
-		auto second = argValues.at(1)->floatCast();
-		
-		return std::make_shared<FloatObject>(pow(first, second)); });
+    	auto argValues = evaluateArgs(callArgs, scope);
+    	assert(argValues.size() == 2);
+
+    	auto &first = argValues.at(0)->castObject<FloatObject>();
+    	auto &second = argValues.at(1)->castObject<FloatObject>();
+
+    	return std::make_shared<FloatObject>(pow(first.value, second.value)); });
 }
 
 

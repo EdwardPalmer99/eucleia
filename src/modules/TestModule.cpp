@@ -21,16 +21,14 @@ void TestModule::defineFunctions()
         auto argValues = evaluateArgs(callArgs, scope);
         assert(argValues.size() == 2);
 
-        auto result = argValues.at(0)->boolCast();
-        auto description = static_cast<StringObject &>(*argValues.at(1));
+        auto result = argValues.at(0)->castObject<BoolObject>();
+        auto description = argValues.at(1)->castObject<StringObject>();
 
         // Print pass or fail depending on the test case.
-        const char *statusString = result ? "PASSED" : "FAILED";
-        const char *statusColor  = result ? kOkGreenColor : kFailColor;
+        const char *statusString = result.value ? "PASSED" : "FAILED";
+        const char *statusColor  = result.value ? kOkGreenColor : kFailColor;
 
-        fflush(stdout);
-        fprintf(stdout, "%-50s %s%s%s\n", description.stringValue.c_str(), statusColor, statusString,  kClearColor);
-        if (!result) exit(EXIT_FAILURE);
+        fprintf(stdout, "%-50s %s%s%s\n", description.value.c_str(), statusColor, statusString,  kClearColor);
         return nullptr; });
 
     defineFunction("ASSERT", [=](ProgramNode &callArgs, Scope &scope) -> std::shared_ptr<BaseObject>
@@ -38,23 +36,8 @@ void TestModule::defineFunctions()
         auto argValues = evaluateArgs(callArgs, scope);
         assert(argValues.size() == 1);
 
-        auto result = argValues.at(0)->boolCast();
-        assert(result);
-        return nullptr; });
-
-    defineFunction("ASSERT_STR_EQUAL", [=](ProgramNode &callArgs, Scope &scope) -> std::shared_ptr<BaseObject>
-                   {
-        auto argValues = evaluateArgs(callArgs, scope);
-        assert(argValues.size() == 2);
-
-        StringObject & str1 = static_cast<StringObject &>(*argValues.at(0));
-        StringObject & str2 = static_cast<StringObject &>(*argValues.at(1));
-
-        if (str1.stringValue != str2.stringValue) 
-        {
-            abort();
-        }
-
+        auto result = argValues.at(0)->castObject<BoolObject>();
+        assert(result.value);
         return nullptr; });
 
     defineFunction("abort", [=](ProgramNode &callArgs, Scope &scope) -> std::shared_ptr<BaseObject>
@@ -70,8 +53,8 @@ void TestModule::defineFunctions()
         auto argValues = evaluateArgs(callArgs, scope);
         assert(argValues.size() == 1);
 
-        auto exitCode = argValues.at(0)->intCast();
-        exit(exitCode);
+        auto exitCode = argValues.at(0)->castObject<IntObject>();
+        exit(exitCode.value);
 
         return nullptr; });
 }

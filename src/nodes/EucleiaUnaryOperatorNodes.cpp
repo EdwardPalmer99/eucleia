@@ -9,10 +9,9 @@
 
 std::shared_ptr<BaseObject> NotNode::evaluate(Scope &scope)
 {
-    auto bodyEvaluated = body->evaluate(scope);
-    assert(bodyEvaluated->type() == BaseObject::ObjectType::Bool);
+    auto bodyEvaluated = body->evaluate<BoolObject>(scope);
 
-    return std::make_shared<BoolObject>(!bodyEvaluated->boolCast());
+    return std::make_shared<BoolObject>(!bodyEvaluated->value);
 }
 
 
@@ -20,7 +19,12 @@ std::shared_ptr<BaseObject> NegationNode::evaluate(Scope &scope)
 {
     auto bodyEvaluated = body->evaluate(scope);
 
-    return bodyEvaluated->negateValue();
+    if (bodyEvaluated->isObjectType<IntObject>())
+        return std::make_shared<IntObject>(-bodyEvaluated->castObject<IntObject>());
+    else if (bodyEvaluated->isObjectType<FloatObject>())
+        return std::make_shared<FloatObject>(-bodyEvaluated->castObject<FloatObject>());
+    else
+        printWarpError("%s", "invalid object type.");
 }
 
 
@@ -30,10 +34,22 @@ std::shared_ptr<BaseObject> PrefixIncrementNode::evaluate(Scope &scope)
     assert(body->type() == BaseNode::VariableName);
     auto variableNameNode = std::static_pointer_cast<VariableNameNode>(body);
 
-    // 2. Object associated with variable name in scope must be an integer.
+    // 2. Object associated with variable name in scope must be integer or float.
     auto bodyEvaluated = body->evaluate(scope);
-
-    return bodyEvaluated;
+    if (bodyEvaluated->isObjectType<IntObject>())
+    {
+        ++(bodyEvaluated->castObject<IntObject>());
+        return bodyEvaluated;
+    }
+    else if (bodyEvaluated->isObjectType<FloatObject>())
+    {
+        ++(bodyEvaluated->castObject<FloatObject>());
+        return bodyEvaluated;
+    }
+    else
+    {
+        printWarpError("%s", "cannot use prefix operator on object of type.\n");
+    }
 }
 
 
@@ -43,11 +59,20 @@ std::shared_ptr<BaseObject> PrefixDecrementNode::evaluate(Scope &scope)
     assert(body->type() == BaseNode::VariableName);
     auto variableNameNode = std::static_pointer_cast<VariableNameNode>(body);
 
-    // 2. Object associated with variable name in scope must be an integer.
+    // 2. Object associated with variable name in scope must be integer or float.
     auto bodyEvaluated = body->evaluate(scope);
-
-    // 3. Increment object (throws error if not supported on type).
-    bodyEvaluated->decrementValue();
-
-    return bodyEvaluated;
+    if (bodyEvaluated->isObjectType<IntObject>())
+    {
+        --(bodyEvaluated->castObject<IntObject>());
+        return bodyEvaluated;
+    }
+    else if (bodyEvaluated->isObjectType<FloatObject>())
+    {
+        --(bodyEvaluated->castObject<FloatObject>());
+        return bodyEvaluated;
+    }
+    else
+    {
+        printWarpError("%s", "cannot use prefix operator on object of type.\n");
+    }
 }

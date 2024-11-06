@@ -28,7 +28,7 @@ GlobalEnvRec gEnvironmentContext;
 /// Create a new BoolObject from a BoolNode.
 std::shared_ptr<BaseObject> BoolNode::evaluate(Scope &scope)
 {
-    return std::make_shared<BoolObject>(boolValue);
+    return std::make_shared<IntObject>(boolValue);
 }
 
 
@@ -141,10 +141,10 @@ std::shared_ptr<BaseObject> VariableNode::evaluate(Scope &scope)
         case String:
             variableObject = std::make_shared<StringObject>("");
             break;
-        case Array:
-            variableObject = std::make_shared<ArrayObject>(std::vector<std::shared_ptr<BaseObject>>());
-            break;
-            // TODO: - handle function type. (will need to think about this.)
+        // case Array:
+        //     variableObject = std::make_shared<ArrayObject>(std::vector<std::shared_ptr<BaseObject>>());
+        //     break;
+        // TODO: - handle function type. (will need to think about this.)
         default:
             break;
     }
@@ -342,7 +342,7 @@ std::shared_ptr<BaseObject> FunctionCallNode::evaluateFunctionBody(BaseNode &fun
 
 std::shared_ptr<BaseObject> FunctionCallNode::evaluate(Scope &scope)
 {
-    // 0. Any library functions that we wish to evaluate.
+    // 0. Any library functions that we wish to evaluate.   // TODO: - implement.
     auto libraryFunc = scope.getOptionalObject<LibraryFunctionObject>(funcName->variableName);
     if (libraryFunc)
     {
@@ -412,7 +412,7 @@ std::shared_ptr<BaseObject> AssignNode::evaluateArrayAccess(Scope &scope)
     auto newValue = right->evaluate(scope);
 
     // 3. Check that the types match.
-    assert(currentValue->type() == newValue->type());
+    assert(currentValue->typesMatch(*newValue));
 
     // Set to new value.
     *currentValue = *newValue;
@@ -425,92 +425,114 @@ std::shared_ptr<BaseObject> ArrayAccessNode::evaluate(Scope &scope)
 {
     // Get shared pointer to array.
     std::shared_ptr<BaseObject> evaluatedObject = arrayName->evaluate(scope);
-    assert(evaluatedObject->type() == BaseObject::ObjectType::Array);
 
-    auto array = std::static_pointer_cast<ArrayObject>(evaluatedObject);
+    auto arrayObject = evaluatedObject->castObject<ArrayObject>();
 
     const long index = arrayIndex->numberValue;
-    assert(index >= 0 && index < array->arrayValues.size());
-
-    return (array->arrayValues.at(index));
+    return arrayObject[index];
 }
 
 
 #pragma mark - *** Helper ***
 
+std::shared_ptr<BaseObject> BinaryNode::applyOperator(const IntObject &left, const IntObject &right) const
+{
+    if (binaryOperator == "+")
+        return std::make_shared<IntObject>(left + right);
+    else if (binaryOperator == "-")
+        return std::make_shared<IntObject>(left - right);
+    else if (binaryOperator == "*")
+        return std::make_shared<IntObject>(left * right);
+    else if (binaryOperator == "/")
+        return std::make_shared<IntObject>(left / right);
+    else if (binaryOperator == "==")
+        return std::make_shared<BoolObject>(left == right);
+    else if (binaryOperator == "!=")
+        return std::make_shared<BoolObject>(left != right);
+    else if (binaryOperator == ">=")
+        return std::make_shared<BoolObject>(left >= right);
+    else if (binaryOperator == ">")
+        return std::make_shared<BoolObject>(left > right);
+    else if (binaryOperator == "<=")
+        return std::make_shared<BoolObject>(left <= right);
+    else if (binaryOperator == "<")
+        return std::make_shared<BoolObject>(left < right);
+    else if (binaryOperator == "%")
+        return std::make_shared<IntObject>(left % right);
+    else if (binaryOperator == "&&")
+        return std::make_shared<BoolObject>(left && right);
+    else if (binaryOperator == "||")
+        return std::make_shared<BoolObject>(left || right);
+    else
+        printWarpError("cannot apply operator '%s' to types Int, Int.\n", binaryOperator.c_str());
+}
+
+
+std::shared_ptr<BaseObject> BinaryNode::applyOperator(const FloatObject &left, const FloatObject &right) const
+{
+    if (binaryOperator == "+")
+        return std::make_shared<FloatObject>(left + right);
+    else if (binaryOperator == "-")
+        return std::make_shared<FloatObject>(left - right);
+    else if (binaryOperator == "*")
+        return std::make_shared<FloatObject>(left * right);
+    else if (binaryOperator == "/")
+        return std::make_shared<FloatObject>(left / right);
+    else if (binaryOperator == "==")
+        return std::make_shared<BoolObject>(left == right);
+    else if (binaryOperator == "!=")
+        return std::make_shared<BoolObject>(left != right);
+    else if (binaryOperator == ">=")
+        return std::make_shared<BoolObject>(left >= right);
+    else if (binaryOperator == ">")
+        return std::make_shared<BoolObject>(left > right);
+    else if (binaryOperator == "<=")
+        return std::make_shared<BoolObject>(left <= right);
+    else if (binaryOperator == "<")
+        return std::make_shared<BoolObject>(left < right);
+    else
+        printWarpError("cannot apply operator '%s' to types Int, Int.\n", binaryOperator.c_str());
+}
+
+
+std::shared_ptr<BaseObject> BinaryNode::applyOperator(const StringObject &left, const StringObject &right) const
+{
+    if (binaryOperator == "+")
+        return std::make_shared<StringObject>(left + right);
+    else if (binaryOperator == "==")
+        return std::make_shared<BoolObject>(left == right);
+    else if (binaryOperator == "!=")
+        return std::make_shared<BoolObject>(left != right);
+    else
+        printWarpError("cannot apply operator '%s' to types String, String.\n", binaryOperator.c_str());
+}
+
+
 std::shared_ptr<BaseObject> BinaryNode::applyOperator(std::shared_ptr<BaseObject> left, std::shared_ptr<BaseObject> right)
 {
-    // Require both types to be integers to perform integer operations.
-    bool intOperations = (left->type() == BaseObject::ObjectType::Int &&
-                          right->type() == BaseObject::ObjectType::Int);
-
-    if (binaryOperator == "+")
+    if (left->isObjectType<IntObject>() && right->isObjectType<IntObject>())
     {
-        if (intOperations)
-            return std::make_shared<IntObject>(left->intCast() + right->intCast());
-        else
-            return std::make_shared<FloatObject>(left->floatCast() + right->floatCast());
+        return applyOperator(left->castObject<IntObject>(), right->castObject<IntObject>());
     }
-    else if (binaryOperator == "-")
+    else if (left->isObjectType<FloatObject>() && right->isObjectType<FloatObject>())
     {
-        if (intOperations)
-            return std::make_shared<IntObject>(left->intCast() - right->intCast());
-        else
-            return std::make_shared<FloatObject>(left->floatCast() - right->floatCast());
+        return applyOperator(left->castObject<FloatObject>(), right->castObject<FloatObject>());
     }
-    else if (binaryOperator == "*")
+    else if (left->isObjectType<IntObject>() && right->isObjectType<FloatObject>())
     {
-        if (intOperations)
-            return std::make_shared<IntObject>(left->intCast() * right->intCast());
-        else
-            return std::make_shared<FloatObject>(left->floatCast() * right->floatCast());
+        return applyOperator(left->castObject<IntObject>().castToFloat(), right->castObject<FloatObject>());
     }
-    else if (binaryOperator == "/")
+    else if (left->isObjectType<FloatObject>() && right->isObjectType<IntObject>())
     {
-        if (intOperations)
-            return std::make_shared<IntObject>(left->intCast() / castToInt(*right).nonzeroValue());
-        else
-            return std::make_shared<FloatObject>(left->floatCast() / right->floatCast());
+        return applyOperator(left->castObject<FloatObject>(), right->castObject<IntObject>().castToFloat());
     }
-    else if (binaryOperator == "%")
+    else if (left->isObjectType<StringObject>() && right->isObjectType<StringObject>())
     {
-        return std::make_shared<IntObject>(castToInt(*left).positiveOrZeroValue() / castToInt(*right).positiveValue());
-    }
-    else if (binaryOperator == "&&")
-    {
-        return std::make_shared<BoolObject>(left->boolCast() && right->boolCast());
-    }
-    else if (binaryOperator == "||")
-    {
-        return (left->boolCast() ? left : right);
-    }
-    else if (binaryOperator == "<")
-    {
-        return std::make_shared<BoolObject>(left->floatCast() < right->floatCast());
-    }
-    else if (binaryOperator == ">")
-    {
-        return std::make_shared<BoolObject>(left->floatCast() > right->floatCast());
-    }
-    else if (binaryOperator == "<=")
-    {
-        return std::make_shared<BoolObject>(left->floatCast() <= right->floatCast());
-    }
-    else if (binaryOperator == ">=")
-    {
-        return std::make_shared<BoolObject>(left->floatCast() >= right->floatCast());
-    }
-    else if (binaryOperator == "==")
-    {
-        return std::make_shared<BoolObject>(left->floatCast() == right->floatCast());
-    }
-    else if (binaryOperator == "!=") // TODO: - need some tolerance.
-    {
-        return std::make_shared<BoolObject>(left->floatCast() != right->floatCast());
+        return applyOperator(left->castObject<StringObject>(), right->castObject<StringObject>());
     }
     else
     {
-        printWarpError("cannot apply operator %s.\n", binaryOperator.c_str());
+        printWarpError("Cannot apply operator '%s' to object types.\n", binaryOperator.c_str());
     }
 }
 
@@ -520,20 +542,18 @@ std::shared_ptr<BaseObject> BinaryNode::applyOperator(std::shared_ptr<BaseObject
 /// Type checking.
 bool VariableNode::passesAssignmentTypeCheck(const BaseObject &assignObject) const
 {
-    auto assignObjectType = assignObject.type();
-
     switch (variableType)
     {
         case Int:
-            return (assignObjectType == BaseObject::ObjectType::Int);
+            return assignObject.isObjectType<IntObject>();
         case Float:
-            return (assignObjectType == BaseObject::ObjectType::Float);
+            return assignObject.isObjectType<FloatObject>();
         case Bool:
-            return (assignObjectType == BaseObject::ObjectType::Bool);
+            return assignObject.isObjectType<BoolObject>();
         case String:
-            return (assignObjectType == BaseObject::ObjectType::String);
+            return assignObject.isObjectType<StringObject>();
         case Array:
-            return (assignObjectType == BaseObject::ObjectType::Array);
+            return assignObject.isObjectType<ArrayObject>();
         default:
             return false;
     }

@@ -462,6 +462,10 @@ struct BinaryNode : AssignNode
 
     std::shared_ptr<BaseObject> applyOperator(std::shared_ptr<BaseObject> left, std::shared_ptr<BaseObject> right);
 
+    std::shared_ptr<BaseObject> applyOperator(const IntObject &left, const IntObject &right) const;
+    std::shared_ptr<BaseObject> applyOperator(const FloatObject &left, const FloatObject &right) const;
+    std::shared_ptr<BaseObject> applyOperator(const StringObject &left, const StringObject &right) const;
+
     std::shared_ptr<BaseObject> evaluate(Scope &scope) override;
 
     std::string binaryOperator;
