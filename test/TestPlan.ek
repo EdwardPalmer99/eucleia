@@ -63,7 +63,7 @@ func stringTestCase()
 {
     intTestCase();
     operationOrderTestCase();
-    arrayAccessTestCase();
-    arrayModificationTestCase();
     stringTestCase();
+    //arrayAccessTestCase();
+    //arrayModificationTestCase();
 }

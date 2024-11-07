@@ -31,6 +31,8 @@ class FloatObject;
 class BaseObject
 {
 public:
+    virtual ~BaseObject() = default;
+
     /// Cast to object type.
     template <class TObject>
     const TObject &castObject() const
@@ -60,7 +62,6 @@ public:
 
 protected:
     BaseObject() = default;
-    virtual ~BaseObject() = default;
 };
 
 /**
@@ -290,18 +291,18 @@ struct ArrayObject : public BaseObject
 {
 public:
     ArrayObject() = default;
-    ArrayObject(std::vector<std::shared_ptr<BaseObject>> values_) : values(std::move(values_)) {}
+    ArrayObject(std::vector<BaseObject *> values_) : values(std::move(values_)) {}
 
     std::string typeName() const override { return "ArrayObject"; }
 
     // TODO: - eventually just store references to BaseObject & or pointers and return reference.
-    std::shared_ptr<BaseObject> operator[](std::size_t index) const
+    BaseObject *operator[](std::size_t index) const
     {
         assert(index < values.size());
-        return (values.at(index));
+        return (values.at(index)); // TODO: - fix this. Just return a reference or something.
     }
 
-    std::vector<std::shared_ptr<BaseObject>> values;
+    std::vector<BaseObject *> values;
 };
 
 
@@ -315,7 +316,7 @@ public:
 
     std::string typeName() const override { return "FunctionObject"; }
 
-    std::shared_ptr<FunctionNode> functionValue{nullptr};
+    std::shared_ptr<FunctionNode> functionValue{nullptr}; // TODO: - weird code.
 };
 
 
@@ -325,7 +326,7 @@ public:
 struct LibraryFunctionObject : public BaseObject
 {
 public:
-    using LibraryFunction = std::function<std::shared_ptr<BaseObject>(ProgramNode &, Scope &)>;
+    using LibraryFunction = std::function<BaseObject *(ProgramNode &, Scope &)>;
 
     LibraryFunctionObject(LibraryFunction function_) : evaluate(std::move(function_)) {}
 

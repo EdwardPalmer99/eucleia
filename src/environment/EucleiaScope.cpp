@@ -6,12 +6,19 @@
 //
 
 #include "EucleiaScope.hpp"
-#include "EucleiaObject.hpp"
 #include "EucleiaUtility.hpp"
 
 Scope::Scope(const Scope &_parent)
     : Scope(&_parent)
 {
+}
+
+Scope::~Scope()
+{
+    for (BaseObject *obj : ownedObjects)
+    {
+        delete obj;
+    }
 }
 
 Scope::Scope(const Scope *_parent)
@@ -39,7 +46,7 @@ bool Scope::objectCreatedInScope(const std::string &name) const
 }
 
 
-std::shared_ptr<BaseObject> Scope::getObject(const std::string &name) const
+BaseObject *Scope::getDefinedObject(const std::string &name) const
 {
     auto it = objects.find(name);
     if (it == objects.end())
@@ -50,24 +57,25 @@ std::shared_ptr<BaseObject> Scope::getObject(const std::string &name) const
     return (it->second);
 }
 
-
-void Scope::defineObject(const std::string &name, std::shared_ptr<BaseObject> object)
+// TODO: - needs checks. This object must be OWNED by us already. Therefore, we can check in our std::unordered_set whether it exists.
+void Scope::defineObject(const std::string &name, BaseObject *object)
 {
     // 1. Check for name clashes. This is where we have two variables with
     // the same name defined in the SAME scope.
     checkForVariableNameClash(name);
 
     // 2. Remove any existing objects with same name. If there are any these will
-    // have been defined in an outer scope. This is variable shadowing.
+    // have been defined in an outer scope. This is variable shadowing. We do not
+    // have ownership of these outer-scope variables.
     removeObject(name);
 
     // 3. Set object creation scope.
     objectCreationScope[name] = this;
-    objects[name] = std::move(object);
+    objects[name] = object;
 }
 
 
-void Scope::updateObject(const std::string &name, std::shared_ptr<BaseObject> object)
+void Scope::updateObject(const std::string &name, BaseObject *object)
 {
     assert(object && hasObject(name));
 
@@ -90,6 +98,8 @@ void Scope::updateObject(const std::string &name, std::shared_ptr<BaseObject> ob
     {
         const_cast<Scope *>(parent)->updateObject(name, object); // Update object in parent scope as well.
     }
+
+    // TODO: - if there is an existing pointer there and we OWN it then we need to delete it!!
 
     objects[name] = std::move(object);
 }

@@ -38,7 +38,7 @@ struct NotNode : UnaryOperatorBaseNode
         return NodeType::Not;
     }
 
-    std::shared_ptr<BaseObject> evaluate(Scope &scope) override;
+    BaseObject *evaluate(Scope &scope) override;
 };
 
 
@@ -55,7 +55,7 @@ struct NegationNode : UnaryOperatorBaseNode
         return NodeType::Negation;
     }
 
-    std::shared_ptr<BaseObject> evaluate(Scope &scope) override;
+    BaseObject *evaluate(Scope &scope) override;
 };
 
 
@@ -72,7 +72,7 @@ struct PrefixIncrementNode : UnaryOperatorBaseNode
         return NodeType::PrefixIncrement;
     }
 
-    std::shared_ptr<BaseObject> evaluate(Scope &scope) override;
+    BaseObject *evaluate(Scope &scope) override;
 };
 
 
@@ -89,7 +89,7 @@ struct PrefixDecrementNode : UnaryOperatorBaseNode
         return NodeType::PrefixDecrement;
     }
 
-    std::shared_ptr<BaseObject> evaluate(Scope &scope) override;
+    BaseObject *evaluate(Scope &scope) override;
 };
 
 

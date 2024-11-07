@@ -145,50 +145,50 @@ std::shared_ptr<BaseNode> Parser::parseProgram()
 {
     auto program = parseProgramLines();
 
-    if (program->nodes.size() == 1) // Return single node (more efficient).
+    if (program->programNodes.size() == 1) // Return single node (more efficient).
     {
-        return std::move(program->nodes.front());
+        return std::move(program->programNodes.front());
     }
 
     return program;
 }
 
 
-std::shared_ptr<IntNode> Parser::parseInt()
+std::shared_ptr<AddIntNode> Parser::parseInt()
 {
     Token token = nextToken();
 
     long intValue = strtold(token.value.c_str(), NULL);
 
-    return std::make_shared<IntNode>(intValue);
+    return std::make_shared<AddIntNode>(intValue);
 }
 
 
-std::shared_ptr<FloatNode> Parser::parseFloat()
+std::shared_ptr<AddFloatNode> Parser::parseFloat()
 {
     Token token = nextToken();
 
     double floatValue = strtof(token.value.c_str(), NULL);
 
-    return std::make_shared<FloatNode>(floatValue);
+    return std::make_shared<AddFloatNode>(floatValue);
 }
 
 
-std::shared_ptr<BoolNode> Parser::parseBool()
+std::shared_ptr<AddBoolNode> Parser::parseBool()
 {
     Token token = nextToken();
 
     bool state = (token.value == "true");
 
-    return std::make_shared<BoolNode>(state);
+    return std::make_shared<AddBoolNode>(state);
 }
 
 
-std::shared_ptr<StringNode> Parser::parseString()
+std::shared_ptr<AddStringNode> Parser::parseString()
 {
     Token token = nextToken();
 
-    return std::make_shared<StringNode>(token.value);
+    return std::make_shared<AddStringNode>(token.value);
 }
 
 
@@ -219,15 +219,15 @@ std::shared_ptr<BaseNode> Parser::parseVariableDefinition()
 
     // TODO: - add void typename for functions eventually.
     if (typeName == "int")
-        return std::make_shared<VariableNode>(variableName, VariableNode::Type::Int);
+        return std::make_shared<AddNewVariableNode>(variableName, AddNewVariableNode::VariableType::Int);
     else if (typeName == "float")
-        return std::make_shared<VariableNode>(variableName, VariableNode::Type::Float);
+        return std::make_shared<AddNewVariableNode>(variableName, AddNewVariableNode::VariableType::Float);
     else if (typeName == "bool")
-        return std::make_shared<VariableNode>(variableName, VariableNode::Type::Bool);
+        return std::make_shared<AddNewVariableNode>(variableName, AddNewVariableNode::VariableType::Bool);
     else if (typeName == "string")
-        return std::make_shared<VariableNode>(variableName, VariableNode::Type::String);
+        return std::make_shared<AddNewVariableNode>(variableName, AddNewVariableNode::VariableType::String);
     else if (typeName == "array")
-        return std::make_shared<VariableNode>(variableName, VariableNode::Type::Array);
+        return std::make_shared<AddNewVariableNode>(variableName, AddNewVariableNode::VariableType::Array);
     else
         printWarpError("expected variable type for variable %s.\n", typeName.c_str());
 }
@@ -239,7 +239,7 @@ std::shared_ptr<BaseNode> Parser::parseVariableName()
     Token token = nextToken();
     assert(token.type == Token::Variable);
 
-    return std::make_shared<VariableNameNode>(token.value);
+    return std::make_shared<LookupVariableNode>(token.value);
 }
 
 
@@ -286,14 +286,14 @@ std::shared_ptr<ForLoopNode> Parser::parseFor()
 
     auto brackets = parseDelimited("(", ")", ";", std::bind(&Parser::parseExpression, this));
 
-    if (brackets->nodes.size() != 3)
+    if (brackets->programNodes.size() != 3)
     {
-        printWarpError("Expected 3 arguments for for-loop but got %ld\n", brackets->nodes.size());
+        printWarpError("Expected 3 arguments for for-loop but got %ld\n", brackets->programNodes.size());
     }
 
-    auto start = brackets->nodes[0];
-    auto condition = brackets->nodes[1];
-    auto update = brackets->nodes[2];
+    auto start = brackets->programNodes[0];
+    auto condition = brackets->programNodes[1];
+    auto update = brackets->programNodes[2];
     auto body = parseProgram();
 
     return std::make_shared<ForLoopNode>(start, condition, update, body);
@@ -401,11 +401,11 @@ std::shared_ptr<ArrayAccessNode> Parser::parseArrayAccessor(std::shared_ptr<Base
 
 
 /// [1, 2, 3, 4] OR [true, false, true] OR [1.2, 2.4] OR ["hello, ", "world!"].
-std::shared_ptr<ArrayNode> Parser::parseArray()
+std::shared_ptr<AddArrayNode> Parser::parseArray()
 {
     auto nodes = parseDelimited("[", "]", ",", std::bind(&Parser::parseExpression, this));
 
-    return std::make_shared<ArrayNode>(*nodes);
+    return std::make_shared<AddArrayNode>(nodes->programNodes);
 }
 
 

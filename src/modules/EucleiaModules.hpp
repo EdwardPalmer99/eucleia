@@ -17,8 +17,8 @@
 
 class ModuleNode : public BaseNode
 {
-  public:
-    using Function = std::function<std::shared_ptr<BaseObject>(ProgramNode &callArgs, Scope &scope)>;
+public:
+    using Function = std::function<BaseObject *(ProgramNode &callArgs, Scope &scope)>;
 
     ModuleNode() = default;
     ~ModuleNode() = default;
@@ -29,18 +29,16 @@ class ModuleNode : public BaseNode
     }
 
     /// Add all library functions to the scope this is evaluated in.
-    std::shared_ptr<BaseObject> evaluate(Scope &scope) final;
+    BaseObject *evaluate(Scope &scope) final;
 
-  protected:
+protected:
     void defineFunction(const std::string &name, Function function);
 
-    std::vector<std::shared_ptr<BaseObject>> evaluateArgs(ProgramNode &args, Scope &scope) const;
+    std::vector<BaseObject *> evaluateArgs(ProgramNode &args, Scope &scope) const;
 
-    virtual void defineFunctions()
-    {
-    }
+    virtual void defineFunctions() {}
 
-  private:
+private:
     std::map<std::string, Function> _functionsMap;
 };
 
@@ -48,11 +46,11 @@ class ModuleNode : public BaseNode
 /// Library functions for maths.
 class MathModuleNode : public ModuleNode
 {
-  public:
+public:
     MathModuleNode() = default;
     ~MathModuleNode() = default;
 
-  protected:
+protected:
     void defineFunctions() override;
 };
 
@@ -60,18 +58,18 @@ class MathModuleNode : public ModuleNode
 /// Library functions for input/output.
 class IOModuleNode : public ModuleNode
 {
-  public:
+public:
     IOModuleNode() = default;
     ~IOModuleNode() = default;
 
-  protected:
+protected:
     void defineFunctions() override;
 };
 
 /// Singleton store of libraries.
 class EucleiaModuleLoader
 {
-  public:
+public:
     static EucleiaModuleLoader &getInstance()
     {
         if (!_instance)
@@ -90,12 +88,12 @@ class EucleiaModuleLoader
 
     static std::unique_ptr<EucleiaModuleLoader> _instance;
 
-  protected:
+protected:
     void buildDefaultLibraries();
 
     std::shared_ptr<ModuleNode> getModule(const std::string &name) const;
 
-  private:
+private:
     std::map<std::string, std::shared_ptr<ModuleNode>> _modules;
 };
 
