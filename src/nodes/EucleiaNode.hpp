@@ -51,6 +51,21 @@ public:
         Library
     };
 
+
+    template <class TNode>
+    const TNode &castNode() const
+    {
+        return static_cast<TNode &>(*this);
+    }
+
+
+    template <class TNode>
+    TNode &castNode()
+    {
+        return static_cast<TNode &>(*this);
+    }
+
+
     virtual inline NodeType type() const // TODO: - remove.
     {
         return NodeType::None;

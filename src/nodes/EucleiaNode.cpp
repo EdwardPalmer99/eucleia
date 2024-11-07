@@ -72,11 +72,11 @@ ArrayObject *AddArrayNode::evaluate(Scope &scope)
 /// Create a new FunctionObject from a FunctionNode and register in current scope.
 BaseObject *FunctionNode::evaluate(Scope &scope)
 {
-    auto funcNameNode = std::static_pointer_cast<AddNewVariableNode>(funcName);
+    auto &funcNameNode = funcName->castNode<AddNewVariableNode>();
 
     auto functionObject = scope.createManagedObject<FunctionObject>(getShared());
 
-    scope.defineObject(funcNameNode->variableName, functionObject);
+    scope.defineObject(funcNameNode.variableName, functionObject);
 
     return functionObject;
 }
@@ -202,8 +202,8 @@ BaseObject *AssignNode::evaluate(Scope &scope)
     auto rightEvaluated = right->evaluate(scope);
 
     // 3. Update value of variable object.
-    auto leftVariableName = std::static_pointer_cast<LookupVariableNode>(left);
-    scope.updateObject(leftVariableName->variableName, rightEvaluated);
+    auto &leftVariableName = left->castNode<LookupVariableNode>();
+    scope.updateObject(leftVariableName.variableName, rightEvaluated);
 
     return nullptr;
 }
@@ -390,18 +390,18 @@ BaseObject *FunctionCallNode::evaluate(Scope &scope)
 
         // Check that the evaluatedArg type (RHS) is compatible with the corresponding
         // (LHS) variable.
-        auto argVariable = std::static_pointer_cast<AddNewVariableNode>(funcNode->funcArgs->programNodes[iarg++]);
+        auto &argVariable = funcNode->funcArgs->programNodes[iarg++]->castNode<AddNewVariableNode>();
 
-        if (!argVariable->passesAssignmentTypeCheck(*evaluatedArg))
+        if (!argVariable.passesAssignmentTypeCheck(*evaluatedArg))
         {
             printWarpError("incorrect type for argument '%s' of function '%s'. Expected type '%s'.\n",
-                           argVariable->variableName.c_str(),
+                           argVariable.variableName.c_str(),
                            funcName->variableName.c_str(),
-                           argVariable->description().c_str());
+                           argVariable.description().c_str());
         }
 
         // Define variable in the function's scope.
-        funcScope.defineObject(argVariable->variableName, evaluatedArg);
+        funcScope.defineObject(argVariable.variableName, evaluatedArg);
     }
 
     // Evaluate the function body in our function scope now that we've added the
