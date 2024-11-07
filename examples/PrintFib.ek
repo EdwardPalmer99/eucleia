@@ -9,4 +9,4 @@ func printFib(int min, int max)
 	}
 }
 
-printFib(1, 20);
+printFib(1, 25);
