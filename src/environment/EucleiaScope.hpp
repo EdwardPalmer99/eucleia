@@ -36,6 +36,10 @@ public:
         return static_cast<T *>(ownedObject);
     }
 
+    // TODO: - when we create an object with no attached variable, we have to
+    // think about whether we should keep it and for how long.
+
+    // TODO: - rename to variable.
     /// Get an object and cast to the desired type. Returns null if not found or
     /// cast fails.
     template <typename T>

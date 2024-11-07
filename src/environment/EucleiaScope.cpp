@@ -101,11 +101,11 @@ void Scope::updateObject(const std::string &name, BaseObject *object)
 
     // TODO: - If the existing object being replaced is also in our owned objects set
     // then we need to delete it.
-    // if (ownedObjects.count(existingObject))
-    // {
-    //     ownedObjects.erase(existingObject);
-    //     delete existingObject;
-    // }
+    if (ownedObjects.count(existingObject))
+    {
+        ownedObjects.erase(existingObject);
+        delete existingObject;
+    }
 
     // Update the mapping in our scope.
     objects[name] = object;
@@ -126,11 +126,11 @@ void Scope::removeObject(const std::string &name)
     auto existingObject = objects[name];
 
     // TODO: - should we remove object we own linked to a variable?
-    // if (existingObject && ownedObjects.count(existingObject))
-    // {
-    //     delete existingObject;
-    //     ownedObjects.erase(existingObject);
-    // }
+    if (existingObject && ownedObjects.count(existingObject))
+    {
+        delete existingObject;
+        ownedObjects.erase(existingObject);
+    }
 
     objects.erase(name);
     objectCreationScope.erase(name);
