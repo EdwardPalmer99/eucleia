@@ -58,6 +58,7 @@ public:
         return typeid(*this) == typeid(other);
     }
 
+    // TODO: - clone should be called with a scope specified to handle memory.
     /// Implement creating a copy for derived classes.
     virtual BaseObject *clone() const = 0;
 
@@ -310,6 +311,7 @@ public:
     ArrayObject() = default;
     ArrayObject(std::vector<BaseObject *> values_) : values(std::move(values_)) {}
 
+    // TODO: - who owns the objects in the array? MEMORY LEAK!!
     /// Performs a deep copy of array. This will enable the array to be returned
     /// by a function without objects (defined in function scope) being destroyed.
     ArrayObject *clone() const override
