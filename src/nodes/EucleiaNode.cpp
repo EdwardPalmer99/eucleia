@@ -220,13 +220,22 @@ BaseObject *BreakNode::evaluate(Scope &scope)
 
 BaseObject *ReturnNode::evaluate(Scope &scope)
 {
+    gEnvironmentContext.returnValue = nullptr;
+
     if (returnNode != nullptr) // i.e. return true;
     {
-        gEnvironmentContext.returnValue = returnNode->evaluate(scope);
-    }
-    else
-    {
-        gEnvironmentContext.returnValue = nullptr;
+        // Evaluate in function scope.
+        BaseObject *tmpResult = returnNode->evaluate(scope);
+        if (tmpResult != nullptr)
+        {
+            // Get the scope in which the function was called. We copy the object to this scope.
+            // This is because the function scope will destroy the return object as soon as its
+            // destructor is called and we need this object to persist until parent scope destructor called.
+            assert(scope.parentScope() != nullptr);
+
+            BaseObject *result = scope.parentScope()->cloneObject(tmpResult);
+            gEnvironmentContext.returnValue = result;
+        }
     }
 
     longjmp(*gEnvironmentContext.returnJumpPoint, 1);

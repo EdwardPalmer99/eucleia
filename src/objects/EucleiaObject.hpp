@@ -58,6 +58,9 @@ public:
         return typeid(*this) == typeid(other);
     }
 
+    /// Implement creating a copy for derived classes.
+    virtual BaseObject *clone() const = 0;
+
     virtual std::string typeName() const = 0;
 
 protected:
@@ -73,6 +76,11 @@ public:
     IntObject(long value_ = 0) : value(value_) {}
 
     std::string typeName() const override { return "IntObject"; }
+
+    IntObject *clone() const override
+    {
+        return new IntObject(value);
+    }
 
     FloatObject castToFloat() const;
 
@@ -180,6 +188,11 @@ public:
 
     std::string typeName() const override { return "FloatObject"; }
 
+    FloatObject *clone() const override
+    {
+        return new FloatObject(value);
+    }
+
     FloatObject &operator++()
     {
         ++value;
@@ -259,6 +272,10 @@ public:
 
     std::string typeName() const override { return "StringObject"; }
 
+    StringObject *clone() const override
+    {
+        return new StringObject(value);
+    }
 
     StringObject operator+(const StringObject &other) const
     {
@@ -293,6 +310,20 @@ public:
     ArrayObject() = default;
     ArrayObject(std::vector<BaseObject *> values_) : values(std::move(values_)) {}
 
+    /// Performs a deep copy of array. This will enable the array to be returned
+    /// by a function without objects (defined in function scope) being destroyed.
+    ArrayObject *clone() const override
+    {
+        std::vector<BaseObject *> cloneValues(values.size());
+
+        for (BaseObject *obj : values)
+        {
+            cloneValues.push_back(obj->clone());
+        }
+
+        return new ArrayObject(cloneValues);
+    }
+
     std::string typeName() const override { return "ArrayObject"; }
 
     // TODO: - eventually just store references to BaseObject & or pointers and return reference.
@@ -316,6 +347,11 @@ public:
 
     std::string typeName() const override { return "FunctionObject"; }
 
+    FunctionObject *clone() const override
+    {
+        return new FunctionObject(functionValue);
+    }
+
     std::shared_ptr<FunctionNode> functionValue{nullptr}; // TODO: - weird code.
 };
 
@@ -331,6 +367,11 @@ public:
     LibraryFunctionObject(LibraryFunction function_) : evaluate(std::move(function_)) {}
 
     std::string typeName() const override { return "LibraryFunctionObject"; }
+
+    LibraryFunctionObject *clone() const override
+    {
+        return new LibraryFunctionObject(evaluate);
+    }
 
     LibraryFunction evaluate;
 };

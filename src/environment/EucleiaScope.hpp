@@ -59,7 +59,23 @@ public:
         return newObject;
     }
 
-    // TODO: - rename to varaible: defineVariable(name, void *ptr);
+    /// Clones and object and assumes ownership.
+    // TODO: - move into cpp file.
+    BaseObject *cloneObject(const BaseObject *object)
+    {
+        if (!object)
+            return nullptr;
+
+        BaseObject *newObject = object->clone();
+        ownedObjects.insert(newObject);
+
+        return newObject;
+    }
+
+    /// Returns non-const reference to parent scope.
+    inline Scope *parentScope() const { return const_cast<Scope *>(parent); }
+
+    // TODO: - rename to variable: defineVariable(name, void *ptr);
 
     /// Create a link between a variable name and an object owned by the scope.
     void defineObject(const std::string &name, BaseObject *object);
