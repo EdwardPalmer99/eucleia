@@ -31,7 +31,7 @@ BaseObject *NegationNode::evaluate(Scope &scope)
 BaseObject *PrefixIncrementNode::evaluate(Scope &scope)
 {
     // 1. Body should be an already-declared variable.
-    assert(body->type() == BaseNode::VariableName);
+    assert(body->isNodeType<LookupVariableNode>());
 
     // 2. Object associated with variable name in scope must be integer or float.
     auto bodyEvaluated = body->evaluate(scope);
@@ -55,7 +55,7 @@ BaseObject *PrefixIncrementNode::evaluate(Scope &scope)
 BaseObject *PrefixDecrementNode::evaluate(Scope &scope)
 {
     // 1. Body should be an already-declared variable.
-    assert(body->type() == BaseNode::VariableName);
+    assert(body->isNodeType<LookupVariableNode>());
 
     // 2. Object associated with variable name in scope must be integer or float.
     auto bodyEvaluated = body->evaluate(scope);

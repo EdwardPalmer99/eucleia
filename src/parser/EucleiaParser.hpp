@@ -75,7 +75,7 @@ protected:
 
     std::shared_ptr<FunctionCallNode> parseFunctionCall(std::shared_ptr<BaseNode> lastExpression);
 
-    void skipSemicolonLineEndingIfRequired(BaseNode::NodeType expressionType);
+    void skipSemicolonLineEndingIfRequired(const BaseNode &node);
 
     std::string parentDirectory(const std::string &fpath);
 
@@ -89,8 +89,6 @@ private:
     std::shared_ptr<BaseNode> parseAtomicallyExpression();
 
     int getPrecedence(void);
-
-    void assertNodeType(const std::shared_ptr<BaseNode> &node, BaseNode::NodeType expectedType);
 
     std::shared_ptr<BaseNode> maybeArrayAccess(ParseMethod expression);
 

@@ -23,11 +23,6 @@ public:
     ModuleNode() = default;
     ~ModuleNode() = default;
 
-    inline NodeType type() const override
-    {
-        return NodeType::Library;
-    }
-
     /// Add all library functions to the scope this is evaluated in.
     BaseObject *evaluate(Scope &scope) final;
 

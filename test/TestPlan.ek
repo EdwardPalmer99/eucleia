@@ -20,6 +20,14 @@ func intTestCase()
         int c = ++a;
         TEST(c == 2 && a == 2, "c = ++a");
     }
+
+    //TEST(--2 == 1, "--2 == 1");
+    //TEST(++1 == 2, "++1 == 2");
+    TEST(2 > 1, "2 > 1");
+    TEST(2 >= 1, "2 >= 1");
+    TEST(1 < 2, "1 < 2");
+    TEST(1 <= 2, "1 <= 2");
+    TEST(1 != 2, "1 != 2");
 }
 
 
@@ -58,6 +66,11 @@ func stringTestCase()
     TEST(("a" + "b") == "ab", "string +");
 }
 
+func boolTestCase()
+{
+    TEST(!true == false, "!true");
+}
+
 
 // Entry-point for tests:
 {
@@ -66,4 +79,5 @@ func stringTestCase()
     stringTestCase();
     //arrayAccessTestCase();
     //arrayModificationTestCase();
+    boolTestCase();
 }

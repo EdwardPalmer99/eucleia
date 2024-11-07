@@ -33,11 +33,6 @@ struct NotNode : UnaryOperatorBaseNode
     {
     }
 
-    inline NodeType type() const override
-    {
-        return NodeType::Not;
-    }
-
     BaseObject *evaluate(Scope &scope) override;
 };
 
@@ -48,11 +43,6 @@ struct NegationNode : UnaryOperatorBaseNode
     NegationNode(SharedNode _body)
         : UnaryOperatorBaseNode(std::move(_body))
     {
-    }
-
-    inline NodeType type() const override
-    {
-        return NodeType::Negation;
     }
 
     BaseObject *evaluate(Scope &scope) override;
@@ -67,11 +57,6 @@ struct PrefixIncrementNode : UnaryOperatorBaseNode
     {
     }
 
-    inline NodeType type() const override
-    {
-        return NodeType::PrefixIncrement;
-    }
-
     BaseObject *evaluate(Scope &scope) override;
 };
 
@@ -82,11 +67,6 @@ struct PrefixDecrementNode : UnaryOperatorBaseNode
     PrefixDecrementNode(SharedNode _body)
         : UnaryOperatorBaseNode(std::move(_body))
     {
-    }
-
-    inline NodeType type() const override
-    {
-        return NodeType::PrefixDecrement;
     }
 
     BaseObject *evaluate(Scope &scope) override;

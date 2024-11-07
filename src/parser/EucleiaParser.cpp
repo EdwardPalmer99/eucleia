@@ -8,6 +8,7 @@
 #include "EucleiaParser.hpp"
 #include "EucleiaModules.hpp"
 #include "EucleiaUtility.hpp"
+#include "TestModule.hpp"
 #include <assert.h>
 #include <cstring>
 #include <memory>
@@ -29,11 +30,9 @@ std::shared_ptr<FileNode> Parser::buildAST()
     {
         auto node = parseExpression();
 
-        auto nodeType = node ? node->type() : BaseNode::None;
+        nodes.push_back(node);
 
-        nodes.push_back(std::move(node));
-
-        skipSemicolonLineEndingIfRequired(nodeType);
+        skipSemicolonLineEndingIfRequired(*node);
     }
 
     nodes.shrink_to_fit();
@@ -645,23 +644,22 @@ std::shared_ptr<ProgramNode> Parser::parseDelimited(std::string start,
 }
 
 
-void Parser::skipSemicolonLineEndingIfRequired(BaseNode::NodeType expressionType)
+void Parser::skipSemicolonLineEndingIfRequired(const BaseNode &node)
 {
-    switch (expressionType)
-    {
-        case BaseNode::Library:
-        case BaseNode::File:
-        case BaseNode::Program:
-        case BaseNode::If:
-        case BaseNode::While:
-        case BaseNode::DoWhile:
-        case BaseNode::ForLoop:
-        case BaseNode::Function:
-            break;
-        default:
-            skipPunctuation(";");
-            break;
-    }
+    bool doSkipPunctuation = (node.isNodeType<ModuleNode>() || // Bit ugly.
+                              node.isNodeType<MathModuleNode>() ||
+                              node.isNodeType<IOModuleNode>() ||
+                              node.isNodeType<TestModule>() ||
+                              node.isNodeType<FileNode>() ||
+                              node.isNodeType<ProgramNode>() ||
+                              node.isNodeType<IfNode>() ||
+                              node.isNodeType<WhileNode>() ||
+                              node.isNodeType<DoWhileNode>() ||
+                              node.isNodeType<ForLoopNode>() ||
+                              node.isNodeType<FunctionNode>());
+
+    if (!doSkipPunctuation)
+        skipPunctuation(";");
 }
 
 
@@ -675,11 +673,9 @@ std::shared_ptr<ProgramNode> Parser::parseProgramLines()
     {
         auto expression = parseExpression();
 
-        auto expressionType = expression ? expression->type() : BaseNode::None;
+        parsedNodes.push_back(expression);
 
-        parsedNodes.push_back(std::move(expression));
-
-        skipSemicolonLineEndingIfRequired(expressionType);
+        skipSemicolonLineEndingIfRequired(*expression);
     }
 
     skipPunctuation("}");
@@ -796,10 +792,4 @@ void Parser::unexpectedToken()
     Token &token = peekToken();
 
     printWarpError("Unexpected token of type '%s' and value '%s'.\n", token.description().c_str(), token.value.c_str());
-}
-
-
-void Parser::assertNodeType(const std::shared_ptr<BaseNode> &node, BaseNode::NodeType expectedType)
-{
-    assert(node->type() == expectedType);
 }

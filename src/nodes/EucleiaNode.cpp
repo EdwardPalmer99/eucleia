@@ -181,21 +181,20 @@ BaseObject *BinaryNode::evaluate(Scope &scope)
 BaseObject *AssignNode::evaluate(Scope &scope)
 {
     // Special case; example: array[0] = 3;
-    if (left->type() == NodeType::ArrayAccess)
+    if (left->isNodeType<ArrayAccessNode>())
     {
         return evaluateArrayAccess(scope);
     }
 
     // 1. Cast LHS to a variable node or a variable name node.
-    assert(left->type() == NodeType::VariableName ||
-           left->type() == NodeType::Variable);
+    assert(left->isNodeType<AddNewVariableNode>() || left->isNodeType<LookupVariableNode>());
 
     // Evaluate the LHS.
     // Case 1: VariableName node --> returns shared pointer to existing object (not useful).
     // Case 2: Variable node --> creates new object in scope.
-    if (left->type() == NodeType::Variable)
+    if (left->isNodeType<AddNewVariableNode>())
     {
-        left->evaluate(scope);
+        (void)left->evaluate(scope);
     }
 
     // 2. Evaluate the right-hand-side.
@@ -415,7 +414,7 @@ BaseObject *FunctionCallNode::evaluate(Scope &scope)
 /// Special method called if LHS is an array accessor.
 BaseObject *AssignNode::evaluateArrayAccess(Scope &scope)
 {
-    assert(left->type() == NodeType::ArrayAccess);
+    assert(left->isNodeType<ArrayAccessNode>());
 
     // 1. Get the array object at that index.
     auto currentValue = left->evaluate(scope);

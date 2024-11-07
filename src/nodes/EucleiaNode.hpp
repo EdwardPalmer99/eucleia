@@ -21,36 +21,6 @@ public:
     BaseNode() = default;
     virtual ~BaseNode() = default;
 
-    enum NodeType // TODO: - remove this crap and use typeid()
-    {
-        None,
-        Binary,
-        Assignment,
-        Program,
-        Array,
-        ArrayAccess,
-        If,
-        While,
-        DoWhile,
-        ForLoop,
-        Function,
-        FunctionCall,
-        Float,
-        Int,
-        Bool,
-        String,
-        Variable,
-        VariableName,
-        Break,
-        Return,
-        Not,
-        PrefixIncrement,
-        PrefixDecrement,
-        Negation,
-        File,
-        Library
-    };
-
 
     template <class TNode>
     const TNode &castNode() const
@@ -66,9 +36,16 @@ public:
     }
 
 
-    virtual inline NodeType type() const // TODO: - remove.
+    template <class TNode>
+    bool isNodeType() const
     {
-        return NodeType::None;
+        return typeid(*this) == typeid(TNode);
+    }
+
+
+    bool typesMatch(const BaseNode &other) const
+    {
+        return typeid(*this) == typeid(other);
     }
 
     virtual BaseObject *evaluate(Scope &scope) = 0;
@@ -78,19 +55,12 @@ public:
     {
         return static_cast<T *>(evaluate(scope));
     }
-
-    // TODO: - add cast methods here.
 };
 
 class AddBoolNode : public BaseNode
 {
 public:
     AddBoolNode(bool state_) : boolObject(state_) {}
-
-    inline NodeType type() const override
-    {
-        return NodeType::Bool;
-    }
 
     // Creates a BoolObject in the scope and returns managed pointer to it.
     BoolObject *evaluate(Scope &scope) override;
@@ -105,11 +75,6 @@ class AddIntNode : public BaseNode
 public:
     AddIntNode(long int_) : intObject(int_) {}
 
-    inline NodeType type() const override
-    {
-        return NodeType::Int;
-    }
-
     // Creates an IntObject in the scope and returns a managed pointer to it.
     IntObject *evaluate(Scope &scope) override;
 
@@ -123,11 +88,6 @@ class AddFloatNode : public BaseNode
 public:
     AddFloatNode(double float_) : floatObject(float_) {}
 
-    inline NodeType type() const override
-    {
-        return NodeType::Float;
-    }
-
     // Returns a FloatObject in the current scope and returns a managed pointer.
     FloatObject *evaluate(Scope &scope) override;
 
@@ -139,11 +99,6 @@ class AddStringNode : public BaseNode
 {
 public:
     AddStringNode(std::string string_) : stringObject(std::move(string_)) {}
-
-    inline NodeType type() const override
-    {
-        return NodeType::String;
-    }
 
     // Creates a StringObject in the scope and returns managed pointer to it.
     StringObject *evaluate(Scope &scope) override;
@@ -157,11 +112,6 @@ class LookupVariableNode : public BaseNode
 {
 public:
     LookupVariableNode(std::string variableName_) : variableName(std::move(variableName_)) {}
-
-    inline NodeType type() const override
-    {
-        return NodeType::VariableName;
-    }
 
     // Returns the object in the scope associated with a variable name.
     BaseObject *evaluate(Scope &scope) override;
@@ -190,11 +140,6 @@ public:
         : LookupVariableNode(std::move(variableName_)),
           variableType(variableType_) {}
 
-    inline NodeType type() const override
-    {
-        return NodeType::Variable;
-    }
-
     // Creates a new empty variable of a given type to the scope (i.e. int a;).
     BaseObject *evaluate(Scope &scope) override;
 
@@ -211,11 +156,6 @@ class ProgramNode : public BaseNode
 public:
     ProgramNode(std::vector<SharedNode> nodes_) : programNodes(std::move(nodes_)) {}
 
-    inline NodeType type() const override
-    {
-        return NodeType::Program;
-    }
-
     // Evaluates a vector of nodes sequentially. Returns nullptr.
     BaseObject *evaluate(Scope &scope) override;
 
@@ -231,11 +171,6 @@ public:
 
     // Create a new ArrayObject in the current scope and return a managed pointer to it.
     ArrayObject *evaluate(Scope &scope) override;
-
-    inline NodeType type() const override
-    {
-        return NodeType::Array;
-    }
 };
 
 
@@ -248,11 +183,6 @@ public:
     // scope node in order to ensure that any functions declared in this file will
     // be added to the master file by using the same global scope - TODO: - think about this logic.
     BaseObject *evaluate(Scope &globalScope) override;
-
-    inline NodeType type() const override
-    {
-        return NodeType::File;
-    }
 };
 
 // TODO: - rewrite this...
@@ -263,11 +193,6 @@ public:
         : arrayName(std::static_pointer_cast<AddNewVariableNode>(_arrayName)),
           arrayIndex(std::static_pointer_cast<AddIntNode>(_arrayIndex))
     {
-    }
-
-    inline NodeType type() const override
-    {
-        return NodeType::ArrayAccess;
     }
 
     BaseObject *evaluate(Scope &scope) override;
@@ -289,11 +214,6 @@ public:
     {
     }
 
-    inline NodeType type() const override
-    {
-        return NodeType::If;
-    }
-
     // Evaluate an if/else statement in current scope. Returns nullptr.
     BaseObject *evaluate(Scope &scope) override;
 
@@ -311,11 +231,6 @@ public:
         : condition(std::move(condition_)),
           body(std::move(body_))
     {
-    }
-
-    inline NodeType type() const override
-    {
-        return NodeType::DoWhile;
     }
 
     // Evaluate a do-while loop in current scope. Returns nullptr.
@@ -337,11 +252,6 @@ public:
 
     // Evaluate a while loop in current scope. Returns nullptr.
     BaseObject *evaluate(Scope &scope) override;
-
-    inline NodeType type() const override
-    {
-        return NodeType::While;
-    }
 };
 
 
@@ -356,10 +266,6 @@ public:
     {
     }
 
-    inline NodeType type() const override
-    {
-        return NodeType::ForLoop;
-    }
 
     // Evaluates a for-loop in current scope. Returns nullptr.
     BaseObject *evaluate(Scope &scope) override;
@@ -379,11 +285,6 @@ public:
         : funcName(std::static_pointer_cast<AddNewVariableNode>(funcName_)),
           funcArgs(std::static_pointer_cast<ProgramNode>(funcArgs_))
     {
-    }
-
-    inline NodeType type() const override
-    {
-        return NodeType::FunctionCall;
     }
 
     // TODO: - don't forget to do performance profiling for Fib sequence and see memory requirements for old and new version
@@ -407,11 +308,6 @@ public:
     {
     }
 
-    inline NodeType type() const override
-    {
-        return NodeType::Function;
-    }
-
     std::shared_ptr<FunctionNode> getShared()
     {
         return shared_from_this();
@@ -425,11 +321,7 @@ public:
 
 class BreakNode : public BaseNode
 {
-    inline NodeType type() const override
-    {
-        return NodeType::Break;
-    }
-
+public:
     BaseObject *evaluate(Scope &scope) override;
 };
 
@@ -440,11 +332,6 @@ public:
     ReturnNode(SharedNode _returnValue = nullptr)
         : returnNode(std::move(_returnValue))
     {
-    }
-
-    inline NodeType type() const override
-    {
-        return NodeType::Return;
     }
 
     BaseObject *evaluate(Scope &scope) override;
@@ -460,11 +347,6 @@ public:
         : left(std::move(_left)),
           right(std::move(_right))
     {
-    }
-
-    inline NodeType type() const override
-    {
-        return NodeType::Assignment;
     }
 
     BaseObject *evaluate(Scope &scope) override;
@@ -483,11 +365,6 @@ public:
         : AssignNode(std::move(left_), std::move(right_)),
           binaryOperator(std::move(binaryOperator_))
     {
-    }
-
-    inline NodeType type() const override
-    {
-        return NodeType::Binary;
     }
 
     BaseObject *evaluate(Scope &scope) override;

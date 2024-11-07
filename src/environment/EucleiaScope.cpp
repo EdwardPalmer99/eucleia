@@ -80,7 +80,7 @@ void Scope::updateObject(const std::string &name, BaseObject *object)
     assert(object && hasObject(name));
 
     // Perform basic type-checking.
-    auto &existingObject = objects[name];
+    auto existingObject = objects[name];
 
     // NB: None type means it has not yet been initialized.
     if (existingObject && !existingObject->typesMatch((*object)))
@@ -99,9 +99,16 @@ void Scope::updateObject(const std::string &name, BaseObject *object)
         const_cast<Scope *>(parent)->updateObject(name, object); // Update object in parent scope as well.
     }
 
-    // TODO: - if there is an existing pointer there and we OWN it then we need to delete it!!
+    // TODO: - If the existing object being replaced is also in our owned objects set
+    // then we need to delete it.
+    // if (ownedObjects.count(existingObject))
+    // {
+    //     ownedObjects.erase(existingObject);
+    //     delete existingObject;
+    // }
 
-    objects[name] = std::move(object);
+    // Update the mapping in our scope.
+    objects[name] = object;
 }
 
 
@@ -116,6 +123,15 @@ void Scope::checkForVariableNameClash(const std::string &name) const
 
 void Scope::removeObject(const std::string &name)
 {
+    auto existingObject = objects[name];
+
+    // TODO: - should we remove object we own linked to a variable?
+    // if (existingObject && ownedObjects.count(existingObject))
+    // {
+    //     delete existingObject;
+    //     ownedObjects.erase(existingObject);
+    // }
+
     objects.erase(name);
     objectCreationScope.erase(name);
 }
