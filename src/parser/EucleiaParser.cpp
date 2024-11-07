@@ -8,6 +8,7 @@
 #include "EucleiaParser.hpp"
 #include "EucleiaModules.hpp"
 #include "EucleiaUtility.hpp"
+#include "TestModule.hpp"
 #include <assert.h>
 #include <cstring>
 #include <memory>
@@ -29,11 +30,9 @@ std::shared_ptr<FileNode> Parser::buildAST()
     {
         auto node = parseExpression();
 
-        auto nodeType = node ? node->type() : BaseNode::None;
+        nodes.push_back(node);
 
-        nodes.push_back(std::move(node));
-
-        skipSemicolonLineEndingIfRequired(nodeType);
+        skipSemicolonLineEndingIfRequired(*node);
     }
 
     nodes.shrink_to_fit();
@@ -145,50 +144,50 @@ std::shared_ptr<BaseNode> Parser::parseProgram()
 {
     auto program = parseProgramLines();
 
-    if (program->nodes.size() == 1) // Return single node (more efficient).
+    if (program->programNodes.size() == 1) // Return single node (more efficient).
     {
-        return std::move(program->nodes.front());
+        return std::move(program->programNodes.front());
     }
 
     return program;
 }
 
 
-std::shared_ptr<IntNode> Parser::parseInt()
+std::shared_ptr<AddIntNode> Parser::parseInt()
 {
     Token token = nextToken();
 
     long intValue = strtold(token.value.c_str(), NULL);
 
-    return std::make_shared<IntNode>(intValue);
+    return std::make_shared<AddIntNode>(intValue);
 }
 
 
-std::shared_ptr<FloatNode> Parser::parseFloat()
+std::shared_ptr<AddFloatNode> Parser::parseFloat()
 {
     Token token = nextToken();
 
     double floatValue = strtof(token.value.c_str(), NULL);
 
-    return std::make_shared<FloatNode>(floatValue);
+    return std::make_shared<AddFloatNode>(floatValue);
 }
 
 
-std::shared_ptr<BoolNode> Parser::parseBool()
+std::shared_ptr<AddBoolNode> Parser::parseBool()
 {
     Token token = nextToken();
 
     bool state = (token.value == "true");
 
-    return std::make_shared<BoolNode>(state);
+    return std::make_shared<AddBoolNode>(state);
 }
 
 
-std::shared_ptr<StringNode> Parser::parseString()
+std::shared_ptr<AddStringNode> Parser::parseString()
 {
     Token token = nextToken();
 
-    return std::make_shared<StringNode>(token.value);
+    return std::make_shared<AddStringNode>(token.value);
 }
 
 
@@ -219,15 +218,15 @@ std::shared_ptr<BaseNode> Parser::parseVariableDefinition()
 
     // TODO: - add void typename for functions eventually.
     if (typeName == "int")
-        return std::make_shared<VariableNode>(variableName, VariableNode::Type::Int);
+        return std::make_shared<AddNewVariableNode>(variableName, AddNewVariableNode::VariableType::Int);
     else if (typeName == "float")
-        return std::make_shared<VariableNode>(variableName, VariableNode::Type::Float);
+        return std::make_shared<AddNewVariableNode>(variableName, AddNewVariableNode::VariableType::Float);
     else if (typeName == "bool")
-        return std::make_shared<VariableNode>(variableName, VariableNode::Type::Bool);
+        return std::make_shared<AddNewVariableNode>(variableName, AddNewVariableNode::VariableType::Bool);
     else if (typeName == "string")
-        return std::make_shared<VariableNode>(variableName, VariableNode::Type::String);
+        return std::make_shared<AddNewVariableNode>(variableName, AddNewVariableNode::VariableType::String);
     else if (typeName == "array")
-        return std::make_shared<VariableNode>(variableName, VariableNode::Type::Array);
+        return std::make_shared<AddNewVariableNode>(variableName, AddNewVariableNode::VariableType::Array);
     else
         printWarpError("expected variable type for variable %s.\n", typeName.c_str());
 }
@@ -239,7 +238,7 @@ std::shared_ptr<BaseNode> Parser::parseVariableName()
     Token token = nextToken();
     assert(token.type == Token::Variable);
 
-    return std::make_shared<VariableNameNode>(token.value);
+    return std::make_shared<LookupVariableNode>(token.value);
 }
 
 
@@ -286,14 +285,14 @@ std::shared_ptr<ForLoopNode> Parser::parseFor()
 
     auto brackets = parseDelimited("(", ")", ";", std::bind(&Parser::parseExpression, this));
 
-    if (brackets->nodes.size() != 3)
+    if (brackets->programNodes.size() != 3)
     {
-        printWarpError("Expected 3 arguments for for-loop but got %ld\n", brackets->nodes.size());
+        printWarpError("Expected 3 arguments for for-loop but got %ld\n", brackets->programNodes.size());
     }
 
-    auto start = brackets->nodes[0];
-    auto condition = brackets->nodes[1];
-    auto update = brackets->nodes[2];
+    auto start = brackets->programNodes[0];
+    auto condition = brackets->programNodes[1];
+    auto update = brackets->programNodes[2];
     auto body = parseProgram();
 
     return std::make_shared<ForLoopNode>(start, condition, update, body);
@@ -401,11 +400,11 @@ std::shared_ptr<ArrayAccessNode> Parser::parseArrayAccessor(std::shared_ptr<Base
 
 
 /// [1, 2, 3, 4] OR [true, false, true] OR [1.2, 2.4] OR ["hello, ", "world!"].
-std::shared_ptr<ArrayNode> Parser::parseArray()
+std::shared_ptr<AddArrayNode> Parser::parseArray()
 {
     auto nodes = parseDelimited("[", "]", ",", std::bind(&Parser::parseExpression, this));
 
-    return std::make_shared<ArrayNode>(*nodes);
+    return std::make_shared<AddArrayNode>(nodes->programNodes);
 }
 
 
@@ -645,23 +644,22 @@ std::shared_ptr<ProgramNode> Parser::parseDelimited(std::string start,
 }
 
 
-void Parser::skipSemicolonLineEndingIfRequired(BaseNode::NodeType expressionType)
+void Parser::skipSemicolonLineEndingIfRequired(const BaseNode &node)
 {
-    switch (expressionType)
-    {
-        case BaseNode::Library:
-        case BaseNode::File:
-        case BaseNode::Program:
-        case BaseNode::If:
-        case BaseNode::While:
-        case BaseNode::DoWhile:
-        case BaseNode::ForLoop:
-        case BaseNode::Function:
-            break;
-        default:
-            skipPunctuation(";");
-            break;
-    }
+    bool doSkipPunctuation = (node.isNodeType<ModuleNode>() || // Bit ugly.
+                              node.isNodeType<MathModuleNode>() ||
+                              node.isNodeType<IOModuleNode>() ||
+                              node.isNodeType<TestModule>() ||
+                              node.isNodeType<FileNode>() ||
+                              node.isNodeType<ProgramNode>() ||
+                              node.isNodeType<IfNode>() ||
+                              node.isNodeType<WhileNode>() ||
+                              node.isNodeType<DoWhileNode>() ||
+                              node.isNodeType<ForLoopNode>() ||
+                              node.isNodeType<FunctionNode>());
+
+    if (!doSkipPunctuation)
+        skipPunctuation(";");
 }
 
 
@@ -675,11 +673,9 @@ std::shared_ptr<ProgramNode> Parser::parseProgramLines()
     {
         auto expression = parseExpression();
 
-        auto expressionType = expression ? expression->type() : BaseNode::None;
+        parsedNodes.push_back(expression);
 
-        parsedNodes.push_back(std::move(expression));
-
-        skipSemicolonLineEndingIfRequired(expressionType);
+        skipSemicolonLineEndingIfRequired(*expression);
     }
 
     skipPunctuation("}");
@@ -796,10 +792,4 @@ void Parser::unexpectedToken()
     Token &token = peekToken();
 
     printWarpError("Unexpected token of type '%s' and value '%s'.\n", token.description().c_str(), token.value.c_str());
-}
-
-
-void Parser::assertNodeType(const std::shared_ptr<BaseNode> &node, BaseNode::NodeType expectedType)
-{
-    assert(node->type() == expectedType);
 }

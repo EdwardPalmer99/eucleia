@@ -22,16 +22,6 @@ void Interpreter::evaluateFile(const std::string &fpath)
     // 2. Create global scope.
     Scope globalScope;
 
-    // 3. Evaluate abstract symbol tree.
-    std::ostringstream oss;
-
-    auto *bufferPtr = std::cout.rdbuf();
-
-    std::cout.rdbuf(oss.rdbuf());
-
-    ast->evaluate(globalScope);
-
-    std::cout.rdbuf(bufferPtr);
-
-    std::cout << oss.str();
+    // 3. Evaluate AST.
+    (void)ast->evaluate(globalScope);
 }

@@ -31,6 +31,8 @@ class FloatObject;
 class BaseObject
 {
 public:
+    virtual ~BaseObject() = default;
+
     /// Cast to object type.
     template <class TObject>
     const TObject &castObject() const
@@ -56,11 +58,14 @@ public:
         return typeid(*this) == typeid(other);
     }
 
+    // TODO: - clone should be called with a scope specified to handle memory.
+    /// Implement creating a copy for derived classes.
+    virtual BaseObject *clone() const = 0;
+
     virtual std::string typeName() const = 0;
 
 protected:
     BaseObject() = default;
-    virtual ~BaseObject() = default;
 };
 
 /**
@@ -72,6 +77,11 @@ public:
     IntObject(long value_ = 0) : value(value_) {}
 
     std::string typeName() const override { return "IntObject"; }
+
+    IntObject *clone() const override
+    {
+        return new IntObject(value);
+    }
 
     FloatObject castToFloat() const;
 
@@ -179,6 +189,11 @@ public:
 
     std::string typeName() const override { return "FloatObject"; }
 
+    FloatObject *clone() const override
+    {
+        return new FloatObject(value);
+    }
+
     FloatObject &operator++()
     {
         ++value;
@@ -258,6 +273,10 @@ public:
 
     std::string typeName() const override { return "StringObject"; }
 
+    StringObject *clone() const override
+    {
+        return new StringObject(value);
+    }
 
     StringObject operator+(const StringObject &other) const
     {
@@ -290,18 +309,33 @@ struct ArrayObject : public BaseObject
 {
 public:
     ArrayObject() = default;
-    ArrayObject(std::vector<std::shared_ptr<BaseObject>> values_) : values(std::move(values_)) {}
+    ArrayObject(std::vector<BaseObject *> values_) : values(std::move(values_)) {}
+
+    // TODO: - who owns the objects in the array? MEMORY LEAK!!
+    /// Performs a deep copy of array. This will enable the array to be returned
+    /// by a function without objects (defined in function scope) being destroyed.
+    ArrayObject *clone() const override
+    {
+        std::vector<BaseObject *> cloneValues(values.size());
+
+        for (BaseObject *obj : values)
+        {
+            cloneValues.push_back(obj->clone());
+        }
+
+        return new ArrayObject(cloneValues);
+    }
 
     std::string typeName() const override { return "ArrayObject"; }
 
     // TODO: - eventually just store references to BaseObject & or pointers and return reference.
-    std::shared_ptr<BaseObject> operator[](std::size_t index) const
+    BaseObject *operator[](std::size_t index) const
     {
         assert(index < values.size());
-        return (values.at(index));
+        return (values.at(index)); // TODO: - fix this. Just return a reference or something.
     }
 
-    std::vector<std::shared_ptr<BaseObject>> values;
+    std::vector<BaseObject *> values;
 };
 
 
@@ -315,7 +349,12 @@ public:
 
     std::string typeName() const override { return "FunctionObject"; }
 
-    std::shared_ptr<FunctionNode> functionValue{nullptr};
+    FunctionObject *clone() const override
+    {
+        return new FunctionObject(functionValue);
+    }
+
+    std::shared_ptr<FunctionNode> functionValue{nullptr}; // TODO: - weird code.
 };
 
 
@@ -325,11 +364,16 @@ public:
 struct LibraryFunctionObject : public BaseObject
 {
 public:
-    using LibraryFunction = std::function<std::shared_ptr<BaseObject>(ProgramNode &, Scope &)>;
+    using LibraryFunction = std::function<BaseObject *(ProgramNode &, Scope &)>;
 
     LibraryFunctionObject(LibraryFunction function_) : evaluate(std::move(function_)) {}
 
     std::string typeName() const override { return "LibraryFunctionObject"; }
+
+    LibraryFunctionObject *clone() const override
+    {
+        return new LibraryFunctionObject(evaluate);
+    }
 
     LibraryFunction evaluate;
 };

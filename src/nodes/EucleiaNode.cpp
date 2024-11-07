@@ -17,7 +17,7 @@ struct GlobalEnvRec
     jmp_buf *breakJumpPoint;
     jmp_buf *returnJumpPoint;
 
-    std::shared_ptr<BaseObject> returnValue{nullptr};
+    BaseObject *returnValue{nullptr};
 };
 
 GlobalEnvRec gEnvironmentContext;
@@ -25,57 +25,58 @@ GlobalEnvRec gEnvironmentContext;
 
 #pragma mark - *** Create New Objects ***
 
-/// Create a new BoolObject from a BoolNode.
-std::shared_ptr<BaseObject> BoolNode::evaluate(Scope &scope)
+/// Create a new BoolObject from a AddBoolNode.
+// Really, this node is creating a single BoolObject in the scope. If we call it again, should it create a new object??
+BoolObject *AddBoolNode::evaluate(Scope &scope)
 {
-    return std::make_shared<IntObject>(boolValue);
+    return scope.createManagedObject<BoolObject>(boolObject);
 }
 
 
 /// Create a new IntObject from an IntNode.
-std::shared_ptr<BaseObject> IntNode::evaluate(Scope &scope)
+IntObject *AddIntNode::evaluate(Scope &scope)
 {
-    return std::make_shared<IntObject>(numberValue);
+    return scope.createManagedObject<IntObject>(intObject);
 }
 
 
 /// Create a new FloatObject from a FloatNode.
-std::shared_ptr<BaseObject> FloatNode::evaluate(Scope &scope)
+FloatObject *AddFloatNode::evaluate(Scope &scope)
 {
-    return std::make_shared<FloatObject>(numberValue);
+    return scope.createManagedObject<FloatObject>(floatObject);
 }
 
 
 /// Create a new StringObject from a StringNode.
-std::shared_ptr<BaseObject> StringNode::evaluate(Scope &scope)
+StringObject *AddStringNode::evaluate(Scope &scope)
 {
-    return std::make_shared<StringObject>(stringValue);
+    return scope.createManagedObject<StringObject>(stringObject);
 }
 
-/// Create a new ArrayObject from an ArrayNode.
-std::shared_ptr<BaseObject> ArrayNode::evaluate(Scope &scope)
-{
-    std::vector<std::shared_ptr<BaseObject>> evaluatedObjects;
 
-    for (const auto &node : nodes)
+ArrayObject *AddArrayNode::evaluate(Scope &scope)
+{
+    std::vector<BaseObject *> evaluatedObjects;
+
+    for (const auto &node : programNodes) // TODO: - don't use shared pointer!
     {
         evaluatedObjects.push_back(node->evaluate(scope));
     }
 
     evaluatedObjects.shrink_to_fit();
 
-    return std::make_shared<ArrayObject>(evaluatedObjects);
+    return scope.createManagedObject<ArrayObject>(evaluatedObjects);
 }
 
 
 /// Create a new FunctionObject from a FunctionNode and register in current scope.
-std::shared_ptr<BaseObject> FunctionNode::evaluate(Scope &scope)
+BaseObject *FunctionNode::evaluate(Scope &scope)
 {
-    auto funcNameNode = std::static_pointer_cast<VariableNode>(funcName);
+    auto &funcNameNode = funcName->castNode<AddNewVariableNode>();
 
-    auto functionObject = std::make_shared<FunctionObject>(getShared());
+    auto functionObject = scope.createManagedObject<FunctionObject>(getShared());
 
-    scope.defineObject(funcNameNode->variableName, functionObject);
+    scope.defineObject(funcNameNode.variableName, functionObject);
 
     return functionObject;
 }
@@ -83,29 +84,26 @@ std::shared_ptr<BaseObject> FunctionNode::evaluate(Scope &scope)
 
 #pragma mark -
 
-/// Evaluate the sequence of nodes stored in a ProgramNode.
-std::shared_ptr<BaseObject> ProgramNode::evaluate(Scope &scope)
+BaseObject *ProgramNode::evaluate(Scope &scope)
 {
     // Create inner program scope for each block of statements. Good example is
     // for a loop where the body of the loop redeclares a variable. This should
     // be okay.
     Scope programScope(scope);
 
-    for (const auto &node : nodes)
+    for (const auto &node : programNodes)
     {
         node->evaluate(programScope);
     }
 
+    // Any memory allocations cleared-up when programScope variable goes out of scope.
+
     return nullptr; // Nothing returned.
 }
 
-
-/// Evaluates a file. Does NOT create an inner scope node in order to ensure that
-/// any functions declared in this file will be added to the master file by
-/// using the same global scope.
-std::shared_ptr<BaseObject> FileNode::evaluate(Scope &globalScope)
+BaseObject *FileNode::evaluate(Scope &globalScope)
 {
-    for (const auto &node : nodes)
+    for (const auto &node : programNodes)
     {
         node->evaluate(globalScope);
     }
@@ -116,49 +114,48 @@ std::shared_ptr<BaseObject> FileNode::evaluate(Scope &globalScope)
 
 /// Return the object associated with the variable name in the scope. This could
 /// be any of the core BaseObject types.
-std::shared_ptr<BaseObject> VariableNameNode::evaluate(Scope &scope)
+BaseObject *LookupVariableNode::evaluate(Scope &scope)
 {
-    return scope.getObject(variableName);
+    return scope.getDefinedObject(variableName);
 }
 
 
 /// Creates a new uninitialized variable and defines it in the current scope.
-std::shared_ptr<BaseObject> VariableNode::evaluate(Scope &scope)
+BaseObject *AddNewVariableNode::evaluate(Scope &scope)
 {
-    std::shared_ptr<BaseObject> variableObject{nullptr};
+    BaseObject *objectPtr = nullptr;
 
     switch (variableType)
     {
         case Int:
-            variableObject = std::make_shared<IntObject>(0);
+        case Bool:
+            objectPtr = scope.createManagedObject<IntObject>();
             break;
         case Float:
-            variableObject = std::make_shared<FloatObject>(0.0);
-            break;
-        case Bool:
-            variableObject = std::make_shared<BoolObject>(false);
+            objectPtr = scope.createManagedObject<FloatObject>();
             break;
         case String:
-            variableObject = std::make_shared<StringObject>("");
+            objectPtr = scope.createManagedObject<StringObject>();
             break;
-        // case Array:
-        //     variableObject = std::make_shared<ArrayObject>(std::vector<std::shared_ptr<BaseObject>>());
-        //     break;
+        case Array:
+            objectPtr = scope.createManagedObject<ArrayObject>();
+            break;
         // TODO: - handle function type. (will need to think about this.)
         default:
-            break;
+            printWarpError("%s", "cannot create a variable of specified type.");
     }
 
-    scope.defineObject(variableName, variableObject);
-
-    return variableObject;
+    scope.defineObject(variableName, objectPtr); // TODO: - could call this linkObjectToVariableName()
+    return objectPtr;
 }
 
 
-/// Evaluate the if statement.
-std::shared_ptr<BaseObject> IfNode::evaluate(Scope &scope)
+BaseObject *IfNode::evaluate(Scope &scope)
 {
-    auto condition = ifCondition->evaluate<BoolObject>(scope);
+    // NB: the condition should be evaluated in its own scope as it is within ()
+    // brackets. We don't want it to persist once evaluated.
+    Scope conditionScope(scope);
+    auto condition = ifCondition->evaluate<BoolObject>(conditionScope);
 
     if (condition->value)
         return thenDo->evaluate(scope);
@@ -172,41 +169,40 @@ std::shared_ptr<BaseObject> IfNode::evaluate(Scope &scope)
 #pragma mark -
 
 
-std::shared_ptr<BaseObject> BinaryNode::evaluate(Scope &scope)
+BaseObject *BinaryNode::evaluate(Scope &scope)
 {
     auto leftEvaluated = left->evaluate(scope);
     auto rightEvaluated = right->evaluate(scope);
 
-    return applyOperator(std::move(leftEvaluated), std::move(rightEvaluated));
+    return applyOperator(scope, *leftEvaluated, *rightEvaluated);
 }
 
 
-std::shared_ptr<BaseObject> AssignNode::evaluate(Scope &scope)
+BaseObject *AssignNode::evaluate(Scope &scope)
 {
     // Special case; example: array[0] = 3;
-    if (left->type() == NodeType::ArrayAccess)
+    if (left->isNodeType<ArrayAccessNode>())
     {
         return evaluateArrayAccess(scope);
     }
 
     // 1. Cast LHS to a variable node or a variable name node.
-    assert(left->type() == NodeType::VariableName ||
-           left->type() == NodeType::Variable);
+    assert(left->isNodeType<AddNewVariableNode>() || left->isNodeType<LookupVariableNode>());
 
     // Evaluate the LHS.
     // Case 1: VariableName node --> returns shared pointer to existing object (not useful).
     // Case 2: Variable node --> creates new object in scope.
-    if (left->type() == NodeType::Variable)
+    if (left->isNodeType<AddNewVariableNode>())
     {
-        left->evaluate(scope);
+        (void)left->evaluate(scope);
     }
 
     // 2. Evaluate the right-hand-side.
     auto rightEvaluated = right->evaluate(scope);
 
     // 3. Update value of variable object.
-    auto leftVariableName = std::static_pointer_cast<VariableNameNode>(left);
-    scope.updateObject(leftVariableName->variableName, rightEvaluated);
+    auto &leftVariableName = left->castNode<LookupVariableNode>();
+    scope.updateObject(leftVariableName.variableName, rightEvaluated);
 
     return nullptr;
 }
@@ -214,22 +210,33 @@ std::shared_ptr<BaseObject> AssignNode::evaluate(Scope &scope)
 
 #pragma mark -
 
-std::shared_ptr<BaseObject> BreakNode::evaluate(Scope &scope)
+BaseObject *BreakNode::evaluate(Scope &scope)
 {
     longjmp(*gEnvironmentContext.breakJumpPoint, 1);
     return nullptr;
 }
 
 
-std::shared_ptr<BaseObject> ReturnNode::evaluate(Scope &scope)
+BaseObject *ReturnNode::evaluate(Scope &scope)
 {
+    gEnvironmentContext.returnValue = nullptr;
+
     if (returnNode != nullptr) // i.e. return true;
     {
-        gEnvironmentContext.returnValue = returnNode->evaluate(scope);
-    }
-    else
-    {
-        gEnvironmentContext.returnValue = nullptr;
+        // Evaluate in function scope (need all local variables, etc.).
+        BaseObject *tmpResult = returnNode->evaluate(scope);
+        if (tmpResult != nullptr)
+        {
+            // TODO: - instead, remove this from the scope and copy into parent scope instead of cloning.
+
+            // Get the scope in which the function was called. We copy the object to this scope.
+            // This is because the function scope will destroy the return object as soon as its
+            // destructor is called and we need this object to persist until parent scope destructor called.
+            assert(scope.parentScope() != nullptr);
+
+            BaseObject *result = scope.parentScope()->cloneObject(tmpResult);
+            gEnvironmentContext.returnValue = result;
+        }
     }
 
     longjmp(*gEnvironmentContext.returnJumpPoint, 1);
@@ -239,7 +246,7 @@ std::shared_ptr<BaseObject> ReturnNode::evaluate(Scope &scope)
 
 #pragma mark -
 
-std::shared_ptr<BaseObject> WhileNode::evaluate(Scope &scope)
+BaseObject *WhileNode::evaluate(Scope &scope)
 {
     // Set jump point for break statements.
     jmp_buf *original = gEnvironmentContext.breakJumpPoint;
@@ -251,9 +258,10 @@ std::shared_ptr<BaseObject> WhileNode::evaluate(Scope &scope)
     {
         Scope loopScope(scope); // Extend scope.
 
+        // TODO: - condition should have it's own scope and be deleted after each call.
         while (condition->evaluate<BoolObject>(scope)->value)
         {
-            body->evaluate(loopScope);
+            (void)body->evaluate(loopScope);
         }
     }
 
@@ -263,7 +271,7 @@ std::shared_ptr<BaseObject> WhileNode::evaluate(Scope &scope)
     return nullptr;
 }
 
-std::shared_ptr<BaseObject> DoWhileNode::evaluate(Scope &scope)
+BaseObject *DoWhileNode::evaluate(Scope &scope)
 {
     jmp_buf *original = gEnvironmentContext.breakJumpPoint;
 
@@ -276,8 +284,8 @@ std::shared_ptr<BaseObject> DoWhileNode::evaluate(Scope &scope)
 
         do
         {
-            body->evaluate(loopScope);
-        } while (condition->evaluate<BoolObject>(scope)->value);
+            (void)body->evaluate(loopScope);
+        } while (condition->evaluate<BoolObject>(scope)->value); // TODO: - think about this. Needs it own separate scope and to delete after each evaluation.
     }
 
     // Restore original context.
@@ -286,7 +294,7 @@ std::shared_ptr<BaseObject> DoWhileNode::evaluate(Scope &scope)
     return nullptr; // Return nothing.
 }
 
-std::shared_ptr<BaseObject> ForLoopNode::evaluate(Scope &scope)
+BaseObject *ForLoopNode::evaluate(Scope &scope)
 {
     jmp_buf *original = gEnvironmentContext.breakJumpPoint;
 
@@ -302,7 +310,7 @@ std::shared_ptr<BaseObject> ForLoopNode::evaluate(Scope &scope)
     if (setjmp(local) != 1)
     {
         for (;
-             condition->evaluate<BoolObject>(loopScope)->value;
+             condition->evaluate<BoolObject>(loopScope)->value; // TODO: - not very efficient repeatedly recalculating...
              update->evaluate(loopScope))
         {
             body->evaluate(loopScope);
@@ -315,7 +323,7 @@ std::shared_ptr<BaseObject> ForLoopNode::evaluate(Scope &scope)
 }
 
 
-std::shared_ptr<BaseObject> FunctionCallNode::evaluateFunctionBody(BaseNode &funcBody, Scope &funcScope)
+BaseObject *FunctionCallNode::evaluateFunctionBody(BaseNode &funcBody, Scope &funcScope)
 {
     // Reset return value.
     gEnvironmentContext.returnValue = nullptr;
@@ -340,25 +348,28 @@ std::shared_ptr<BaseObject> FunctionCallNode::evaluateFunctionBody(BaseNode &fun
 
 #pragma mark -
 
-std::shared_ptr<BaseObject> FunctionCallNode::evaluate(Scope &scope)
+BaseObject *FunctionCallNode::evaluate(Scope &scope)
 {
-    // 0. Any library functions that we wish to evaluate.   // TODO: - implement.
-    auto libraryFunc = scope.getOptionalObject<LibraryFunctionObject>(funcName->variableName);
-    if (libraryFunc)
+    // 0. Any library functions that we wish to evaluate.
+    BaseObject *libraryFunc = scope.getOptionalObject<BaseObject>(funcName->variableName);
+    if (libraryFunc && libraryFunc->isObjectType<LibraryFunctionObject>())
     {
-        return libraryFunc->evaluate(*funcArgs, scope);
+        ProgramNode &programNode = (*funcArgs);
+
+        return libraryFunc->castObject<LibraryFunctionObject>().evaluate(programNode, scope);
     }
 
+    // TODO: - finish implementing here. Should not be a shared pointer.
     // 1. Get a shared pointer to the function node stored in this scope.
     auto funcNode = scope.getObject<FunctionObject>(funcName->variableName)->functionValue;
 
     // 2. Verify that the number of arguments matches those required for the
     // function we are calling.
-    if (funcArgs->nodes.size() != funcNode->funcArgs->nodes.size())
+    if (funcArgs->programNodes.size() != funcNode->funcArgs->programNodes.size())
     {
         printWarpError("expected %ld arguments but got %ld arguments for function '%s'.\n",
-                       funcNode->funcArgs->nodes.size(),
-                       funcArgs->nodes.size(),
+                       funcNode->funcArgs->programNodes.size(),
+                       funcArgs->programNodes.size(),
                        funcName->variableName.c_str());
     }
 
@@ -371,25 +382,25 @@ std::shared_ptr<BaseObject> FunctionCallNode::evaluate(Scope &scope)
     // that the object types are compatible.
 
     int iarg = 0;
-    for (const auto &argNode : funcArgs->nodes)
+    for (const auto &argNode : funcArgs->programNodes)
     {
         // Evaluate all function arguments in external scope (outside function).
         auto evaluatedArg = argNode->evaluate(scope);
 
         // Check that the evaluatedArg type (RHS) is compatible with the corresponding
         // (LHS) variable.
-        auto argVariable = std::static_pointer_cast<VariableNode>(funcNode->funcArgs->nodes[iarg++]);
+        auto &argVariable = funcNode->funcArgs->programNodes[iarg++]->castNode<AddNewVariableNode>();
 
-        if (!argVariable->passesAssignmentTypeCheck(*evaluatedArg))
+        if (!argVariable.passesAssignmentTypeCheck(*evaluatedArg))
         {
             printWarpError("incorrect type for argument '%s' of function '%s'. Expected type '%s'.\n",
-                           argVariable->variableName.c_str(),
+                           argVariable.variableName.c_str(),
                            funcName->variableName.c_str(),
-                           argVariable->description().c_str());
+                           argVariable.description().c_str());
         }
 
         // Define variable in the function's scope.
-        funcScope.defineObject(argVariable->variableName, evaluatedArg);
+        funcScope.defineObject(argVariable.variableName, evaluatedArg);
     }
 
     // Evaluate the function body in our function scope now that we've added the
@@ -401,9 +412,9 @@ std::shared_ptr<BaseObject> FunctionCallNode::evaluate(Scope &scope)
 #pragma mark -
 
 /// Special method called if LHS is an array accessor.
-std::shared_ptr<BaseObject> AssignNode::evaluateArrayAccess(Scope &scope)
+BaseObject *AssignNode::evaluateArrayAccess(Scope &scope)
 {
-    assert(left->type() == NodeType::ArrayAccess);
+    assert(left->isNodeType<ArrayAccessNode>());
 
     // 1. Get the array object at that index.
     auto currentValue = left->evaluate(scope);
@@ -416,119 +427,122 @@ std::shared_ptr<BaseObject> AssignNode::evaluateArrayAccess(Scope &scope)
 
     // Set to new value.
     *currentValue = *newValue;
+    printWarpError("%s", "WIP: LOGIC IS NOT CORRECT. THINK ABOUT HOW TO REMOVE OLD VALUE FROM SCOPE.");
 
     return nullptr;
 }
 
 
-std::shared_ptr<BaseObject> ArrayAccessNode::evaluate(Scope &scope)
+BaseObject *ArrayAccessNode::evaluate(Scope &scope)
 {
-    // Get shared pointer to array.
-    std::shared_ptr<BaseObject> evaluatedObject = arrayName->evaluate(scope);
+    printWarpError("%s", "Not implemented. Think abouto this...");
 
-    auto arrayObject = evaluatedObject->castObject<ArrayObject>();
+    // // Get shared pointer to array.
+    // ArrayObject *evaluatedObject = arrayName->evaluate(scope);
 
-    const long index = arrayIndex->numberValue;
-    return arrayObject[index];
+    // auto arrayObject = evaluatedObject->castObject<ArrayObject>();
+
+    // const long index = arrayIndex->numberValue;
+    // return arrayObject[index];
 }
 
 
 #pragma mark - *** Helper ***
 
-std::shared_ptr<BaseObject> BinaryNode::applyOperator(const IntObject &left, const IntObject &right) const
+BaseObject *BinaryNode::applyOperator(Scope &scope, const IntObject &left, const IntObject &right) const
 {
     if (binaryOperator == "+")
-        return std::make_shared<IntObject>(left + right);
+        return scope.createManagedObject<IntObject>(left + right);
     else if (binaryOperator == "-")
-        return std::make_shared<IntObject>(left - right);
+        return scope.createManagedObject<IntObject>(left - right);
     else if (binaryOperator == "*")
-        return std::make_shared<IntObject>(left * right);
+        return scope.createManagedObject<IntObject>(left * right);
     else if (binaryOperator == "/")
-        return std::make_shared<IntObject>(left / right);
+        return scope.createManagedObject<IntObject>(left / right);
     else if (binaryOperator == "==")
-        return std::make_shared<BoolObject>(left == right);
+        return scope.createManagedObject<BoolObject>(left == right);
     else if (binaryOperator == "!=")
-        return std::make_shared<BoolObject>(left != right);
+        return scope.createManagedObject<BoolObject>(left != right);
     else if (binaryOperator == ">=")
-        return std::make_shared<BoolObject>(left >= right);
+        return scope.createManagedObject<BoolObject>(left >= right);
     else if (binaryOperator == ">")
-        return std::make_shared<BoolObject>(left > right);
+        return scope.createManagedObject<BoolObject>(left > right);
     else if (binaryOperator == "<=")
-        return std::make_shared<BoolObject>(left <= right);
+        return scope.createManagedObject<BoolObject>(left <= right);
     else if (binaryOperator == "<")
-        return std::make_shared<BoolObject>(left < right);
+        return scope.createManagedObject<BoolObject>(left < right);
     else if (binaryOperator == "%")
-        return std::make_shared<IntObject>(left % right);
+        return scope.createManagedObject<IntObject>(left % right);
     else if (binaryOperator == "&&")
-        return std::make_shared<BoolObject>(left && right);
+        return scope.createManagedObject<BoolObject>(left && right);
     else if (binaryOperator == "||")
-        return std::make_shared<BoolObject>(left || right);
+        return scope.createManagedObject<BoolObject>(left || right);
     else
         printWarpError("cannot apply operator '%s' to types Int, Int.\n", binaryOperator.c_str());
 }
 
 
-std::shared_ptr<BaseObject> BinaryNode::applyOperator(const FloatObject &left, const FloatObject &right) const
+BaseObject *BinaryNode::applyOperator(Scope &scope, const FloatObject &left, const FloatObject &right) const
 {
     if (binaryOperator == "+")
-        return std::make_shared<FloatObject>(left + right);
+        return scope.createManagedObject<FloatObject>(left + right);
     else if (binaryOperator == "-")
-        return std::make_shared<FloatObject>(left - right);
+        return scope.createManagedObject<FloatObject>(left - right);
     else if (binaryOperator == "*")
-        return std::make_shared<FloatObject>(left * right);
+        return scope.createManagedObject<FloatObject>(left * right);
     else if (binaryOperator == "/")
-        return std::make_shared<FloatObject>(left / right);
+        return scope.createManagedObject<FloatObject>(left / right);
     else if (binaryOperator == "==")
-        return std::make_shared<BoolObject>(left == right);
+        return scope.createManagedObject<BoolObject>(left == right);
     else if (binaryOperator == "!=")
-        return std::make_shared<BoolObject>(left != right);
+        return scope.createManagedObject<BoolObject>(left != right);
     else if (binaryOperator == ">=")
-        return std::make_shared<BoolObject>(left >= right);
+        return scope.createManagedObject<BoolObject>(left >= right);
     else if (binaryOperator == ">")
-        return std::make_shared<BoolObject>(left > right);
+        return scope.createManagedObject<BoolObject>(left > right);
     else if (binaryOperator == "<=")
-        return std::make_shared<BoolObject>(left <= right);
+        return scope.createManagedObject<BoolObject>(left <= right);
     else if (binaryOperator == "<")
-        return std::make_shared<BoolObject>(left < right);
+        return scope.createManagedObject<BoolObject>(left < right);
     else
         printWarpError("cannot apply operator '%s' to types Int, Int.\n", binaryOperator.c_str());
 }
 
 
-std::shared_ptr<BaseObject> BinaryNode::applyOperator(const StringObject &left, const StringObject &right) const
+BaseObject *BinaryNode::applyOperator(Scope &scope, const StringObject &left, const StringObject &right) const
 {
     if (binaryOperator == "+")
-        return std::make_shared<StringObject>(left + right);
+        return scope.createManagedObject<StringObject>(left + right);
     else if (binaryOperator == "==")
-        return std::make_shared<BoolObject>(left == right);
+        return scope.createManagedObject<BoolObject>(left == right);
     else if (binaryOperator == "!=")
-        return std::make_shared<BoolObject>(left != right);
+        return scope.createManagedObject<BoolObject>(left != right);
     else
         printWarpError("cannot apply operator '%s' to types String, String.\n", binaryOperator.c_str());
 }
 
 
-std::shared_ptr<BaseObject> BinaryNode::applyOperator(std::shared_ptr<BaseObject> left, std::shared_ptr<BaseObject> right)
+BaseObject *BinaryNode::applyOperator(Scope &scope, const BaseObject &left, const BaseObject &right) const
 {
-    if (left->isObjectType<IntObject>() && right->isObjectType<IntObject>())
+    if (left.isObjectType<IntObject>() && right.isObjectType<IntObject>())
     {
-        return applyOperator(left->castObject<IntObject>(), right->castObject<IntObject>());
+        return applyOperator(scope, left.castObject<IntObject>(), right.castObject<IntObject>());
     }
-    else if (left->isObjectType<FloatObject>() && right->isObjectType<FloatObject>())
+    else if (left.isObjectType<FloatObject>() && right.isObjectType<FloatObject>())
     {
-        return applyOperator(left->castObject<FloatObject>(), right->castObject<FloatObject>());
+        return applyOperator(scope, left.castObject<FloatObject>(), right.castObject<FloatObject>());
     }
-    else if (left->isObjectType<IntObject>() && right->isObjectType<FloatObject>())
+    else if (left.isObjectType<IntObject>() && right.isObjectType<FloatObject>())
     {
-        return applyOperator(left->castObject<IntObject>().castToFloat(), right->castObject<FloatObject>());
+        return applyOperator(scope, left.castObject<IntObject>().castToFloat(), right.castObject<FloatObject>());
     }
-    else if (left->isObjectType<FloatObject>() && right->isObjectType<IntObject>())
+    else if (left.isObjectType<FloatObject>() && right.isObjectType<IntObject>())
     {
-        return applyOperator(left->castObject<FloatObject>(), right->castObject<IntObject>().castToFloat());
+        return applyOperator(scope, left.castObject<FloatObject>(), right.castObject<IntObject>().castToFloat());
     }
-    else if (left->isObjectType<StringObject>() && right->isObjectType<StringObject>())
+    else if (left.isObjectType<StringObject>() && right.isObjectType<StringObject>())
     {
-        return applyOperator(left->castObject<StringObject>(), right->castObject<StringObject>());
+        return applyOperator(scope, left.castObject<StringObject>(), right.castObject<StringObject>());
     }
     else
     {
@@ -540,7 +554,7 @@ std::shared_ptr<BaseObject> BinaryNode::applyOperator(std::shared_ptr<BaseObject
 #pragma mark - *** Variable Type Checking ***
 
 /// Type checking.
-bool VariableNode::passesAssignmentTypeCheck(const BaseObject &assignObject) const
+bool AddNewVariableNode::passesAssignmentTypeCheck(const BaseObject &assignObject) const
 {
     switch (variableType)
     {
@@ -560,7 +574,7 @@ bool VariableNode::passesAssignmentTypeCheck(const BaseObject &assignObject) con
 }
 
 
-std::string VariableNode::description() const
+std::string AddNewVariableNode::description() const
 {
     switch (variableType)
     {

@@ -16,7 +16,7 @@ static const char *kOkGreenColor = "\033[92m";
 
 void TestModule::defineFunctions()
 {
-    defineFunction("TEST", [=](ProgramNode &callArgs, Scope &scope) -> std::shared_ptr<BaseObject>
+    defineFunction("TEST", [=](ProgramNode &callArgs, Scope &scope) -> BaseObject *
                    {
         auto argValues = evaluateArgs(callArgs, scope);
         assert(argValues.size() == 2);
@@ -31,7 +31,7 @@ void TestModule::defineFunctions()
         fprintf(stdout, "%-50s %s%s%s\n", description.value.c_str(), statusColor, statusString,  kClearColor);
         return nullptr; });
 
-    defineFunction("ASSERT", [=](ProgramNode &callArgs, Scope &scope) -> std::shared_ptr<BaseObject>
+    defineFunction("ASSERT", [=](ProgramNode &callArgs, Scope &scope) -> BaseObject *
                    {
         auto argValues = evaluateArgs(callArgs, scope);
         assert(argValues.size() == 1);
@@ -40,7 +40,7 @@ void TestModule::defineFunctions()
         assert(result.value);
         return nullptr; });
 
-    defineFunction("abort", [=](ProgramNode &callArgs, Scope &scope) -> std::shared_ptr<BaseObject>
+    defineFunction("abort", [=](ProgramNode &callArgs, Scope &scope) -> BaseObject *
                    {
         auto argValues = evaluateArgs(callArgs, scope);
         assert(argValues.size() == 0);
@@ -48,7 +48,7 @@ void TestModule::defineFunctions()
         abort();
         return nullptr; });
 
-    defineFunction("exit", [=](ProgramNode &callArgs, Scope &scope) -> std::shared_ptr<BaseObject>
+    defineFunction("exit", [=](ProgramNode &callArgs, Scope &scope) -> BaseObject *
                    {
         auto argValues = evaluateArgs(callArgs, scope);
         assert(argValues.size() == 1);

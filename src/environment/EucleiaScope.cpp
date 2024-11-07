@@ -6,12 +6,19 @@
 //
 
 #include "EucleiaScope.hpp"
-#include "EucleiaObject.hpp"
 #include "EucleiaUtility.hpp"
 
 Scope::Scope(const Scope &_parent)
     : Scope(&_parent)
 {
+}
+
+Scope::~Scope()
+{
+    for (BaseObject *obj : ownedObjects)
+    {
+        delete obj;
+    }
 }
 
 Scope::Scope(const Scope *_parent)
@@ -39,7 +46,7 @@ bool Scope::objectCreatedInScope(const std::string &name) const
 }
 
 
-std::shared_ptr<BaseObject> Scope::getObject(const std::string &name) const
+BaseObject *Scope::getDefinedObject(const std::string &name) const
 {
     auto it = objects.find(name);
     if (it == objects.end())
@@ -50,29 +57,30 @@ std::shared_ptr<BaseObject> Scope::getObject(const std::string &name) const
     return (it->second);
 }
 
-
-void Scope::defineObject(const std::string &name, std::shared_ptr<BaseObject> object)
+// TODO: - needs checks. This object must be OWNED by us already. Therefore, we can check in our std::unordered_set whether it exists.
+void Scope::defineObject(const std::string &name, BaseObject *object)
 {
     // 1. Check for name clashes. This is where we have two variables with
     // the same name defined in the SAME scope.
     checkForVariableNameClash(name);
 
     // 2. Remove any existing objects with same name. If there are any these will
-    // have been defined in an outer scope. This is variable shadowing.
+    // have been defined in an outer scope. This is variable shadowing. We do not
+    // have ownership of these outer-scope variables.
     removeObject(name);
 
     // 3. Set object creation scope.
     objectCreationScope[name] = this;
-    objects[name] = std::move(object);
+    objects[name] = object;
 }
 
 
-void Scope::updateObject(const std::string &name, std::shared_ptr<BaseObject> object)
+void Scope::updateObject(const std::string &name, BaseObject *object)
 {
     assert(object && hasObject(name));
 
     // Perform basic type-checking.
-    auto &existingObject = objects[name];
+    auto existingObject = objects[name];
 
     // NB: None type means it has not yet been initialized.
     if (existingObject && !existingObject->typesMatch((*object)))
@@ -91,7 +99,16 @@ void Scope::updateObject(const std::string &name, std::shared_ptr<BaseObject> ob
         const_cast<Scope *>(parent)->updateObject(name, object); // Update object in parent scope as well.
     }
 
-    objects[name] = std::move(object);
+    // TODO: - If the existing object being replaced is also in our owned objects set
+    // then we need to delete it.
+    if (ownedObjects.count(existingObject))
+    {
+        ownedObjects.erase(existingObject);
+        delete existingObject;
+    }
+
+    // Update the mapping in our scope.
+    objects[name] = object;
 }
 
 
@@ -106,6 +123,15 @@ void Scope::checkForVariableNameClash(const std::string &name) const
 
 void Scope::removeObject(const std::string &name)
 {
+    auto existingObject = objects[name];
+
+    // TODO: - should we remove object we own linked to a variable?
+    if (existingObject && ownedObjects.count(existingObject))
+    {
+        delete existingObject;
+        ownedObjects.erase(existingObject);
+    }
+
     objects.erase(name);
     objectCreationScope.erase(name);
 }

@@ -23,15 +23,15 @@ protected:
 
     std::shared_ptr<FileNode> buildAST();
 
-    std::shared_ptr<BoolNode> parseBool();
-    std::shared_ptr<StringNode> parseString();
-    std::shared_ptr<IntNode> parseInt();
-    std::shared_ptr<FloatNode> parseFloat();
+    std::shared_ptr<AddBoolNode> parseBool();
+    std::shared_ptr<AddStringNode> parseString();
+    std::shared_ptr<AddIntNode> parseInt();
+    std::shared_ptr<AddFloatNode> parseFloat();
 
     std::shared_ptr<BaseNode> parseBrackets();
 
     std::shared_ptr<BaseNode> parseProgram();
-    std::shared_ptr<ArrayNode> parseArray();
+    std::shared_ptr<AddArrayNode> parseArray();
 
     std::shared_ptr<BaseNode> parseVariableDefinition();
     std::shared_ptr<BaseNode> parseVariableName();
@@ -75,7 +75,7 @@ protected:
 
     std::shared_ptr<FunctionCallNode> parseFunctionCall(std::shared_ptr<BaseNode> lastExpression);
 
-    void skipSemicolonLineEndingIfRequired(BaseNode::NodeType expressionType);
+    void skipSemicolonLineEndingIfRequired(const BaseNode &node);
 
     std::string parentDirectory(const std::string &fpath);
 
@@ -89,8 +89,6 @@ private:
     std::shared_ptr<BaseNode> parseAtomicallyExpression();
 
     int getPrecedence(void);
-
-    void assertNodeType(const std::shared_ptr<BaseNode> &node, BaseNode::NodeType expectedType);
 
     std::shared_ptr<BaseNode> maybeArrayAccess(ParseMethod expression);
 

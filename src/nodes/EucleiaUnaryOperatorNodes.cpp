@@ -7,32 +7,31 @@
 
 #include "EucleiaUnaryOperatorNodes.hpp"
 
-std::shared_ptr<BaseObject> NotNode::evaluate(Scope &scope)
+BaseObject *NotNode::evaluate(Scope &scope)
 {
     auto bodyEvaluated = body->evaluate<BoolObject>(scope);
 
-    return std::make_shared<BoolObject>(!bodyEvaluated->value);
+    return scope.createManagedObject<BoolObject>(!(*bodyEvaluated));
 }
 
 
-std::shared_ptr<BaseObject> NegationNode::evaluate(Scope &scope)
+BaseObject *NegationNode::evaluate(Scope &scope)
 {
     auto bodyEvaluated = body->evaluate(scope);
 
     if (bodyEvaluated->isObjectType<IntObject>())
-        return std::make_shared<IntObject>(-bodyEvaluated->castObject<IntObject>());
+        return scope.createManagedObject<IntObject>(-bodyEvaluated->castObject<IntObject>());
     else if (bodyEvaluated->isObjectType<FloatObject>())
-        return std::make_shared<FloatObject>(-bodyEvaluated->castObject<FloatObject>());
+        return scope.createManagedObject<FloatObject>(-bodyEvaluated->castObject<FloatObject>());
     else
         printWarpError("%s", "invalid object type.");
 }
 
 
-std::shared_ptr<BaseObject> PrefixIncrementNode::evaluate(Scope &scope)
+BaseObject *PrefixIncrementNode::evaluate(Scope &scope)
 {
     // 1. Body should be an already-declared variable.
-    assert(body->type() == BaseNode::VariableName);
-    auto variableNameNode = std::static_pointer_cast<VariableNameNode>(body);
+    assert(body->isNodeType<LookupVariableNode>());
 
     // 2. Object associated with variable name in scope must be integer or float.
     auto bodyEvaluated = body->evaluate(scope);
@@ -53,11 +52,10 @@ std::shared_ptr<BaseObject> PrefixIncrementNode::evaluate(Scope &scope)
 }
 
 
-std::shared_ptr<BaseObject> PrefixDecrementNode::evaluate(Scope &scope)
+BaseObject *PrefixDecrementNode::evaluate(Scope &scope)
 {
     // 1. Body should be an already-declared variable.
-    assert(body->type() == BaseNode::VariableName);
-    auto variableNameNode = std::static_pointer_cast<VariableNameNode>(body);
+    assert(body->isNodeType<LookupVariableNode>());
 
     // 2. Object associated with variable name in scope must be integer or float.
     auto bodyEvaluated = body->evaluate(scope);

@@ -14,14 +14,15 @@
 std::unique_ptr<EucleiaModuleLoader> EucleiaModuleLoader::_instance = nullptr;
 
 
-std::shared_ptr<BaseObject> ModuleNode::evaluate(Scope &scope)
+BaseObject *ModuleNode::evaluate(Scope &scope)
 {
     defineFunctions();
 
     // Iterate over functions and add to scope.
     for (const auto &[name, function] : _functionsMap)
     {
-        scope.defineObject(name, std::make_shared<LibraryFunctionObject>(function));
+        LibraryFunctionObject *object = scope.createManagedObject<LibraryFunctionObject>(function);
+        scope.defineObject(name, object);
     }
 
     return nullptr;
@@ -34,12 +35,12 @@ void ModuleNode::defineFunction(const std::string &name, Function function)
 }
 
 
-std::vector<std::shared_ptr<BaseObject>> ModuleNode::evaluateArgs(ProgramNode &args, Scope &scope) const
+std::vector<BaseObject *> ModuleNode::evaluateArgs(ProgramNode &args, Scope &scope) const
 {
-    std::vector<std::shared_ptr<BaseObject>> out(args.nodes.size());
+    std::vector<BaseObject *> out(args.programNodes.size());
 
     int i = 0;
-    for (const auto &node : args.nodes)
+    for (const auto &node : args.programNodes)
     {
         out[i++] = node->evaluate(scope);
     }
@@ -50,15 +51,15 @@ std::vector<std::shared_ptr<BaseObject>> ModuleNode::evaluateArgs(ProgramNode &a
 
 void MathModuleNode::defineFunctions()
 {
-    defineFunction("sqrt", [=](ProgramNode &callArgs, Scope &scope) -> std::shared_ptr<BaseObject>
+    defineFunction("sqrt", [=](ProgramNode &callArgs, Scope &scope) -> BaseObject *
                    {
     	auto argValues = evaluateArgs(callArgs, scope);
     	assert(argValues.size() == 1);
 
     	auto & first = argValues.front()->castObject<FloatObject>();
-    	return std::make_shared<FloatObject>(sqrt(first.value)); });
+    	return scope.createManagedObject<FloatObject>(sqrt(first.value)); });
 
-    defineFunction("pow", [=](ProgramNode &callArgs, Scope &scope) -> std::shared_ptr<BaseObject>
+    defineFunction("pow", [=](ProgramNode &callArgs, Scope &scope) -> BaseObject *
                    {
     	auto argValues = evaluateArgs(callArgs, scope);
     	assert(argValues.size() == 2);
@@ -66,21 +67,21 @@ void MathModuleNode::defineFunctions()
     	auto &first = argValues.at(0)->castObject<FloatObject>();
     	auto &second = argValues.at(1)->castObject<FloatObject>();
 
-    	return std::make_shared<FloatObject>(pow(first.value, second.value)); });
+    	return scope.createManagedObject<FloatObject>(pow(first.value, second.value)); });
 }
 
 
 void IOModuleNode::defineFunctions()
 {
-    auto closure = [](ProgramNode &callArgs, Scope &scope) -> std::shared_ptr<BaseObject>
+    auto closure = [](ProgramNode &callArgs, Scope &scope) -> BaseObject *
     {
-        for (const auto &node : callArgs.nodes)
+        for (const auto &node : callArgs.programNodes)
         {
             auto evaluatedNode = node->evaluate(scope);
 
             std::cout << *evaluatedNode;
 
-            if (node != callArgs.nodes.back())
+            if (node != callArgs.programNodes.back())
             {
                 std::cout << " ";
             }
@@ -111,5 +112,4 @@ void EucleiaModuleLoader::buildDefaultLibraries()
     _modules["io"] = std::make_shared<IOModuleNode>();
     _modules["math"] = std::make_shared<MathModuleNode>();
     _modules["test"] = std::make_shared<TestModule>();
-    // Add test library.
 }
