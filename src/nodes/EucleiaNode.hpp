@@ -16,8 +16,6 @@
 class BaseNode
 {
 public:
-    using SharedNode = std::shared_ptr<BaseNode>;
-
     BaseNode() = default;
     virtual ~BaseNode() = default;
 
@@ -154,7 +152,7 @@ public:
 class ProgramNode : public BaseNode
 {
 public:
-    ProgramNode(std::vector<SharedNode> nodes_) : programNodes(std::move(nodes_)) {}
+    ProgramNode(std::vector<std::shared_ptr<BaseNode>> nodes_) : programNodes(std::move(nodes_)) {}
 
     // Evaluates a vector of nodes sequentially. Returns nullptr.
     BaseObject *evaluate(Scope &scope) override;
@@ -167,7 +165,7 @@ public:
 class AddArrayNode : public ProgramNode
 {
 public:
-    AddArrayNode(std::vector<SharedNode> nodes_) : ProgramNode(std::move(nodes_)) {}
+    AddArrayNode(std::vector<std::shared_ptr<BaseNode>> nodes_) : ProgramNode(std::move(nodes_)) {}
 
     // Create a new ArrayObject in the current scope and return a managed pointer to it.
     ArrayObject *evaluate(Scope &scope) override;
@@ -177,7 +175,7 @@ public:
 class FileNode : public ProgramNode
 {
 public:
-    FileNode(std::vector<SharedNode> nodes_) : ProgramNode(std::move(nodes_)) {}
+    FileNode(std::vector<std::shared_ptr<BaseNode>> nodes_) : ProgramNode(std::move(nodes_)) {}
 
     // Evaluates a file treating it as one large program. Does NOT create an inner
     // scope node in order to ensure that any functions declared in this file will
@@ -227,7 +225,7 @@ public:
 class DoWhileNode : public BaseNode
 {
 public:
-    DoWhileNode(SharedNode condition_, SharedNode body_)
+    DoWhileNode(std::shared_ptr<BaseNode> condition_, std::shared_ptr<BaseNode> body_)
         : condition(std::move(condition_)),
           body(std::move(body_))
     {
@@ -245,7 +243,7 @@ public:
 class WhileNode : public DoWhileNode
 {
 public:
-    WhileNode(SharedNode _condition, SharedNode _body)
+    WhileNode(std::shared_ptr<BaseNode> _condition, std::shared_ptr<BaseNode> _body)
         : DoWhileNode(std::move(_condition), std::move(_body))
     {
     }
@@ -258,7 +256,7 @@ public:
 class ForLoopNode : public BaseNode
 {
 public:
-    ForLoopNode(SharedNode start_, SharedNode condition_, SharedNode update_, SharedNode body_)
+    ForLoopNode(std::shared_ptr<BaseNode> start_, std::shared_ptr<BaseNode> condition_, std::shared_ptr<BaseNode> update_, std::shared_ptr<BaseNode> body_)
         : start(std::move(start_)),
           condition(std::move(condition_)),
           update(std::move(update_)),
@@ -281,7 +279,7 @@ public:
 class FunctionCallNode : public BaseNode
 {
 public:
-    FunctionCallNode(SharedNode funcName_, SharedNode funcArgs_)
+    FunctionCallNode(std::shared_ptr<BaseNode> funcName_, std::shared_ptr<BaseNode> funcArgs_)
         : funcName(std::static_pointer_cast<AddNewVariableNode>(funcName_)),
           funcArgs(std::static_pointer_cast<ProgramNode>(funcArgs_))
     {
@@ -302,7 +300,7 @@ public:
 class FunctionNode : public FunctionCallNode, public std::enable_shared_from_this<FunctionNode>
 {
 public:
-    FunctionNode(SharedNode _funcName, SharedNode _funcArgs, SharedNode _funcBody)
+    FunctionNode(std::shared_ptr<BaseNode> _funcName, std::shared_ptr<BaseNode> _funcArgs, std::shared_ptr<BaseNode> _funcBody)
         : FunctionCallNode(std::move(_funcName), std::move(_funcArgs)),
           funcBody(std::static_pointer_cast<ProgramNode>(_funcBody))
     {
@@ -329,21 +327,21 @@ public:
 class ReturnNode : public BaseNode
 {
 public:
-    ReturnNode(SharedNode _returnValue = nullptr)
+    ReturnNode(std::shared_ptr<BaseNode> _returnValue = nullptr)
         : returnNode(std::move(_returnValue))
     {
     }
 
     BaseObject *evaluate(Scope &scope) override;
 
-    SharedNode returnNode{nullptr};
+    std::shared_ptr<BaseNode> returnNode{nullptr};
 };
 
 
 class AssignNode : public BaseNode
 {
 public:
-    AssignNode(SharedNode _left, SharedNode _right)
+    AssignNode(std::shared_ptr<BaseNode> _left, std::shared_ptr<BaseNode> _right)
         : left(std::move(_left)),
           right(std::move(_right))
     {
@@ -353,15 +351,15 @@ public:
 
     BaseObject *evaluateArrayAccess(Scope &scope);
 
-    SharedNode left{nullptr};
-    SharedNode right{nullptr};
+    std::shared_ptr<BaseNode> left{nullptr};
+    std::shared_ptr<BaseNode> right{nullptr};
 };
 
 
 class BinaryNode : public AssignNode
 {
 public:
-    BinaryNode(SharedNode left_, SharedNode right_, std::string binaryOperator_)
+    BinaryNode(std::shared_ptr<BaseNode> left_, std::shared_ptr<BaseNode> right_, std::string binaryOperator_)
         : AssignNode(std::move(left_), std::move(right_)),
           binaryOperator(std::move(binaryOperator_))
     {
