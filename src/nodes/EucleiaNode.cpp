@@ -224,10 +224,12 @@ BaseObject *ReturnNode::evaluate(Scope &scope)
 
     if (returnNode != nullptr) // i.e. return true;
     {
-        // Evaluate in function scope.
+        // Evaluate in function scope (need all local variables, etc.).
         BaseObject *tmpResult = returnNode->evaluate(scope);
         if (tmpResult != nullptr)
         {
+            // TODO: - instead, remove this from the scope and copy into parent scope instead of cloning.
+
             // Get the scope in which the function was called. We copy the object to this scope.
             // This is because the function scope will destroy the return object as soon as its
             // destructor is called and we need this object to persist until parent scope destructor called.
