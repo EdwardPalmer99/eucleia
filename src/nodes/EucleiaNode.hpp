@@ -154,6 +154,23 @@ class ProgramNode : public BaseNode // TODO: - write proper destructor to avoid 
 public:
     ProgramNode(std::vector<BaseNode *> nodes_) : programNodes(std::move(nodes_)) {}
 
+    ~ProgramNode() override
+    {
+        for (BaseNode *node : programNodes) // Call destructor on all nodes we own.
+        {
+            delete node;
+        }
+    }
+
+    // Ownership of nodes passes to the caller.
+    std::vector<BaseNode *> releaseNodes()
+    {
+        auto returnedNodes = programNodes;
+        programNodes.clear();
+
+        return returnedNodes;
+    }
+
     BaseNode *operator[](size_t index) const
     {
         assert(index < programNodes.size());
@@ -162,7 +179,6 @@ public:
 
     // Evaluates a vector of nodes sequentially. Returns nullptr.
     BaseObject *evaluate(Scope &scope) override;
-
 
     std::vector<BaseNode *> programNodes;
 };
@@ -199,6 +215,12 @@ public:
     {
     }
 
+    ~ArrayAccessNode() override
+    {
+        delete arrayName;
+        delete arrayIndex;
+    }
+
     BaseObject *evaluate(Scope &scope) override;
 
     AddNewVariableNode *arrayName{nullptr};
@@ -218,6 +240,13 @@ public:
     {
     }
 
+    ~IfNode() override
+    {
+        delete ifCondition;
+        delete thenDo;
+        delete elseDo;
+    }
+
     // Evaluate an if/else statement in current scope. Returns nullptr.
     BaseObject *evaluate(Scope &scope) override;
 
@@ -235,6 +264,12 @@ public:
         : condition(condition_),
           body(body_)
     {
+    }
+
+    ~DoWhileNode() override
+    {
+        delete condition;
+        delete body;
     }
 
     // Evaluate a do-while loop in current scope. Returns nullptr.
@@ -270,6 +305,13 @@ public:
     {
     }
 
+    ~ForLoopNode() override
+    {
+        delete start;
+        delete condition;
+        delete update;
+        delete body;
+    }
 
     // Evaluates a for-loop in current scope. Returns nullptr.
     BaseObject *evaluate(Scope &scope) override;
@@ -289,6 +331,12 @@ public:
         : funcName(static_cast<AddNewVariableNode *>(funcName_)),
           funcArgs(static_cast<ProgramNode *>(funcArgs_))
     {
+    }
+
+    ~FunctionCallNode() override
+    {
+        delete funcName;
+        delete funcArgs;
     }
 
     // TODO: - don't forget to do performance profiling for Fib sequence and see memory requirements for old and new version
@@ -312,6 +360,11 @@ public:
     {
     }
 
+    ~FunctionNode() override
+    {
+        delete funcBody;
+    }
+
     BaseObject *evaluate(Scope &scope) override;
 
     ProgramNode *funcBody{nullptr};
@@ -333,6 +386,11 @@ public:
     {
     }
 
+    ~ReturnNode() override
+    {
+        delete returnNode;
+    }
+
     BaseObject *evaluate(Scope &scope) override;
 
     BaseNode *returnNode{nullptr};
@@ -346,6 +404,12 @@ public:
         : left(left_),
           right(right_)
     {
+    }
+
+    ~AssignNode() override
+    {
+        delete left;
+        delete right;
     }
 
     BaseObject *evaluate(Scope &scope) override;

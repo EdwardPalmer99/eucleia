@@ -21,6 +21,11 @@ public:
     {
     }
 
+    ~UnaryOperatorBaseNode() override
+    {
+        delete body;
+    }
+
     BaseNode *body{nullptr};
 };
 

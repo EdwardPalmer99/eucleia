@@ -102,7 +102,6 @@ ModuleNode *Parser::parseLibraryImport()
 
     auto libraryName = token.value;
 
-    // TODO: - handle memory issues here.
     return EucleiaModuleLoader::getModuleInstance(libraryName);
 }
 
@@ -147,9 +146,7 @@ BaseNode *Parser::parseProgram()
 
     if (program->programNodes.size() == 1) // Return single node (more efficient).
     {
-        BaseNode *first = (*program)[0];
-
-        program->programNodes.clear(); // To prevent destructor deleting first base node.
+        BaseNode *first = program->releaseNodes()[0];
         delete program;
 
         return first;
@@ -408,11 +405,13 @@ ArrayAccessNode *Parser::parseArrayAccessor(BaseNode *lastExpression)
 /// [1, 2, 3, 4] OR [true, false, true] OR [1.2, 2.4] OR ["hello, ", "world!"].
 AddArrayNode *Parser::parseArray()
 {
-    auto nodes = parseDelimited("[", "]", ",", std::bind(&Parser::parseExpression, this));
+    auto programNodes = parseDelimited("[", "]", ",", std::bind(&Parser::parseExpression, this));
 
-    // TODO: - this is a memory leak. Need to extract the copy the vector or init with programNodes vector.
+    auto nodesVector = programNodes->releaseNodes();
 
-    return new AddArrayNode(nodes->programNodes);
+    delete programNodes;
+
+    return new AddArrayNode(nodesVector);
 }
 
 

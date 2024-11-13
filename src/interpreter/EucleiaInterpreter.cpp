@@ -17,11 +17,14 @@
 void Interpreter::evaluateFile(const std::string &fpath)
 {
     // 1. Generate abstract symbol tree.
-    auto ast = Parser::buildAST(fpath);
+    FileNode *ast = Parser::buildAST(fpath);
 
     // 2. Create global scope.
     Scope globalScope;
 
     // 3. Evaluate AST.
     (void)ast->evaluate(globalScope);
+
+    // 4. Memory cleanup.
+    delete ast;
 }

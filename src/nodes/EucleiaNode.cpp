@@ -58,7 +58,7 @@ ArrayObject *AddArrayNode::evaluate(Scope &scope)
 {
     std::vector<BaseObject *> evaluatedObjects;
 
-    for (const auto &node : programNodes) // TODO: - don't use shared pointer!
+    for (auto *node : programNodes)
     {
         evaluatedObjects.push_back(node->evaluate(scope));
     }
@@ -360,7 +360,7 @@ BaseObject *FunctionCallNode::evaluate(Scope &scope)
     }
 
     // TODO: - finish implementing here. Should not be a shared pointer.
-    // 1. Get a shared pointer to the function node stored in this scope.
+    // 1. Get a pointer to the function node stored in this scope.
     auto funcNode = scope.getObject<FunctionObject>(funcName->variableName)->functionValue;
 
     // 2. Verify that the number of arguments matches those required for the
