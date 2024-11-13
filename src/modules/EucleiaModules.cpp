@@ -95,21 +95,14 @@ void IOModuleNode::defineFunctions()
 }
 
 
-std::shared_ptr<ModuleNode> EucleiaModuleLoader::getModule(const std::string &name) const
+ModuleNode *EucleiaModuleLoader::getModule(const std::string &name) const
 {
-    auto it = _modules.find(name);
-    if (it == _modules.end())
-    {
-        printWarpError("No library with name '%s'.\n", name.c_str());
-    }
-
-    return it->second;
-}
-
-
-void EucleiaModuleLoader::buildDefaultLibraries()
-{
-    _modules["io"] = std::make_shared<IOModuleNode>();
-    _modules["math"] = std::make_shared<MathModuleNode>();
-    _modules["test"] = std::make_shared<TestModule>();
+    if (name == "io")
+        return new IOModuleNode();
+    else if (name == "math")
+        return new MathModuleNode();
+    else if (name == "test")
+        return new TestModule();
+    else
+        printEucleiaError("No library with name '%s'.\n", name.c_str());
 }

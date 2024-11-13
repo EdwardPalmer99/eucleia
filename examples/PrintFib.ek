@@ -9,5 +9,5 @@ func printFib(int min, int max)
 	}
 }
 
-// NB: python ~112ms/~9MB --- Eucleia 2024-11-07: ~22.5s/~500MB
+// NB: python ~112ms/~9MB --- Eucleia 2024-11-13: ~12s/~500MB (debug mode)
 printFib(1, 25);

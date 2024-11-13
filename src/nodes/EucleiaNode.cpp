@@ -58,7 +58,7 @@ ArrayObject *AddArrayNode::evaluate(Scope &scope)
 {
     std::vector<BaseObject *> evaluatedObjects;
 
-    for (const auto &node : programNodes) // TODO: - don't use shared pointer!
+    for (auto *node : programNodes)
     {
         evaluatedObjects.push_back(node->evaluate(scope));
     }
@@ -74,7 +74,7 @@ BaseObject *FunctionNode::evaluate(Scope &scope)
 {
     auto &funcNameNode = funcName->castNode<AddNewVariableNode>();
 
-    auto functionObject = scope.createManagedObject<FunctionObject>(getShared());
+    auto functionObject = scope.createManagedObject<FunctionObject>(this); // TODO: - uh-oh!! Think about pointer ownership here!!
 
     scope.defineObject(funcNameNode.variableName, functionObject);
 
@@ -142,7 +142,7 @@ BaseObject *AddNewVariableNode::evaluate(Scope &scope)
             break;
         // TODO: - handle function type. (will need to think about this.)
         default:
-            printWarpError("%s", "cannot create a variable of specified type.");
+            printEucleiaError("%s", "cannot create a variable of specified type.");
     }
 
     scope.defineObject(variableName, objectPtr); // TODO: - could call this linkObjectToVariableName()
@@ -360,17 +360,17 @@ BaseObject *FunctionCallNode::evaluate(Scope &scope)
     }
 
     // TODO: - finish implementing here. Should not be a shared pointer.
-    // 1. Get a shared pointer to the function node stored in this scope.
+    // 1. Get a pointer to the function node stored in this scope.
     auto funcNode = scope.getObject<FunctionObject>(funcName->variableName)->functionValue;
 
     // 2. Verify that the number of arguments matches those required for the
     // function we are calling.
     if (funcArgs->programNodes.size() != funcNode->funcArgs->programNodes.size())
     {
-        printWarpError("expected %ld arguments but got %ld arguments for function '%s'.\n",
-                       funcNode->funcArgs->programNodes.size(),
-                       funcArgs->programNodes.size(),
-                       funcName->variableName.c_str());
+        printEucleiaError("expected %ld arguments but got %ld arguments for function '%s'.\n",
+                          funcNode->funcArgs->programNodes.size(),
+                          funcArgs->programNodes.size(),
+                          funcName->variableName.c_str());
     }
 
     // 3. Extend current scope (outside function) with names and values of function
@@ -393,10 +393,10 @@ BaseObject *FunctionCallNode::evaluate(Scope &scope)
 
         if (!argVariable.passesAssignmentTypeCheck(*evaluatedArg))
         {
-            printWarpError("incorrect type for argument '%s' of function '%s'. Expected type '%s'.\n",
-                           argVariable.variableName.c_str(),
-                           funcName->variableName.c_str(),
-                           argVariable.description().c_str());
+            printEucleiaError("incorrect type for argument '%s' of function '%s'. Expected type '%s'.\n",
+                              argVariable.variableName.c_str(),
+                              funcName->variableName.c_str(),
+                              argVariable.description().c_str());
         }
 
         // Define variable in the function's scope.
@@ -427,7 +427,7 @@ BaseObject *AssignNode::evaluateArrayAccess(Scope &scope)
 
     // Set to new value.
     *currentValue = *newValue;
-    printWarpError("%s", "WIP: LOGIC IS NOT CORRECT. THINK ABOUT HOW TO REMOVE OLD VALUE FROM SCOPE.");
+    printEucleiaError("%s", "WIP: LOGIC IS NOT CORRECT. THINK ABOUT HOW TO REMOVE OLD VALUE FROM SCOPE.");
 
     return nullptr;
 }
@@ -435,7 +435,7 @@ BaseObject *AssignNode::evaluateArrayAccess(Scope &scope)
 
 BaseObject *ArrayAccessNode::evaluate(Scope &scope)
 {
-    printWarpError("%s", "Not implemented. Think abouto this...");
+    printEucleiaError("%s", "Not implemented. Think abouto this...");
 
     // // Get shared pointer to array.
     // ArrayObject *evaluatedObject = arrayName->evaluate(scope);
@@ -478,7 +478,7 @@ BaseObject *BinaryNode::applyOperator(Scope &scope, const IntObject &left, const
     else if (binaryOperator == "||")
         return scope.createManagedObject<BoolObject>(left || right);
     else
-        printWarpError("cannot apply operator '%s' to types Int, Int.\n", binaryOperator.c_str());
+        printEucleiaError("cannot apply operator '%s' to types Int, Int.\n", binaryOperator.c_str());
 }
 
 
@@ -505,7 +505,7 @@ BaseObject *BinaryNode::applyOperator(Scope &scope, const FloatObject &left, con
     else if (binaryOperator == "<")
         return scope.createManagedObject<BoolObject>(left < right);
     else
-        printWarpError("cannot apply operator '%s' to types Int, Int.\n", binaryOperator.c_str());
+        printEucleiaError("cannot apply operator '%s' to types Int, Int.\n", binaryOperator.c_str());
 }
 
 
@@ -518,7 +518,7 @@ BaseObject *BinaryNode::applyOperator(Scope &scope, const StringObject &left, co
     else if (binaryOperator == "!=")
         return scope.createManagedObject<BoolObject>(left != right);
     else
-        printWarpError("cannot apply operator '%s' to types String, String.\n", binaryOperator.c_str());
+        printEucleiaError("cannot apply operator '%s' to types String, String.\n", binaryOperator.c_str());
 }
 
 
@@ -546,7 +546,7 @@ BaseObject *BinaryNode::applyOperator(Scope &scope, const BaseObject &left, cons
     }
     else
     {
-        printWarpError("Cannot apply operator '%s' to object types.\n", binaryOperator.c_str());
+        printEucleiaError("Cannot apply operator '%s' to object types.\n", binaryOperator.c_str());
     }
 }
 

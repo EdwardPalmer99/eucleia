@@ -16,8 +16,6 @@
 class BaseNode
 {
 public:
-    using SharedNode = std::shared_ptr<BaseNode>;
-
     BaseNode() = default;
     virtual ~BaseNode() = default;
 
@@ -65,7 +63,7 @@ public:
     // Creates a BoolObject in the scope and returns managed pointer to it.
     BoolObject *evaluate(Scope &scope) override;
 
-    // protected:
+
     BoolObject boolObject;
 };
 
@@ -78,7 +76,7 @@ public:
     // Creates an IntObject in the scope and returns a managed pointer to it.
     IntObject *evaluate(Scope &scope) override;
 
-    // protected:
+
     IntObject intObject;
 };
 
@@ -91,7 +89,7 @@ public:
     // Returns a FloatObject in the current scope and returns a managed pointer.
     FloatObject *evaluate(Scope &scope) override;
 
-    // protected:
+
     FloatObject floatObject;
 };
 
@@ -103,7 +101,7 @@ public:
     // Creates a StringObject in the scope and returns managed pointer to it.
     StringObject *evaluate(Scope &scope) override;
 
-    // protected:
+
     StringObject stringObject;
 };
 
@@ -116,7 +114,7 @@ public:
     // Returns the object in the scope associated with a variable name.
     BaseObject *evaluate(Scope &scope) override;
 
-    // protected:
+
     std::string variableName;
 };
 
@@ -143,7 +141,7 @@ public:
     // Creates a new empty variable of a given type to the scope (i.e. int a;).
     BaseObject *evaluate(Scope &scope) override;
 
-    // protected:
+
     //  Type checking for variable assignment.
     bool passesAssignmentTypeCheck(const BaseObject &assignObject) const;
 
@@ -151,23 +149,45 @@ public:
 };
 
 
-class ProgramNode : public BaseNode
+class ProgramNode : public BaseNode // TODO: - write proper destructor to avoid memory leaks.
 {
 public:
-    ProgramNode(std::vector<SharedNode> nodes_) : programNodes(std::move(nodes_)) {}
+    ProgramNode(std::vector<BaseNode *> nodes_) : programNodes(std::move(nodes_)) {}
+
+    ~ProgramNode() override
+    {
+        for (BaseNode *node : programNodes) // Call destructor on all nodes we own.
+        {
+            delete node;
+        }
+    }
+
+    // Ownership of nodes passes to the caller.
+    std::vector<BaseNode *> releaseNodes()
+    {
+        auto returnedNodes = programNodes;
+        programNodes.clear();
+
+        return returnedNodes;
+    }
+
+    BaseNode *operator[](size_t index) const
+    {
+        assert(index < programNodes.size());
+        return programNodes[index];
+    }
 
     // Evaluates a vector of nodes sequentially. Returns nullptr.
     BaseObject *evaluate(Scope &scope) override;
 
-    // protected:
-    std::vector<std::shared_ptr<BaseNode>> programNodes; // TODO: - should be vector of pointers.
+    std::vector<BaseNode *> programNodes;
 };
 
 
 class AddArrayNode : public ProgramNode
 {
 public:
-    AddArrayNode(std::vector<SharedNode> nodes_) : ProgramNode(std::move(nodes_)) {}
+    AddArrayNode(std::vector<BaseNode *> nodes_) : ProgramNode(std::move(nodes_)) {}
 
     // Create a new ArrayObject in the current scope and return a managed pointer to it.
     ArrayObject *evaluate(Scope &scope) override;
@@ -177,7 +197,7 @@ public:
 class FileNode : public ProgramNode
 {
 public:
-    FileNode(std::vector<SharedNode> nodes_) : ProgramNode(std::move(nodes_)) {}
+    FileNode(std::vector<BaseNode *> nodes_) : ProgramNode(std::move(nodes_)) {}
 
     // Evaluates a file treating it as one large program. Does NOT create an inner
     // scope node in order to ensure that any functions declared in this file will
@@ -189,64 +209,83 @@ public:
 class ArrayAccessNode : public BaseNode
 {
 public:
-    ArrayAccessNode(std::shared_ptr<BaseNode> _arrayName, std::shared_ptr<BaseNode> _arrayIndex)
-        : arrayName(std::static_pointer_cast<AddNewVariableNode>(_arrayName)),
-          arrayIndex(std::static_pointer_cast<AddIntNode>(_arrayIndex))
+    ArrayAccessNode(BaseNode *arrayName_, BaseNode *arrayIndex_)
+        : arrayName(static_cast<AddNewVariableNode *>(arrayName_)),
+          arrayIndex(static_cast<AddIntNode *>(arrayIndex_))
     {
+    }
+
+    ~ArrayAccessNode() override
+    {
+        delete arrayName;
+        delete arrayIndex;
     }
 
     BaseObject *evaluate(Scope &scope) override;
 
-    std::shared_ptr<AddNewVariableNode> arrayName{nullptr}; // TODO: - don't use shared pointers.
-    std::shared_ptr<AddIntNode> arrayIndex{nullptr};
+    AddNewVariableNode *arrayName{nullptr};
+    AddIntNode *arrayIndex{nullptr};
 };
 
 
 class IfNode : public BaseNode
 {
 public:
-    IfNode(std::shared_ptr<BaseNode> condition_,
-           std::shared_ptr<BaseNode> thenDo_,
-           std::shared_ptr<BaseNode> elseDo_ = nullptr)
+    IfNode(BaseNode *condition_,
+           BaseNode *thenDo_,
+           BaseNode *elseDo_ = nullptr)
         : ifCondition(condition_),
           thenDo(thenDo_),
           elseDo(elseDo_)
     {
     }
 
+    ~IfNode() override
+    {
+        delete ifCondition;
+        delete thenDo;
+        delete elseDo;
+    }
+
     // Evaluate an if/else statement in current scope. Returns nullptr.
     BaseObject *evaluate(Scope &scope) override;
 
-    // protected:
-    std::shared_ptr<BaseNode> ifCondition{nullptr};
-    std::shared_ptr<BaseNode> thenDo{nullptr};
-    std::shared_ptr<BaseNode> elseDo{nullptr}; // Links to next argument (if node!).
+
+    BaseNode *ifCondition{nullptr};
+    BaseNode *thenDo{nullptr};
+    BaseNode *elseDo{nullptr}; // Links to next argument (if node!).
 };
 
 
 class DoWhileNode : public BaseNode
 {
 public:
-    DoWhileNode(SharedNode condition_, SharedNode body_)
-        : condition(std::move(condition_)),
-          body(std::move(body_))
+    DoWhileNode(BaseNode *condition_, BaseNode *body_)
+        : condition(condition_),
+          body(body_)
     {
+    }
+
+    ~DoWhileNode() override
+    {
+        delete condition;
+        delete body;
     }
 
     // Evaluate a do-while loop in current scope. Returns nullptr.
     BaseObject *evaluate(Scope &scope) override;
 
-    // protected:
-    std::shared_ptr<BaseNode> condition{nullptr};
-    std::shared_ptr<BaseNode> body{nullptr};
+
+    BaseNode *condition{nullptr};
+    BaseNode *body{nullptr};
 };
 
 
 class WhileNode : public DoWhileNode
 {
 public:
-    WhileNode(SharedNode _condition, SharedNode _body)
-        : DoWhileNode(std::move(_condition), std::move(_body))
+    WhileNode(BaseNode *_condition, BaseNode *_body)
+        : DoWhileNode(_condition, _body)
     {
     }
 
@@ -258,33 +297,46 @@ public:
 class ForLoopNode : public BaseNode
 {
 public:
-    ForLoopNode(SharedNode start_, SharedNode condition_, SharedNode update_, SharedNode body_)
-        : start(std::move(start_)),
-          condition(std::move(condition_)),
-          update(std::move(update_)),
-          body(std::move(body_))
+    ForLoopNode(BaseNode *start_, BaseNode *condition_, BaseNode *update_, BaseNode *body_)
+        : start(start_),
+          condition(condition_),
+          update(update_),
+          body(body_)
     {
     }
 
+    ~ForLoopNode() override
+    {
+        delete start;
+        delete condition;
+        delete update;
+        delete body;
+    }
 
     // Evaluates a for-loop in current scope. Returns nullptr.
     BaseObject *evaluate(Scope &scope) override;
 
-    // protected:
-    std::shared_ptr<BaseNode> start{nullptr};
-    std::shared_ptr<BaseNode> condition{nullptr};
-    std::shared_ptr<BaseNode> update{nullptr};
-    std::shared_ptr<BaseNode> body{nullptr};
+
+    BaseNode *start{nullptr};
+    BaseNode *condition{nullptr};
+    BaseNode *update{nullptr};
+    BaseNode *body{nullptr};
 };
 
 
 class FunctionCallNode : public BaseNode
 {
 public:
-    FunctionCallNode(SharedNode funcName_, SharedNode funcArgs_)
-        : funcName(std::static_pointer_cast<AddNewVariableNode>(funcName_)),
-          funcArgs(std::static_pointer_cast<ProgramNode>(funcArgs_))
+    FunctionCallNode(BaseNode *funcName_, BaseNode *funcArgs_)
+        : funcName(static_cast<AddNewVariableNode *>(funcName_)),
+          funcArgs(static_cast<ProgramNode *>(funcArgs_))
     {
+    }
+
+    ~FunctionCallNode() override
+    {
+        delete funcName;
+        delete funcArgs;
     }
 
     // TODO: - don't forget to do performance profiling for Fib sequence and see memory requirements for old and new version
@@ -293,29 +345,29 @@ public:
 
     BaseObject *evaluateFunctionBody(BaseNode &funcBody, Scope &funcScope);
 
-    // protected:
-    std::shared_ptr<AddNewVariableNode> funcName{nullptr};
-    std::shared_ptr<ProgramNode> funcArgs{nullptr};
+
+    AddNewVariableNode *funcName{nullptr};
+    ProgramNode *funcArgs{nullptr};
 };
 
 
 class FunctionNode : public FunctionCallNode, public std::enable_shared_from_this<FunctionNode>
 {
 public:
-    FunctionNode(SharedNode _funcName, SharedNode _funcArgs, SharedNode _funcBody)
-        : FunctionCallNode(std::move(_funcName), std::move(_funcArgs)),
-          funcBody(std::static_pointer_cast<ProgramNode>(_funcBody))
+    FunctionNode(BaseNode *funcName_, BaseNode *funcArgs_, BaseNode *funcBody_)
+        : FunctionCallNode(funcName_, funcArgs_),
+          funcBody(static_cast<ProgramNode *>(funcBody_))
     {
     }
 
-    std::shared_ptr<FunctionNode> getShared()
+    ~FunctionNode() override
     {
-        return shared_from_this();
+        delete funcBody;
     }
 
     BaseObject *evaluate(Scope &scope) override;
 
-    std::shared_ptr<ProgramNode> funcBody{nullptr};
+    ProgramNode *funcBody{nullptr};
 };
 
 
@@ -329,40 +381,51 @@ public:
 class ReturnNode : public BaseNode
 {
 public:
-    ReturnNode(SharedNode _returnValue = nullptr)
-        : returnNode(std::move(_returnValue))
+    ReturnNode(BaseNode *returnValue_ = nullptr)
+        : returnNode(returnValue_)
     {
+    }
+
+    ~ReturnNode() override
+    {
+        delete returnNode;
     }
 
     BaseObject *evaluate(Scope &scope) override;
 
-    SharedNode returnNode{nullptr};
+    BaseNode *returnNode{nullptr};
 };
 
 
 class AssignNode : public BaseNode
 {
 public:
-    AssignNode(SharedNode _left, SharedNode _right)
-        : left(std::move(_left)),
-          right(std::move(_right))
+    AssignNode(BaseNode *left_, BaseNode *right_)
+        : left(left_),
+          right(right_)
     {
+    }
+
+    ~AssignNode() override
+    {
+        delete left;
+        delete right;
     }
 
     BaseObject *evaluate(Scope &scope) override;
 
     BaseObject *evaluateArrayAccess(Scope &scope);
 
-    SharedNode left{nullptr};
-    SharedNode right{nullptr};
+    BaseNode *left{nullptr};
+    BaseNode *right{nullptr};
 };
 
 
 class BinaryNode : public AssignNode
 {
 public:
-    BinaryNode(SharedNode left_, SharedNode right_, std::string binaryOperator_)
-        : AssignNode(std::move(left_), std::move(right_)),
+    BinaryNode(BaseNode *left_, BaseNode *right_, std::string binaryOperator_)
+        : AssignNode(left_, right_),
           binaryOperator(std::move(binaryOperator_))
     {
     }
@@ -371,7 +434,7 @@ public:
 
     std::string binaryOperator;
 
-    // protected:
+
     BaseObject *applyOperator(Scope &scope, const BaseObject &left, const BaseObject &right) const;
 
     BaseObject *applyOperator(Scope &scope, const IntObject &left, const IntObject &right) const;

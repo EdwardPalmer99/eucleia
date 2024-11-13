@@ -345,7 +345,7 @@ public:
 class FunctionObject : public BaseObject
 {
 public:
-    FunctionObject(std::shared_ptr<FunctionNode> function_) : functionValue(std::move(function_)) {}
+    FunctionObject(FunctionNode *function_) : functionValue(function_) {}
 
     std::string typeName() const override { return "FunctionObject"; }
 
@@ -354,7 +354,7 @@ public:
         return new FunctionObject(functionValue);
     }
 
-    std::shared_ptr<FunctionNode> functionValue{nullptr}; // TODO: - weird code.
+    FunctionNode *functionValue{nullptr}; // TODO: - weird code.
 };
 
 

@@ -24,7 +24,7 @@ BaseObject *NegationNode::evaluate(Scope &scope)
     else if (bodyEvaluated->isObjectType<FloatObject>())
         return scope.createManagedObject<FloatObject>(-bodyEvaluated->castObject<FloatObject>());
     else
-        printWarpError("%s", "invalid object type.");
+        printEucleiaError("%s", "invalid object type.");
 }
 
 
@@ -47,7 +47,7 @@ BaseObject *PrefixIncrementNode::evaluate(Scope &scope)
     }
     else
     {
-        printWarpError("%s", "cannot use prefix operator on object of type.\n");
+        printEucleiaError("%s", "cannot use prefix operator on object of type.\n");
     }
 }
 
@@ -71,6 +71,6 @@ BaseObject *PrefixDecrementNode::evaluate(Scope &scope)
     }
     else
     {
-        printWarpError("%s", "cannot use prefix operator on object of type.\n");
+        printEucleiaError("%s", "cannot use prefix operator on object of type.\n");
     }
 }
