@@ -16,7 +16,7 @@
 
 Parser::Parser(const std::string &fpath)
     : tokenizer(Tokenizer::loadFromFile(fpath)),
-      parentDir(parentDirectory(fpath))
+      nameParentDir(parentDirectory(fpath))
 {
 }
 
@@ -76,12 +76,12 @@ FileNode *Parser::parseFileImport()
     assert(token.type == Token::String);
 
     // Build the file path:
-    auto filePath = parentDir + token.value;
+    auto filePath = nameParentDir + token.value;
 
     auto ast = Parser::buildAST(filePath);
     if (!ast)
     {
-        printWarpError("Failed to import file with path '%s'.", filePath.c_str());
+        printEucleiaError("Failed to import file with path '%s'.", filePath.c_str());
     }
 
     return ast;
@@ -231,7 +231,7 @@ BaseNode *Parser::parseVariableDefinition()
     else if (typeName == "array")
         return new AddNewVariableNode(variableName, AddNewVariableNode::VariableType::Array);
     else
-        printWarpError("expected variable type for variable %s.\n", typeName.c_str());
+        printEucleiaError("expected variable type for variable %s.\n", typeName.c_str());
 }
 
 
@@ -290,7 +290,7 @@ ForLoopNode *Parser::parseFor()
 
     if (brackets->programNodes.size() != 3)
     {
-        printWarpError("Expected 3 arguments for for-loop but got %ld\n", brackets->programNodes.size());
+        printEucleiaError("Expected 3 arguments for for-loop but got %ld\n", brackets->programNodes.size());
     }
 
     auto start = brackets->programNodes[0];
@@ -763,7 +763,7 @@ void Parser::skipKeyword(const std::string &name)
 {
     if (!isKeyword(name))
     {
-        printWarpError("expected keyword '%s'.\n", name.c_str());
+        printEucleiaError("expected keyword '%s'.\n", name.c_str());
     }
 
     skipToken();
@@ -774,7 +774,7 @@ void Parser::skipPunctuation(const std::string &name)
 {
     if (!isPunctuation(name))
     {
-        printWarpError("expected punctuation '%s'.\n", name.c_str());
+        printEucleiaError("expected punctuation '%s'.\n", name.c_str());
     }
 
     skipToken();
@@ -785,7 +785,7 @@ void Parser::skipOperator(const std::string &name)
 {
     if (!isOperator(name))
     {
-        printWarpError("expected operator '%s'.\n", name.c_str());
+        printEucleiaError("expected operator '%s'.\n", name.c_str());
     }
 
     skipToken();
@@ -798,5 +798,5 @@ void Parser::unexpectedToken()
 {
     Token &token = peekToken();
 
-    printWarpError("Unexpected token of type '%s' and value '%s'.\n", token.description().c_str(), token.value.c_str());
+    printEucleiaError("Unexpected token of type '%s' and value '%s'.\n", token.description().c_str(), token.value.c_str());
 }

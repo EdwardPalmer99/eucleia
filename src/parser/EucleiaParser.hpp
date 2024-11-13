@@ -108,7 +108,7 @@ private:
 
     Tokenizer tokenizer;
 
-    const std::string parentDir;
+    const std::string nameParentDir;
 };
 
 #endif /* EucleiaParser_hpp */
