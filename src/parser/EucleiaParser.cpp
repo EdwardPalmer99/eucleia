@@ -22,9 +22,9 @@ Parser::Parser(const std::string &fpath)
 
 #pragma mark -
 
-std::shared_ptr<FileNode> Parser::buildAST()
+FileNode *Parser::buildAST()
 {
-    std::vector<std::shared_ptr<BaseNode>> nodes;
+    std::vector<BaseNode *> nodes;
 
     while (!tokenizer.empty() && peekToken().type != Token::None)
     {
@@ -37,11 +37,11 @@ std::shared_ptr<FileNode> Parser::buildAST()
 
     nodes.shrink_to_fit();
 
-    return std::make_shared<FileNode>(nodes);
+    return new FileNode(nodes);
 }
 
 
-std::shared_ptr<FileNode> Parser::buildAST(const std::string &fpath)
+FileNode *Parser::buildAST(const std::string &fpath)
 {
     Parser parser(fpath);
 
@@ -49,7 +49,7 @@ std::shared_ptr<FileNode> Parser::buildAST(const std::string &fpath)
 }
 
 
-std::shared_ptr<BaseNode> Parser::parseImport()
+BaseNode *Parser::parseImport()
 {
     skipKeyword("import");
 
@@ -69,7 +69,7 @@ std::shared_ptr<BaseNode> Parser::parseImport()
 /// import "path_to_some_file"
 ///
 /// Imports a file and its functions into this scope.
-std::shared_ptr<FileNode> Parser::parseFileImport()
+FileNode *Parser::parseFileImport()
 {
     // File name token:
     auto token = nextToken();
@@ -91,7 +91,7 @@ std::shared_ptr<FileNode> Parser::parseFileImport()
 ///
 /// This is for importing functions from a stdlib as opposed to user-defined functions
 /// into this scope.
-std::shared_ptr<ModuleNode> Parser::parseLibraryImport()
+ModuleNode *Parser::parseLibraryImport()
 {
     skipOperator("<");
 
@@ -102,6 +102,7 @@ std::shared_ptr<ModuleNode> Parser::parseLibraryImport()
 
     auto libraryName = token.value;
 
+    // TODO: - handle memory issues here.
     return EucleiaModuleLoader::getModuleInstance(libraryName);
 }
 
@@ -140,62 +141,67 @@ std::string Parser::parentDirectory(const std::string &fpath)
 /// Parses a sequence of expression. If there is only one expression within the
 /// brackets then we just return that.
 /// TODO: - add handling for no expressions within the brackets.
-std::shared_ptr<BaseNode> Parser::parseProgram()
+BaseNode *Parser::parseProgram()
 {
-    auto program = parseProgramLines();
+    ProgramNode *program = parseProgramLines();
 
     if (program->programNodes.size() == 1) // Return single node (more efficient).
     {
-        return std::move(program->programNodes.front());
+        BaseNode *first = (*program)[0];
+
+        program->programNodes.clear(); // To prevent destructor deleting first base node.
+        delete program;
+
+        return first;
     }
 
     return program;
 }
 
 
-std::shared_ptr<AddIntNode> Parser::parseInt()
+AddIntNode *Parser::parseInt()
 {
     Token token = nextToken();
 
     long intValue = strtold(token.value.c_str(), NULL);
 
-    return std::make_shared<AddIntNode>(intValue);
+    return new AddIntNode(intValue);
 }
 
 
-std::shared_ptr<AddFloatNode> Parser::parseFloat()
+AddFloatNode *Parser::parseFloat()
 {
     Token token = nextToken();
 
     double floatValue = strtof(token.value.c_str(), NULL);
 
-    return std::make_shared<AddFloatNode>(floatValue);
+    return new AddFloatNode(floatValue);
 }
 
 
-std::shared_ptr<AddBoolNode> Parser::parseBool()
+AddBoolNode *Parser::parseBool()
 {
     Token token = nextToken();
 
     bool state = (token.value == "true");
 
-    return std::make_shared<AddBoolNode>(state);
+    return new AddBoolNode(state);
 }
 
 
-std::shared_ptr<AddStringNode> Parser::parseString()
+AddStringNode *Parser::parseString()
 {
     Token token = nextToken();
 
-    return std::make_shared<AddStringNode>(token.value);
+    return new AddStringNode(token.value);
 }
 
 
-std::shared_ptr<BaseNode> Parser::parseBrackets()
+BaseNode *Parser::parseBrackets()
 {
     skipPunctuation("(");
 
-    auto expression = parseExpression();
+    BaseNode *expression = parseExpression();
 
     skipPunctuation(")");
 
@@ -205,7 +211,7 @@ std::shared_ptr<BaseNode> Parser::parseBrackets()
 
 /// Variable definition:
 /// int/float/string/bool/array [VARIABLE_NAME]
-std::shared_ptr<BaseNode> Parser::parseVariableDefinition()
+BaseNode *Parser::parseVariableDefinition()
 {
     Token typeToken = nextToken();
     assert(typeToken.type == Token::Keyword);
@@ -218,27 +224,27 @@ std::shared_ptr<BaseNode> Parser::parseVariableDefinition()
 
     // TODO: - add void typename for functions eventually.
     if (typeName == "int")
-        return std::make_shared<AddNewVariableNode>(variableName, AddNewVariableNode::VariableType::Int);
+        return new AddNewVariableNode(variableName, AddNewVariableNode::VariableType::Int);
     else if (typeName == "float")
-        return std::make_shared<AddNewVariableNode>(variableName, AddNewVariableNode::VariableType::Float);
+        return new AddNewVariableNode(variableName, AddNewVariableNode::VariableType::Float);
     else if (typeName == "bool")
-        return std::make_shared<AddNewVariableNode>(variableName, AddNewVariableNode::VariableType::Bool);
+        return new AddNewVariableNode(variableName, AddNewVariableNode::VariableType::Bool);
     else if (typeName == "string")
-        return std::make_shared<AddNewVariableNode>(variableName, AddNewVariableNode::VariableType::String);
+        return new AddNewVariableNode(variableName, AddNewVariableNode::VariableType::String);
     else if (typeName == "array")
-        return std::make_shared<AddNewVariableNode>(variableName, AddNewVariableNode::VariableType::Array);
+        return new AddNewVariableNode(variableName, AddNewVariableNode::VariableType::Array);
     else
         printWarpError("expected variable type for variable %s.\n", typeName.c_str());
 }
 
 
 /// [VARIABLE_NAME]
-std::shared_ptr<BaseNode> Parser::parseVariableName()
+BaseNode *Parser::parseVariableName()
 {
     Token token = nextToken();
     assert(token.type == Token::Variable);
 
-    return std::make_shared<LookupVariableNode>(token.value);
+    return new LookupVariableNode(token.value);
 }
 
 
@@ -249,14 +255,14 @@ std::shared_ptr<BaseNode> Parser::parseVariableName()
 /// 	[code]
 /// }
 /// while ([condition is true]);
-std::shared_ptr<DoWhileNode> Parser::parseDoWhile()
+DoWhileNode *Parser::parseDoWhile()
 {
     skipKeyword("do");
-    auto body = parseProgram();
+    BaseNode *body = parseProgram();
     skipKeyword("while");
-    auto condition = parseBrackets();
+    BaseNode *condition = parseBrackets();
 
-    return std::make_shared<DoWhileNode>(std::move(condition), std::move(body));
+    return new DoWhileNode(condition, body);
 }
 
 
@@ -264,14 +270,14 @@ std::shared_ptr<DoWhileNode> Parser::parseDoWhile()
 /// {
 /// 	[code]
 /// }
-std::shared_ptr<WhileNode> Parser::parseWhile()
+WhileNode *Parser::parseWhile()
 {
     skipKeyword("while");
 
-    auto condition = parseBrackets();
-    auto body = parseProgram();
+    BaseNode *condition = parseBrackets();
+    BaseNode *body = parseProgram();
 
-    return std::make_shared<WhileNode>(std::move(condition), std::move(body));
+    return new WhileNode(condition, body);
 }
 
 
@@ -279,7 +285,7 @@ std::shared_ptr<WhileNode> Parser::parseWhile()
 /// {
 /// 	[code]
 /// }
-std::shared_ptr<ForLoopNode> Parser::parseFor()
+ForLoopNode *Parser::parseFor()
 {
     skipKeyword("for");
 
@@ -295,13 +301,13 @@ std::shared_ptr<ForLoopNode> Parser::parseFor()
     auto update = brackets->programNodes[2];
     auto body = parseProgram();
 
-    return std::make_shared<ForLoopNode>(start, condition, update, body);
+    return new ForLoopNode(start, condition, update, body);
 }
 
 
 #pragma mark - *** Control Flow ***
 
-std::shared_ptr<IfNode> Parser::parseIf()
+IfNode *Parser::parseIf()
 {
     // For now, only permit a single if statement.
     skipKeyword("if");
@@ -310,7 +316,7 @@ std::shared_ptr<IfNode> Parser::parseIf()
     auto thenDo = parseProgram();
 
 
-    std::shared_ptr<BaseNode> elseDo{nullptr}; // Optional.
+    BaseNode *elseDo{nullptr}; // Optional.
     if (peekToken().value == "else")
     {
         skipKeyword("else");
@@ -323,30 +329,30 @@ std::shared_ptr<IfNode> Parser::parseIf()
             elseDo = parseProgram();
     }
 
-    return std::make_shared<IfNode>(condition, thenDo, elseDo);
+    return new IfNode(condition, thenDo, elseDo);
 }
 
 
-std::shared_ptr<BreakNode> Parser::parseBreak()
+BreakNode *Parser::parseBreak()
 {
     skipKeyword("break");
 
-    return std::make_shared<BreakNode>();
+    return new BreakNode();
 }
 
 
-std::shared_ptr<ReturnNode> Parser::parseReturn()
+ReturnNode *Parser::parseReturn()
 {
     skipKeyword("return");
 
-    std::shared_ptr<BaseNode> returnedExpression{nullptr};
+    BaseNode *returnedExpression{nullptr};
 
     if (!isPunctuation(";"))
     {
         returnedExpression = parseExpression();
     }
 
-    return std::make_shared<ReturnNode>(returnedExpression);
+    return new ReturnNode(returnedExpression);
 }
 
 
@@ -356,7 +362,7 @@ std::shared_ptr<ReturnNode> Parser::parseReturn()
 /// {
 ///		[BODY]
 /// }
-std::shared_ptr<FunctionNode> Parser::parseFunctionDefinition()
+FunctionNode *Parser::parseFunctionDefinition()
 {
     skipKeyword("func");
 
@@ -364,19 +370,19 @@ std::shared_ptr<FunctionNode> Parser::parseFunctionDefinition()
     auto funcArgs = parseDelimited("(", ")", ",", std::bind(&Parser::parseVariableDefinition, this)); // Func variables.
     auto funcBody = parseProgram();
 
-    return std::make_shared<FunctionNode>(funcName, funcArgs, funcBody);
+    return new FunctionNode(funcName, funcArgs, funcBody);
 }
 
 
 ///
 /// Example: test(a, b, c);
 ///
-std::shared_ptr<FunctionCallNode> Parser::parseFunctionCall(std::shared_ptr<BaseNode> lastExpression)
+FunctionCallNode *Parser::parseFunctionCall(BaseNode *lastExpression)
 {
     auto functionName = std::move(lastExpression);
     auto functionArgs = parseDelimited("(", ")", ",", std::bind(&Parser::parseExpression, this));
 
-    return std::make_shared<FunctionCallNode>(functionName, functionArgs);
+    return new FunctionCallNode(functionName, functionArgs);
 }
 
 
@@ -385,9 +391,9 @@ std::shared_ptr<FunctionCallNode> Parser::parseFunctionCall(std::shared_ptr<Base
 ///
 /// Expression: array_variable[0].
 ///
-std::shared_ptr<ArrayAccessNode> Parser::parseArrayAccessor(std::shared_ptr<BaseNode> lastExpression)
+ArrayAccessNode *Parser::parseArrayAccessor(BaseNode *lastExpression)
 {
-    auto arrayName = std::move(lastExpression);
+    auto arrayName = lastExpression;
 
     skipPunctuation("[");
 
@@ -395,22 +401,24 @@ std::shared_ptr<ArrayAccessNode> Parser::parseArrayAccessor(std::shared_ptr<Base
 
     skipPunctuation("]");
 
-    return std::make_shared<ArrayAccessNode>(arrayName, arrayIndex);
+    return new ArrayAccessNode(arrayName, arrayIndex);
 }
 
 
 /// [1, 2, 3, 4] OR [true, false, true] OR [1.2, 2.4] OR ["hello, ", "world!"].
-std::shared_ptr<AddArrayNode> Parser::parseArray()
+AddArrayNode *Parser::parseArray()
 {
     auto nodes = parseDelimited("[", "]", ",", std::bind(&Parser::parseExpression, this));
 
-    return std::make_shared<AddArrayNode>(nodes->programNodes);
+    // TODO: - this is a memory leak. Need to extract the copy the vector or init with programNodes vector.
+
+    return new AddArrayNode(nodes->programNodes);
 }
 
 
 #pragma mark - *** Assignment/Binary ***
 
-std::shared_ptr<BaseNode> Parser::maybeBinary(std::shared_ptr<BaseNode> leftExpression, int leftPrecedence)
+BaseNode *Parser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
 {
     // Take a peek look at the next token. Is it an operator token. If it is then
     // we need to create a binary node.
@@ -428,14 +436,14 @@ std::shared_ptr<BaseNode> Parser::maybeBinary(std::shared_ptr<BaseNode> leftExpr
             auto rightExpression = maybeBinary(parseAtomically(), nextPrecedence);
 
             // Create binary or assign node.
-            std::shared_ptr<BaseNode> node{nullptr};
+            BaseNode *node{nullptr};
 
             bool isAssignNode = (next.value == "=");
 
             if (isAssignNode)
-                node = std::make_shared<AssignNode>(std::move(leftExpression), std::move(rightExpression));
+                node = new AssignNode(leftExpression, rightExpression);
             else
-                node = std::make_shared<BinaryNode>(leftExpression, rightExpression, next.value);
+                node = new BinaryNode(leftExpression, rightExpression, next.value);
 
             // Wrap binary node by calling ourselves should the next operator
             // be of a greater precedence.
@@ -450,30 +458,30 @@ std::shared_ptr<BaseNode> Parser::maybeBinary(std::shared_ptr<BaseNode> leftExpr
 
 #pragma mark - *** Maybe ***
 
-std::shared_ptr<BaseNode> Parser::maybeFunctionCall(ParseMethod expression)
+BaseNode *Parser::maybeFunctionCall(ParseMethod expression)
 {
     auto expr = expression(); // Possible function name.
 
-    return isPunctuation("(") ? parseFunctionCall(std::move(expr)) : expr;
+    return isPunctuation("(") ? parseFunctionCall(expr) : expr;
 }
 
 
-std::shared_ptr<BaseNode> Parser::maybeArrayAccess(ParseMethod expression)
+BaseNode *Parser::maybeArrayAccess(ParseMethod expression)
 {
     auto expr = expression(); // Possible array variable name.
 
-    return isPunctuation("[") ? parseArrayAccessor(std::move(expr)) : expr;
+    return isPunctuation("[") ? parseArrayAccessor(expr) : expr;
 }
 
 
-std::shared_ptr<BaseNode> Parser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
+BaseNode *Parser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
 {
     auto expr = expression();
 
     if (isPunctuation("("))
-        return parseFunctionCall(std::move(expr));
+        return parseFunctionCall(expr);
     else if (isPunctuation("["))
-        return parseArrayAccessor(std::move(expr));
+        return parseArrayAccessor(expr);
     else
         return expr;
 }
@@ -481,19 +489,19 @@ std::shared_ptr<BaseNode> Parser::maybeFunctionCallOrArrayAccess(ParseMethod exp
 
 #pragma mark - *** Utility ***
 
-std::shared_ptr<BaseNode> Parser::parseExpression()
+BaseNode *Parser::parseExpression()
 {
     return maybeFunctionCallOrArrayAccess(std::bind(&Parser::parseExpressionHelper, this));
 }
 
 
-std::shared_ptr<BaseNode> Parser::parseExpressionHelper()
+BaseNode *Parser::parseExpressionHelper()
 {
     return maybeBinary(parseAtomically(), 0);
 }
 
 
-std::shared_ptr<BaseNode> Parser::parseAtomically()
+BaseNode *Parser::parseAtomically()
 {
     // 1. Call parseAtomicallyExpression() -> This may be the function name.
     // 2. Do we have a next token which is "("? --> YES --> FUNCTION CALL!
@@ -501,7 +509,7 @@ std::shared_ptr<BaseNode> Parser::parseAtomically()
 }
 
 
-std::shared_ptr<BaseNode> Parser::parseAtomicallyExpression()
+BaseNode *Parser::parseAtomicallyExpression()
 {
     // TODO: - breakup
     if (isPunctuation("("))
@@ -562,35 +570,35 @@ std::shared_ptr<BaseNode> Parser::parseAtomicallyExpression()
 }
 
 
-std::shared_ptr<NotNode> Parser::parseNot()
+NotNode *Parser::parseNot()
 {
     skipOperator("!");
 
-    return std::make_shared<NotNode>(parseAtomically());
+    return new NotNode(parseAtomically());
 }
 
 
-std::shared_ptr<PrefixIncrementNode> Parser::parsePrefixIncrement()
+PrefixIncrementNode *Parser::parsePrefixIncrement()
 {
     skipOperator("++");
 
-    return std::make_shared<PrefixIncrementNode>(parseAtomically());
+    return new PrefixIncrementNode(parseAtomically());
 }
 
 
-std::shared_ptr<PrefixDecrementNode> Parser::parsePrefixDecrement()
+PrefixDecrementNode *Parser::parsePrefixDecrement()
 {
     skipOperator("--");
 
-    return std::make_shared<PrefixDecrementNode>(parseAtomically());
+    return new PrefixDecrementNode(parseAtomically());
 }
 
 
-std::shared_ptr<NegationNode> Parser::parseNegation()
+NegationNode *Parser::parseNegation()
 {
     skipOperator("-");
 
-    return std::make_shared<NegationNode>(parseAtomically());
+    return new NegationNode(parseAtomically());
 }
 
 
@@ -602,14 +610,14 @@ std::shared_ptr<NegationNode> Parser::parseNegation()
 ///
 /// function aFunction(a, b, c) --> start = (, stop = ), separator = ,
 ///
-std::shared_ptr<ProgramNode> Parser::parseDelimited(std::string start,
-                                                    std::string stop,
-                                                    std::string separator,
-                                                    std::function<std::shared_ptr<BaseNode>(void)> parseMethod)
+ProgramNode *Parser::parseDelimited(std::string start,
+                                    std::string stop,
+                                    std::string separator,
+                                    std::function<BaseNode *(void)> parseMethod)
 {
     skipPunctuation(start); // Skip the punctuation at the start.
 
-    std::vector<std::shared_ptr<BaseNode>> parsedNodes;
+    std::vector<BaseNode *> parsedNodes;
 
     // Iterate while we still have tokens and haven't reached stop token.
     bool firstCall = true;
@@ -640,7 +648,7 @@ std::shared_ptr<ProgramNode> Parser::parseDelimited(std::string start,
     // Resize to fit.
     parsedNodes.shrink_to_fit();
 
-    return std::make_shared<ProgramNode>(parsedNodes);
+    return new ProgramNode(parsedNodes);
 }
 
 
@@ -663,11 +671,11 @@ void Parser::skipSemicolonLineEndingIfRequired(const BaseNode &node)
 }
 
 
-std::shared_ptr<ProgramNode> Parser::parseProgramLines()
+ProgramNode *Parser::parseProgramLines()
 {
     skipPunctuation("{");
 
-    std::vector<std::shared_ptr<BaseNode>> parsedNodes;
+    std::vector<BaseNode *> parsedNodes;
 
     while (!tokenizer.empty() && !isPunctuation("}"))
     {
@@ -680,7 +688,7 @@ std::shared_ptr<ProgramNode> Parser::parseProgramLines()
 
     skipPunctuation("}");
 
-    return std::make_shared<ProgramNode>(std::move(parsedNodes));
+    return new ProgramNode(std::move(parsedNodes));
 }
 
 

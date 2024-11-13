@@ -16,46 +16,46 @@
 class Parser
 {
 public:
-    static std::shared_ptr<FileNode> buildAST(const std::string &fpath);
+    static FileNode *buildAST(const std::string &fpath);
 
 protected:
     Parser(const std::string &fpath);
 
-    std::shared_ptr<FileNode> buildAST();
+    FileNode *buildAST();
 
-    std::shared_ptr<AddBoolNode> parseBool();
-    std::shared_ptr<AddStringNode> parseString();
-    std::shared_ptr<AddIntNode> parseInt();
-    std::shared_ptr<AddFloatNode> parseFloat();
+    AddBoolNode *parseBool();
+    AddStringNode *parseString();
+    AddIntNode *parseInt();
+    AddFloatNode *parseFloat();
 
-    std::shared_ptr<BaseNode> parseBrackets();
+    BaseNode *parseBrackets();
 
-    std::shared_ptr<BaseNode> parseProgram();
-    std::shared_ptr<AddArrayNode> parseArray();
+    BaseNode *parseProgram();
+    AddArrayNode *parseArray();
 
-    std::shared_ptr<BaseNode> parseVariableDefinition();
-    std::shared_ptr<BaseNode> parseVariableName();
+    BaseNode *parseVariableDefinition();
+    BaseNode *parseVariableName();
 
-    std::shared_ptr<DoWhileNode> parseDoWhile();
-    std::shared_ptr<WhileNode> parseWhile();
-    std::shared_ptr<ForLoopNode> parseFor();
+    DoWhileNode *parseDoWhile();
+    WhileNode *parseWhile();
+    ForLoopNode *parseFor();
 
-    std::shared_ptr<IfNode> parseIf();
-    std::shared_ptr<FunctionNode> parseFunctionDefinition();
+    IfNode *parseIf();
+    FunctionNode *parseFunctionDefinition();
 
-    std::shared_ptr<BreakNode> parseBreak();
-    std::shared_ptr<ReturnNode> parseReturn();
+    BreakNode *parseBreak();
+    ReturnNode *parseReturn();
 
-    std::shared_ptr<NotNode> parseNot();
-    std::shared_ptr<PrefixIncrementNode> parsePrefixIncrement();
-    std::shared_ptr<PrefixDecrementNode> parsePrefixDecrement();
-    std::shared_ptr<NegationNode> parseNegation();
+    NotNode *parseNot();
+    PrefixIncrementNode *parsePrefixIncrement();
+    PrefixDecrementNode *parsePrefixDecrement();
+    NegationNode *parseNegation();
 
-    std::shared_ptr<ModuleNode> parseLibraryImport();
-    std::shared_ptr<FileNode> parseFileImport();
-    std::shared_ptr<BaseNode> parseImport();
+    ModuleNode *parseLibraryImport();
+    FileNode *parseFileImport();
+    BaseNode *parseImport();
 
-    std::shared_ptr<ArrayAccessNode> parseArrayAccessor(std::shared_ptr<BaseNode> lastExpression);
+    ArrayAccessNode *parseArrayAccessor(BaseNode *lastExpression);
 
     bool isKeyword(const std::string &keyword);
     bool isPunctuation(const std::string &punctuation);
@@ -73,7 +73,7 @@ protected:
 
     void unexpectedToken();
 
-    std::shared_ptr<FunctionCallNode> parseFunctionCall(std::shared_ptr<BaseNode> lastExpression);
+    FunctionCallNode *parseFunctionCall(BaseNode *lastExpression);
 
     void skipSemicolonLineEndingIfRequired(const BaseNode &node);
 
@@ -81,30 +81,30 @@ protected:
 
 
 private:
-    using ParseMethod = std::function<std::shared_ptr<BaseNode>(void)>;
+    using ParseMethod = std::function<BaseNode *(void)>;
 
-    std::shared_ptr<BaseNode> parseExpression();
-    std::shared_ptr<BaseNode> parseExpressionHelper();
-    std::shared_ptr<BaseNode> parseAtomically();
-    std::shared_ptr<BaseNode> parseAtomicallyExpression();
+    BaseNode *parseExpression();
+    BaseNode *parseExpressionHelper();
+    BaseNode *parseAtomically();
+    BaseNode *parseAtomicallyExpression();
 
     int getPrecedence(void);
 
-    std::shared_ptr<BaseNode> maybeArrayAccess(ParseMethod expression);
+    BaseNode *maybeArrayAccess(ParseMethod expression);
 
-    std::shared_ptr<BaseNode> maybeFunctionCall(ParseMethod expression);
+    BaseNode *maybeFunctionCall(ParseMethod expression);
 
-    std::shared_ptr<BaseNode> maybeFunctionCallOrArrayAccess(ParseMethod expression);
+    BaseNode *maybeFunctionCallOrArrayAccess(ParseMethod expression);
 
-    std::shared_ptr<ProgramNode> parseDelimited(std::string start,
-                                                std::string stop,
-                                                std::string separator,
-                                                ParseMethod expression);
+    ProgramNode *parseDelimited(std::string start,
+                                std::string stop,
+                                std::string separator,
+                                ParseMethod expression);
 
-    std::shared_ptr<ProgramNode> parseProgramLines();
+    ProgramNode *parseProgramLines();
 
-    std::shared_ptr<BaseNode> maybeBinary(std::shared_ptr<BaseNode> leftExpression,
-                                          int leftPrecedence);
+    BaseNode *maybeBinary(BaseNode *leftExpression,
+                          int leftPrecedence);
 
     Tokenizer tokenizer;
 

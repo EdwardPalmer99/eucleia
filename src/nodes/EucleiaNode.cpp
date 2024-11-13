@@ -74,7 +74,7 @@ BaseObject *FunctionNode::evaluate(Scope &scope)
 {
     auto &funcNameNode = funcName->castNode<AddNewVariableNode>();
 
-    auto functionObject = scope.createManagedObject<FunctionObject>(getShared());
+    auto functionObject = scope.createManagedObject<FunctionObject>(this); // TODO: - uh-oh!! Think about pointer ownership here!!
 
     scope.defineObject(funcNameNode.variableName, functionObject);
 

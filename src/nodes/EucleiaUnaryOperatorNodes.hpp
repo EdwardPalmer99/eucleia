@@ -9,27 +9,28 @@
 #define EucleiaUnaryOperatorNodes_hpp
 
 #include "EucleiaNode.hpp"
-#include <memory>
-
-using SharedPtr = std::shared_ptr<BaseObject>;
+#include "EucleiaObject.hpp"
+#include "EucleiaScope.hpp"
 
 /// Base node for unary operators.
-struct UnaryOperatorBaseNode : BaseNode
+class UnaryOperatorBaseNode : public BaseNode
 {
-    UnaryOperatorBaseNode(SharedNode _body)
-        : body{std::move(_body)}
+public:
+    UnaryOperatorBaseNode(BaseNode *body_)
+        : body(body_)
     {
     }
 
-    SharedNode body{nullptr};
+    BaseNode *body{nullptr};
 };
 
 
 /// Unary not operator (e.g. !true --> false).
-struct NotNode : UnaryOperatorBaseNode
+class NotNode : public UnaryOperatorBaseNode
 {
-    NotNode(SharedNode _body)
-        : UnaryOperatorBaseNode(std::move(_body))
+public:
+    NotNode(BaseNode *body_)
+        : UnaryOperatorBaseNode(body_)
     {
     }
 
@@ -38,10 +39,11 @@ struct NotNode : UnaryOperatorBaseNode
 
 
 /// Unary - operator (.e.g. -1).
-struct NegationNode : UnaryOperatorBaseNode
+class NegationNode : public UnaryOperatorBaseNode
 {
-    NegationNode(SharedNode _body)
-        : UnaryOperatorBaseNode(std::move(_body))
+public:
+    NegationNode(BaseNode *body_)
+        : UnaryOperatorBaseNode(body_)
     {
     }
 
@@ -50,10 +52,11 @@ struct NegationNode : UnaryOperatorBaseNode
 
 
 /// Unary prefix increment node (e.g. ++a).
-struct PrefixIncrementNode : UnaryOperatorBaseNode
+class PrefixIncrementNode : public UnaryOperatorBaseNode
 {
-    PrefixIncrementNode(SharedNode _body)
-        : UnaryOperatorBaseNode(std::move(_body))
+public:
+    PrefixIncrementNode(BaseNode *body_)
+        : UnaryOperatorBaseNode(body_)
     {
     }
 
@@ -62,10 +65,11 @@ struct PrefixIncrementNode : UnaryOperatorBaseNode
 
 
 /// Unary prefix decrement node (e.g. --a).
-struct PrefixDecrementNode : UnaryOperatorBaseNode
+class PrefixDecrementNode : public UnaryOperatorBaseNode
 {
-    PrefixDecrementNode(SharedNode _body)
-        : UnaryOperatorBaseNode(std::move(_body))
+public:
+    PrefixDecrementNode(BaseNode *body_)
+        : UnaryOperatorBaseNode(body_)
     {
     }
 

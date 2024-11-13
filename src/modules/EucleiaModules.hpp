@@ -62,7 +62,7 @@ protected:
 };
 
 /// Singleton store of libraries.
-class EucleiaModuleLoader
+class EucleiaModuleLoader // TODO: - massive overkill. Can just add to the parser.
 {
 public:
     static EucleiaModuleLoader &getInstance()
@@ -70,13 +70,12 @@ public:
         if (!_instance)
         {
             _instance = std::make_unique<EucleiaModuleLoader>();
-            _instance->buildDefaultLibraries();
         }
 
         return *_instance;
     }
 
-    static std::shared_ptr<ModuleNode> getModuleInstance(const std::string &name)
+    static ModuleNode *getModuleInstance(const std::string &name)
     {
         return getInstance().getModule(name);
     }
@@ -84,12 +83,7 @@ public:
     static std::unique_ptr<EucleiaModuleLoader> _instance;
 
 protected:
-    void buildDefaultLibraries();
-
-    std::shared_ptr<ModuleNode> getModule(const std::string &name) const;
-
-private:
-    std::map<std::string, std::shared_ptr<ModuleNode>> _modules;
+    ModuleNode *getModule(const std::string &name) const;
 };
 
 
