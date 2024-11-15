@@ -75,10 +75,21 @@ FileNode *Parser::parseFileImport()
     auto token = nextToken();
     assert(token.type == Token::String);
 
+    // Check: has file already been imported somewhere? If it has then we don't
+    // want to import it a second time! (i.e. A imports B, C and B imports C. In
+    // this case, PARSE A set[A]--> PARSE B set[A,B]--> PARSE C set[A,B,C].
+    if (parsedFilePaths.count(token.value))
+    {
+        return new FileNode(); // Return "empty file".
+    }
+
+    // NB: drawback is multiple files with same name cannot be used.
+    parsedFilePaths.insert(token.value);
+
     // Build the file path:
     auto filePath = nameParentDir + token.value;
 
-    auto ast = Parser::buildAST(filePath);
+    auto ast = Parser::buildAST(filePath); // NB: don't use static method.
     if (!ast)
     {
         printEucleiaError("Failed to import file with path '%s'.", filePath.c_str());
@@ -101,6 +112,13 @@ ModuleNode *Parser::parseLibraryImport()
     skipOperator(">");
 
     auto libraryName = token.value;
+
+    if (parsedFilePaths.count(token.value))
+    {
+        return new ModuleNode(); // Return "empty module".
+    }
+
+    parsedFilePaths.insert(token.value);
 
     return EucleiaModuleLoader::getModuleInstance(libraryName);
 }

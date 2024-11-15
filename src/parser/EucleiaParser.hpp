@@ -12,6 +12,9 @@
 #include "EucleiaNode.hpp"
 #include "EucleiaTokenizer.hpp"
 #include "EucleiaUnaryOperatorNodes.hpp"
+#include <unordered_set>
+
+static std::unordered_set<std::string> parsedFilePaths;
 
 class Parser
 {
@@ -78,7 +81,6 @@ protected:
     void skipSemicolonLineEndingIfRequired(const BaseNode &node);
 
     std::string parentDirectory(const std::string &fpath);
-
 
 private:
     using ParseMethod = std::function<BaseNode *(void)>;
