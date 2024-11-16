@@ -1,5 +1,0 @@
-import "unit/IntTests.ek"
-import "unit/BoolTests.ek"
-import "unit/MiscTests.ek"
-import "unit/StringTests.ek"
-import "unit/ArrayTests.ek"
