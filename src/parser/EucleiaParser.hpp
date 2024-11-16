@@ -12,6 +12,7 @@
 #include "EucleiaNode.hpp"
 #include "EucleiaTokenizer.hpp"
 #include "EucleiaUnaryOperatorNodes.hpp"
+#include "FileInfoRec.hpp"
 #include <unordered_set>
 
 static std::unordered_set<std::string> parsedFilePaths;
@@ -80,8 +81,6 @@ protected:
 
     void skipSemicolonLineEndingIfRequired(const BaseNode &node);
 
-    std::string parentDirectory(const std::string &fpath);
-
 private:
     using ParseMethod = std::function<BaseNode *(void)>;
 
@@ -110,7 +109,8 @@ private:
 
     Tokenizer tokenizer;
 
-    const std::string nameParentDir;
+    FileComponentsRec fileInfo;
 };
+
 
 #endif /* EucleiaParser_hpp */

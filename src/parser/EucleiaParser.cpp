@@ -16,7 +16,7 @@
 
 Parser::Parser(const std::string &fpath)
     : tokenizer(Tokenizer::loadFromFile(fpath)),
-      nameParentDir(parentDirectory(fpath))
+      fileInfo(fpath)
 {
 }
 
@@ -87,7 +87,7 @@ FileNode *Parser::parseFileImport()
     parsedFilePaths.insert(token.value);
 
     // Build the file path:
-    auto filePath = nameParentDir + token.value;
+    auto filePath = fileInfo.dirPath + token.value;
 
     auto ast = Parser::buildAST(filePath); // NB: don't use static method.
     if (!ast)
@@ -121,33 +121,6 @@ ModuleNode *Parser::parseLibraryImport()
     parsedFilePaths.insert(token.value);
 
     return EucleiaModuleLoader::getModuleInstance(libraryName);
-}
-
-
-/// Returns the string path corresponding to the parent directory from the
-/// file path.
-std::string Parser::parentDirectory(const std::string &fpath)
-{
-    // 1. Copy string to C buffer for easy manipulation.
-    char buffer[fpath.size() + 1];
-
-    buffer[fpath.size()] = '\0';
-    memcpy(buffer, fpath.data(), fpath.size());
-
-    for (long i = fpath.size(); i >= 0; i--)
-    {
-        char c = buffer[i];
-
-        if (c == '/') // Hit our first '/' (successfully stripped file name and extension).
-        {
-            buffer[i + 1] = '\0'; // Set terminating character.
-            break;
-        }
-    }
-
-    auto output = std::string(buffer);
-
-    return output;
 }
 
 
