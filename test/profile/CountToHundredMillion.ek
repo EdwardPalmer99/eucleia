@@ -1,0 +1,12 @@
+// Count to 100 million
+//
+// Timings: 2024-11-16:
+// install/eucleia test/profile/CountToHundredMillion.ek  343.47s user 12.15s system 97% cpu 6:04.27 total (used about 5.5GB RAM!) (-O0)
+
+int counter = 0;
+int max_counter = 100000000;
+
+while (counter < max_counter)
+{
+    ++counter;
+}

@@ -197,7 +197,7 @@ public:
 class FileNode : public ProgramNode
 {
 public:
-    FileNode(std::vector<BaseNode *> nodes_) : ProgramNode(std::move(nodes_)) {}
+    FileNode(std::vector<BaseNode *> nodes_ = {}) : ProgramNode(std::move(nodes_)) {}
 
     // Evaluates a file treating it as one large program. Does NOT create an inner
     // scope node in order to ensure that any functions declared in this file will

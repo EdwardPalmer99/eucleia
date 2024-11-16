@@ -5,7 +5,7 @@ CXXFLAGS	:= -std=c++2a -g -O0
 
 # TODO: - need a release version.
 TARGET_EXEC 	:= eucleia
-TESTPLAN_MAIN 	:= test/TestPlan.ek
+TESTPLAN_MAIN 	:= test/unit/Main.ek
 INSTALL_DIR		:= install
 BUILD_DIR		:= build
 SRC_DIR 		:= src

@@ -1,0 +1,8 @@
+import <io>
+import <test>
+
+{
+    TEST("a" != "b", "string !=");
+    TEST("a" == "a", "string ==");
+    TEST(("a" + "b") == "ab", "string +");
+}

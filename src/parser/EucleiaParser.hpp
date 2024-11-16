@@ -5,13 +5,14 @@
 //  Created by Edward on 20/01/2024.
 //
 
-#ifndef EucleiaParser_hpp
-#define EucleiaParser_hpp
-
+#pragma once
 #include "EucleiaModules.hpp"
 #include "EucleiaNode.hpp"
 #include "EucleiaTokenizer.hpp"
 #include "EucleiaUnaryOperatorNodes.hpp"
+#include "FileInfoRec.hpp"
+#include <unordered_set>
+
 
 class Parser
 {
@@ -77,9 +78,6 @@ protected:
 
     void skipSemicolonLineEndingIfRequired(const BaseNode &node);
 
-    std::string parentDirectory(const std::string &fpath);
-
-
 private:
     using ParseMethod = std::function<BaseNode *(void)>;
 
@@ -108,7 +106,5 @@ private:
 
     Tokenizer tokenizer;
 
-    const std::string nameParentDir;
+    FileComponentsRec fileInfo;
 };
-
-#endif /* EucleiaParser_hpp */

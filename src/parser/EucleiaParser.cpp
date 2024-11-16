@@ -14,13 +14,31 @@
 #include <memory>
 #include <stdlib.h>
 
+std::unordered_set<std::string> importedModuleNames;
+std::unordered_set<std::string> importedFileNames;
+
+
 Parser::Parser(const std::string &fpath)
     : tokenizer(Tokenizer::loadFromFile(fpath)),
-      nameParentDir(parentDirectory(fpath))
+      fileInfo(fpath)
 {
+    // Add this file info so we don't accidentally import twice.
+    importedFileNames.insert(fileInfo.nameWithExt);
 }
 
+
 #pragma mark -
+
+FileNode *Parser::buildAST(const std::string &fpath)
+{
+    // Static method. Called by user. Clear imports.
+    importedModuleNames.clear();
+    importedFileNames.clear();
+
+    Parser parser(fpath);
+    return parser.buildAST();
+}
+
 
 FileNode *Parser::buildAST()
 {
@@ -38,14 +56,6 @@ FileNode *Parser::buildAST()
     nodes.shrink_to_fit();
 
     return new FileNode(nodes);
-}
-
-
-FileNode *Parser::buildAST(const std::string &fpath)
-{
-    Parser parser(fpath);
-
-    return parser.buildAST();
 }
 
 
@@ -75,10 +85,18 @@ FileNode *Parser::parseFileImport()
     auto token = nextToken();
     assert(token.type == Token::String);
 
-    // Build the file path:
-    auto filePath = nameParentDir + token.value;
+    // Check: has file already been imported somewhere? If it has then we don't
+    // want to import it a second time! (i.e. A imports B, C and B imports C. In
+    // this case, PARSE A set[A]--> PARSE B set[A,B]--> PARSE C set[A,B,C].
+    if (importedFileNames.count(token.value))
+    {
+        return new FileNode(); // Return "empty file".
+    }
 
-    auto ast = Parser::buildAST(filePath);
+    // Build the file path:
+    std::string filePath = fileInfo.dirPath + token.value;
+
+    auto ast = Parser(filePath).buildAST(); // NB: don't use static method as this will clear loaded modules/files.
     if (!ast)
     {
         printEucleiaError("Failed to import file with path '%s'.", filePath.c_str());
@@ -91,6 +109,7 @@ FileNode *Parser::parseFileImport()
 ///
 /// This is for importing functions from a stdlib as opposed to user-defined functions
 /// into this scope.
+
 ModuleNode *Parser::parseLibraryImport()
 {
     skipOperator("<");
@@ -102,34 +121,14 @@ ModuleNode *Parser::parseLibraryImport()
 
     auto libraryName = token.value;
 
-    return EucleiaModuleLoader::getModuleInstance(libraryName);
-}
-
-
-/// Returns the string path corresponding to the parent directory from the
-/// file path.
-std::string Parser::parentDirectory(const std::string &fpath)
-{
-    // 1. Copy string to C buffer for easy manipulation.
-    char buffer[fpath.size() + 1];
-
-    buffer[fpath.size()] = '\0';
-    memcpy(buffer, fpath.data(), fpath.size());
-
-    for (long i = fpath.size(); i >= 0; i--)
+    if (importedModuleNames.count(token.value))
     {
-        char c = buffer[i];
-
-        if (c == '/') // Hit our first '/' (successfully stripped file name and extension).
-        {
-            buffer[i + 1] = '\0'; // Set terminating character.
-            break;
-        }
+        return new ModuleNode(); // Return "empty module".
     }
 
-    auto output = std::string(buffer);
+    importedModuleNames.insert(token.value);
 
-    return output;
+    return EucleiaModuleLoader::getModuleInstance(libraryName);
 }
 
 
@@ -763,7 +762,7 @@ void Parser::skipKeyword(const std::string &name)
 {
     if (!isKeyword(name))
     {
-        printEucleiaError("expected keyword '%s'.\n", name.c_str());
+        printEucleiaError("expected keyword '%s' while parsing %s.\n", name.c_str(), fileInfo.nameWithExt.c_str());
     }
 
     skipToken();
@@ -774,7 +773,7 @@ void Parser::skipPunctuation(const std::string &name)
 {
     if (!isPunctuation(name))
     {
-        printEucleiaError("expected punctuation '%s'.\n", name.c_str());
+        printEucleiaError("expected punctuation '%s' while parsing %s.\n", name.c_str(), fileInfo.nameWithExt.c_str());
     }
 
     skipToken();
@@ -785,7 +784,7 @@ void Parser::skipOperator(const std::string &name)
 {
     if (!isOperator(name))
     {
-        printEucleiaError("expected operator '%s'.\n", name.c_str());
+        printEucleiaError("expected operator '%s' while parsing %s.\n", name.c_str(), fileInfo.nameWithExt.c_str());
     }
 
     skipToken();
