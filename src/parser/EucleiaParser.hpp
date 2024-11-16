@@ -5,9 +5,7 @@
 //  Created by Edward on 20/01/2024.
 //
 
-#ifndef EucleiaParser_hpp
-#define EucleiaParser_hpp
-
+#pragma once
 #include "EucleiaModules.hpp"
 #include "EucleiaNode.hpp"
 #include "EucleiaTokenizer.hpp"
@@ -15,7 +13,6 @@
 #include "FileInfoRec.hpp"
 #include <unordered_set>
 
-static std::unordered_set<std::string> parsedFilePaths;
 
 class Parser
 {
@@ -111,6 +108,3 @@ private:
 
     FileComponentsRec fileInfo;
 };
-
-
-#endif /* EucleiaParser_hpp */

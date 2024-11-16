@@ -14,13 +14,31 @@
 #include <memory>
 #include <stdlib.h>
 
+std::unordered_set<std::string> importedModuleNames;
+std::unordered_set<std::string> importedFileNames;
+
+
 Parser::Parser(const std::string &fpath)
     : tokenizer(Tokenizer::loadFromFile(fpath)),
       fileInfo(fpath)
 {
+    // Add this file info so we don't accidentally import twice.
+    importedFileNames.insert(fileInfo.nameWithExt);
 }
 
+
 #pragma mark -
+
+FileNode *Parser::buildAST(const std::string &fpath)
+{
+    // Static method. Called by user. Clear imports.
+    importedModuleNames.clear();
+    importedFileNames.clear();
+
+    Parser parser(fpath);
+    return parser.buildAST();
+}
+
 
 FileNode *Parser::buildAST()
 {
@@ -38,14 +56,6 @@ FileNode *Parser::buildAST()
     nodes.shrink_to_fit();
 
     return new FileNode(nodes);
-}
-
-
-FileNode *Parser::buildAST(const std::string &fpath)
-{
-    Parser parser(fpath);
-
-    return parser.buildAST();
 }
 
 
@@ -78,18 +88,15 @@ FileNode *Parser::parseFileImport()
     // Check: has file already been imported somewhere? If it has then we don't
     // want to import it a second time! (i.e. A imports B, C and B imports C. In
     // this case, PARSE A set[A]--> PARSE B set[A,B]--> PARSE C set[A,B,C].
-    if (parsedFilePaths.count(token.value))
+    if (importedFileNames.count(token.value))
     {
         return new FileNode(); // Return "empty file".
     }
 
-    // NB: drawback is multiple files with same name cannot be used.
-    parsedFilePaths.insert(token.value);
-
     // Build the file path:
-    auto filePath = fileInfo.dirPath + token.value;
+    std::string filePath = fileInfo.dirPath + token.value;
 
-    auto ast = Parser::buildAST(filePath); // NB: don't use static method.
+    auto ast = Parser(filePath).buildAST(); // NB: don't use static method as this will clear loaded modules/files.
     if (!ast)
     {
         printEucleiaError("Failed to import file with path '%s'.", filePath.c_str());
@@ -102,6 +109,7 @@ FileNode *Parser::parseFileImport()
 ///
 /// This is for importing functions from a stdlib as opposed to user-defined functions
 /// into this scope.
+
 ModuleNode *Parser::parseLibraryImport()
 {
     skipOperator("<");
@@ -113,12 +121,12 @@ ModuleNode *Parser::parseLibraryImport()
 
     auto libraryName = token.value;
 
-    if (parsedFilePaths.count(token.value))
+    if (importedModuleNames.count(token.value))
     {
         return new ModuleNode(); // Return "empty module".
     }
 
-    parsedFilePaths.insert(token.value);
+    importedModuleNames.insert(token.value);
 
     return EucleiaModuleLoader::getModuleInstance(libraryName);
 }
