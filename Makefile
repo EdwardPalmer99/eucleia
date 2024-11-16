@@ -1,7 +1,7 @@
 # Reference: https://makefiletutorial.com/#the-all-target
 
 CXX 		:= g++
-CXXFLAGS	:= -std=c++2a -g -O0
+CXXFLAGS	:= -std=c++2a -g -O2
 
 # TODO: - need a release version.
 TARGET_EXEC 	:= eucleia
