@@ -762,7 +762,7 @@ void Parser::skipKeyword(const std::string &name)
 {
     if (!isKeyword(name))
     {
-        printEucleiaError("expected keyword '%s'.\n", name.c_str());
+        printEucleiaError("expected keyword '%s' while parsing %s.\n", name.c_str(), fileInfo.nameWithExt.c_str());
     }
 
     skipToken();
@@ -773,7 +773,7 @@ void Parser::skipPunctuation(const std::string &name)
 {
     if (!isPunctuation(name))
     {
-        printEucleiaError("expected punctuation '%s'.\n", name.c_str());
+        printEucleiaError("expected punctuation '%s' while parsing %s.\n", name.c_str(), fileInfo.nameWithExt.c_str());
     }
 
     skipToken();
@@ -784,7 +784,7 @@ void Parser::skipOperator(const std::string &name)
 {
     if (!isOperator(name))
     {
-        printEucleiaError("expected operator '%s'.\n", name.c_str());
+        printEucleiaError("expected operator '%s' while parsing %s.\n", name.c_str(), fileInfo.nameWithExt.c_str());
     }
 
     skipToken();

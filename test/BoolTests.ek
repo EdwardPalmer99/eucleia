@@ -1,0 +1,4 @@
+import <io>
+import <test>
+
+TEST(!true == false, "!true");

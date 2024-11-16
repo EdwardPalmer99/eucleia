@@ -1,0 +1,8 @@
+import <io>
+import <test>
+
+{
+    //int result = (((3 * 2) / 3 + 4) - 1) / (4 + 1);
+    //print(result);
+    //TEST(result == 5, "operation order");
+}
