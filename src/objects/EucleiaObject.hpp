@@ -12,6 +12,7 @@
 #include "BaseObject.hpp"
 #include "EucleiaUtility.hpp"
 #include "FloatObject.hpp"
+#include "FunctionObject.hpp"
 #include "IntObject.hpp"
 #include "StringObject.hpp"
 #include <assert.h>
@@ -25,28 +26,6 @@
 
 class ProgramNode;
 class Scope;
-
-// Forwards declaration.
-class FunctionNode;
-
-
-/// FunctionObject contains a pointer to the original function definition which
-/// allows us to call its evaluate() method and perform type-checking of the
-/// supplied function arguments with the expected arguments.
-class FunctionObject : public BaseObject
-{
-public:
-    FunctionObject(FunctionNode *function_) : functionValue(function_) {}
-
-    std::string typeName() const override { return "FunctionObject"; }
-
-    FunctionObject *clone() const override
-    {
-        return new FunctionObject(functionValue);
-    }
-
-    FunctionNode *functionValue{nullptr}; // TODO: - weird code.
-};
 
 
 /// Library function allows us to define lambdas which wrap around existing stdlib
