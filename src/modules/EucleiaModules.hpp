@@ -9,8 +9,8 @@
 #define EucleiaModules_hpp
 
 #include "EucleiaNode.hpp"
-#include "EucleiaObject.hpp"
 #include "EucleiaScope.hpp"
+#include "Objects.hpp"
 #include <map>
 #include <memory>
 #include <string>

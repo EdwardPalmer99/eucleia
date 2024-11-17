@@ -1,5 +1,5 @@
 //
-//  EucleiaObject.hpp
+//  Objects.hpp
 //  Eucleia
 //
 //  Created by Edward on 14/01/2024.

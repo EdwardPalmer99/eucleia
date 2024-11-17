@@ -6,8 +6,8 @@
 //
 
 #include "EucleiaNode.hpp"
-#include "EucleiaObject.hpp"
 #include "EucleiaUtility.hpp"
+#include "Objects.hpp"
 #include <assert.h>
 #include <iostream>
 #include <setjmp.h>

@@ -8,8 +8,8 @@
 #ifndef EuclieaNode_hpp
 #define EuclieaNode_hpp
 
-#include "EucleiaObject.hpp"
 #include "EucleiaScope.hpp"
+#include "Objects.hpp"
 #include <memory>
 #include <string>
 

@@ -8,9 +8,9 @@
 #include "EucleiaInterpreter.hpp"
 #include "EucleiaModules.hpp"
 #include "EucleiaNode.hpp"
-#include "EucleiaObject.hpp"
 #include "EucleiaParser.hpp"
 #include "EucleiaScope.hpp"
+#include "Objects.hpp"
 #include <iostream>
 
 // TODO: - Parser() should have empty constructor. Should call parseFile method with string to run parser.
