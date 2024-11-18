@@ -41,6 +41,4 @@ private:
      * Allocation pointer.
      */
     Chunk *nextAvailChunk{nullptr};
-
-    size_t numChunksInUse{0};
 };

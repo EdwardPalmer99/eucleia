@@ -7,6 +7,7 @@
 
 #include "EucleiaNode.hpp"
 #include "EucleiaUtility.hpp"
+#include "ExpressionScope.hpp"
 #include "Objects.hpp"
 #include <assert.h>
 #include <iostream>
@@ -154,10 +155,7 @@ BaseObject *IfNode::evaluate(Scope &scope)
 {
     // NB: the condition should be evaluated in its own scope as it is within ()
     // brackets. We don't want it to persist once evaluated.
-    Scope conditionScope(scope);
-    auto condition = ifCondition->evaluate<BoolObject>(conditionScope);
-
-    if (condition->value)
+    if (evaluate<BoolObject>(ifCondition, scope).value)
         return thenDo->evaluate(scope);
     else if (elseDo != nullptr) // Optional "else"
         return elseDo->evaluate(scope);
@@ -171,9 +169,15 @@ BaseObject *IfNode::evaluate(Scope &scope)
 
 BaseObject *BinaryNode::evaluate(Scope &scope)
 {
-    auto leftEvaluated = left->evaluate(scope);
-    auto rightEvaluated = right->evaluate(scope);
+    // TODO: - lose a lot of performance. Scope class is too heavy!!!!
 
+    // Evaluate left/right in inner scope so destroyed after evaluated.
+    Scope binaryScope(scope);
+
+    auto leftEvaluated = left->evaluate(binaryScope);
+    auto rightEvaluated = right->evaluate(binaryScope);
+
+    // Persist result by storing in outer scope.
     return applyOperator(scope, *leftEvaluated, *rightEvaluated);
 }
 
@@ -258,8 +262,7 @@ BaseObject *WhileNode::evaluate(Scope &scope)
     {
         Scope loopScope(scope); // Extend scope.
 
-        // TODO: - condition should have it's own scope and be deleted after each call.
-        while (condition->evaluate<BoolObject>(scope)->value)
+        while (evaluate<BoolObject>(condition, scope).value)
         {
             (void)body->evaluate(loopScope);
         }
@@ -285,7 +288,7 @@ BaseObject *DoWhileNode::evaluate(Scope &scope)
         do
         {
             (void)body->evaluate(loopScope);
-        } while (condition->evaluate<BoolObject>(scope)->value); // TODO: - think about this. Needs it own separate scope and to delete after each evaluation.
+        } while (evaluate<BoolObject>(condition, scope).value);
     }
 
     // Restore original context.
@@ -310,10 +313,10 @@ BaseObject *ForLoopNode::evaluate(Scope &scope)
     if (setjmp(local) != 1)
     {
         for (;
-             condition->evaluate<BoolObject>(loopScope)->value; // TODO: - not very efficient repeatedly recalculating...
+             evaluate<BoolObject>(condition, loopScope).value; // TODO: - not very efficient repeatedly recalculating...
              update->evaluate(loopScope))
         {
-            body->evaluate(loopScope);
+            (void)body->evaluate(loopScope);
         }
     }
 

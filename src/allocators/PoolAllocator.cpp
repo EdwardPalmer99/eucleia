@@ -11,9 +11,13 @@
 #include <cstdlib>
 #include <iostream>
 
+// TODO: - need some way to cleanup and destroy old blocks if memory goes way down.
+
 Chunk *PoolAllocator::allocateBlock(size_t chunkSize)
 {
-    std::cout << "allocating block (chunkSize = " << chunkSize << ", chunksPerBlock = " << chunksPerBlock << ")" << std::endl;
+    static size_t blockCounter = 0;
+
+    std::cout << "allocating new block; blockCounter = " << ++blockCounter << std::endl;
 
     size_t blockSize = (chunkSize * chunksPerBlock);
 
@@ -54,7 +58,7 @@ void *PoolAllocator::allocate(size_t chunkSize)
 
 void PoolAllocator::deallocate(void *chunk)
 {
-    // std::cout << "deallocating chunk: " << numChunksInUse << std::endl;
+    // std::cout << "deallocating chunk: " << --numChunksInUse << std::endl;
 
     // Freed pointer's next pointer points to current allocation pointer and
     // allocation pointer set to returned free chunk.
