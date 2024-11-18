@@ -9,6 +9,10 @@
 
 #pragma once
 #include "BaseObject.hpp"
+#include "PoolAllocator.hpp"
+
+// 10 chunks per block.
+static PoolAllocator allocator{10};
 
 class FloatObject;
 
@@ -21,6 +25,16 @@ public:
     IntObject(long value_ = 0) : value(value_) {}
 
     std::string typeName() const override { return "IntObject"; }
+
+    void *operator new(size_t size)
+    {
+        return allocator.allocate(size);
+    }
+
+    void operator delete(void *ptr)
+    {
+        allocator.deallocate(ptr);
+    }
 
     IntObject *clone() const override
     {
