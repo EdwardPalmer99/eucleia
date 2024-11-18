@@ -8,7 +8,7 @@
 #ifndef EucleiaScope_hpp
 #define EucleiaScope_hpp
 
-#include "EucleiaObject.hpp"
+#include "Objects.hpp"
 #include <map>
 #include <memory>
 #include <string>

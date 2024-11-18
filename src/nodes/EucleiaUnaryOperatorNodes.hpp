@@ -9,8 +9,8 @@
 #define EucleiaUnaryOperatorNodes_hpp
 
 #include "EucleiaNode.hpp"
-#include "EucleiaObject.hpp"
 #include "EucleiaScope.hpp"
+#include "Objects.hpp"
 
 /// Base node for unary operators.
 class UnaryOperatorBaseNode : public BaseNode
