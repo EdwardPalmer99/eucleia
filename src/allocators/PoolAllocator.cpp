@@ -15,9 +15,8 @@
 
 Chunk *PoolAllocator::allocateBlock(size_t chunkSize)
 {
-    static size_t blockCounter = 0;
-
-    std::cout << "allocating new block; blockCounter = " << ++blockCounter << std::endl;
+    // static size_t blockCounter = 0;
+    // std::cout << "allocating new block; blockCounter = " << ++blockCounter << std::endl;
 
     size_t blockSize = (chunkSize * chunksPerBlock);
 
