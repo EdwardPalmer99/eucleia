@@ -8,7 +8,7 @@
 #ifndef EucleiaModules_hpp
 #define EucleiaModules_hpp
 
-#include "EucleiaNode.hpp"
+#include "BaseNode.hpp"
 #include "EucleiaScope.hpp"
 #include "Objects.hpp"
 #include <map>

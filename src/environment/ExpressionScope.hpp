@@ -8,7 +8,7 @@
  */
 
 #pragma once
-#include "EucleiaNode.hpp"
+#include "BaseNode.hpp"
 #include "EucleiaScope.hpp"
 #include "IntObject.hpp"
 
@@ -18,7 +18,7 @@
  * destroyed once we have a value.
  */
 template <class TObject>
-static TObject evaluate(BaseNode *node, const Scope &parent)
+TObject evaluate(BaseNode *node, const Scope &parent)
 {
     Scope evalScope(parent);
     auto *output = node->evaluate<TObject>(evalScope);
