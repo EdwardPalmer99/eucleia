@@ -15,7 +15,7 @@ Scope::Scope(const Scope &_parent)
 
 Scope::~Scope()
 {
-    for (BaseObject *obj : ownedObjects)
+    for (BaseObject *obj : objectsCreatedInScope)
     {
         delete obj;
     }
@@ -28,7 +28,7 @@ Scope::Scope(const Scope *_parent)
     // this scope, it will modify these variables defined in an outer scope.
     if (parent)
     {
-        objects = parent->objects;
+        objectForVariableName = parent->objectForVariableName;
         objectCreationScope = parent->objectCreationScope;
     }
 }
@@ -36,7 +36,7 @@ Scope::Scope(const Scope *_parent)
 
 bool Scope::hasObject(const std::string &name) const
 {
-    return (objects.find(name) != objects.end());
+    return (objectForVariableName.find(name) != objectForVariableName.end());
 }
 
 
@@ -48,8 +48,8 @@ bool Scope::objectCreatedInScope(const std::string &name) const
 
 BaseObject *Scope::getDefinedObject(const std::string &name) const
 {
-    auto it = objects.find(name);
-    if (it == objects.end())
+    auto it = objectForVariableName.find(name);
+    if (it == objectForVariableName.end())
     {
         printEucleiaError("undefined variable '%s'.\n", name.c_str());
     }
@@ -58,7 +58,7 @@ BaseObject *Scope::getDefinedObject(const std::string &name) const
 }
 
 // TODO: - needs checks. This object must be OWNED by us already. Therefore, we can check in our std::unordered_set whether it exists.
-void Scope::defineObject(const std::string &name, BaseObject *object)
+void Scope::linkObject(const std::string &name, BaseObject *object)
 {
     // 1. Check for name clashes. This is where we have two variables with
     // the same name defined in the SAME scope.
@@ -67,20 +67,20 @@ void Scope::defineObject(const std::string &name, BaseObject *object)
     // 2. Remove any existing objects with same name. If there are any these will
     // have been defined in an outer scope. This is variable shadowing. We do not
     // have ownership of these outer-scope variables.
-    removeObject(name);
+    unlinkObject(name);
 
     // 3. Set object creation scope.
     objectCreationScope[name] = this;
-    objects[name] = object;
+    objectForVariableName[name] = object;
 }
 
 
-void Scope::updateObject(const std::string &name, BaseObject *object)
+void Scope::updateLinkedObject(const std::string &name, BaseObject *object)
 {
     assert(object && hasObject(name));
 
     // Perform basic type-checking.
-    auto existingObject = objects[name];
+    auto existingObject = objectForVariableName[name];
 
     // NB: None type means it has not yet been initialized.
     if (existingObject && !existingObject->typesMatch((*object)))
@@ -96,19 +96,19 @@ void Scope::updateObject(const std::string &name, BaseObject *object)
 
     if (creationScope != this)
     {
-        const_cast<Scope *>(parent)->updateObject(name, object); // Update object in parent scope as well.
+        const_cast<Scope *>(parent)->updateLinkedObject(name, object); // Update object in parent scope as well.
     }
 
     // TODO: - If the existing object being replaced is also in our owned objects set
     // then we need to delete it.
-    if (ownedObjects.count(existingObject))
+    if (objectsCreatedInScope.count(existingObject))
     {
-        ownedObjects.erase(existingObject);
+        objectsCreatedInScope.erase(existingObject);
         delete existingObject;
     }
 
     // Update the mapping in our scope.
-    objects[name] = object;
+    objectForVariableName[name] = object;
 }
 
 
@@ -121,17 +121,17 @@ void Scope::checkForVariableNameClash(const std::string &name) const
 }
 
 
-void Scope::removeObject(const std::string &name)
+void Scope::unlinkObject(const std::string &name)
 {
-    auto existingObject = objects[name];
+    auto existingObject = objectForVariableName[name];
 
     // TODO: - should we remove object we own linked to a variable?
-    if (existingObject && ownedObjects.count(existingObject))
+    if (existingObject && objectsCreatedInScope.count(existingObject))
     {
         delete existingObject;
-        ownedObjects.erase(existingObject);
+        objectsCreatedInScope.erase(existingObject);
     }
 
-    objects.erase(name);
+    objectForVariableName.erase(name);
     objectCreationScope.erase(name);
 }

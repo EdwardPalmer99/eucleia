@@ -59,7 +59,7 @@ public:
         TObject *newObject = new TObject(std::forward<Args>(args)...);
 
         // Assume is derived from BaseObject.
-        ownedObjects.insert(newObject);
+        objectsCreatedInScope.insert(newObject);
         return newObject;
     }
 
@@ -71,7 +71,7 @@ public:
             return nullptr;
 
         BaseObject *newObject = object->clone();
-        ownedObjects.insert(newObject);
+        objectsCreatedInScope.insert(newObject);
 
         return newObject;
     }
@@ -82,12 +82,10 @@ public:
     // TODO: - rename to variable: defineVariable(name, void *ptr);
 
     /// Create a link between a variable name and an object owned by the scope.
-    void defineObject(const std::string &name, BaseObject *object);
-
-    // TODO: - rewrite this. Don't use shared pointers.
+    void linkObject(const std::string &name, BaseObject *object);
 
     /// Update the value of an existing object in the current scope.
-    void updateObject(const std::string &name, BaseObject *object);
+    void updateLinkedObject(const std::string &name, BaseObject *object);
 
     /// Returns true if object is in this scope AND object was created in this
     /// scope (as opposed to being created in a parent scope). We cannot have
@@ -96,7 +94,7 @@ public:
     bool objectCreatedInScope(const std::string &name) const;
 
 protected:
-    void removeObject(const std::string &name);
+    void unlinkObject(const std::string &name);
 
     void checkForVariableNameClash(const std::string &name) const;
 
@@ -104,7 +102,7 @@ private:
     /// Stores a mapping from the variable name to a pointer to the object. These objects
     /// may not belong to the scope (i.e. variables defined in an outer set). Therefore,
     /// when we're doing cleanup, do NOT delete these objects.
-    std::map<std::string, BaseObject *> objects;
+    std::map<std::string, BaseObject *> objectForVariableName;
 
     /// Stores whether a variable was defined in an outer scope. We allow shadow
     /// variables which is when a variable in the current scope hides the definition
@@ -113,7 +111,7 @@ private:
 
     /// Store all objects we have created. They will persist for the lifetime
     /// of the scope. We are responsible for deleting these in destructor.
-    std::unordered_set<BaseObject *> ownedObjects;
+    std::unordered_set<BaseObject *> objectsCreatedInScope;
 
     const Scope *parent{nullptr};
 };

@@ -16,7 +16,7 @@ BaseObject *FunctionNode::evaluate(Scope &scope)
 
     auto functionObject = scope.createManagedObject<FunctionObject>(this); // TODO: - uh-oh!! Think about pointer ownership here!!
 
-    scope.defineObject(funcNameNode.variableName, functionObject);
+    scope.linkObject(funcNameNode.variableName, functionObject);
 
     return functionObject;
 }

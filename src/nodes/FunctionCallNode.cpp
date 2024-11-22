@@ -64,7 +64,7 @@ BaseObject *FunctionCallNode::evaluate(Scope &scope)
         }
 
         // Define variable in the function's scope.
-        funcScope.defineObject(argVariable.variableName, evaluatedArg);
+        funcScope.linkObject(argVariable.variableName, evaluatedArg);
     }
 
     // Evaluate the function body in our function scope now that we've added the
