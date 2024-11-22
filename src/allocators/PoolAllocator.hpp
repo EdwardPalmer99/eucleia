@@ -19,6 +19,8 @@ struct Chunk
  * The allocator class.
  *
  * - Consider it as consisting of a series of large blocks with smaller chunks.
+ *
+ * Ref: http://dmitrysoshnikov.com/compilers/writing-a-pool-allocator/
  */
 class PoolAllocator
 {

@@ -6,6 +6,7 @@
 //
 
 #include "EucleiaModules.hpp"
+#include "ProgramNode.hpp"
 #include "TestModule.hpp"
 #include <cmath>
 #include <iostream>
