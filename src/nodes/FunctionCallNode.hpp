@@ -11,8 +11,8 @@
 #include "AddNewVariableNode.hpp"
 #include "BaseNode.hpp"
 #include "BaseObject.hpp"
-#include "EucleiaScope.hpp"
 #include "ProgramNode.hpp"
+#include "Scope.hpp"
 
 class FunctionCallNode : public BaseNode
 {

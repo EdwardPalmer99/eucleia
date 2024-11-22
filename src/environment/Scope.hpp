@@ -1,13 +1,13 @@
-//
-//  EucleiaScope.hpp
-//  Eucleia
-//
-//  Created by Edward on 14/01/2024.
-//
+/**
+ * @file Scope.hpp
+ * @author Edward Palmer
+ * @date 2024-11-22
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
 
-#ifndef EucleiaScope_hpp
-#define EucleiaScope_hpp
-
+#pragma once
 #include "Objects.hpp"
 #include <map>
 #include <memory>
@@ -115,5 +115,3 @@ private:
 
     const Scope *parent{nullptr};
 };
-
-#endif /* EucleiaScope_hpp */

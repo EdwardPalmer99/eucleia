@@ -11,9 +11,9 @@
 #include "AssignNode.hpp"
 #include "BaseNode.hpp"
 #include "BaseObject.hpp"
-#include "EucleiaScope.hpp"
 #include "FloatObject.hpp"
 #include "IntObject.hpp"
+#include "Scope.hpp"
 #include "StringObject.hpp"
 #include <string>
 

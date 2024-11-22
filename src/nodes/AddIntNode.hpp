@@ -9,8 +9,8 @@
 
 #pragma once
 #include "BaseNode.hpp"
-#include "EucleiaScope.hpp"
 #include "IntObject.hpp"
+#include "Scope.hpp"
 
 class AddIntNode : public BaseNode
 {

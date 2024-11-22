@@ -9,7 +9,7 @@
 
 #pragma once
 #include "BaseObject.hpp"
-#include "EucleiaScope.hpp"
+#include "Scope.hpp"
 
 class BaseNode
 {

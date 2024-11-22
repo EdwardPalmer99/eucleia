@@ -11,7 +11,7 @@
 #include "BaseNode.hpp"
 #include "BaseObject.hpp"
 #include "DoWhileNode.hpp"
-#include "EucleiaScope.hpp"
+#include "Scope.hpp"
 
 
 class WhileNode : public DoWhileNode

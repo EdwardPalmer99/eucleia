@@ -1,11 +1,13 @@
-//
-//  EucleiaScope.cpp
-//  Eucleia
-//
-//  Created by Edward on 14/01/2024.
-//
+/**
+ * @file Scope.cpp
+ * @author Edward Palmer
+ * @date 2024-11-22
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
 
-#include "EucleiaScope.hpp"
+#include "Scope.hpp"
 #include "EucleiaUtility.hpp"
 
 Scope::Scope(const Scope &_parent)
