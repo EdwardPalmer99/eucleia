@@ -26,34 +26,6 @@ GlobalEnvRec gEnvironmentContext;
 
 #pragma mark - *** Create New Objects ***
 
-/// Create a new BoolObject from a AddBoolNode.
-// Really, this node is creating a single BoolObject in the scope. If we call it again, should it create a new object??
-BoolObject *AddBoolNode::evaluate(Scope &scope)
-{
-    return scope.createManagedObject<BoolObject>(boolObject);
-}
-
-
-/// Create a new IntObject from an IntNode.
-IntObject *AddIntNode::evaluate(Scope &scope)
-{
-    return scope.createManagedObject<IntObject>(intObject);
-}
-
-
-/// Create a new FloatObject from a FloatNode.
-FloatObject *AddFloatNode::evaluate(Scope &scope)
-{
-    return scope.createManagedObject<FloatObject>(floatObject);
-}
-
-
-/// Create a new StringObject from a StringNode.
-StringObject *AddStringNode::evaluate(Scope &scope)
-{
-    return scope.createManagedObject<StringObject>(stringObject);
-}
-
 
 ArrayObject *AddArrayNode::evaluate(Scope &scope)
 {

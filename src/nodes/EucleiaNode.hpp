@@ -13,97 +13,11 @@
 #include <memory>
 #include <string>
 
-class BaseNode
-{
-public:
-    BaseNode() = default;
-    virtual ~BaseNode() = default;
-
-
-    template <class TNode>
-    const TNode &castNode() const
-    {
-        return static_cast<TNode &>(*this);
-    }
-
-
-    template <class TNode>
-    TNode &castNode()
-    {
-        return static_cast<TNode &>(*this);
-    }
-
-
-    template <class TNode>
-    bool isNodeType() const
-    {
-        return typeid(*this) == typeid(TNode);
-    }
-
-
-    bool typesMatch(const BaseNode &other) const
-    {
-        return typeid(*this) == typeid(other);
-    }
-
-    virtual BaseObject *evaluate(Scope &scope) = 0;
-
-    template <typename T>
-    T *evaluate(Scope &scope)
-    {
-        return static_cast<T *>(evaluate(scope));
-    }
-};
-
-class AddBoolNode : public BaseNode
-{
-public:
-    AddBoolNode(bool state_) : boolObject(state_) {}
-
-    // Creates a BoolObject in the scope and returns managed pointer to it.
-    BoolObject *evaluate(Scope &scope) override;
-
-
-    BoolObject boolObject;
-};
-
-
-class AddIntNode : public BaseNode
-{
-public:
-    AddIntNode(long int_) : intObject(int_) {}
-
-    // Creates an IntObject in the scope and returns a managed pointer to it.
-    IntObject *evaluate(Scope &scope) override;
-
-
-    IntObject intObject;
-};
-
-
-class AddFloatNode : public BaseNode
-{
-public:
-    AddFloatNode(double float_) : floatObject(float_) {}
-
-    // Returns a FloatObject in the current scope and returns a managed pointer.
-    FloatObject *evaluate(Scope &scope) override;
-
-
-    FloatObject floatObject;
-};
-
-class AddStringNode : public BaseNode
-{
-public:
-    AddStringNode(std::string string_) : stringObject(std::move(string_)) {}
-
-    // Creates a StringObject in the scope and returns managed pointer to it.
-    StringObject *evaluate(Scope &scope) override;
-
-
-    StringObject stringObject;
-};
+#include "AddBoolNode.hpp"
+#include "AddFloatNode.hpp"
+#include "AddIntNode.hpp"
+#include "AddStringNode.hpp"
+#include "BaseNode.hpp"
 
 
 class LookupVariableNode : public BaseNode
