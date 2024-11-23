@@ -9,7 +9,7 @@
 
 #pragma once
 #include "AddIntNode.hpp"
-#include "AddNewVariableNode.hpp"
+#include "AddVariableNode.hpp"
 #include "BaseNode.hpp"
 #include "BaseObject.hpp"
 

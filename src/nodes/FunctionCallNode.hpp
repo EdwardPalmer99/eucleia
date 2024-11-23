@@ -8,7 +8,7 @@
  */
 
 #pragma once
-#include "AddNewVariableNode.hpp"
+#include "AddVariableNode.hpp"
 #include "BaseNode.hpp"
 #include "BaseObject.hpp"
 #include "ProgramNode.hpp"
@@ -18,7 +18,7 @@ class FunctionCallNode : public BaseNode
 {
 public:
     FunctionCallNode(BaseNode *funcName_, BaseNode *funcArgs_)
-        : funcName(static_cast<AddNewVariableNode *>(funcName_)),
+        : funcName(static_cast<AddVariableNode *>(funcName_)),
           funcArgs(static_cast<ProgramNode *>(funcArgs_))
     {
     }
@@ -36,6 +36,6 @@ public:
     BaseObject *evaluateFunctionBody(BaseNode &funcBody, Scope &funcScope);
 
 
-    AddNewVariableNode *funcName{nullptr};
+    AddVariableNode *funcName{nullptr};
     ProgramNode *funcArgs{nullptr};
 };

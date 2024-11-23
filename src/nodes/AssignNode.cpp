@@ -16,12 +16,12 @@ BaseObject *AssignNode::evaluate(Scope &scope)
     // i.e. array[0] = 1;
 
     // 1. Cast LHS to a variable node or a variable name node.
-    assert(left->isNodeType<AddNewVariableNode>() || left->isNodeType<LookupVariableNode>());
+    assert(left->isNodeType<AddVariableNode>() || left->isNodeType<LookupVariableNode>());
 
     // Evaluate the LHS.
     // Case 1: VariableName node --> returns shared pointer to existing object (not useful).
     // Case 2: Variable node --> creates new object in scope.
-    if (left->isNodeType<AddNewVariableNode>())
+    if (left->isNodeType<AddVariableNode>())
     {
         (void)left->evaluate(scope);
     }

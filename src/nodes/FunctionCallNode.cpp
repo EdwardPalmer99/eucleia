@@ -53,7 +53,7 @@ BaseObject *FunctionCallNode::evaluate(Scope &scope)
 
         // Check that the evaluatedArg type (RHS) is compatible with the corresponding
         // (LHS) variable.
-        auto &argVariable = funcNode->funcArgs->programNodes[iarg++]->castNode<AddNewVariableNode>();
+        auto &argVariable = funcNode->funcArgs->programNodes[iarg++]->castNode<AddVariableNode>();
 
         if (!argVariable.passesAssignmentTypeCheck(*evaluatedArg))
         {
