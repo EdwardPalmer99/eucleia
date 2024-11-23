@@ -1,9 +1,6 @@
 import <io>
 import <test>
 
-print("Running Array tests.");
-
-
 func arrayAccessTestCase()
 {
     array test = [1, 2, 3];
@@ -23,5 +20,5 @@ func arrayModificationTestCase()
     //TEST(test[0] == 100 && test[1] == 2, "array modification");
 }
 
-//arrayAccessTestCase();
-//arrayModificationTestCase();
+arrayAccessTestCase();
+arrayModificationTestCase();
