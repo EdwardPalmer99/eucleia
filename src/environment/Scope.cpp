@@ -112,7 +112,7 @@ void Scope::updateLinkedObject(const std::string &name, BaseObject *object)
     if (!existingObject->typesMatch((*object)))
     {
         printEucleiaError("Setting object of type %s with incompatible type %s",
-                          existingObject->typeName().c_str(), object->typeName().c_str());
+                          typeid(existingObject).name(), typeid(object).name());
     }
 
     // 3. Update the mapping in this scope.

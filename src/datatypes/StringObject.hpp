@@ -17,8 +17,6 @@ class StringObject : public BaseObject
 public:
     StringObject(std::string value_ = "") : value(std::move(value_)) {}
 
-    std::string typeName() const override { return "StringObject"; }
-
     StringObject *clone() const override
     {
         return new StringObject(value);

@@ -47,8 +47,6 @@ public:
     /// Implement creating a copy for derived classes.
     virtual BaseObject *clone() const = 0;
 
-    virtual std::string typeName() const = 0;
-
 protected:
     BaseObject() = default;
 };

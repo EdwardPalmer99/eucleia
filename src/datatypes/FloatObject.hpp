@@ -19,8 +19,6 @@ class FloatObject : public BaseObject
 public:
     FloatObject(double value_ = 0.0) : value(value_) {}
 
-    std::string typeName() const override { return "FloatObject"; }
-
     FloatObject *clone() const override
     {
         return new FloatObject(value);

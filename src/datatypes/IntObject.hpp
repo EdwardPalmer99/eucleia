@@ -24,8 +24,6 @@ class IntObject : public BaseObject
 public:
     IntObject(long value_ = 0) : value(value_) {}
 
-    std::string typeName() const override { return "IntObject"; }
-
     void *operator new(size_t size)
     {
         return allocator.allocate(size);

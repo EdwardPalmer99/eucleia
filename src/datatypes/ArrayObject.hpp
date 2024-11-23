@@ -11,7 +11,7 @@
 #include "BaseObject.hpp"
 #include <vector>
 
-struct ArrayObject : public BaseObject
+class ArrayObject : public BaseObject
 {
 public:
     ArrayObject() = default;
@@ -31,8 +31,6 @@ public:
 
         return new ArrayObject(cloneValues);
     }
-
-    std::string typeName() const override { return "ArrayObject"; }
 
     // TODO: - eventually just store references to BaseObject & or pointers and return reference.
     BaseObject *operator[](std::size_t index) const
