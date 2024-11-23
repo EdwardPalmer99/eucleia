@@ -1,0 +1,15 @@
+=== CountToOneMillion.ek ===
+2024-11-16:
+- 2.54s user 0.06s system 99% cpu 2.618 total (-O0)
+2024-11-23:
+- 2.48s user 0.01s system 99% cpu 2.499 total (-O0)
+
+=== CountToTenMillion.ek ===
+2024-11-16:
+- 31.77s user 0.98s system 95% cpu 34.116 total (-O0)
+2024-11-23:
+- 25.86s user 0.13s system 99% cpu 26.214 total (-O0)
+
+=== CountToHundredMillion.ek ===
+2024-11-16:
+- 343.47s user 12.15s system 97% cpu 6:04.27 total (used about 5.5GB RAM!) (-O0)

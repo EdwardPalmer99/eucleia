@@ -1,8 +1,4 @@
 // Count to 10 million
-//
-// Timings: 2024-11-16:
-// install/eucleia test/profile/CountToTenMillion.ek  31.77s user 0.98s system 95% cpu 34.116 total (-O0)
-// install/eucleia test/profile/CountToTenMillion.ek  14.63s user 0.57s system 99% cpu 15.284 total (-O2)
 
 int counter = 0;
 int max_counter = 10000000;
