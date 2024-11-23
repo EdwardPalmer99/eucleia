@@ -19,7 +19,7 @@ struct GlobalEnvRec
     BaseObject *returnValue{nullptr};
 };
 
-extern GlobalEnvRec gEnvironmentContext;
+extern GlobalEnvRec gEnvironmentContext; // TODO: - remove once return done as well.
 
 void pushBreakJumpPoint(jmp_buf *jumpPoint);
 void popBreakJumpPoint();
