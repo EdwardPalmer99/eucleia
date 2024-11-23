@@ -15,7 +15,7 @@
 BaseObject *FunctionCallNode::evaluate(Scope &scope)
 {
     // 0. Any library functions that we wish to evaluate.
-    BaseObject *libraryFunc = scope.getOptionalObject<BaseObject>(funcName->variableName);
+    BaseObject *libraryFunc = scope.getOptionalNamedObject<BaseObject>(funcName->variableName);
     if (libraryFunc && libraryFunc->isObjectType<LibraryFunctionObject>())
     {
         ProgramNode &programNode = (*funcArgs);
@@ -25,7 +25,7 @@ BaseObject *FunctionCallNode::evaluate(Scope &scope)
 
     // TODO: - finish implementing here. Should not be a shared pointer.
     // 1. Get a pointer to the function node stored in this scope.
-    auto funcNode = scope.getObject<FunctionObject>(funcName->variableName)->functionValue;
+    auto funcNode = scope.getNamedObject<FunctionObject>(funcName->variableName)->functionValue;
 
     // 2. Verify that the number of arguments matches those required for the
     // function we are calling.

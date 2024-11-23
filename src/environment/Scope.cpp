@@ -24,116 +24,102 @@ Scope::~Scope()
 }
 
 Scope::Scope(const Scope *_parent)
-    : parent{_parent}
+    : parent(_parent)
 {
-    // If there is a parent, shallow-copy all values. If we modify the value in
-    // this scope, it will modify these variables defined in an outer scope.
+}
+
+
+BaseObject *Scope::getOptionalNamedObject(const std::string &name) const
+{
+    // Try in our scope (to handle variable shadowing).
+    auto iter = linkedObjectForName.find(name);
+    if (iter != linkedObjectForName.end())
+    {
+        return (iter->second);
+    }
+
+    // Otherwise check if it is defined in our parent's scope? Keep working outwards.
     if (parent)
     {
-        objectForVariableName = parent->objectForVariableName;
-        objectCreationScope = parent->objectCreationScope;
+        return parent->getOptionalNamedObject(name);
     }
+
+    // Not defined.
+    return nullptr;
 }
 
 
-bool Scope::hasObject(const std::string &name) const
+BaseObject *Scope::getNamedObject(const std::string &name) const
 {
-    return (objectForVariableName.find(name) != objectForVariableName.end());
-}
-
-
-bool Scope::objectCreatedInScope(const std::string &name) const
-{
-    return hasObject(name) && (objectCreationScope.at(name) == this);
-}
-
-
-BaseObject *Scope::getDefinedObject(const std::string &name) const
-{
-    auto it = objectForVariableName.find(name);
-    if (it == objectForVariableName.end())
+    BaseObject *obj = getOptionalNamedObject(name);
+    if (!obj)
     {
         printEucleiaError("undefined variable '%s'.\n", name.c_str());
     }
 
-    return (it->second);
+    return obj;
 }
 
-// TODO: - needs checks. This object must be OWNED by us already. Therefore, we can check in our std::unordered_set whether it exists.
+
+bool Scope::hasNamedObject(const std::string &name) const
+{
+    return (getOptionalNamedObject(name) != nullptr);
+}
+
+
 void Scope::linkObject(const std::string &name, BaseObject *object)
 {
+    assert(object != nullptr);
+
     // 1. Check for name clashes. This is where we have two variables with
     // the same name defined in the SAME scope.
-    checkForVariableNameClash(name);
+    auto iter = linkedObjectForName.find(name);
+    if (iter != linkedObjectForName.end())
+    {
+        printEucleiaError("%s is already defined in current scope.", name.c_str());
+    }
 
-    // 2. Remove any existing objects with same name. If there are any these will
-    // have been defined in an outer scope. This is variable shadowing. We do not
-    // have ownership of these outer-scope variables.
-    unlinkObject(name);
-
-    // 3. Set object creation scope.
-    objectCreationScope[name] = this;
-    objectForVariableName[name] = object;
+    // 2. Add to map. This will ensure that we now ignore any outer-scope variables
+    // with this name (variable shadowing).
+    linkedObjectForName[name] = object;
 }
 
 
 void Scope::updateLinkedObject(const std::string &name, BaseObject *object)
 {
-    assert(object && hasObject(name));
+    assert(object != nullptr);
 
-    // Perform basic type-checking.
-    auto existingObject = objectForVariableName[name];
+    // 1. Call moving-up scopes to the parent and update in the first scope where
+    // the object is defined.
+    auto iter = linkedObjectForName.find(name);
+    if (iter == linkedObjectForName.end())
+    {
+        // Not found. Try in parent scope.
+        if (parent)
+        {
+            return const_cast<Scope *>(parent)->updateLinkedObject(name, object);
+        }
+        else
+        {
+            // Not found!!
+            printEucleiaError("cannot update variable %s - not found in any scope.\n", name.c_str());
+        }
+    }
 
-    // NB: None type means it has not yet been initialized.
-    if (existingObject && !existingObject->typesMatch((*object)))
+    // Found in this scope. Great.
+    // 2. Check types of existing object matches that of new object.
+    BaseObject *existingObject = iter->second;
+    if (!existingObject->typesMatch((*object)))
     {
         printEucleiaError("Setting object of type %s with incompatible type %s",
                           existingObject->typeName().c_str(), object->typeName().c_str());
     }
 
-    // If the creationScope != this then the variable was defined in a parent
-    // scope and we are using it. We need to jump up through the scopes and update
-    // all scopes using this variable with its new value.
-    const Scope *creationScope = objectCreationScope[name];
+    // 3. Update the mapping in this scope.
+    linkedObjectForName[name] = object;
 
-    if (creationScope != this)
-    {
-        const_cast<Scope *>(parent)->updateLinkedObject(name, object); // Update object in parent scope as well.
-    }
-
-    // TODO: - If the existing object being replaced is also in our owned objects set
-    // then we need to delete it.
-    if (objectsCreatedInScope.count(existingObject))
-    {
-        objectsCreatedInScope.erase(existingObject);
-        delete existingObject;
-    }
-
-    // Update the mapping in our scope.
-    objectForVariableName[name] = object;
-}
-
-
-void Scope::checkForVariableNameClash(const std::string &name) const
-{
-    if (objectCreatedInScope(name))
-    {
-        printEucleiaError("Multiple variables defined in scope with the same name '%s'.", name.c_str());
-    }
-}
-
-
-void Scope::unlinkObject(const std::string &name)
-{
-    auto existingObject = objectForVariableName[name];
-
-    // TODO: - should we remove object we own linked to a variable?
-    if (existingObject && objectsCreatedInScope.count(existingObject))
-    {
-        delete existingObject;
-        objectsCreatedInScope.erase(existingObject);
-    }
-
-    objectForVariableName.erase(name);
-    objectCreationScope.erase(name);
+    // 4. If we created existingObject in OUR scope then we should delete it
+    // as it is no longer in use (r-value).
+    objectsCreatedInScope.erase(existingObject);
+    delete existingObject;
 }
