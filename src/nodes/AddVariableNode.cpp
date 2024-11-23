@@ -1,5 +1,5 @@
 /**
- * @file AddNewVariableNode.cpp
+ * @file AddVariableNode.cpp
  * @author Edward Palmer
  * @date 2024-11-22
  *
@@ -7,9 +7,9 @@
  *
  */
 
-#include "AddNewVariableNode.hpp"
+#include "AddVariableNode.hpp"
 
-BaseObject *AddNewVariableNode::evaluate(Scope &scope)
+BaseObject *AddVariableNode::evaluate(Scope &scope)
 {
     BaseObject *objectPtr = nullptr;
 
@@ -39,7 +39,7 @@ BaseObject *AddNewVariableNode::evaluate(Scope &scope)
 
 
 /// Type checking.
-bool AddNewVariableNode::passesAssignmentTypeCheck(const BaseObject &assignObject) const
+bool AddVariableNode::passesAssignmentTypeCheck(const BaseObject &assignObject) const
 {
     switch (variableType)
     {
@@ -59,7 +59,7 @@ bool AddNewVariableNode::passesAssignmentTypeCheck(const BaseObject &assignObjec
 }
 
 
-std::string AddNewVariableNode::description() const
+std::string AddVariableNode::description() const
 {
     switch (variableType)
     {

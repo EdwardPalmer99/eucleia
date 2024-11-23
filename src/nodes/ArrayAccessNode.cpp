@@ -8,16 +8,25 @@
  */
 
 #include "ArrayAccessNode.hpp"
+#include "ArrayObject.hpp"
+#include "BaseNode.hpp"
+
+ArrayAccessNode::~ArrayAccessNode()
+{
+    delete arrayLookup;
+    delete index;
+}
 
 BaseObject *ArrayAccessNode::evaluate(Scope &scope)
 {
-    printEucleiaError("%s", "Not implemented. Think abouto this...");
+    // Lookup array in scope or parent scope.
+    ArrayObject *arrayObject = static_cast<ArrayObject *>(arrayLookup->evaluate(scope));
 
-    // // Get shared pointer to array.
-    // ArrayObject *evaluatedObject = arrayName->evaluate(scope);
+    Scope arrayAccessScope(scope); // TODO: - inefficient. Should not store Rvalues in scope.
+    IntObject *indexObject = index->evaluate(arrayAccessScope);
 
-    // auto arrayObject = evaluatedObject->castObject<ArrayObject>();
+    BaseObject *lookupObj = arrayObject->values[indexObject->value];
 
-    // const long index = arrayIndex->numberValue;
-    // return arrayObject[index];
+    // Now return a copy of lookupObj.
+    return lookupObj->clone();
 }

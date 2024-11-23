@@ -20,8 +20,6 @@ class FunctionObject : public BaseObject
 public:
     FunctionObject(FunctionNode *function_) : functionValue(function_) {}
 
-    std::string typeName() const override { return "FunctionObject"; }
-
     FunctionObject *clone() const override
     {
         return new FunctionObject(functionValue);

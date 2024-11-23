@@ -220,15 +220,15 @@ BaseNode *Parser::parseVariableDefinition()
 
     // TODO: - add void typename for functions eventually.
     if (typeName == "int")
-        return new AddNewVariableNode(variableName, AddNewVariableNode::VariableType::Int);
+        return new AddVariableNode(variableName, AddVariableNode::VariableType::Int);
     else if (typeName == "float")
-        return new AddNewVariableNode(variableName, AddNewVariableNode::VariableType::Float);
+        return new AddVariableNode(variableName, AddVariableNode::VariableType::Float);
     else if (typeName == "bool")
-        return new AddNewVariableNode(variableName, AddNewVariableNode::VariableType::Bool);
+        return new AddVariableNode(variableName, AddVariableNode::VariableType::Bool);
     else if (typeName == "string")
-        return new AddNewVariableNode(variableName, AddNewVariableNode::VariableType::String);
+        return new AddVariableNode(variableName, AddVariableNode::VariableType::String);
     else if (typeName == "array")
-        return new AddNewVariableNode(variableName, AddNewVariableNode::VariableType::Array);
+        return new AddVariableNode(variableName, AddVariableNode::VariableType::Array);
     else
         printEucleiaError("expected variable type for variable %s.\n", typeName.c_str());
 }
@@ -389,11 +389,11 @@ FunctionCallNode *Parser::parseFunctionCall(BaseNode *lastExpression)
 ///
 ArrayAccessNode *Parser::parseArrayAccessor(BaseNode *lastExpression)
 {
-    auto arrayName = lastExpression;
+    auto arrayName = static_cast<LookupVariableNode *>(lastExpression);
 
     skipPunctuation("[");
 
-    auto arrayIndex = parseExpression();
+    auto arrayIndex = static_cast<AddIntNode *>(parseExpression());
 
     skipPunctuation("]");
 

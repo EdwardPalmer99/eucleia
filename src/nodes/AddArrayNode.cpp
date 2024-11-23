@@ -13,6 +13,7 @@ ArrayObject *AddArrayNode::evaluate(Scope &scope)
 {
     std::vector<BaseObject *> evaluatedObjects;
 
+    // Scope owns all objects in array and array itself.
     for (auto *node : programNodes)
     {
         evaluatedObjects.push_back(node->evaluate(scope));

@@ -8,5 +8,35 @@
  */
 
 #include "JumpPoints.hpp"
+#include "EucleiaUtility.hpp"
+#include <stack>
+
+std::stack<jmp_buf *> gBreakJumpPointStack;
+
+void pushBreakJumpPoint(jmp_buf *jumpPoint)
+{
+    gBreakJumpPointStack.push(jumpPoint);
+}
+
+void popBreakJumpPoint()
+{
+    if (gBreakJumpPointStack.empty())
+    {
+        printEucleiaError("%s", "break jump stack is empty!\n");
+    }
+
+    gBreakJumpPointStack.pop();
+}
+
+void jumpToBreakJumpPoint()
+{
+    if (gBreakJumpPointStack.empty())
+    {
+        printEucleiaError("%s", "break jump stack is empty!\n");
+    }
+
+    jmp_buf *top = gBreakJumpPointStack.top();
+    longjmp(*top, true);
+}
 
 GlobalEnvRec gEnvironmentContext;

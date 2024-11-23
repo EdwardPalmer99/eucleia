@@ -24,8 +24,6 @@ public:
 
     LibraryFunctionObject(LibraryFunction function_) : evaluate(std::move(function_)) {}
 
-    std::string typeName() const override { return "LibraryFunctionObject"; }
-
     LibraryFunctionObject *clone() const override
     {
         return new LibraryFunctionObject(evaluate);

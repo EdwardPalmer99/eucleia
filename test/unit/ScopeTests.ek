@@ -1,0 +1,17 @@
+import <io>
+import <test>
+
+{
+    int a = 1;
+    TEST(a == 1, "outer-scope a == 1");
+    
+    {
+        int a = 2;
+        TEST(a == 2, "inner-scope a == 2");
+
+        ++a;
+        TEST(a == 3, "inner-scope a == 3");
+    }
+    
+    TEST(a == 1, "outer-scope a == 1 (still)");
+}
