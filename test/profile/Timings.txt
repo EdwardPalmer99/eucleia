@@ -9,7 +9,10 @@
 - 31.77s user 0.98s system 95% cpu 34.116 total (-O0)
 2024-11-23:
 - 25.86s user 0.13s system 99% cpu 26.214 total (-O0)
+- 3.05s user 0.07s system 99% cpu 3.134 total (-O2)
 
 === CountToHundredMillion.ek ===
 2024-11-16:
 - 343.47s user 12.15s system 97% cpu 6:04.27 total (used about 5.5GB RAM!) (-O0)
+2024-11-23:
+- 33.92s user 1.14s system 97% cpu 36.042 total (-O2)
