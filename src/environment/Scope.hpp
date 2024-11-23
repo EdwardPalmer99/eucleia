@@ -9,7 +9,7 @@
 
 #pragma once
 #include "Objects.hpp"
-#include <memory>
+#include <new>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -82,8 +82,6 @@ public:
 
     /// Returns non-const reference to parent scope.
     inline Scope *parentScope() const { return const_cast<Scope *>(parent); }
-
-    // TODO: - rename to variable: defineVariable(name, void *ptr);
 
     /// Create a link between a variable name and an object in this scope.
     void linkObject(const std::string &name, BaseObject *object);
