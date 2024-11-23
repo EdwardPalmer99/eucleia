@@ -26,9 +26,9 @@ public:
         delete right;
     }
 
+    // Perform an assignment where LHS is either a pre-defined variable or an
+    // assignment of a new variable.
     BaseObject *evaluate(Scope &scope) override;
-
-    BaseObject *evaluateArrayAccess(Scope &scope);
 
     BaseNode *left{nullptr};
     BaseNode *right{nullptr};

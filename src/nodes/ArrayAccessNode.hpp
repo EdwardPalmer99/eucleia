@@ -13,24 +13,21 @@
 #include "BaseNode.hpp"
 #include "BaseObject.hpp"
 
-// TODO: - rewrite this...
 class ArrayAccessNode : public BaseNode
 {
 public:
-    ArrayAccessNode(BaseNode *arrayName_, BaseNode *arrayIndex_)
-        : arrayName(static_cast<AddNewVariableNode *>(arrayName_)),
-          arrayIndex(static_cast<AddIntNode *>(arrayIndex_))
+    ArrayAccessNode(LookupVariableNode *array_, AddIntNode *index_)
+        : arrayLookup(array_),
+          index(index_)
     {
     }
 
-    ~ArrayAccessNode() override
-    {
-        delete arrayName;
-        delete arrayIndex;
-    }
+    ~ArrayAccessNode() override;
 
+    // Returns copy of object at specified index in array. This makes sense as
+    // imagine int a = integerArray[0], a += 1 --> integerArray[0] unchanged.
     BaseObject *evaluate(Scope &scope) override;
 
-    AddNewVariableNode *arrayName{nullptr};
-    AddIntNode *arrayIndex{nullptr};
+    LookupVariableNode *arrayLookup{nullptr};
+    AddIntNode *index{nullptr};
 };

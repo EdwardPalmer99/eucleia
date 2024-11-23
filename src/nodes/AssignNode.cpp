@@ -12,11 +12,8 @@
 
 BaseObject *AssignNode::evaluate(Scope &scope)
 {
-    // Special case; example: array[0] = 3;
-    if (left->isNodeType<ArrayAccessNode>())
-    {
-        return evaluateArrayAccess(scope);
-    }
+    // NB: - cannot currently handle modification of arrays.
+    // i.e. array[0] = 1;
 
     // 1. Cast LHS to a variable node or a variable name node.
     assert(left->isNodeType<AddNewVariableNode>() || left->isNodeType<LookupVariableNode>());
@@ -35,27 +32,6 @@ BaseObject *AssignNode::evaluate(Scope &scope)
     // 3. Update value of variable object.
     auto &leftVariableName = left->castNode<LookupVariableNode>();
     scope.updateLinkedObject(leftVariableName.variableName, rightEvaluated);
-
-    return nullptr;
-}
-
-/// Special method called if LHS is an array accessor.
-BaseObject *AssignNode::evaluateArrayAccess(Scope &scope)
-{
-    assert(left->isNodeType<ArrayAccessNode>());
-
-    // 1. Get the array object at that index.
-    auto currentValue = left->evaluate(scope);
-
-    // 2. Evaluate RHS to get new value for the object.
-    auto newValue = right->evaluate(scope);
-
-    // 3. Check that the types match.
-    assert(currentValue->typesMatch(*newValue));
-
-    // Set to new value.
-    *currentValue = *newValue;
-    printEucleiaError("%s", "WIP: LOGIC IS NOT CORRECT. THINK ABOUT HOW TO REMOVE OLD VALUE FROM SCOPE.");
 
     return nullptr;
 }
