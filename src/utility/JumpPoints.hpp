@@ -20,3 +20,7 @@ struct GlobalEnvRec
 };
 
 extern GlobalEnvRec gEnvironmentContext;
+
+void pushBreakJumpPoint(jmp_buf *jumpPoint);
+void popBreakJumpPoint();
+void jumpToBreakJumpPoint();

@@ -15,10 +15,11 @@
 
 BaseObject *DoWhileNode::evaluate(Scope &scope)
 {
-    jmp_buf *original = gEnvironmentContext.breakJumpPoint;
+    // jmp_buf *original = gEnvironmentContext.breakJumpPoint;
 
     jmp_buf local;
-    gEnvironmentContext.breakJumpPoint = &local;
+    pushBreakJumpPoint(&local);
+    // gEnvironmentContext.breakJumpPoint = &local;
 
     if (setjmp(local) != 1)
     {
@@ -31,7 +32,8 @@ BaseObject *DoWhileNode::evaluate(Scope &scope)
     }
 
     // Restore original context.
-    gEnvironmentContext.breakJumpPoint = original;
+    popBreakJumpPoint();
+    // gEnvironmentContext.breakJumpPoint = original;
 
     return nullptr; // Return nothing.
 }

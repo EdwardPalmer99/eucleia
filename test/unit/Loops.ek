@@ -1,0 +1,17 @@
+import <io>
+import <test>
+
+{
+    int counter = 0;
+
+    while (1)
+    {
+        if (++counter >= 10)
+        {
+            break;
+        }
+    }
+
+    TEST(counter == 10, "test break");
+}
+
