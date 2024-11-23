@@ -9,9 +9,9 @@
 
 #pragma once
 #include "Objects.hpp"
-#include <map>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <unordered_set>
 
 class Scope
@@ -96,7 +96,7 @@ private:
     /// Stores a mapping from the variable name to a pointer to the object. These
     /// are only linked objects defined in this scope. This enables variable
     /// shadowing.
-    std::map<std::string, BaseObject *> linkedObjectForName;
+    std::unordered_map<std::string, BaseObject *> linkedObjectForName;
 
     /// Store all objects we have created. They will persist for the lifetime
     /// of the scope. We are responsible for deleting these in destructor.
