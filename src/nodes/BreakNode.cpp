@@ -13,6 +13,5 @@
 BaseObject *BreakNode::evaluate(Scope &scope)
 {
     jumpToBreakJumpPoint();
-    //longjmp(*gEnvironmentContext.breakJumpPoint, true);
     return nullptr;
 }

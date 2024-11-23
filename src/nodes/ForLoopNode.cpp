@@ -14,8 +14,6 @@
 
 BaseObject *ForLoopNode::evaluate(Scope &scope)
 {
-    // jmp_buf *original = gEnvironmentContext.breakJumpPoint;
-
     // Initialization.
     Scope loopScope(scope); // Extend scope.
 
@@ -23,7 +21,6 @@ BaseObject *ForLoopNode::evaluate(Scope &scope)
 
     jmp_buf local;
     pushBreakJumpPoint(&local);
-    // gEnvironmentContext.breakJumpPoint = &local;
 
     // Add evaluation to forScope:
     if (setjmp(local) != 1)
@@ -37,7 +34,6 @@ BaseObject *ForLoopNode::evaluate(Scope &scope)
     }
 
     popBreakJumpPoint();
-    // gEnvironmentContext.breakJumpPoint = original;
 
     return nullptr;
 }
