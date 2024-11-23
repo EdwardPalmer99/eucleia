@@ -9,8 +9,8 @@
 
 #pragma once
 #include "BaseObject.hpp"
-#include "EucleiaScope.hpp"
 #include "ProgramNode.hpp"
+#include "Scope.hpp"
 #include <vector>
 
 class FileNode : public ProgramNode

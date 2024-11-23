@@ -1,8 +1,4 @@
 // Count to 1 million
-//
-// Timings: 2024-11-16:
-// install/eucleia test/profile/CountToOneMillion.ek  2.54s user 0.06s system 99% cpu 2.618 total (-O0)
-// install/eucleia test/profile/CountToOneMillion.ek  1.12s user 0.06s system 98% cpu 1.191 total (-O2)
 
 int counter = 0;
 int max_counter = 1000000;

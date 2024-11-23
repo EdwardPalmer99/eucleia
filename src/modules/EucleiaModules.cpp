@@ -23,7 +23,7 @@ BaseObject *ModuleNode::evaluate(Scope &scope)
     for (const auto &[name, function] : _functionsMap)
     {
         LibraryFunctionObject *object = scope.createManagedObject<LibraryFunctionObject>(function);
-        scope.defineObject(name, object);
+        scope.linkObject(name, object);
     }
 
     return nullptr;

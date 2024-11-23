@@ -9,7 +9,7 @@
 
 #pragma once
 #include "BaseNode.hpp"
-#include "EucleiaScope.hpp"
+#include "Scope.hpp"
 
 class AssignNode : public BaseNode
 {

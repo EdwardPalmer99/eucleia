@@ -19,4 +19,4 @@ struct GlobalEnvRec
     BaseObject *returnValue{nullptr};
 };
 
-static GlobalEnvRec gEnvironmentContext;
+extern GlobalEnvRec gEnvironmentContext;

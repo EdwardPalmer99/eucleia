@@ -9,8 +9,8 @@
 
 #pragma once
 #include "BaseNode.hpp"
-#include "EucleiaScope.hpp"
 #include "IntObject.hpp"
+#include "Scope.hpp"
 
 /**
  * The goal of this is to be a lightweight wrapper around a node which evaluates

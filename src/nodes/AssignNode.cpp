@@ -34,7 +34,7 @@ BaseObject *AssignNode::evaluate(Scope &scope)
 
     // 3. Update value of variable object.
     auto &leftVariableName = left->castNode<LookupVariableNode>();
-    scope.updateObject(leftVariableName.variableName, rightEvaluated);
+    scope.updateLinkedObject(leftVariableName.variableName, rightEvaluated);
 
     return nullptr;
 }

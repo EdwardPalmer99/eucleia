@@ -9,8 +9,8 @@
 
 #pragma once
 #include "BaseObject.hpp"
-#include "EucleiaScope.hpp"
 #include "LookupVariableNode.hpp"
+#include "Scope.hpp"
 
 
 class AddNewVariableNode : public LookupVariableNode

@@ -10,7 +10,7 @@
 #pragma once
 #include "BaseNode.hpp"
 #include "BaseObject.hpp"
-#include "EucleiaScope.hpp"
+#include "Scope.hpp"
 #include <vector>
 
 class ProgramNode : public BaseNode

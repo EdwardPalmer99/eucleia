@@ -33,7 +33,7 @@ BaseObject *AddNewVariableNode::evaluate(Scope &scope)
             printEucleiaError("%s", "cannot create a variable of specified type.");
     }
 
-    scope.defineObject(variableName, objectPtr); // TODO: - could call this linkObjectToVariableName()
+    scope.linkObject(variableName, objectPtr); // TODO: - could call this linkObjectToVariableName()
     return objectPtr;
 }
 

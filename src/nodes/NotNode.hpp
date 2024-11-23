@@ -10,7 +10,7 @@
 #pragma once
 #include "BaseObject.hpp"
 #include "BaseUnaryOperatorNode.hpp"
-#include "EucleiaScope.hpp"
+#include "Scope.hpp"
 
 /// Unary not operator (e.g. !true --> false).
 class NotNode : public BaseUnaryOperatorNode
