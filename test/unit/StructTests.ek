@@ -27,3 +27,12 @@ print(emptyStruct);
 
 struct SomeStruct anotherEmptyStruct;
 anotherEmptyStruct = emptyStruct;   // TODO: - needs to be handled.
+
+
+// TODO: - After getting this working properly, next step will be to implement classes 
+// which we will derive from Structs. Will be pretty much the same. Also need to
+// have a mapping for storing function objects which will be called in the same 
+// way as above and have access to all objects we have created in this Struct. 
+// Interestingly, we could also create a Scope object which lives inside Struct 
+// and handles memory and ownership. This would make sense and we would not need 
+// an explicit map inside!! 
