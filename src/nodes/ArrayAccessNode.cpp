@@ -27,6 +27,8 @@ BaseObject *ArrayAccessNode::evaluate(Scope &scope)
 
     BaseObject *lookupObj = arrayObject->values[indexObject->value];
 
+    // TODO: - clone method should include scope so can assign to scope.
+    // NB: this is a potential memory leak.
     // Now return a copy of lookupObj.
     return lookupObj->clone();
 }

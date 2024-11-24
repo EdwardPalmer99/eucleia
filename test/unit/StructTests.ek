@@ -11,4 +11,19 @@ struct SomeStruct
 };
 
 struct SomeStruct emptyStruct;
+print(emptyStruct, emptyStruct.i, emptyStruct.f, emptyStruct.s);
+
+// Accessing values.
+int i = emptyStruct.i;
+i = 2;
+print(i, emptyStruct.i);
+
+// TODO: - modify values. Becasue values are stored in the struct instance, we
+// need some way to modify them.
+emptyStruct.i = 1;
+emptyStruct.f = 2.1;
+emptyStruct.s = "hello";
 print(emptyStruct);
+
+struct SomeStruct anotherEmptyStruct;
+anotherEmptyStruct = emptyStruct;   // TODO: - needs to be handled.

@@ -429,6 +429,31 @@ BaseNode *Parser::parseStruct()
     }
 }
 
+
+/**
+ * Example:
+ *
+ * aStruct.i --> returns int object stored in struct instance.
+ */
+BaseNode *Parser::parseStructAccessor(BaseNode *lastExpression)
+{
+    auto structName = static_cast<LookupVariableNode *>(lastExpression);
+
+    skipPunctuation(".");
+
+    LookupVariableNode *accessorRHS = static_cast<LookupVariableNode *>(parseVariableName());
+
+    StructAccessorNode *accessor = new StructAccessorNode(structName->variableName, accessorRHS->variableName);
+
+    // Mark: - really ugly code. Should be possible to just have a parseVariableName() method
+    // which returns a string so we don't always have to wrap-it up into a LookupVariableNode.
+    delete lastExpression;
+    delete accessorRHS;
+
+    return accessor;
+}
+
+
 #pragma mark - *** Arrays ***
 
 ///
@@ -527,6 +552,8 @@ BaseNode *Parser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
         return parseFunctionCall(expr);
     else if (isPunctuation("["))
         return parseArrayAccessor(expr);
+    else if (isPunctuation("."))
+        return parseStructAccessor(expr);
     else
         return expr;
 }
