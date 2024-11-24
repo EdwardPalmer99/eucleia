@@ -54,7 +54,7 @@ BaseObject *Scope::getNamedObject(const std::string &name) const
     BaseObject *obj = getOptionalNamedObject(name);
     if (!obj)
     {
-        printEucleiaError("undefined variable '%s'.\n", name.c_str());
+        EucleiaError("undefined variable '%s'.\n", name.c_str());
     }
 
     return obj;
@@ -76,7 +76,7 @@ void Scope::linkObject(const std::string &name, BaseObject *object)
     auto iter = linkedObjectForName.find(name);
     if (iter != linkedObjectForName.end())
     {
-        printEucleiaError("%s is already defined in current scope.", name.c_str());
+        EucleiaError("%s is already defined in current scope.", name.c_str());
     }
 
     // 2. Add to map. This will ensure that we now ignore any outer-scope variables
@@ -102,7 +102,7 @@ void Scope::updateLinkedObject(const std::string &name, BaseObject *object)
         else
         {
             // Not found!!
-            printEucleiaError("cannot update variable %s - not found in any scope.\n", name.c_str());
+            EucleiaError("cannot update variable %s - not found in any scope.\n", name.c_str());
         }
     }
 
@@ -111,8 +111,8 @@ void Scope::updateLinkedObject(const std::string &name, BaseObject *object)
     BaseObject *existingObject = iter->second;
     if (!existingObject->typesMatch((*object)))
     {
-        printEucleiaError("Setting object of type %s with incompatible type %s",
-                          typeid(existingObject).name(), typeid(object).name());
+        EucleiaError("Setting object of type %s with incompatible type %s",
+                     typeid(existingObject).name(), typeid(object).name());
     }
 
     // 3. Update the mapping in this scope.

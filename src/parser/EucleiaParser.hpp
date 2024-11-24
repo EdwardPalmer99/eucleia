@@ -43,6 +43,8 @@ protected:
     IfNode *parseIf();
     FunctionNode *parseFunctionDefinition();
 
+    BaseNode *parseStruct();
+
     BreakNode *parseBreak();
     ReturnNode *parseReturn();
 

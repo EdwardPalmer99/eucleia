@@ -10,27 +10,25 @@
 #pragma once
 #include "BaseObject.hpp"
 #include "EucleiaUtility.hpp"
+#include "StructDefinitionObject.hpp"
 #include <map>
 #include <string>
 
 /**
- * struct SomeStruct
- * {
- *      int a;
- *      string b;
- *      ...
- * };
+ * struct SomeStruct a;
  */
 class StructObject : public BaseObject
 {
 public:
-    StructObject(std::map<std::string, BaseObject *> items_) : objectForName(std::move(items_)) {}
+    StructObject() = delete;
+    explicit StructObject(StructDefinitionObject *structDefinition);
+
+    ~StructObject() override;
 
     StructObject *clone() const override
     {
-        printEucleiaError("%s", "not implemented!\n");
+        EucleiaError("%s", "not implemented!\n");
     }
 
-protected:
     std::map<std::string, BaseObject *> objectForName;
 };
