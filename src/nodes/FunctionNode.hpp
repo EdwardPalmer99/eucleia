@@ -12,7 +12,7 @@
 #include "FunctionCallNode.hpp"
 #include "ProgramNode.hpp"
 
-class FunctionNode : public FunctionCallNode, public std::enable_shared_from_this<FunctionNode>
+class FunctionNode : public FunctionCallNode
 {
 public:
     FunctionNode(BaseNode *funcName_, BaseNode *funcArgs_, BaseNode *funcBody_)
