@@ -25,6 +25,8 @@ public:
 
     ~StructObject() override;
 
+    StructObject &operator=(const BaseObject &other) override;
+
     StructObject *clone() const override
     {
         EucleiaError("%s", "not implemented!\n");

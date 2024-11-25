@@ -9,18 +9,31 @@
 
 #include "AssignNode.hpp"
 #include "ArrayAccessNode.hpp"
+#include "StructNode.hpp"
+#include <iostream>
 
 BaseObject *AssignNode::evaluate(Scope &scope)
 {
-    // Array modification: array[0] = 1;
+    // Setting array or struct values.
     if (left->isNodeType<ArrayAccessNode>())
     {
         ArrayAccessNode &accessor = left->castNode<ArrayAccessNode>();
 
-        // TODO: - think about memory here.
-        accessor.setObject(scope, right->evaluate(scope));
+        *(accessor.evaluateNoClone(scope)) = *(right->evaluate(scope));
         return nullptr;
     }
+    else if (left->isNodeType<StructAccessNode>())
+    {
+        StructAccessNode &accessor = left->castNode<StructAccessNode>();
+
+        *(accessor.evaluateNoClone(scope)) = *(right->evaluate(scope));
+        std::cout << "StructNodeAccess... " << std::endl;
+        std::cout << *(right->evaluate(scope)) << std::endl;
+        return nullptr;
+    }
+
+    // TODO: - don't actually need to update the linked object here. We can just
+    // perform an assignment as above. More efficient!!
 
     // 1. Cast LHS to a variable node or a variable name node.
     assert(left->isNodeType<AddVariableNode>() || left->isNodeType<LookupVariableNode>());

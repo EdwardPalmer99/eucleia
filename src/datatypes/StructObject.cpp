@@ -13,6 +13,39 @@
 #include "StringObject.hpp"
 #include <cassert>
 
+StructObject &StructObject::operator=(const BaseObject &other)
+{
+    if (this == &other)
+    {
+        return (*this);
+    }
+
+    // 1. cast to struct object.
+    const StructObject &otherStruct = other.castObject<StructObject>();
+
+    // 2. Are the struct objects equal? We need to know that they have the same
+    // struct template. Not ideal but we can iterate through and compare the typeids
+    // of each object in the maps.
+    if (otherStruct.objectForName.size() != objectForName.size())
+    {
+        EucleiaError("%s\n", "attempting to assign different struct types.");
+    }
+
+    for (auto &[name, object] : objectForName)
+    {
+        auto iter = otherStruct.objectForName.find(name);
+        if (iter == otherStruct.objectForName.end())
+        {
+            EucleiaError("%s\n", "attempting to assign different struct types.");
+        }
+
+        // Attempt an assignment. Will fail if different types.
+        *object = *(iter->second);
+    }
+
+    return (*this);
+}
+
 StructObject::StructObject(StructDefinitionObject *structDefinitionObject)
 {
     assert(structDefinitionObject);

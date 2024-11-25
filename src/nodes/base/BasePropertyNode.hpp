@@ -26,9 +26,6 @@ public:
     // Return copy of object (getter).
     BaseObject *evaluate(Scope &scope) override = 0;
 
-    // Set object directly (setter).
-    virtual void setObject(Scope &scope, BaseObject *object) = 0;
-
-    // Return object directly (not copy!). Should only be used internally.
-    virtual BaseObject *objectPtr(Scope &scope) = 0;
+    // Return object directly (not copy!). Should be used to modify value.
+    virtual BaseObject *evaluateNoClone(Scope &scope) = 0;
 };

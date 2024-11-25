@@ -17,6 +17,16 @@ class StringObject : public BaseObject
 public:
     StringObject(std::string value_ = "") : value(std::move(value_)) {}
 
+    StringObject &operator=(const BaseObject &other) override
+    {
+        if (this != &other)
+        {
+            value = other.castObject<StringObject>().value;
+        }
+
+        return (*this);
+    }
+
     StringObject *clone() const override
     {
         return new StringObject(value);

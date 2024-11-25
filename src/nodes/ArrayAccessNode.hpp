@@ -26,13 +26,10 @@ public:
     ~ArrayAccessNode() override;
 
     // Returns object directly.
-    BaseObject *objectPtr(Scope &scope) override;
+    BaseObject *evaluateNoClone(Scope &scope) override;
 
     // Returns copy of object.
     BaseObject *evaluate(Scope &scope) override;
-
-    // Updates value of object.
-    void setObject(Scope &scope, BaseObject *object) override;
 
     LookupVariableNode *arrayLookup{nullptr};
     AddIntNode *index{nullptr};

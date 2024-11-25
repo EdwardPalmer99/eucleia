@@ -10,6 +10,7 @@
 #pragma once
 #include "BaseNode.hpp"
 #include "BaseObject.hpp"
+#include "BasePropertyNode.hpp"
 #include "Scope.hpp"
 #include <string>
 
@@ -37,7 +38,7 @@ public:
  *
  * [structName].[memberVariableName]
  */
-class StructAccessNode : public BaseNode
+class StructAccessNode : public BasePropertyNode
 {
 public:
     explicit StructAccessNode(std::string name_, std::string memberVariableName_)
@@ -45,13 +46,11 @@ public:
     {
     }
 
-    // Returns clone of object. We want to use this when the accessor is on the RHS.
-    // i.e. int a = someStruct.i (should be copy).
+    // Returns object directly (use to set value).
+    BaseObject *evaluateNoClone(Scope &scope) override;
+
+    // Returns copy of object (getter).
     BaseObject *evaluate(Scope &scope) override;
-
-    // Returns pointer to object. We want to use this when the accessor is on the LHS.
-    // i.e. someStruct.i = 1;
-
 
     std::string name;
     std::string memberVariableName;

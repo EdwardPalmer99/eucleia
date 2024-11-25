@@ -10,18 +10,29 @@ struct SomeStruct
     string s;
 };
 
-struct SomeStruct emptyStruct;
-print(emptyStruct, emptyStruct.i, emptyStruct.f, emptyStruct.s);
+struct SomeStruct first;
+TEST(first.i == 0, "struct init");
 
-// Accessing values.
-int i = emptyStruct.i;
-i = 2;
-print(i, emptyStruct.i);
+// Setters.
+first.i = 1;
+TEST(first.i == 1, "set struct int");
 
-// TODO: - modify values. Becasue values are stored in the struct instance, we
-// need some way to modify them.
-emptyStruct.i = 1;
+first.f = 1.1;
+TEST(first.f == 1.1, "set struct float");
 
+first.s = "hello, world!";
+TEST(first.s == "hello, world!", "set struct string");
+
+// Getters (assigning value).
+int iValue = first.i;
+
+++iValue;
+TEST(iValue == 2 && first.i == 1, "int getter");
+
+// Copy struct instances.
+struct SomeStruct second;   // TODO: - cannot handle = first here!
+second = first;
+TEST(second.i == 1 && second.f == 1.1 && second.s == "hello, world!", "struct assignment");
 // TODO: - After getting this working properly, next step will be to implement classes 
 // which we will derive from Structs. Will be pretty much the same. Also need to
 // have a mapping for storing function objects which will be called in the same 

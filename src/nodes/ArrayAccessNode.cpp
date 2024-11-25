@@ -20,7 +20,7 @@ ArrayAccessNode::~ArrayAccessNode()
 }
 
 
-BaseObject *ArrayAccessNode::objectPtr(Scope &scope)
+BaseObject *ArrayAccessNode::evaluateNoClone(Scope &scope)
 {
     // Lookup in array.
     auto &arrayObj = arrayLookup->evaluate(scope)->castObject<ArrayObject>();
@@ -32,15 +32,8 @@ BaseObject *ArrayAccessNode::objectPtr(Scope &scope)
 
 BaseObject *ArrayAccessNode::evaluate(Scope &scope)
 {
-    BaseObject *currentObject = objectPtr(scope);
+    BaseObject *currentObject = evaluateNoClone(scope);
 
     // Return a safe copy of object.
     return scope.cloneObject(currentObject);
-}
-
-
-void ArrayAccessNode::setObject(Scope &scope, BaseObject *newObjectValue)
-{
-    BaseObject *currentObjectValue = objectPtr(scope);
-    *currentObjectValue = *newObjectValue;
 }
