@@ -25,7 +25,7 @@ BaseObject *StructNode::evaluate(Scope &scope)
 }
 
 
-BaseObject *StructAccessorNode::evaluate(Scope &scope)
+BaseObject *StructAccessNode::evaluate(Scope &scope)
 {
     StructObject *structObj = scope.getNamedObject<StructObject>(name);
 

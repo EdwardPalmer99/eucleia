@@ -443,7 +443,7 @@ BaseNode *Parser::parseStructAccessor(BaseNode *lastExpression)
 
     LookupVariableNode *accessorRHS = static_cast<LookupVariableNode *>(parseVariableName());
 
-    StructAccessorNode *accessor = new StructAccessorNode(structName->variableName, accessorRHS->variableName);
+    StructAccessNode *accessor = new StructAccessNode(structName->variableName, accessorRHS->variableName);
 
     // Mark: - really ugly code. Should be possible to just have a parseVariableName() method
     // which returns a string so we don't always have to wrap-it up into a LookupVariableNode.

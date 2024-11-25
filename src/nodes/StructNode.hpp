@@ -37,10 +37,10 @@ public:
  *
  * [structName].[memberVariableName]
  */
-class StructAccessorNode : public BaseNode
+class StructAccessNode : public BaseNode
 {
 public:
-    explicit StructAccessorNode(std::string name_, std::string memberVariableName_)
+    explicit StructAccessNode(std::string name_, std::string memberVariableName_)
         : name(std::move(name_)), memberVariableName(std::move(memberVariableName_))
     {
     }
@@ -51,7 +51,7 @@ public:
 
     // Returns pointer to object. We want to use this when the accessor is on the LHS.
     // i.e. someStruct.i = 1;
-    
+
 
     std::string name;
     std::string memberVariableName;
