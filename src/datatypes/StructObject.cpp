@@ -27,7 +27,7 @@ StructObject::StructObject(StructDefinitionObject *structDefinitionObject)
                 objectForName[name] = new IntObject();
                 break;
             case StructDefinitionObject::SupportedObjectTypes::FloatObject:
-                objectForName[name] = new IntObject();
+                objectForName[name] = new FloatObject();
                 break;
             case StructDefinitionObject::SupportedObjectTypes::StringObject:
                 objectForName[name] = new StringObject();
