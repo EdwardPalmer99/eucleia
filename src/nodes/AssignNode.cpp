@@ -12,8 +12,15 @@
 
 BaseObject *AssignNode::evaluate(Scope &scope)
 {
-    // NB: - cannot currently handle modification of arrays.
-    // i.e. array[0] = 1;
+    // Array modification: array[0] = 1;
+    if (left->isNodeType<ArrayAccessNode>())
+    {
+        ArrayAccessNode &accessor = left->castNode<ArrayAccessNode>();
+
+        // TODO: - think about memory here.
+        accessor.setObject(scope, right->evaluate(scope));
+        return nullptr;
+    }
 
     // 1. Cast LHS to a variable node or a variable name node.
     assert(left->isNodeType<AddVariableNode>() || left->isNodeType<LookupVariableNode>());

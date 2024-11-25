@@ -45,8 +45,13 @@ public:
     {
     }
 
-    // Returns pointer to object stored in the struct instance.
+    // Returns clone of object. We want to use this when the accessor is on the RHS.
+    // i.e. int a = someStruct.i (should be copy).
     BaseObject *evaluate(Scope &scope) override;
+
+    // Returns pointer to object. We want to use this when the accessor is on the LHS.
+    // i.e. someStruct.i = 1;
+    
 
     std::string name;
     std::string memberVariableName;

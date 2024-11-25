@@ -10,6 +10,8 @@
 #include "ArrayAccessNode.hpp"
 #include "ArrayObject.hpp"
 #include "BaseNode.hpp"
+#include <cassert>
+#include <iostream>
 
 ArrayAccessNode::~ArrayAccessNode()
 {
@@ -17,18 +19,28 @@ ArrayAccessNode::~ArrayAccessNode()
     delete index;
 }
 
+
+BaseObject *ArrayAccessNode::objectPtr(Scope &scope)
+{
+    // Lookup in array.
+    auto &arrayObj = arrayLookup->evaluate(scope)->castObject<ArrayObject>();
+    auto &indexObject = index->evaluate(scope)->castObject<IntObject>();
+
+    return arrayObj[indexObject.value];
+}
+
+
 BaseObject *ArrayAccessNode::evaluate(Scope &scope)
 {
-    // Lookup array in scope or parent scope.
-    ArrayObject *arrayObject = static_cast<ArrayObject *>(arrayLookup->evaluate(scope));
+    BaseObject *currentObject = objectPtr(scope);
 
-    Scope arrayAccessScope(scope); // TODO: - inefficient. Should not store Rvalues in scope.
-    IntObject *indexObject = index->evaluate(arrayAccessScope);
+    // Return a safe copy of object.
+    return scope.cloneObject(currentObject);
+}
 
-    BaseObject *lookupObj = arrayObject->values[indexObject->value];
 
-    // TODO: - clone method should include scope so can assign to scope.
-    // NB: this is a potential memory leak.
-    // Now return a copy of lookupObj.
-    return lookupObj->clone();
+void ArrayAccessNode::setObject(Scope &scope, BaseObject *newObjectValue)
+{
+    BaseObject *currentObjectValue = objectPtr(scope);
+    *currentObjectValue = *newObjectValue;
 }

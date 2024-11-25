@@ -13,4 +13,7 @@ import <test>
 
     val = 2;
     TEST(val == 2 && test[0] == 1, "copy array value.");
+
+    test[0] = test[1];
+    TEST(test[0] == 2, "set array int value.");
 }

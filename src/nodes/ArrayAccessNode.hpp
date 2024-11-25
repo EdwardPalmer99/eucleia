@@ -10,10 +10,11 @@
 #pragma once
 #include "AddIntNode.hpp"
 #include "AddVariableNode.hpp"
-#include "BaseNode.hpp"
 #include "BaseObject.hpp"
+#include "BasePropertyNode.hpp"
+#include "Scope.hpp"
 
-class ArrayAccessNode : public BaseNode
+class ArrayAccessNode : public BasePropertyNode
 {
 public:
     ArrayAccessNode(LookupVariableNode *array_, AddIntNode *index_)
@@ -24,9 +25,14 @@ public:
 
     ~ArrayAccessNode() override;
 
-    // Returns copy of object at specified index in array. This makes sense as
-    // imagine int a = integerArray[0], a += 1 --> integerArray[0] unchanged.
+    // Returns object directly.
+    BaseObject *objectPtr(Scope &scope) override;
+
+    // Returns copy of object.
     BaseObject *evaluate(Scope &scope) override;
+
+    // Updates value of object.
+    void setObject(Scope &scope, BaseObject *object) override;
 
     LookupVariableNode *arrayLookup{nullptr};
     AddIntNode *index{nullptr};

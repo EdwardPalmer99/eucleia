@@ -24,6 +24,16 @@ class IntObject : public BaseObject
 public:
     IntObject(long value_ = 0) : value(value_) {}
 
+    IntObject &operator=(const BaseObject &other) override
+    {
+        if (this != &other)
+        {
+            value = other.castObject<IntObject>().value;
+        }
+
+        return (*this);
+    }
+
     void *operator new(size_t size)
     {
         return allocator.allocate(size);
