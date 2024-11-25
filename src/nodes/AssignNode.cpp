@@ -10,7 +10,6 @@
 #include "AssignNode.hpp"
 #include "ArrayAccessNode.hpp"
 #include "StructNode.hpp"
-#include <iostream>
 
 BaseObject *AssignNode::evaluate(Scope &scope)
 {
@@ -27,8 +26,6 @@ BaseObject *AssignNode::evaluate(Scope &scope)
         StructAccessNode &accessor = left->castNode<StructAccessNode>();
 
         *(accessor.evaluateNoClone(scope)) = *(right->evaluate(scope));
-        std::cout << "StructNodeAccess... " << std::endl;
-        std::cout << *(right->evaluate(scope)) << std::endl;
         return nullptr;
     }
 

@@ -10,6 +10,7 @@ struct SomeStruct
     string s;
 };
 
+// TODO: - would be nice to have { .i = 1, .f = 1.1, .s = "hi" }; assignment
 struct SomeStruct first;
 TEST(first.i == 0, "struct init");
 
