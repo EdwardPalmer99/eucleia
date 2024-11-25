@@ -10,6 +10,7 @@
 #include "AssignNode.hpp"
 #include "ArrayAccessNode.hpp"
 #include "StructNode.hpp"
+#include <iostream>
 
 BaseObject *AssignNode::evaluate(Scope &scope)
 {
@@ -29,26 +30,18 @@ BaseObject *AssignNode::evaluate(Scope &scope)
         return nullptr;
     }
 
-    // TODO: - don't actually need to update the linked object here. We can just
-    // perform an assignment as above. More efficient!!
-
-    // 1. Cast LHS to a variable node or a variable name node.
     assert(left->isNodeType<AddVariableNode>() || left->isNodeType<LookupVariableNode>());
 
-    // Evaluate the LHS.
-    // Case 1: VariableName node --> returns shared pointer to existing object (not useful).
-    // Case 2: Variable node --> creates new object in scope.
-    if (left->isNodeType<AddVariableNode>())
-    {
-        (void)left->evaluate(scope);
-    }
+    // Case 1: AddVariableNode -> we create default init object, add to scope and return.
+    // Case 2: LookupVariableNode -> we object defined in scope (not cloned!) - TODO: - think about whether we should clone it.
+    BaseObject *objectLHS = left->evaluate(scope);
 
-    // 2. Evaluate the right-hand-side.
-    auto rightEvaluated = right->evaluate(scope);
+    // Object we want to assign to LHS.
+    // NB: evaluate in temporary scope so destroy when we exit this function.
+    Scope tmpScope(scope);
+    BaseObject *objectRHS = right->evaluate(tmpScope);
 
-    // 3. Update value of variable object.
-    auto &leftVariableName = left->castNode<LookupVariableNode>();
-    scope.updateLinkedObject(leftVariableName.variableName, rightEvaluated);
-
+    // Update directly. TODO: - We will need to implement this for some object types still.
+    *objectLHS = *objectRHS;
     return nullptr;
 }

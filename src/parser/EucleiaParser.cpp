@@ -10,6 +10,7 @@
 #include "EucleiaUtility.hpp"
 #include "TestModule.hpp"
 #include <assert.h>
+#include <cassert>
 #include <cstring>
 #include <memory>
 #include <stdlib.h>
@@ -547,6 +548,7 @@ BaseNode *Parser::maybeArrayAccess(ParseMethod expression)
 BaseNode *Parser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
 {
     auto expr = expression();
+    assert(expr != nullptr);
 
     if (isPunctuation("("))
         return parseFunctionCall(expr);

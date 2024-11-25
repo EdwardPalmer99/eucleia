@@ -86,10 +86,6 @@ public:
     /// Create a link between a variable name and an object in this scope.
     void linkObject(const std::string &name, BaseObject *object);
 
-    /// Updates the link between a variable and an object in this scope or the
-    /// first outer scope. The object type must match the existing object type.
-    void updateLinkedObject(const std::string &name, BaseObject *object);
-
 private:
     /// Stores a mapping from the variable name to a pointer to the object. These
     /// are only linked objects defined in this scope. This enables variable

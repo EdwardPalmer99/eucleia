@@ -10,8 +10,6 @@
 #include "ArrayAccessNode.hpp"
 #include "ArrayObject.hpp"
 #include "BaseNode.hpp"
-#include <cassert>
-#include <iostream>
 
 ArrayAccessNode::~ArrayAccessNode()
 {
