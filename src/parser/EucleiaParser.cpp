@@ -286,16 +286,20 @@ ForLoopNode *Parser::parseFor()
 {
     skipKeyword("for");
 
-    auto brackets = parseDelimited("(", ")", ";", std::bind(&Parser::parseExpression, this));
+    ProgramNode *brackets = parseDelimited("(", ")", ";", std::bind(&Parser::parseExpression, this));
 
-    if (brackets->programNodes.size() != 3)
+    std::vector<BaseNode *> forLoopArgs = brackets->releaseNodes();
+
+    delete brackets;
+
+    if (forLoopArgs.size() != 3)
     {
         EucleiaError("Expected 3 arguments for for-loop but got %ld\n", brackets->programNodes.size());
     }
 
-    auto start = brackets->programNodes[0];
-    auto condition = brackets->programNodes[1];
-    auto update = brackets->programNodes[2];
+    auto start = forLoopArgs[0];
+    auto condition = forLoopArgs[1];
+    auto update = forLoopArgs[2];
     auto body = parseProgram();
 
     return new ForLoopNode(start, condition, update, body);
