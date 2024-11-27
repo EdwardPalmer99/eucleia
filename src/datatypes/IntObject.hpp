@@ -10,6 +10,7 @@
 #pragma once
 #include "BaseObject.hpp"
 #include "PoolAllocator.hpp"
+#include <cassert>
 
 // 10 chunks per block.
 static PoolAllocator allocator{10};

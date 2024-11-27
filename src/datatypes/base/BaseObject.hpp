@@ -10,6 +10,7 @@
 #pragma once
 #include "EucleiaUtility.hpp"
 #include <string>
+#include <typeinfo>
 
 /**
  * BaseObject. All objects are derived from this class.

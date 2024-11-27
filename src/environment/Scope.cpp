@@ -9,6 +9,7 @@
 
 #include "Scope.hpp"
 #include "EucleiaUtility.hpp"
+#include <cassert>
 
 Scope::Scope(const Scope &_parent)
     : Scope(&_parent)

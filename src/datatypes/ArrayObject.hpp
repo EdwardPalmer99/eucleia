@@ -10,6 +10,7 @@
 #pragma once
 #include "BaseObject.hpp"
 #include <vector>
+#include <cassert>
 
 class ArrayObject : public BaseObject
 {

@@ -9,6 +9,7 @@
 
 #pragma once
 #include <new>
+#include <cstddef>
 
 struct Chunk
 {
