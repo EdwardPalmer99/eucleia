@@ -79,7 +79,9 @@ Token &Tokenizer::peek()
 Token Tokenizer::next()
 {
     auto next = Tokenizer::peek();
-    _tokens.pop();
+
+    if (!_tokens.empty())
+        _tokens.pop();
 
     return next;
 }
