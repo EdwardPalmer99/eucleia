@@ -693,7 +693,7 @@ NegationNode *Parser::parseNegation()
 ProgramNode *Parser::parseDelimited(std::string start,
                                     std::string stop,
                                     std::string separator,
-                                    std::function<BaseNode *(void)> parseMethod)
+                                    ParseMethod parseMethod)
 {
     skipPunctuation(start); // Skip the punctuation at the start.
 
