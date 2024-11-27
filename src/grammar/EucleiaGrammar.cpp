@@ -29,7 +29,8 @@ EucleiaGrammar::EucleiaGrammar()
         "string",
         "break",
         "return",
-        "import"};
+        "import",
+        "struct"};
 
     _dataTypes = {
         "int",

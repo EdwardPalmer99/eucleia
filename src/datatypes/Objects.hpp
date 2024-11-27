@@ -14,6 +14,8 @@
 #include "IntObject.hpp"
 #include "LibraryFunctionObject.hpp"
 #include "StringObject.hpp"
+#include "StructDefinitionObject.hpp"
+#include "StructObject.hpp"
 #include <ostream>
 
 inline std::ostream &operator<<(std::ostream &out, const BaseObject &object)
@@ -34,6 +36,18 @@ inline std::ostream &operator<<(std::ostream &out, const BaseObject &object)
             out << *arrayObject[i] << ", ";
         }
         out << "]";
+        return out;
+    }
+    else if (object.isObjectType<StructObject>())
+    {
+        auto &structObject = object.castObject<StructObject>();
+
+        out << "(";
+        for (auto &[name, obj] : structObject.objectForName)
+        {
+            out << name << ": " << (*obj) << ", ";
+        }
+        out << ")";
         return out;
     }
     else

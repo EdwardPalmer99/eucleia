@@ -10,6 +10,7 @@
 #pragma once
 #include "BaseObject.hpp"
 #include "PoolAllocator.hpp"
+#include <cassert>
 
 // 10 chunks per block.
 static PoolAllocator allocator{10};
@@ -23,6 +24,16 @@ class IntObject : public BaseObject
 {
 public:
     IntObject(long value_ = 0) : value(value_) {}
+
+    IntObject &operator=(const BaseObject &other) override
+    {
+        if (this != &other)
+        {
+            value = other.castObject<IntObject>().value;
+        }
+
+        return (*this);
+    }
 
     void *operator new(size_t size)
     {

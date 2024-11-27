@@ -8,7 +8,9 @@
  */
 
 #pragma once
+#include "EucleiaUtility.hpp"
 #include <string>
+#include <typeinfo>
 
 /**
  * BaseObject. All objects are derived from this class.
@@ -17,6 +19,12 @@ class BaseObject
 {
 public:
     virtual ~BaseObject() = default;
+
+    // Implement copy assignment in derived classes.
+    virtual BaseObject &operator=(const BaseObject &other)
+    {
+        EucleiaError("%s\n", "copy assignment not implemented.");
+    }
 
     /// Cast to object type.
     template <class TObject>

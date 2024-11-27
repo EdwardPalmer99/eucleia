@@ -31,4 +31,6 @@
 #include "PrefixIncrementNode.hpp"
 #include "ProgramNode.hpp"
 #include "ReturnNode.hpp"
+#include "StructDefinitionNode.hpp"
+#include "StructNode.hpp"
 #include "WhileNode.hpp"

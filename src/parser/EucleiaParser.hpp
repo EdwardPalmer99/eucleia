@@ -43,6 +43,9 @@ protected:
     IfNode *parseIf();
     FunctionNode *parseFunctionDefinition();
 
+    BaseNode *parseStruct();
+    BaseNode *parseStructAccessor(BaseNode *lastExpression);
+
     BreakNode *parseBreak();
     ReturnNode *parseReturn();
 

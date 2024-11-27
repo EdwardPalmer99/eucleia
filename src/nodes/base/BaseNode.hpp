@@ -14,9 +14,8 @@
 class BaseNode
 {
 public:
-    BaseNode() = default;
+    BaseNode() = default; // TODO: - should be protected! Should not create BaseNode directly.
     virtual ~BaseNode() = default;
-
 
     template <class TNode>
     const TNode &castNode() const

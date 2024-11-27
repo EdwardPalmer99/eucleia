@@ -52,7 +52,7 @@ std::vector<BaseObject *> ModuleNode::evaluateArgs(ProgramNode &args, Scope &sco
 
 void MathModuleNode::defineFunctions()
 {
-    defineFunction("sqrt", [=](ProgramNode &callArgs, Scope &scope) -> BaseObject *
+    defineFunction("sqrt", [*this](ProgramNode &callArgs, Scope &scope) -> BaseObject *
                    {
     	auto argValues = evaluateArgs(callArgs, scope);
     	assert(argValues.size() == 1);
@@ -60,7 +60,7 @@ void MathModuleNode::defineFunctions()
     	auto & first = argValues.front()->castObject<FloatObject>();
     	return scope.createManagedObject<FloatObject>(sqrt(first.value)); });
 
-    defineFunction("pow", [=](ProgramNode &callArgs, Scope &scope) -> BaseObject *
+    defineFunction("pow", [*this](ProgramNode &callArgs, Scope &scope) -> BaseObject *
                    {
     	auto argValues = evaluateArgs(callArgs, scope);
     	assert(argValues.size() == 2);
@@ -105,5 +105,5 @@ ModuleNode *EucleiaModuleLoader::getModule(const std::string &name) const
     else if (name == "test")
         return new TestModule();
     else
-        printEucleiaError("No library with name '%s'.\n", name.c_str());
+        EucleiaError("No library with name '%s'.\n", name.c_str());
 }

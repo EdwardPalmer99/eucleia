@@ -10,6 +10,7 @@
 #include "PoolAllocator.hpp"
 #include <cstdlib>
 #include <iostream>
+#include <cstdint>
 
 // TODO: - need some way to cleanup and destroy old blocks if memory goes way down.
 

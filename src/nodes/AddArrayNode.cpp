@@ -13,13 +13,14 @@ ArrayObject *AddArrayNode::evaluate(Scope &scope)
 {
     std::vector<BaseObject *> evaluatedObjects;
 
-    // Scope owns all objects in array and array itself.
+    evaluatedObjects.reserve(programNodes.size());
+
+    // Scope owns all objects in array we are passing in. The array object will
+    // copy these!
     for (auto *node : programNodes)
     {
         evaluatedObjects.push_back(node->evaluate(scope));
     }
 
-    evaluatedObjects.shrink_to_fit();
-
-    return scope.createManagedObject<ArrayObject>(evaluatedObjects);
+    return scope.createManagedObject<ArrayObject>(std::move(evaluatedObjects));
 }

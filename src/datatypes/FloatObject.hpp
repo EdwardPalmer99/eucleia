@@ -19,6 +19,16 @@ class FloatObject : public BaseObject
 public:
     FloatObject(double value_ = 0.0) : value(value_) {}
 
+    FloatObject &operator=(const BaseObject &other) override
+    {
+        if (this != &other)
+        {
+            value = other.castObject<FloatObject>().value;
+        }
+
+        return (*this);
+    }
+
     FloatObject *clone() const override
     {
         return new FloatObject(value);

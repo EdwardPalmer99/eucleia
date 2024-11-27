@@ -18,7 +18,7 @@
  * destroyed once we have a value.
  */
 template <class TObject>
-TObject evaluate(BaseNode *node, const Scope &parent)
+TObject evaluateExpression(BaseNode *node, const Scope &parent)
 {
     Scope evalScope(parent);
     auto *output = node->evaluate<TObject>(evalScope);

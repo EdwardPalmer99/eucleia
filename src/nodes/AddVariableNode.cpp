@@ -30,7 +30,7 @@ BaseObject *AddVariableNode::evaluate(Scope &scope)
             break;
         // TODO: - handle function type. (will need to think about this.)
         default:
-            printEucleiaError("%s", "cannot create a variable of specified type.");
+            EucleiaError("%s", "cannot create a variable of specified type.");
     }
 
     scope.linkObject(variableName, objectPtr); // TODO: - could call this linkObjectToVariableName()

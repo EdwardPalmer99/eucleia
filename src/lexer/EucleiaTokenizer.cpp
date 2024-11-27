@@ -79,7 +79,9 @@ Token &Tokenizer::peek()
 Token Tokenizer::next()
 {
     auto next = Tokenizer::peek();
-    _tokens.pop();
+
+    if (!_tokens.empty())
+        _tokens.pop();
 
     return next;
 }
@@ -180,7 +182,7 @@ Token Tokenizer::readString()
             void *tempPtr = realloc(value, sizeof(char) * capacity);
             if (!tempPtr) // Failed to resize array.
             {
-                printEucleiaError("%s", "failed to resize array.");
+                EucleiaError("%s", "failed to resize array.");
             }
 
             value = (char *)tempPtr; // Resized array.

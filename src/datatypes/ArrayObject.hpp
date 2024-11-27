@@ -10,27 +10,23 @@
 #pragma once
 #include "BaseObject.hpp"
 #include <vector>
+#include <cassert>
 
 class ArrayObject : public BaseObject
 {
 public:
     ArrayObject() = default;
-    ArrayObject(std::vector<BaseObject *> values_) : values(std::move(values_)) {}
+
+    ~ArrayObject() override;
+
+    ArrayObject(std::vector<BaseObject *> values_);
+
+    ArrayObject &operator=(const BaseObject &other) override;
 
     // TODO: - who owns the objects in the array? MEMORY LEAK!!
     /// Performs a deep copy of array. This will enable the array to be returned
     /// by a function without objects (defined in function scope) being destroyed.
-    ArrayObject *clone() const override
-    {
-        std::vector<BaseObject *> cloneValues(values.size());
-
-        for (BaseObject *obj : values)
-        {
-            cloneValues.push_back(obj->clone());
-        }
-
-        return new ArrayObject(cloneValues);
-    }
+    ArrayObject *clone() const override;
 
     // TODO: - eventually just store references to BaseObject & or pointers and return reference.
     BaseObject *operator[](std::size_t index) const

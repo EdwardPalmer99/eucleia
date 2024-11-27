@@ -22,7 +22,7 @@ void popBreakJumpPoint()
 {
     if (gBreakJumpPointStack.empty())
     {
-        printEucleiaError("%s", "break jump stack is empty!\n");
+        EucleiaError("%s", "break jump stack is empty!\n");
     }
 
     gBreakJumpPointStack.pop();
@@ -32,7 +32,7 @@ void jumpToBreakJumpPoint()
 {
     if (gBreakJumpPointStack.empty())
     {
-        printEucleiaError("%s", "break jump stack is empty!\n");
+        EucleiaError("%s", "break jump stack is empty!\n");
     }
 
     jmp_buf *top = gBreakJumpPointStack.top();

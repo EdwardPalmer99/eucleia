@@ -17,16 +17,21 @@ ArrayAccessNode::~ArrayAccessNode()
     delete index;
 }
 
+
+BaseObject *ArrayAccessNode::evaluateNoClone(Scope &scope)
+{
+    // Lookup in array.
+    auto &arrayObj = arrayLookup->evaluate(scope)->castObject<ArrayObject>();
+    auto &indexObject = index->evaluate(scope)->castObject<IntObject>();
+
+    return arrayObj[indexObject.value];
+}
+
+
 BaseObject *ArrayAccessNode::evaluate(Scope &scope)
 {
-    // Lookup array in scope or parent scope.
-    ArrayObject *arrayObject = static_cast<ArrayObject *>(arrayLookup->evaluate(scope));
+    BaseObject *currentObject = evaluateNoClone(scope);
 
-    Scope arrayAccessScope(scope); // TODO: - inefficient. Should not store Rvalues in scope.
-    IntObject *indexObject = index->evaluate(arrayAccessScope);
-
-    BaseObject *lookupObj = arrayObject->values[indexObject->value];
-
-    // Now return a copy of lookupObj.
-    return lookupObj->clone();
+    // Return a safe copy of object.
+    return scope.cloneObject(currentObject);
 }

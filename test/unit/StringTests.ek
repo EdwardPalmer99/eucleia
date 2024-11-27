@@ -4,5 +4,5 @@ import <test>
 {
     TEST("a" != "b", "string !=");
     TEST("a" == "a", "string ==");
-    TEST(("a" + "b") == "ab", "string +");
+    TEST("a" + "b" == "ab", "string +");    // TODO: - cannot handle nested (()) brackets!
 }
