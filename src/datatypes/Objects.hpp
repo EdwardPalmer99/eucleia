@@ -53,6 +53,19 @@ inline std::ostream &operator<<(std::ostream &out, const BaseObject &object)
         out << ")";
         return out;
     }
+    else if (object.isObjectType<ClassObject>())
+    {
+        auto &classObject = object.castObject<ClassObject>();
+
+        out << "(";
+        for (auto &name : classObject.variableNames)
+        {
+            BaseObject *obj = classObject.instanceScope.getNamedObject(name);
+            out << name << ": " << (*obj) << ", ";
+        }
+        out << ")";
+        return out;
+    }
     else
         return out; // Don't print anything.
 }

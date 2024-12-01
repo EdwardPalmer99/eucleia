@@ -27,9 +27,9 @@ BaseObject *StructNode::evaluate(Scope &scope)
 
 BaseObject *StructAccessNode::evaluateNoClone(Scope &scope)
 {
-    StructObject *structObject = scope.getNamedObject<StructObject>(name);
+    StructObject *structObject = scope.getNamedObject<StructObject>(instanceName);
 
-    return structObject->instanceScope.getNamedObject(memberVariableName);
+    return structObject->instanceScope.getNamedObject(memberName);
 }
 
 

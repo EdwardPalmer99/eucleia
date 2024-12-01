@@ -41,8 +41,10 @@ public:
 class StructAccessNode : public BasePropertyNode
 {
 public:
-    explicit StructAccessNode(std::string name_, std::string memberVariableName_)
-        : name(std::move(name_)), memberVariableName(std::move(memberVariableName_))
+    explicit StructAccessNode(std::string instanceName_,
+                              std::string memberName_)
+        : instanceName(std::move(instanceName_)),
+          memberName(std::move(memberName_))
     {
     }
 
@@ -52,6 +54,6 @@ public:
     // Returns copy of object (getter).
     BaseObject *evaluate(Scope &scope) override;
 
-    std::string name;
-    std::string memberVariableName;
+    std::string instanceName;
+    std::string memberName;
 };

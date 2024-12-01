@@ -9,6 +9,7 @@
 
 #pragma once
 #include "BaseNode.hpp"
+#include "FunctionCallNode.hpp"
 #include "Scope.hpp"
 #include "StructNode.hpp"
 #include <string>
@@ -23,4 +24,23 @@ public:
     ClassNode(std::string typeName_, std::string name_) : StructNode(typeName_, name_) {}
 
     BaseObject *evaluate(Scope &scope) override;
+};
+
+
+/**
+ * Access class method.
+ *
+ * [class instance name].[method call]
+ */
+class ClassMethodCallNode : public BaseNode
+{
+public:
+    ClassMethodCallNode(std::string instanceName_, FunctionCallNode *methodCallNode_);
+
+    ~ClassMethodCallNode() override;
+
+    BaseObject *evaluate(Scope &scope) override;
+
+    FunctionCallNode *methodCallNode;
+    std::string instanceName;
 };

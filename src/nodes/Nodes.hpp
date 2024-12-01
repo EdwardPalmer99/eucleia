@@ -18,6 +18,8 @@
 #include "AssignNode.hpp"
 #include "BinaryNode.hpp"
 #include "BreakNode.hpp"
+#include "ClassDefinitionNode.hpp"
+#include "ClassNode.hpp"
 #include "DoWhileNode.hpp"
 #include "FileNode.hpp"
 #include "ForLoopNode.hpp"

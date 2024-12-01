@@ -467,33 +467,33 @@ BaseNode *Parser::parseClass()
     // Do we have a '{' token next? If we do then it is definition of new struct.
     if (isPunctuation("{"))
     {
-        // BaseNode *classBody = parseProgram();
+        BaseNode *classBody = parseProgram();
 
-        // auto nodes = classBody->castNode<ProgramNode>().releaseNodes();
+        auto nodes = classBody->castNode<ProgramNode>().releaseNodes();
 
-        // delete classBody;
+        delete classBody;
 
-        // // Split-up into class variables and class methods:
-        // std::vector<BaseNode *> classVariables;
-        // std::vector<BaseNode *> classMethods;
+        // Split-up into class variables and class methods:
+        std::vector<AddVariableNode *> classVariables;
+        std::vector<FunctionNode *> classMethods;
 
-        // for (BaseNode *node : nodes)
-        // {
-        //     if (node->isNodeType<AddVariableNode>())
-        //         classVariables.push_back(node);
-        //     else if (node->isNodeType<FunctionNode>())
-        //         classVariables.push_back(node);
-        //     else
-        //         EucleiaError("unexpected node type for class definition %s\n", classTypeName.c_str());
-        // }
+        for (BaseNode *node : nodes)
+        {
+            if (node->isNodeType<AddVariableNode>())
+                classVariables.push_back(reinterpret_cast<AddVariableNode *>(node));
+            else if (node->isNodeType<FunctionNode>())
+                classMethods.push_back(reinterpret_cast<FunctionNode *>(node));
+            else
+                EucleiaError("unexpected node type for class definition %s\n", classTypeName.c_str());
+        }
 
-        // return new ClassDefinitionNode(classTypeName, classVariables, classMethods);
+        return new ClassDefinitionNode(classTypeName, classVariables, classMethods);
     }
     else
     {
-        // auto classInstanceName = nextToken().value;
+        auto classInstanceName = nextToken().value;
 
-        // return new ClassNode(classTypeName, classInstanceName);
+        return new ClassNode(classTypeName, classInstanceName);
     }
 
     return nullptr;
@@ -507,20 +507,29 @@ BaseNode *Parser::parseClass()
  */
 BaseNode *Parser::parseStructAccessor(BaseNode *lastExpression)
 {
-    auto structName = static_cast<LookupVariableNode *>(lastExpression);
+    auto instanceName = lastExpression->castNode<LookupVariableNode>().name;
+    delete lastExpression; // NB: ugly.
 
     skipPunctuation(".");
 
-    LookupVariableNode *accessorRHS = static_cast<LookupVariableNode *>(parseVariableName());
+    BaseNode *expression = maybeFunctionCall(std::bind(&Parser::parseVariableName, this));
 
-    StructAccessNode *accessor = new StructAccessNode(structName->name, accessorRHS->name);
+    if (expression->isNodeType<FunctionCallNode>()) // Method.
+    {
+        // NB: do NOT delete expression as owned by ClassMethodCallNode.
+        return new ClassMethodCallNode(instanceName, reinterpret_cast<FunctionNode *>(expression));
+    }
+    else if (expression->isNodeType<LookupVariableNode>()) // Member variable.
+    {
+        std::string memberVariableName = expression->castNode<LookupVariableNode>().name;
+        delete expression; // No longer required. Ugly.
 
-    // Mark: - really ugly code. Should be possible to just have a parseVariableName() method
-    // which returns a string so we don't always have to wrap-it up into a LookupVariableNode.
-    delete lastExpression;
-    delete accessorRHS;
-
-    return accessor;
+        return new StructAccessNode(instanceName, memberVariableName);
+    }
+    else
+    {
+        EucleiaError("unexpected node type while accessing struct/class member.");
+    }
 }
 
 
@@ -677,6 +686,8 @@ BaseNode *Parser::parseAtomicallyExpression()
         return parseFunctionDefinition();
     else if (isKeyword("struct"))
         return parseStruct();
+    else if (isKeyword("class"))
+        return parseClass();
     else if (isDataTypeKeyword())
         return parseVariableDefinition();
     else if (isKeyword("break"))
