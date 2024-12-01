@@ -11,5 +11,5 @@
 
 BaseObject *LookupVariableNode::evaluate(Scope &scope)
 {
-    return scope.getNamedObject(variableName);
+    return scope.getNamedObject(name);
 }

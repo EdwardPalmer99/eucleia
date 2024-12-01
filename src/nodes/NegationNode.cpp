@@ -20,5 +20,5 @@ BaseObject *NegationNode::evaluate(Scope &scope)
     else if (bodyEvaluated->isObjectType<FloatObject>())
         return scope.createManagedObject<FloatObject>(-bodyEvaluated->castObject<FloatObject>());
     else
-        EucleiaError("%s", "invalid object type.");
+        EucleiaError("invalid object type.");
 }

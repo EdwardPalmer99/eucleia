@@ -17,7 +17,7 @@ class Scope;
 /// Library function allows us to define lambdas which wrap around existing stdlib
 /// functions. These can then be added to a global scope after seeing "import <...>"
 /// with angled-brackets.
-struct LibraryFunctionObject : public BaseObject
+class LibraryFunctionObject : public BaseObject
 {
 public:
     using LibraryFunction = std::function<BaseObject *(ProgramNode &, Scope &)>;

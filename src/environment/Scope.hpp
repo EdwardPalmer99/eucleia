@@ -8,7 +8,7 @@
  */
 
 #pragma once
-#include "Objects.hpp"
+#include "BaseObject.hpp"
 #include <new>
 #include <string>
 #include <unordered_map>
@@ -81,7 +81,10 @@ public:
     }
 
     /// Returns non-const reference to parent scope.
-    inline Scope *parentScope() const { return const_cast<Scope *>(parent); }
+    inline const Scope *parentScope() const { return parent; }
+
+    /// Set a new parent scope. Use with care!
+    void setParentScope(Scope *parent_) { parent = parent_; }
 
     /// Create a link between a variable name and an object in this scope.
     void linkObject(const std::string &name, BaseObject *object);
@@ -96,5 +99,5 @@ private:
     /// of the scope. We are responsible for deleting these in destructor.
     std::unordered_set<BaseObject *> objectsCreatedInScope;
 
-    const Scope *parent{nullptr};
+    Scope *parent{nullptr};
 };

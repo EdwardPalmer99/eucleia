@@ -27,16 +27,9 @@ BaseObject *StructNode::evaluate(Scope &scope)
 
 BaseObject *StructAccessNode::evaluateNoClone(Scope &scope)
 {
-    StructObject *structObject = scope.getNamedObject<StructObject>(name);
+    StructObject *structObject = scope.getNamedObject<StructObject>(instanceName);
 
-    auto iter = structObject->objectForName.find(memberVariableName);
-    if (iter == structObject->objectForName.end())
-    {
-        EucleiaError("No member variable named %s found for struct %s\n",
-                     memberVariableName.c_str(), name.c_str());
-    }
-
-    return (iter->second);
+    return structObject->instanceScope.getNamedObject(memberName);
 }
 
 

@@ -1,23 +1,23 @@
-//
-//  EucleiaUtility.hpp
-//  Eucleia
-//
-//  Created by Edward on 28/01/2024.
-//
+/**
+ * @file EucleiaUtility.hpp
+ * @author Edward Palmer
+ * @date 2024-11-29
+ *
+ * @copyright Copyright (c) 2024
+ *
+ */
 
-#ifndef EucleiaUtility_hpp
-#define EucleiaUtility_hpp
+#pragma once
+#include <cstdio>
 
-#include <stdio.h>
-
-// TODO: - throw C++ exception instead.
+// TODO : -write a logger class.
 
 // clang-format off
-#define EucleiaError(fmt, args...)\
+#define EucleiaError(...)\
 ({\
-	fprintf(stderr, "%s:%d:%s(): error: " fmt, __FILE__, __LINE__, __func__, args);\
+	fprintf(stderr, "%s:%d:%s(): error: ", __FILE__, __LINE__, __func__);\
+	fprintf(stderr, __VA_ARGS__);\
+	fprintf(stderr, "\n");\
 	exit(EXIT_FAILURE);\
 })
 // clang-format on
-
-#endif /* EucleiaUtility_hpp */

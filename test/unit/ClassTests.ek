@@ -1,0 +1,47 @@
+import <io>
+import <test>
+
+bool wasSet = false;    // Test global variable.
+
+class Point
+{
+    func init(float vx_, float vy_, float vz_)
+    {
+        vx = vx_;
+        vy = vy_;
+        vz = vz_;
+
+        wasSet = true;
+    }
+
+    func zero()
+    {
+        vx = 0;
+        vy = 0;
+        vz = 0;
+    }
+
+    func one()
+    {
+        vx = 1.0;
+        vy = 1.0;
+        vz = 1.0;
+    }
+
+    float vx;
+    float vy;
+    float vz;
+};
+
+
+class Point p;
+p.one();
+TEST(p.vx == 1.0 && p.vy == 1.0 && p.vz == 1.0, "class method one.");
+
+class Point q;
+q.init(1.0, 3.0, 5.0);
+TEST(q.vx == 1.0 && q.vy == 3.0 && q.vz == 5.0, "class method init.");
+TEST(wasSet == true, "access global variable in class.");
+
+p.vz = q.vz;
+TEST(p.vx == 1.0 && p.vy == 1.0 && p.vz == 5.0, "set instance variable.");

@@ -8,6 +8,7 @@
  */
 
 #include "NotNode.hpp"
+#include "IntObject.hpp"
 
 BaseObject *NotNode::evaluate(Scope &scope)
 {

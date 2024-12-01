@@ -8,7 +8,10 @@
  */
 
 #include "PrefixIncrementNode.hpp"
+#include "FloatObject.hpp"
+#include "IntObject.hpp"
 #include "LookupVariableNode.hpp"
+#include <cassert>
 
 BaseObject *PrefixIncrementNode::evaluate(Scope &scope)
 {
@@ -29,6 +32,6 @@ BaseObject *PrefixIncrementNode::evaluate(Scope &scope)
     }
     else
     {
-        EucleiaError("%s", "cannot use prefix operator on object of type.\n");
+        EucleiaError("cannot use prefix operator on object of type.");
     }
 }
