@@ -54,7 +54,7 @@ BaseObject *BinaryNode::applyOperator(Scope &scope, const IntObject &left, const
     else if (binaryOperator == "||")
         return scope.createManagedObject<BoolObject>(left || right);
     else
-        EucleiaError("cannot apply operator '%s' to types Int, Int.\n", binaryOperator.c_str());
+        EucleiaError("cannot apply operator '%s' to types Int, Int.", binaryOperator.c_str());
 }
 
 
@@ -81,7 +81,7 @@ BaseObject *BinaryNode::applyOperator(Scope &scope, const FloatObject &left, con
     else if (binaryOperator == "<")
         return scope.createManagedObject<BoolObject>(left < right);
     else
-        EucleiaError("cannot apply operator '%s' to types Int, Int.\n", binaryOperator.c_str());
+        EucleiaError("cannot apply operator '%s' to types Int, Int.", binaryOperator.c_str());
 }
 
 
@@ -94,7 +94,7 @@ BaseObject *BinaryNode::applyOperator(Scope &scope, const StringObject &left, co
     else if (binaryOperator == "!=")
         return scope.createManagedObject<BoolObject>(left != right);
     else
-        EucleiaError("cannot apply operator '%s' to types String, String.\n", binaryOperator.c_str());
+        EucleiaError("cannot apply operator '%s' to types String, String.", binaryOperator.c_str());
 }
 
 
@@ -122,6 +122,6 @@ BaseObject *BinaryNode::applyOperator(Scope &scope, const BaseObject &left, cons
     }
     else
     {
-        EucleiaError("Cannot apply operator '%s' to object types.\n", binaryOperator.c_str());
+        EucleiaError("cannot apply operator '%s' to object types.", binaryOperator.c_str());
     }
 }

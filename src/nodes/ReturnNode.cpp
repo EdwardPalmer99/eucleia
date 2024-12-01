@@ -9,6 +9,7 @@
 
 #include "ReturnNode.hpp"
 #include "JumpPoints.hpp"
+#include <cassert>
 
 BaseObject *ReturnNode::evaluate(Scope &scope)
 {

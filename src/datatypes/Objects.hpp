@@ -8,6 +8,8 @@
 #pragma once
 #include "ArrayObject.hpp"
 #include "BaseObject.hpp"
+#include "ClassDefinitionObject.hpp"
+#include "ClassObject.hpp"
 #include "EucleiaUtility.hpp"
 #include "FloatObject.hpp"
 #include "FunctionObject.hpp"
@@ -43,8 +45,9 @@ inline std::ostream &operator<<(std::ostream &out, const BaseObject &object)
         auto &structObject = object.castObject<StructObject>();
 
         out << "(";
-        for (auto &[name, obj] : structObject.objectForName)
+        for (auto &name : structObject.variableNames)
         {
+            BaseObject *obj = structObject.instanceScope.getNamedObject(name);
             out << name << ": " << (*obj) << ", ";
         }
         out << ")";

@@ -29,7 +29,7 @@ std::string EucleiaFileReader::readFile(const std::string &fpath)
 
     // Read from file.
     fileBuffer[bufferSize] = '\0';
-    fread((void *)fileBuffer, sizeof(char), bufferSize, fp);
+    (void)fread((void *)fileBuffer, sizeof(char), bufferSize, fp);
 
     // Cleanup.
     fclose(fp);

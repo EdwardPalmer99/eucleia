@@ -8,57 +8,36 @@
  */
 
 #include "StructDefinitionNode.hpp"
+#include "AddVariableNode.hpp"
 #include "EucleiaUtility.hpp"
 #include "StructDefinitionObject.hpp"
-#include <map>
+
+StructDefinitionNode::~StructDefinitionNode()
+{
+    // Already transferred ownership of vector.
+    if (evaluateCalled)
+        return;
+
+    for (AddVariableNode *obj : variableDefs)
+    {
+        delete obj;
+    }
+
+    variableDefs.clear();
+}
+
 
 BaseObject *StructDefinitionNode::evaluate(Scope &scope)
 {
-    auto &name = structTypeName->variableName;
-    auto &programNodes = structMemberVars->programNodes;
-
-    if (programNodes.empty())
+    if (evaluateCalled)
     {
-        EucleiaError("struct %s cannot be empty!\n", name.c_str());
-        return nullptr;
+        EucleiaError("evaluate method already called for StructDefinitionNode.");
     }
 
-    std::map<std::string, StructDefinitionObject::SupportedObjectTypes> objectTypeForName;
+    evaluateCalled = true;
 
-    for (size_t iObject = 0; iObject < programNodes.size(); ++iObject)
-    {
-        // We need each node to be an AddVariableNode (i.e. int a; float b;).
-        AddVariableNode &obj = programNodes[iObject]->castNode<AddVariableNode>();
-
-        // Ensure each member variable name is unique.
-        auto iter = objectTypeForName.find(obj.variableName);
-        if (iter != objectTypeForName.end())
-        {
-            EucleiaError("duplicate member variable name %s in struct %s definition\n", obj.variableName.c_str(), name.c_str());
-        }
-
-        // Add to our map provided type is allowed for structs.
-        // TODO: - have a single global enum class for object type.
-        switch (obj.variableType)
-        {
-            case AddVariableNode::Int:
-                objectTypeForName[obj.variableName] = StructDefinitionObject::SupportedObjectTypes::IntObject;
-                break;
-            case AddVariableNode::Float:
-                objectTypeForName[obj.variableName] = StructDefinitionObject::SupportedObjectTypes::FloatObject;
-                break;
-            case AddVariableNode::String:
-                objectTypeForName[obj.variableName] = StructDefinitionObject::SupportedObjectTypes::StringObject;
-                break;
-            default:
-                EucleiaError("object type %s is not supported for structs.\n", obj.description().c_str());
-                break;
-        }
-    }
-
-    // Now create our struct definition and add to scope.
-    StructDefinitionObject *obj = scope.createManagedObject<StructDefinitionObject>(objectTypeForName);
-    scope.linkObject(name, obj);
+    StructDefinitionObject *obj = scope.createManagedObject<StructDefinitionObject>(std::move(variableDefs));
+    scope.linkObject(typeName, obj);
 
     return obj;
 }

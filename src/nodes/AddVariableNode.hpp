@@ -10,23 +10,15 @@
 #pragma once
 #include "BaseObject.hpp"
 #include "LookupVariableNode.hpp"
+#include "ObjectTypes.hpp"
 #include "Scope.hpp"
 
 class AddVariableNode : public LookupVariableNode
 {
 public:
-    enum VariableType
-    {
-        Int,
-        Float,
-        Bool,
-        String,
-        Array
-    };
-
-    AddVariableNode(std::string variableName_, VariableType variableType_)
-        : LookupVariableNode(std::move(variableName_)),
-          variableType(variableType_) {}
+    AddVariableNode(std::string name_, ObjectType type_)
+        : LookupVariableNode(std::move(name_)),
+          type(type_) {}
 
     // Creates a new empty variable of a given type to the scope (i.e. int a;).
     BaseObject *evaluate(Scope &scope) override;
@@ -36,5 +28,5 @@ public:
     //  Type checking for variable assignment.
     bool passesAssignmentTypeCheck(const BaseObject &assignObject) const;
 
-    const VariableType variableType;
+    const ObjectType type;
 };

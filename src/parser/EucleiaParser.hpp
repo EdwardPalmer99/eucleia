@@ -46,6 +46,8 @@ protected:
     BaseNode *parseStruct();
     BaseNode *parseStructAccessor(BaseNode *lastExpression);
 
+    BaseNode *parseClass();
+
     BreakNode *parseBreak();
     ReturnNode *parseReturn();
 

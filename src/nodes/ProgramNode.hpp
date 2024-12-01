@@ -11,6 +11,7 @@
 #include "BaseNode.hpp"
 #include "BaseObject.hpp"
 #include "Scope.hpp"
+#include <cassert>
 #include <vector>
 
 class ProgramNode : public BaseNode

@@ -7,5 +7,7 @@ Eucleia:
     2024-11-23: 7.6s/440kB  (-O0)
     2024-11-23: 1.9s/440kB  (-O2)
     2024-11-27: 740ms       (-Ofast, Docker)
+    2024-12-01: 4.9s        (-OO, Docker)
+    2024-12-01: 680ms       (-Ofast, Docker)
 
 

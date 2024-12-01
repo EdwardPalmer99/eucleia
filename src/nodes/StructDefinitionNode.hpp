@@ -11,8 +11,11 @@
 #include "AddVariableNode.hpp"
 #include "BaseNode.hpp"
 #include "BaseObject.hpp"
-#include "ProgramNode.hpp"
 #include "Scope.hpp"
+#include <string>
+#include <vector>
+
+// TODO: - merge this with StructDefinitionObject.
 
 /**
  * This node defines a new struct and its member variables. Similar in logic
@@ -21,27 +24,36 @@
 class StructDefinitionNode : public BaseNode
 {
 public:
-    StructDefinitionNode(BaseNode *structTypeName_, BaseNode *structMemberVars_)
-        : structTypeName(static_cast<AddVariableNode *>(structTypeName_)),
-          structMemberVars(static_cast<ProgramNode *>(structMemberVars_))
+    StructDefinitionNode(std::string typeName_,
+                         std::vector<AddVariableNode *> variableDefs_)
+        : typeName(std::move(typeName_)),
+          variableDefs(std::move(variableDefs_))
     {
     }
-
-    ~StructDefinitionNode() override
-    {
-        delete structTypeName;
-        delete structMemberVars;
-    }
-
-    // Creates a new StructObject and register in current scope.
-    BaseObject *evaluate(Scope &scope) override;
-
-    // TODO: - Inefficient. Better to extract what we need (i.e. string, etc).
-    AddVariableNode *structTypeName{nullptr};
 
     /**
-     * Basically a vector of AddVariableNode (one for each variable definition).
-     * i.e. int a; float b; string c;
+     * Deletes nodes stored in variableDefs IFF evaluate not called.
      */
-    ProgramNode *structMemberVars{nullptr};
+    ~StructDefinitionNode() override;
+
+    /*
+     * Creates a new StructDefinitionObject and register in current scope.
+     */
+    BaseObject *evaluate(Scope &scope) override;
+
+    /**
+     * Type name for struct.
+     */
+    std::string typeName{nullptr};
+
+    /**
+     * Stores nodes defined in struct.
+     */
+    std::vector<AddVariableNode *> variableDefs;
+
+    /**
+     * Prevent evaluate being called multiple times as vector ownership changes
+     * once called.
+     */
+    bool evaluateCalled{false};
 };

@@ -55,7 +55,7 @@ BaseObject *Scope::getNamedObject(const std::string &name) const
     BaseObject *obj = getOptionalNamedObject(name);
     if (!obj)
     {
-        EucleiaError("undefined variable '%s'.\n", name.c_str());
+        EucleiaError("undefined variable '%s'.", name.c_str());
     }
 
     return obj;
@@ -84,4 +84,3 @@ void Scope::linkObject(const std::string &name, BaseObject *object)
     // with this name (variable shadowing).
     linkedObjectForName[name] = object;
 }
-

@@ -8,32 +8,36 @@
  */
 
 #include "AddVariableNode.hpp"
+#include "ArrayObject.hpp"
+#include "FloatObject.hpp"
+#include "IntObject.hpp"
+#include "StringObject.hpp"
 
 BaseObject *AddVariableNode::evaluate(Scope &scope)
 {
     BaseObject *objectPtr = nullptr;
 
-    switch (variableType)
+    switch (type)
     {
-        case Int:
-        case Bool:
+        case ObjectType::Int:
+        case ObjectType::Bool:
             objectPtr = scope.createManagedObject<IntObject>();
             break;
-        case Float:
+        case ObjectType::Float:
             objectPtr = scope.createManagedObject<FloatObject>();
             break;
-        case String:
+        case ObjectType::String:
             objectPtr = scope.createManagedObject<StringObject>();
             break;
-        case Array:
+        case ObjectType::Array:
             objectPtr = scope.createManagedObject<ArrayObject>();
             break;
         // TODO: - handle function type. (will need to think about this.)
         default:
-            EucleiaError("%s", "cannot create a variable of specified type.");
+            EucleiaError("cannot create a variable of specified type.");
     }
 
-    scope.linkObject(variableName, objectPtr); // TODO: - could call this linkObjectToVariableName()
+    scope.linkObject(name, objectPtr); // TODO: - could call this linkObjectToVariableName()
     return objectPtr;
 }
 
@@ -41,17 +45,17 @@ BaseObject *AddVariableNode::evaluate(Scope &scope)
 /// Type checking.
 bool AddVariableNode::passesAssignmentTypeCheck(const BaseObject &assignObject) const
 {
-    switch (variableType)
+    switch (type)
     {
-        case Int:
+        case ObjectType::Int:
             return assignObject.isObjectType<IntObject>();
-        case Float:
+        case ObjectType::Float:
             return assignObject.isObjectType<FloatObject>();
-        case Bool:
+        case ObjectType::Bool:
             return assignObject.isObjectType<BoolObject>();
-        case String:
+        case ObjectType::String:
             return assignObject.isObjectType<StringObject>();
-        case Array:
+        case ObjectType::Array:
             return assignObject.isObjectType<ArrayObject>();
         default:
             return false;
@@ -61,17 +65,17 @@ bool AddVariableNode::passesAssignmentTypeCheck(const BaseObject &assignObject) 
 
 std::string AddVariableNode::description() const
 {
-    switch (variableType)
+    switch (type)
     {
-        case Bool:
+        case ObjectType::Bool:
             return "Bool";
-        case Int:
+        case ObjectType::Int:
             return "Int";
-        case Float:
+        case ObjectType::Float:
             return "Float";
-        case String:
+        case ObjectType::String:
             return "String";
-        case Array:
+        case ObjectType::Array:
             return "Array";
         default:
             return "Unknown";

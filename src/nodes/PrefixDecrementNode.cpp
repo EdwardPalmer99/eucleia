@@ -31,6 +31,6 @@ BaseObject *PrefixDecrementNode::evaluate(Scope &scope)
     }
     else
     {
-        EucleiaError("%s", "cannot use prefix operator on object of type.\n");
+        EucleiaError("cannot use prefix operator on object of type.");
     }
 }

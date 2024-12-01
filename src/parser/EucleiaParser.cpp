@@ -8,6 +8,7 @@
 #include "EucleiaParser.hpp"
 #include "EucleiaModules.hpp"
 #include "EucleiaUtility.hpp"
+#include "ObjectTypes.hpp"
 #include "TestModule.hpp"
 #include <assert.h>
 #include <cassert>
@@ -100,7 +101,7 @@ FileNode *Parser::parseFileImport()
     auto ast = Parser(filePath).buildAST(); // NB: don't use static method as this will clear loaded modules/files.
     if (!ast)
     {
-        EucleiaError("Failed to import file with path '%s'.", filePath.c_str());
+        EucleiaError("failed to import file with path '%s'.", filePath.c_str());
     }
 
     return ast;
@@ -219,19 +220,18 @@ BaseNode *Parser::parseVariableDefinition()
     std::string &typeName = typeToken.value;
     std::string &variableName = nameToken.value;
 
-    // TODO: - add void typename for functions eventually.
     if (typeName == "int")
-        return new AddVariableNode(variableName, AddVariableNode::VariableType::Int);
+        return new AddVariableNode(variableName, ObjectType::Int);
     else if (typeName == "float")
-        return new AddVariableNode(variableName, AddVariableNode::VariableType::Float);
+        return new AddVariableNode(variableName, ObjectType::Float);
     else if (typeName == "bool")
-        return new AddVariableNode(variableName, AddVariableNode::VariableType::Bool);
+        return new AddVariableNode(variableName, ObjectType::Bool);
     else if (typeName == "string")
-        return new AddVariableNode(variableName, AddVariableNode::VariableType::String);
+        return new AddVariableNode(variableName, ObjectType::String);
     else if (typeName == "array")
-        return new AddVariableNode(variableName, AddVariableNode::VariableType::Array);
+        return new AddVariableNode(variableName, ObjectType::Array);
     else
-        EucleiaError("expected variable type for variable %s.\n", typeName.c_str());
+        EucleiaError("expected variable type for variable %s.", typeName.c_str());
 }
 
 
@@ -294,7 +294,7 @@ ForLoopNode *Parser::parseFor()
 
     if (forLoopArgs.size() != 3)
     {
-        EucleiaError("Expected 3 arguments for for-loop but got %ld\n", brackets->programNodes.size());
+        EucleiaError("expected 3 arguments for for-loop but got %ld.", brackets->programNodes.size());
     }
 
     auto start = forLoopArgs[0];
@@ -407,31 +407,96 @@ BaseNode *Parser::parseStruct()
 {
     skipKeyword("struct");
 
-    auto structTypeName = parseVariableName();
+    auto structTypeName = nextToken().value;
 
     // Do we have a '{' token next? If we do then it is definition of new struct.
     if (isPunctuation("{"))
     {
         auto structMemberVars = parseDelimited("{", "}", ";", std::bind(&Parser::parseVariableDefinition, this));
 
-        return new StructDefinitionNode(structTypeName, structMemberVars);
+        std::vector<BaseNode *> nodes = structMemberVars->releaseNodes();
+
+        delete structMemberVars;
+
+        std::vector<AddVariableNode *> variableDefs;
+        variableDefs.reserve(nodes.size());
+
+        for (BaseNode *node : nodes)
+        {
+            variableDefs.push_back(reinterpret_cast<AddVariableNode *>(node));
+        }
+
+        return new StructDefinitionNode(structTypeName, variableDefs);
     }
     else
     {
-        auto structInstanceName = parseVariableName();
+        auto structInstanceName = nextToken().value;
 
-        std::string typeNameString = structTypeName->castNode<LookupVariableNode>().variableName;
-        std::string structInstanceNameString = structInstanceName->castNode<LookupVariableNode>().variableName;
-
-        // Avoid memory leak with delete.
-        // TODO: - this is really ugly code. We need to return particular types.
-        // Sometimes the parser should just not return a node and instead return
-        // a string for instance parseVariableName() should just return a string.
-        delete structTypeName;
-        delete structInstanceName;
-
-        return new StructNode(typeNameString, structInstanceNameString);
+        return new StructNode(structTypeName, structInstanceName);
     }
+}
+
+#pragma mark - *** Class ***
+
+/**
+ * Case 1: definition of a new class:
+ *
+ * class SomeClass
+ * {
+ *      int i;
+ *
+ *      func someFunc(int a)
+        {
+            i = i + 1;
+            print("Hello");
+            return i;
+        }
+ * };
+ *
+ *
+ * Case 2: instance of the class:
+ *
+ * class SomeClass aClass;
+ */
+BaseNode *Parser::parseClass()
+{
+    skipKeyword("class");
+
+    auto classTypeName = nextToken().value;
+
+    // Do we have a '{' token next? If we do then it is definition of new struct.
+    if (isPunctuation("{"))
+    {
+        // BaseNode *classBody = parseProgram();
+
+        // auto nodes = classBody->castNode<ProgramNode>().releaseNodes();
+
+        // delete classBody;
+
+        // // Split-up into class variables and class methods:
+        // std::vector<BaseNode *> classVariables;
+        // std::vector<BaseNode *> classMethods;
+
+        // for (BaseNode *node : nodes)
+        // {
+        //     if (node->isNodeType<AddVariableNode>())
+        //         classVariables.push_back(node);
+        //     else if (node->isNodeType<FunctionNode>())
+        //         classVariables.push_back(node);
+        //     else
+        //         EucleiaError("unexpected node type for class definition %s\n", classTypeName.c_str());
+        // }
+
+        // return new ClassDefinitionNode(classTypeName, classVariables, classMethods);
+    }
+    else
+    {
+        // auto classInstanceName = nextToken().value;
+
+        // return new ClassNode(classTypeName, classInstanceName);
+    }
+
+    return nullptr;
 }
 
 
@@ -448,7 +513,7 @@ BaseNode *Parser::parseStructAccessor(BaseNode *lastExpression)
 
     LookupVariableNode *accessorRHS = static_cast<LookupVariableNode *>(parseVariableName());
 
-    StructAccessNode *accessor = new StructAccessNode(structName->variableName, accessorRHS->variableName);
+    StructAccessNode *accessor = new StructAccessNode(structName->name, accessorRHS->name);
 
     // Mark: - really ugly code. Should be possible to just have a parseVariableName() method
     // which returns a string so we don't always have to wrap-it up into a LookupVariableNode.
@@ -844,7 +909,7 @@ void Parser::skipKeyword(const std::string &name)
 {
     if (!isKeyword(name))
     {
-        EucleiaError("expected keyword '%s' while parsing %s.\n", name.c_str(), fileInfo.nameWithExt.c_str());
+        EucleiaError("expected keyword '%s' while parsing %s.", name.c_str(), fileInfo.nameWithExt.c_str());
     }
 
     skipToken();
@@ -855,7 +920,7 @@ void Parser::skipPunctuation(const std::string &name)
 {
     if (!isPunctuation(name))
     {
-        EucleiaError("expected punctuation '%s' while parsing %s.\n", name.c_str(), fileInfo.nameWithExt.c_str());
+        EucleiaError("expected punctuation '%s' while parsing %s.", name.c_str(), fileInfo.nameWithExt.c_str());
     }
 
     skipToken();
@@ -866,7 +931,7 @@ void Parser::skipOperator(const std::string &name)
 {
     if (!isOperator(name))
     {
-        EucleiaError("expected operator '%s' while parsing %s.\n", name.c_str(), fileInfo.nameWithExt.c_str());
+        EucleiaError("expected operator '%s' while parsing %s.", name.c_str(), fileInfo.nameWithExt.c_str());
     }
 
     skipToken();
@@ -879,5 +944,5 @@ void Parser::unexpectedToken()
 {
     Token &token = peekToken();
 
-    EucleiaError("Unexpected token of type '%s' and value '%s'.\n", token.description().c_str(), token.value.c_str());
+    EucleiaError("Unexpected token of type '%s' and value '%s'.", token.description().c_str(), token.value.c_str());
 }

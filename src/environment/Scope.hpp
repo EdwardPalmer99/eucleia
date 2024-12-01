@@ -8,7 +8,7 @@
  */
 
 #pragma once
-#include "Objects.hpp"
+#include "BaseObject.hpp"
 #include <new>
 #include <string>
 #include <unordered_map>

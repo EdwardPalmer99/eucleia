@@ -11,11 +11,12 @@
 #include "FunctionNode.hpp"
 #include "FunctionObject.hpp"
 #include "JumpPoints.hpp"
+#include "LibraryFunctionObject.hpp"
 
 BaseObject *FunctionCallNode::evaluate(Scope &scope)
 {
     // 0. Any library functions that we wish to evaluate.
-    BaseObject *libraryFunc = scope.getOptionalNamedObject<BaseObject>(funcName->variableName);
+    BaseObject *libraryFunc = scope.getOptionalNamedObject<BaseObject>(funcName->name);
     if (libraryFunc && libraryFunc->isObjectType<LibraryFunctionObject>())
     {
         ProgramNode &programNode = (*funcArgs);
@@ -25,16 +26,16 @@ BaseObject *FunctionCallNode::evaluate(Scope &scope)
 
     // TODO: - finish implementing here. Should not be a shared pointer.
     // 1. Get a pointer to the function node stored in this scope.
-    auto funcNode = scope.getNamedObject<FunctionObject>(funcName->variableName)->functionValue;
+    auto funcNode = scope.getNamedObject<FunctionObject>(funcName->name)->functionValue;
 
     // 2. Verify that the number of arguments matches those required for the
     // function we are calling.
     if (funcArgs->programNodes.size() != funcNode->funcArgs->programNodes.size())
     {
-        EucleiaError("expected %ld arguments but got %ld arguments for function '%s'.\n",
+        EucleiaError("expected %ld arguments but got %ld arguments for function '%s'.",
                      funcNode->funcArgs->programNodes.size(),
                      funcArgs->programNodes.size(),
-                     funcName->variableName.c_str());
+                     funcName->name.c_str());
     }
 
     // 3. Extend current scope (outside function) with names and values of function
@@ -57,14 +58,14 @@ BaseObject *FunctionCallNode::evaluate(Scope &scope)
 
         if (!argVariable.passesAssignmentTypeCheck(*evaluatedArg))
         {
-            EucleiaError("incorrect type for argument '%s' of function '%s'. Expected type '%s'.\n",
-                         argVariable.variableName.c_str(),
-                         funcName->variableName.c_str(),
+            EucleiaError("incorrect type for argument '%s' of function '%s'. Expected type '%s'.",
+                         argVariable.name.c_str(),
+                         funcName->name.c_str(),
                          argVariable.description().c_str());
         }
 
         // Define variable in the function's scope.
-        funcScope.linkObject(argVariable.variableName, evaluatedArg);
+        funcScope.linkObject(argVariable.name, evaluatedArg);
     }
 
     // Evaluate the function body in our function scope now that we've added the
