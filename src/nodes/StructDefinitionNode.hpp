@@ -25,8 +25,10 @@ class StructDefinitionNode : public BaseNode
 {
 public:
     StructDefinitionNode(std::string typeName_,
+                         std::string parentTypeName_,
                          std::vector<AddVariableNode *> variableDefs_)
         : typeName(std::move(typeName_)),
+          parentTypeName(std::move(parentTypeName_)),
           variableDefs(std::move(variableDefs_))
     {
     }
@@ -44,7 +46,12 @@ public:
     /**
      * Type name for struct.
      */
-    std::string typeName{nullptr};
+    std::string typeName;
+
+    /**
+     * Type name for parent.
+     */
+    std::string parentTypeName;
 
     /**
      * Stores nodes defined in struct.

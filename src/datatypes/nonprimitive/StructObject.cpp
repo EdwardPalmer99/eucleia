@@ -19,13 +19,13 @@ StructObject::StructObject(StructDefinitionObject *structDefinition_)
 {
     assert(structDefinition);
 
-    for (AddVariableNode *addNode : structDefinition->variableDefs)
+    for (auto &[name, addNode] : structDefinition->allVariableDefsMap)
     {
         // Install in this instance's scope. This instance has ownership of the
         // created objects.
         (void)addNode->evaluate(instanceScope);
 
-        variableNames.insert(addNode->name);
+        variableNames.insert(name);
     }
 }
 

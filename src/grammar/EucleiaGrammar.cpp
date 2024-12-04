@@ -31,7 +31,8 @@ EucleiaGrammar::EucleiaGrammar()
         "return",
         "import",
         "struct",
-        "class"};
+        "class",
+        "extends"};
 
     _dataTypes = {
         "int",

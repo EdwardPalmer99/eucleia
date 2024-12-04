@@ -11,9 +11,11 @@
 #include "ClassDefinitionObject.hpp"
 
 ClassDefinitionNode::ClassDefinitionNode(std::string typeName_,
+                                         std::string parentTypeName_,
                                          std::vector<AddVariableNode *> variableDefs_,
                                          std::vector<FunctionNode *> methodDefs_)
     : StructDefinitionNode(typeName_, variableDefs_),
+      parentTypeName(std::move(parentTypeName_)),
       methodDefs(std::move(methodDefs_))
 {
 }
@@ -42,7 +44,9 @@ BaseObject *ClassDefinitionNode::evaluate(Scope &scope)
 
     evaluateCalled = true;
 
-    ClassDefinitionObject *obj = scope.createManagedObject<ClassDefinitionObject>(std::move(variableDefs), std::move(methodDefs));
+    ClassDefinitionObject *parentClassDefinition = parentTypeName.empty() ? nullptr : scope.getNamedObject<ClassDefinitionObject>(parentTypeName);
+
+    ClassDefinitionObject *obj = scope.createManagedObject<ClassDefinitionObject>(std::move(variableDefs), std::move(methodDefs), parentClassDefinition);
     scope.linkObject(typeName, obj);
 
     return obj;

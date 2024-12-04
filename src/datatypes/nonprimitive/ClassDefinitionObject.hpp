@@ -23,11 +23,14 @@ class ClassDefinitionObject : public StructDefinitionObject
 {
 public:
     /**
-     * Supply vectors of nodes containing the variables and methods.
+     * Supply vectors of nodes containing the variables and methods. We only
+     * pass vectors to the variables and methods we actually own. The others
+     * will be in a parent class if provided.
      */
     ClassDefinitionObject(std::vector<AddVariableNode *> variableDefs_,
-                          std::vector<FunctionNode *> methodDefs_)
-        : StructDefinitionObject(std::move(variableDefs_)),
+                          std::vector<FunctionNode *> methodDefs_,
+                          ClassDefinitionObject *parent_ = nullptr)
+        : StructDefinitionObject(std::move(variableDefs_), parent_),
           methodDefs(std::move(methodDefs_)) {}
 
     /**

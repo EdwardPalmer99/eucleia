@@ -29,6 +29,7 @@ public:
      * NB: we take ownership of these nodes!
      */
     ClassDefinitionNode(std::string typeName_,
+                        std::string parentTypeName_,
                         std::vector<AddVariableNode *> classVariables_,
                         std::vector<FunctionNode *> classMethods_);
 
@@ -40,4 +41,10 @@ public:
     BaseObject *evaluate(Scope &scope) override;
 
     std::vector<FunctionNode *> methodDefs;
+
+    /**
+     * Parent (inheritance). Note: we cannot do anything until we evaluate the
+     * node in the scope to see whether the parent is also defined.
+     */
+    std::string parentTypeName;
 };

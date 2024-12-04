@@ -410,8 +410,17 @@ BaseNode *Parser::parseStruct()
     auto structTypeName = nextToken().value;
 
     // Do we have a '{' token next? If we do then it is definition of new struct.
-    if (isPunctuation("{"))
+    if (isPunctuation("{") || isKeyword("extends"))
     {
+        std::string structParentTypeName = "";
+
+        if (isKeyword("extends"))
+        {
+            skipKeyword("extends");
+
+            structParentTypeName = nextToken().value;
+        }
+
         auto structMemberVars = parseDelimited("{", "}", ";", std::bind(&Parser::parseVariableDefinition, this));
 
         std::vector<BaseNode *> nodes = structMemberVars->releaseNodes();
@@ -426,7 +435,7 @@ BaseNode *Parser::parseStruct()
             variableDefs.push_back(reinterpret_cast<AddVariableNode *>(node));
         }
 
-        return new StructDefinitionNode(structTypeName, variableDefs);
+        return new StructDefinitionNode(structTypeName, structParentTypeName, variableDefs);
     }
     else
     {
@@ -465,11 +474,23 @@ BaseNode *Parser::parseClass()
     auto classTypeName = nextToken().value;
 
     // Do we have a '{' token next? If we do then it is definition of new struct.
-    if (isPunctuation("{"))
+    if (isPunctuation("{") || isKeyword("extends"))
     {
-        BaseNode *classBody = parseProgram();
+        // *** Inheritance: class SomeClass(ParentClass) ***
+        std::string classParentTypeName = "";
 
-        auto nodes = classBody->castNode<ProgramNode>().releaseNodes();
+        if (isKeyword("extends"))
+        {
+            skipKeyword("extends");
+
+            classParentTypeName = nextToken().value;
+        }
+
+        // NB: have to be a bit careful with parseProgram. If there is only
+        // one node, it will return that!
+        ProgramNode *classBody = parseProgramLines();
+
+        std::vector<BaseNode *> nodes = classBody->releaseNodes();
 
         delete classBody;
 
@@ -487,7 +508,7 @@ BaseNode *Parser::parseClass()
                 EucleiaError("unexpected node type for class definition %s\n", classTypeName.c_str());
         }
 
-        return new ClassDefinitionNode(classTypeName, classVariables, classMethods);
+        return new ClassDefinitionNode(classTypeName, classParentTypeName, classVariables, classMethods);
     }
     else
     {

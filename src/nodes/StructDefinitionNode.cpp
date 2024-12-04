@@ -36,7 +36,9 @@ BaseObject *StructDefinitionNode::evaluate(Scope &scope)
 
     evaluateCalled = true;
 
-    StructDefinitionObject *obj = scope.createManagedObject<StructDefinitionObject>(std::move(variableDefs));
+    StructDefinitionObject *parentObj = parentTypeName.empty() ? nullptr : scope.getNamedObject<StructDefinitionObject>(parentTypeName);
+
+    StructDefinitionObject *obj = scope.createManagedObject<StructDefinitionObject>(std::move(variableDefs), parentObj);
     scope.linkObject(typeName, obj);
 
     return obj;
