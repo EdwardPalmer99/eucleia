@@ -16,19 +16,14 @@ ClassObject::ClassObject(ClassDefinitionObject *classDefinition_)
 {
     assert(classDefinition_);
 
-    for (FunctionNode *funcNode : classDefinition_->methodDefs)
+    for (auto &[name, funcNode] : classDefinition_->allMethodDefsMap)
     {
         // Install in this instance's scope.
         (void)funcNode->evaluate(instanceScope);
-
-        // NB: for now, we do not support method overriding. When performing an
-        // assignment, we will only be copying variable values which is already
-        // handled by parent class.
     }
 }
 
 
 ClassObject::~ClassObject()
 {
-
 }

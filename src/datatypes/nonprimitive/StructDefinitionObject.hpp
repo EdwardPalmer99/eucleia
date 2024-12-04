@@ -26,12 +26,7 @@ public:
      * ownership and free these later.
      */
     StructDefinitionObject(std::vector<AddVariableNode *> variableDefs_,
-                           StructDefinitionObject *parent_ = nullptr)
-        : variableDefs(std::move(variableDefs_)),
-          parent(parent_)
-    {
-        buildVariableDefHashMap();
-    }
+                           StructDefinitionObject *parent_ = nullptr);
 
     /**
      * Destructor deletes all nodes in variable definitions.

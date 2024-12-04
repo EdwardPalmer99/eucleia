@@ -41,10 +41,4 @@ public:
     BaseObject *evaluate(Scope &scope) override;
 
     std::vector<FunctionNode *> methodDefs;
-
-    /**
-     * Parent (inheritance). Note: we cannot do anything until we evaluate the
-     * node in the scope to see whether the parent is also defined.
-     */
-    std::string parentTypeName;
 };

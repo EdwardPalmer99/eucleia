@@ -14,8 +14,7 @@ ClassDefinitionNode::ClassDefinitionNode(std::string typeName_,
                                          std::string parentTypeName_,
                                          std::vector<AddVariableNode *> variableDefs_,
                                          std::vector<FunctionNode *> methodDefs_)
-    : StructDefinitionNode(typeName_, variableDefs_),
-      parentTypeName(std::move(parentTypeName_)),
+    : StructDefinitionNode(typeName_, parentTypeName_, variableDefs_),
       methodDefs(std::move(methodDefs_))
 {
 }

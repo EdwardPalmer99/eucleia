@@ -9,6 +9,16 @@
 
 #include "StructDefinitionObject.hpp"
 
+
+StructDefinitionObject::StructDefinitionObject(std::vector<AddVariableNode *> variableDefs_,
+                                               StructDefinitionObject *parent_)
+    : variableDefs(std::move(variableDefs_)),
+      parent(parent_)
+{
+    buildVariableDefHashMap();
+}
+
+
 StructDefinitionObject::~StructDefinitionObject()
 {
     // We are responsible for deleting nodes.
