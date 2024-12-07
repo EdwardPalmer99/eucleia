@@ -46,7 +46,8 @@ BaseObject *ClassDefinitionObject::evaluate(Scope &scope)
     buildVariableDefHashMap(scope);
     buildMethodDefsHashMap(scope);
 
-    // TODO: - scope should take ownership.
+    // NB: scope cannot manage lifetime of this definition currently since it
+    // is owned by the AST.
     scope.linkObject(typeName, this);
     return this;
 }

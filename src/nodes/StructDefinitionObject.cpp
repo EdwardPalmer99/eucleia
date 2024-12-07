@@ -58,9 +58,8 @@ BaseObject *StructDefinitionObject::evaluate(Scope &scope)
     // prior to this.
     buildVariableDefHashMap(scope);
 
-    // TODO: - we should transfer ownership to the scope otherwise we will have
-    // a memory leak. Currently, nothing will call this destructor after the
-    // parser creates it.
+    // NB: scope cannot manage lifetime of this definition currently since it
+    // is owned by the AST.
     scope.linkObject(typeName, this);
     return this;
 }
