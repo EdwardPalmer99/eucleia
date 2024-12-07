@@ -81,7 +81,7 @@ public:
     }
 
     /// Returns non-const reference to parent scope.
-    inline const Scope *parentScope() const { return parent; }
+    inline Scope *parentScope() { return parent; }
 
     /// Set a new parent scope. Use with care!
     void setParentScope(Scope *parent_) { parent = parent_; }

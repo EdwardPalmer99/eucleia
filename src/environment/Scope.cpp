@@ -25,7 +25,7 @@ Scope::~Scope()
 }
 
 Scope::Scope(const Scope *_parent)
-    : parent(_parent)
+    : parent(const_cast<Scope *>(_parent))
 {
 }
 

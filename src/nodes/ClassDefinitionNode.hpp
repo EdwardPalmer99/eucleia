@@ -29,6 +29,7 @@ public:
      * NB: we take ownership of these nodes!
      */
     ClassDefinitionNode(std::string typeName_,
+                        std::string parentTypeName_,
                         std::vector<AddVariableNode *> classVariables_,
                         std::vector<FunctionNode *> classMethods_);
 

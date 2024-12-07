@@ -23,12 +23,13 @@ class ClassDefinitionObject : public StructDefinitionObject
 {
 public:
     /**
-     * Supply vectors of nodes containing the variables and methods.
+     * Supply vectors of nodes containing the variables and methods. We only
+     * pass vectors to the variables and methods we actually own. The others
+     * will be in a parent class if provided.
      */
     ClassDefinitionObject(std::vector<AddVariableNode *> variableDefs_,
-                          std::vector<FunctionNode *> methodDefs_)
-        : StructDefinitionObject(std::move(variableDefs_)),
-          methodDefs(std::move(methodDefs_)) {}
+                          std::vector<FunctionNode *> methodDefs_,
+                          ClassDefinitionObject *parent_ = nullptr);
 
     /**
      * Destructor deletes all method definition nodes.
@@ -36,8 +37,26 @@ public:
     ~ClassDefinitionObject() override;
 
     /**
+     * Calls evaluate method on all method nodes. Installs them in argument scope.
+     */
+    void installMethodsInScope(Scope &scope) const;
+
+protected:
+    /**
+     * Builds the method map from parent classes.
+     */
+    void buildMethodDefsHashMap();
+
+    /**
      * Stores FunctionNodes. We will call evaluate() method to add them to class scope.
      * Note we are responsible for deleting these.
      */
     std::vector<FunctionNode *> methodDefs;
+
+    /**
+     * Stores our owned methods and those of any parent methods we inherit. If
+     * we have a method with the same name as one in a parent class, we will
+     * "override" it by using our own.
+     */
+    std::unordered_map<std::string, FunctionNode *> allMethodDefsMap;
 };

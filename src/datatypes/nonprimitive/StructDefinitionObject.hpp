@@ -10,6 +10,8 @@
 #pragma once
 #include "AddVariableNode.hpp"
 #include "BaseObject.hpp"
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 /**
@@ -24,8 +26,8 @@ public:
      * Supply a vector of nodes for constructing the struct. This class will take
      * ownership and free these later.
      */
-    StructDefinitionObject(std::vector<AddVariableNode *> variableDefs_)
-        : variableDefs(std::move(variableDefs_)) {}
+    StructDefinitionObject(std::vector<AddVariableNode *> variableDefs_,
+                           StructDefinitionObject *parent_ = nullptr);
 
     /**
      * Destructor deletes all nodes in variable definitions.
@@ -43,9 +45,33 @@ public:
     }
 
     /**
+     * Calls evaluate method on all variables in this struct and parents. Installs
+     * them in argument scope.
+     */
+    void installVariablesInScope(Scope &scope, std::unordered_set<std::string> &variableNames) const;
+
+protected:
+    /**
+     * Builds the variableDefsMap from any parent classes and checks for clashing
+     * variables
+     */
+    void buildVariableDefHashMap();
+
+    /**
      * Store AddVariableNode so class can create all defined variables. We take
-     * ownership of all nodes. To construct the object, we will call evaluate()
-     * method on each node.
+     * ownership of all nodes. There may be additional nodes that are not in this
+     * vector and will be stored in a parent class.
      */
     std::vector<AddVariableNode *> variableDefs;
+
+    /**
+     * Stores our owned variables and those of any parent variables we inherit.
+     * To construct the object, we will call evaluate() method on each node.
+     */
+    std::unordered_map<std::string, AddVariableNode *> allVariableDefsMap;
+
+    /**
+     * Parent struct we inherit from.
+     */
+    StructDefinitionObject *parent{nullptr};
 };

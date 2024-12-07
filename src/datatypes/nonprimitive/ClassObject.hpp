@@ -20,5 +20,5 @@ class ClassObject : public StructObject
 public:
     explicit ClassObject(ClassDefinitionObject *classDefinition_);
 
-    ~ClassObject() override;
+    ~ClassObject() override = default;
 };
