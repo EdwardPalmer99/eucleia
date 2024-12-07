@@ -55,6 +55,11 @@ BaseObject *ClassDefinitionObject::evaluate(Scope &scope)
 
 void ClassDefinitionObject::installMethodsInScope(Scope &scope) const
 {
+    if (!active)
+    {
+        EucleiaError("The class definition is inactive!");
+    }
+
     for (auto &[name, funcNode] : allMethodDefsMap)
     {
         (void)funcNode->evaluate(scope);

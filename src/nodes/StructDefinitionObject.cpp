@@ -67,6 +67,11 @@ BaseObject *StructDefinitionObject::evaluate(Scope &scope)
 
 void StructDefinitionObject::installVariablesInScope(Scope &scope, std::unordered_set<std::string> &variableNames) const
 {
+    if (!active)
+    {
+        EucleiaError("The struct definition is inactive!");
+    }
+
     variableNames.clear();
 
     for (auto iter = allVariableDefsMap.begin(); iter != allVariableDefsMap.end(); ++iter)
