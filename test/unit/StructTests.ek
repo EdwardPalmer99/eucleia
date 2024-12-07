@@ -33,6 +33,7 @@ TEST(iValue == 2 && first.i == 1, "int getter");
 // Copy struct instances.
 struct SomeStruct second;   // TODO: - cannot handle = first here!
 second = first;
+print(first.i, second.i);
 TEST(second.i == 1 && second.f == 1.1 && second.s == "hello, world!", "struct assignment");
 // TODO: - After getting this working properly, next step will be to implement classes 
 // which we will derive from Structs. Will be pretty much the same. Also need to

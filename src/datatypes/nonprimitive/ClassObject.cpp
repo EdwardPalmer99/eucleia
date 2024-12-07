@@ -15,15 +15,5 @@ ClassObject::ClassObject(ClassDefinitionObject *classDefinition_)
     : StructObject(classDefinition_)
 {
     assert(classDefinition_);
-
-    for (auto &[name, funcNode] : classDefinition_->allMethodDefsMap)
-    {
-        // Install in this instance's scope.
-        (void)funcNode->evaluate(instanceScope);
-    }
-}
-
-
-ClassObject::~ClassObject()
-{
+    classDefinition_->installMethodsInScope(instanceScope);
 }

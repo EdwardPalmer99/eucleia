@@ -11,6 +11,7 @@
 #include "AddVariableNode.hpp"
 #include "BaseObject.hpp"
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 /**
@@ -43,6 +44,13 @@ public:
         EucleiaError("not implemented.");
     }
 
+    /**
+     * Calls evaluate method on all variables in this struct and parents. Installs
+     * them in argument scope.
+     */
+    void installVariablesInScope(Scope &scope, std::unordered_set<std::string> &variableNames) const;
+
+protected:
     /**
      * Builds the variableDefsMap from any parent classes and checks for clashing
      * variables

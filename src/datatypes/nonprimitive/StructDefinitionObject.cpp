@@ -31,6 +31,18 @@ StructDefinitionObject::~StructDefinitionObject()
 }
 
 
+void StructDefinitionObject::installVariablesInScope(Scope &scope, std::unordered_set<std::string> &variableNames) const
+{
+    variableNames.clear();
+
+    for (auto iter = allVariableDefsMap.begin(); iter != allVariableDefsMap.end(); ++iter)
+    {
+        variableNames.insert(iter->first);
+        (void)iter->second->evaluate(scope);
+    }
+}
+
+
 void StructDefinitionObject::buildVariableDefHashMap()
 {
     if (!allVariableDefsMap.empty())

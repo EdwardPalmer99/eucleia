@@ -31,6 +31,15 @@ ClassDefinitionObject::~ClassDefinitionObject()
 }
 
 
+void ClassDefinitionObject::installMethodsInScope(Scope &scope) const
+{
+    for (auto &[name, funcNode] : allMethodDefsMap)
+    {
+        (void)funcNode->evaluate(scope);
+    }
+}
+
+
 void ClassDefinitionObject::buildMethodDefsHashMap()
 {
     if (!allMethodDefsMap.empty())

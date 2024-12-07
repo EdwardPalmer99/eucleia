@@ -37,6 +37,12 @@ public:
     ~ClassDefinitionObject() override;
 
     /**
+     * Calls evaluate method on all method nodes. Installs them in argument scope.
+     */
+    void installMethodsInScope(Scope &scope) const;
+
+protected:
+    /**
      * Builds the method map from parent classes.
      */
     void buildMethodDefsHashMap();
