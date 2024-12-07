@@ -5,7 +5,7 @@ Eucleia
 
 General Information
 -------------------
-Eucleia is a simple interpreted programming language based on C and Python.
+Eucleia is a simple interpreted programming language inspired by C, C++, Python and Java.
 
 Build Instructions
 ------------------
