@@ -435,7 +435,7 @@ BaseNode *Parser::parseStruct()
             variableDefs.push_back(reinterpret_cast<AddVariableNode *>(node));
         }
 
-        return new StructDefinitionNode(structTypeName, structParentTypeName, variableDefs);
+        return new StructDefinitionObject(structTypeName, structParentTypeName, variableDefs);
     }
     else
     {
@@ -508,7 +508,7 @@ BaseNode *Parser::parseClass()
                 EucleiaError("unexpected node type for class definition %s\n", classTypeName.c_str());
         }
 
-        return new ClassDefinitionNode(classTypeName, classParentTypeName, classVariables, classMethods);
+        return new ClassDefinitionObject(classTypeName, classParentTypeName, classVariables, classMethods);
     }
     else
     {
