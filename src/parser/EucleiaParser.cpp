@@ -441,7 +441,7 @@ BaseNode *Parser::parseStruct()
     {
         auto structInstanceName = nextToken().value;
 
-        return new StructNode(structTypeName, structInstanceName);
+        return new StructObject(structTypeName, structInstanceName);
     }
 }
 
@@ -514,7 +514,7 @@ BaseNode *Parser::parseClass()
     {
         auto classInstanceName = nextToken().value;
 
-        return new ClassNode(classTypeName, classInstanceName);
+        return new ClassObject(classTypeName, classInstanceName);
     }
 
     return nullptr;

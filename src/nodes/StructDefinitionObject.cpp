@@ -59,7 +59,7 @@ BaseObject *StructDefinitionObject::evaluate(Scope &scope)
     buildVariableDefHashMap(scope);
 
     // NB: scope cannot manage lifetime of this definition currently since it
-    // is owned by the AST.
+    // is owned by the AST. TODO: - rectify this.
     scope.linkObject(typeName, this);
     return this;
 }

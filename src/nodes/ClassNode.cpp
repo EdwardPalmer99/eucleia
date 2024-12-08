@@ -11,15 +11,15 @@
 #include "ClassDefinitionObject.hpp"
 #include "ClassObject.hpp"
 
-BaseObject *ClassNode::evaluate(Scope &scope)
-{
-    ClassDefinitionObject *templateObj = scope.getNamedObject<ClassDefinitionObject>(typeName);
+// BaseObject *ClassNode::evaluate(Scope &scope)
+// {
+//     ClassDefinitionObject *templateObj = scope.getNamedObject<ClassDefinitionObject>(typeName);
 
-    ClassObject *classObj = scope.createManagedObject<ClassObject>(templateObj);
-    scope.linkObject(name, classObj);
+//     ClassObject *classObj = scope.createManagedObject<ClassObject>(templateObj);
+//     scope.linkObject(name, classObj);
 
-    return classObj;
-}
+//     return classObj;
+// }
 
 
 ClassMethodCallNode::ClassMethodCallNode(std::string instanceName_, FunctionCallNode *methodCallNode_)

@@ -8,6 +8,7 @@
  */
 
 #pragma once
+#include "BaseNode.hpp"
 #include "BaseObject.hpp"
 #include "EucleiaUtility.hpp"
 #include "Scope.hpp"
@@ -18,20 +19,26 @@
 /**
  * struct SomeStruct a;
  */
-class StructObject : public BaseObject
+class StructObject : public BaseObject, public BaseNode
 {
 public:
     StructObject() = delete;
 
     /**
-     * Construct an instance of a struct from a definition.
+     * Create a new empty StructObject with the name.
      */
-    StructObject(StructDefinitionObject *structDefinition_);
+    StructObject(std::string typeName_, std::string name_);
 
     /**
-     *
+     * Assignment operator.
      */
     StructObject &operator=(const BaseObject &other) override;
+
+    /**
+     * Finishes initializing the struct object and links to the scope. Ownership
+     * should pass to the scope from the AST. Returns a pointer to itself.
+     */
+    BaseObject *evaluate(Scope &scope) override;
 
     // TODO: - implement in future.
     StructObject *clone() const override
@@ -52,8 +59,18 @@ public:
     std::unordered_set<std::string> variableNames;
 
     /**
-     * Pointer to the struct definition. This will be stored in some parent scope.
-     * We use this to check whether another instance shares the same class definition.
+     * Ony a single evaluate call allowed.
      */
-    StructDefinitionObject *structDefinition;
+    bool active{false};
+
+    /**
+     * Stores name of instance and the type.
+     */
+    std::string name;
+    std::string typeName;
+
+    /**
+     * Store the struct definition once active.
+     */
+    StructDefinitionObject *structDefinition{nullptr};
 };

@@ -12,17 +12,17 @@
 #include "StructDefinitionObject.hpp"
 #include "StructObject.hpp"
 
-BaseObject *StructNode::evaluate(Scope &scope)
-{
-    // Get struct template.
-    StructDefinitionObject *templateObj = scope.getNamedObject<StructDefinitionObject>(typeName);
+// BaseObject *StructNode::evaluate(Scope &scope)
+// {
+//     // Get struct template.
+//     StructDefinitionObject *templateObj = scope.getNamedObject<StructDefinitionObject>(typeName);
 
-    // Create and owned by scope.
-    StructObject *structObj = scope.createManagedObject<StructObject>(templateObj);
-    scope.linkObject(name, structObj);
+//     // Create and owned by scope.
+//     StructObject *structObj = scope.createManagedObject<StructObject>(templateObj);
+//     scope.linkObject(name, structObj);
 
-    return structObj;
-}
+//     return structObj;
+// }
 
 
 BaseObject *StructAccessNode::evaluateNoClone(Scope &scope)

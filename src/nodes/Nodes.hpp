@@ -20,6 +20,7 @@
 #include "BreakNode.hpp"
 #include "ClassDefinitionObject.hpp"
 #include "ClassNode.hpp"
+#include "ClassObject.hpp"
 #include "DoWhileNode.hpp"
 #include "FileNode.hpp"
 #include "ForLoopNode.hpp"
@@ -35,4 +36,5 @@
 #include "ReturnNode.hpp"
 #include "StructDefinitionObject.hpp"
 #include "StructNode.hpp"
+#include "StructObject.hpp"
 #include "WhileNode.hpp"

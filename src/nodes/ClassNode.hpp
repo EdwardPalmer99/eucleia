@@ -18,13 +18,13 @@
  * Create a new empty ClassObject. We expect there exists a ClassDefinitionObject
  * defined in the scope earlier.
  */
-class ClassNode : public StructNode
-{
-public:
-    ClassNode(std::string typeName_, std::string name_) : StructNode(typeName_, name_) {}
+// class ClassNode : public StructNode
+// {
+// public:
+//     ClassNode(std::string typeName_, std::string name_) : StructNode(typeName_, name_) {}
 
-    BaseObject *evaluate(Scope &scope) override;
-};
+//     BaseObject *evaluate(Scope &scope) override;
+// };
 
 
 /**
