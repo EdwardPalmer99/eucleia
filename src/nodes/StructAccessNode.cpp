@@ -1,5 +1,5 @@
 /**
- * @file StructNode.cpp
+ * @file StructAccessNode.cpp
  * @author Edward Palmer
  * @date 2024-11-24
  *
@@ -7,22 +7,10 @@
  *
  */
 
-#include "StructNode.hpp"
+#include "StructAccessNode.hpp"
 #include "EucleiaUtility.hpp"
 #include "StructDefinitionObject.hpp"
 #include "StructObject.hpp"
-
-// BaseObject *StructNode::evaluate(Scope &scope)
-// {
-//     // Get struct template.
-//     StructDefinitionObject *templateObj = scope.getNamedObject<StructDefinitionObject>(typeName);
-
-//     // Create and owned by scope.
-//     StructObject *structObj = scope.createManagedObject<StructObject>(templateObj);
-//     scope.linkObject(name, structObj);
-
-//     return structObj;
-// }
 
 
 BaseObject *StructAccessNode::evaluateNoClone(Scope &scope)
