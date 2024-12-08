@@ -1,5 +1,5 @@
 /**
- * @file ClassNode.cpp
+ * @file ClassAccessNode.cpp
  * @author Edward Palmer
  * @date 2024-12-01
  *
@@ -7,19 +7,9 @@
  *
  */
 
-#include "ClassNode.hpp"
+#include "ClassAccessNode.hpp"
 #include "ClassDefinitionObject.hpp"
 #include "ClassObject.hpp"
-
-BaseObject *ClassNode::evaluate(Scope &scope)
-{
-    ClassDefinitionObject *templateObj = scope.getNamedObject<ClassDefinitionObject>(typeName);
-
-    ClassObject *classObj = scope.createManagedObject<ClassObject>(templateObj);
-    scope.linkObject(name, classObj);
-
-    return classObj;
-}
 
 
 ClassMethodCallNode::ClassMethodCallNode(std::string instanceName_, FunctionCallNode *methodCallNode_)

@@ -15,3 +15,34 @@ import <test>
     
     TEST(a == 1, "outer-scope a == 1 (still)");
 }
+
+{
+    class ClassA
+    {
+        int i;
+        bool b;
+        float f;
+
+        func greeting()
+        {
+            return "Hello, world!";
+        }
+    };
+
+    class ClassA firstInstance;
+
+    {
+        class ClassA 
+        {
+            func greeting()
+            {
+                return "Well, hello there!";
+            }
+        };
+
+        class ClassA secondInstance;
+
+        TEST(firstInstance.greeting() != secondInstance.greeting(), "nested class definitions");
+    }
+}
+

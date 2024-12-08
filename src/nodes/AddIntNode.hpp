@@ -20,6 +20,5 @@ public:
     // Creates an IntObject in the scope and returns a managed pointer to it.
     IntObject *evaluate(Scope &scope) override;
 
-
     IntObject intObject;
 };

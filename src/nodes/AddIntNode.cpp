@@ -9,7 +9,6 @@
 
 #include "AddIntNode.hpp"
 
-
 IntObject *AddIntNode::evaluate(Scope &scope)
 {
     return scope.createManagedObject<IntObject>(intObject);

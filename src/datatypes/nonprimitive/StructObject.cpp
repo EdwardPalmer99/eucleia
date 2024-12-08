@@ -14,11 +14,30 @@
 #include "StringObject.hpp"
 #include <cassert>
 
-StructObject::StructObject(StructDefinitionObject *structDefinition_)
-    : structDefinition(structDefinition_)
+StructObject::StructObject(std::string typeName_, std::string name_)
+    : typeName(std::move(typeName_)), name(std::move(name_))
 {
-    assert(structDefinition);
+}
+
+
+BaseObject *StructObject::evaluate(Scope &scope)
+{
+    if (active)
+    {
+        EucleiaError("StructObject named '%s' of type '%s' is already active",
+                     name.c_str(), typeName.c_str());
+    }
+
+    active = true;
+
+    // Initialize our instance from the struct definition defined in the scope.
+    structDefinition = scope.getNamedObject<StructDefinitionObject>(typeName);
     structDefinition->installVariablesInScope(instanceScope, variableNames);
+
+    // Add the active struct instance to the scope. TODO: - transfer ownership
+    // to the scope. Will have to remove this class from AST to do this correctly.
+    scope.linkObject(name, this);
+    return this;
 }
 
 
