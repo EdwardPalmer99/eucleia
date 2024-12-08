@@ -13,6 +13,7 @@
 #include "EucleiaUtility.hpp"
 #include "Scope.hpp"
 #include "StructDefinitionObject.hpp"
+#include <ostream>
 #include <string>
 #include <unordered_set>
 
@@ -46,6 +47,14 @@ public:
         EucleiaError("not implemented!");
     }
 
+    /**
+     * Returns a description of the struct.
+     */
+    friend std::ostream &operator<<(std::ostream &os, const BaseObject &);
+
+    friend class StructAccessNode;
+
+protected:
     /**
      * The struct has its own scope for storing its own variables. It does not
      * inherit from any parent scopes. Literally just used for storing stuff.

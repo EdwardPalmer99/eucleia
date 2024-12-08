@@ -26,4 +26,6 @@ public:
      * @return BaseObject* Pointer to itself
      */
     BaseObject *evaluate(Scope &scope) override;
+
+    friend class ClassMethodCallNode;
 };
