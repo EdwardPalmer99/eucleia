@@ -84,3 +84,17 @@ void Scope::linkObject(const std::string &name, BaseObject *object)
     // with this name (variable shadowing).
     linkedObjectForName[name] = object;
 }
+
+
+BaseObject *Scope::releaseManagedObject(BaseObject *object)
+{
+    assert(object != nullptr);
+
+    if (!objectsCreatedInScope.count(object))
+    {
+        EucleiaError("The scope cannot release an object it did not create");
+    }
+
+    objectsCreatedInScope.erase(object);
+    return object;
+}

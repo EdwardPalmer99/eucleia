@@ -8,6 +8,7 @@
  */
 
 #include "FunctionCallNode.hpp"
+#include "AddVariableNode.hpp"
 #include "FunctionNode.hpp"
 #include "FunctionObject.hpp"
 #include "JumpPoints.hpp"
@@ -27,6 +28,8 @@ BaseObject *FunctionCallNode::evaluate(Scope &scope)
     // TODO: - finish implementing here. Should not be a shared pointer.
     // 1. Get a pointer to the function node stored in this scope.
     auto funcNode = scope.getNamedObject<FunctionObject>(funcName->name)->functionValue;
+
+    // TODO: - store whether evaluate already called. Can save some computation.
 
     // 2. Verify that the number of arguments matches those required for the
     // function we are calling.

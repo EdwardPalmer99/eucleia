@@ -6,6 +6,7 @@
 //
 
 #pragma once
+#include "ArrayClassObject.hpp"
 #include "ArrayObject.hpp"
 #include "BaseObject.hpp"
 #include "ClassDefinitionObject.hpp"
@@ -36,6 +37,18 @@ inline std::ostream &operator<<(std::ostream &out, const BaseObject &object)
         for (int i = 0; i < arrayObject.values.size(); i++)
         {
             out << *arrayObject[i] << ", ";
+        }
+        out << "]";
+        return out;
+    }
+    else if (object.isObjectType<ArrayClassObject>())
+    {
+        auto &arrayClassObject = object.castObject<ArrayClassObject>();
+
+        out << "[";
+        for (BaseObject *object : arrayClassObject.objects)
+        {
+            out << (*object) << ", ";
         }
         out << "]";
         return out;

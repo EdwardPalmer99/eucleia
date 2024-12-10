@@ -15,6 +15,7 @@
 #include "AddStringNode.hpp"
 #include "AddVariableNode.hpp"
 #include "ArrayAccessNode.hpp"
+#include "ArrayClassObject.hpp"
 #include "AssignNode.hpp"
 #include "BinaryNode.hpp"
 #include "BreakNode.hpp"

@@ -473,6 +473,14 @@ BaseNode *Parser::parseClass()
 
     auto classTypeName = nextToken().value;
 
+    if (classTypeName == ArrayClassObject::className()) // Custom.
+    {
+        // Create new instance of an array class object.
+        return new ArrayClassObject(nextToken().value);
+    }
+
+    // TODO: - beautify this.
+
     // Do we have a '{' token next? If we do then it is definition of new struct.
     if (isPunctuation("{") || isKeyword("extends"))
     {

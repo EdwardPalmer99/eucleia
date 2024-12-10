@@ -89,6 +89,11 @@ public:
     /// Create a link between a variable name and an object in this scope.
     void linkObject(const std::string &name, BaseObject *object);
 
+    /// If the object is owned by the scope, it now transfers ownership. Be very
+    /// careful with this as if the object is linked to a scope we could have a
+    /// segfault if deleted too early.
+    BaseObject *releaseManagedObject(BaseObject *object);
+
 private:
     /// Stores a mapping from the variable name to a pointer to the object. These
     /// are only linked objects defined in this scope. This enables variable

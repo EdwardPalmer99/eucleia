@@ -8,9 +8,9 @@
  */
 
 #pragma once
-#include "AddVariableNode.hpp"
 #include "BaseNode.hpp"
 #include "BaseObject.hpp"
+#include "LookupVariableNode.hpp"
 #include "ProgramNode.hpp"
 #include "Scope.hpp"
 
@@ -18,7 +18,7 @@ class FunctionCallNode : public BaseNode
 {
 public:
     FunctionCallNode(BaseNode *funcName_, BaseNode *funcArgs_)
-        : funcName(static_cast<AddVariableNode *>(funcName_)),
+        : funcName(static_cast<LookupVariableNode *>(funcName_)),
           funcArgs(static_cast<ProgramNode *>(funcArgs_))
     {
     }
@@ -36,6 +36,6 @@ public:
     BaseObject *evaluateFunctionBody(BaseNode &funcBody, Scope &funcScope);
 
 
-    AddVariableNode *funcName{nullptr};
+    LookupVariableNode *funcName{nullptr};
     ProgramNode *funcArgs{nullptr};
 };
