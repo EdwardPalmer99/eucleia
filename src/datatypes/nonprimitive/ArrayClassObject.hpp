@@ -66,7 +66,8 @@ protected:
 private:
     /**
      * Array of pointers. One for each object. These are owned by the instanceScope.
-     * so we do not explicitly need to delete these from the vector.
+     * so we do not explicitly need to delete these from the vector. TODO: - this comment is incorrect.
      */
+    // TODO: - enable iterating over objects created in scope.
     std::vector<BaseObject *> objects;
 };
