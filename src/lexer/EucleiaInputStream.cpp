@@ -9,6 +9,7 @@
 #include "EucleiaGrammar.hpp"
 #include "EucleiaUtility.hpp"
 #include <algorithm>
+#include <cstring>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,6 +31,23 @@ char InputStream::peek() const
     return (_current.ptr ? *_current.ptr : '\0');
 }
 
+char *InputStream::peek2()
+{
+    static char buffer[3];
+    memset(buffer, '\0', 3);
+
+    buffer[0] = peek();
+
+    if (buffer[0] != '\0')
+    {
+        _current.ptr++;
+        buffer[1] = peek();
+        _current.ptr--;
+    }
+
+    return buffer;
+}
+
 
 char InputStream::next()
 {
@@ -43,9 +61,9 @@ char InputStream::next()
 
 #pragma mark -
 
-bool InputStream::isComment() const
+bool InputStream::isComment()
 {
-    return (peek() == '/');
+    return (strcmp(peek2(), "//") == 0);
 }
 
 bool InputStream::isOperator() const

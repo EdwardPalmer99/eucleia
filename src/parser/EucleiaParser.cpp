@@ -590,6 +590,12 @@ AddArrayNode *Parser::parseArray()
 
 BaseNode *Parser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
 {
+    // Special case: tokens empty. Cannot be binary expression.
+    if (tokenizer.empty())
+    {
+        return leftExpression;
+    }
+
     // Take a peek look at the next token. Is it an operator token. If it is then
     // we need to create a binary node.
     Token &next = peekToken();
@@ -649,14 +655,17 @@ BaseNode *Parser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
     auto expr = expression();
     assert(expr != nullptr);
 
-    if (isPunctuation("("))
-        return parseFunctionCall(expr);
-    else if (isPunctuation("["))
-        return parseArrayAccessor(expr);
-    else if (isPunctuation("."))
-        return parseStructAccessor(expr);
-    else
-        return expr;
+    if (!tokenizer.empty())
+    {
+        if (isPunctuation("("))
+            return parseFunctionCall(expr);
+        else if (isPunctuation("["))
+            return parseArrayAccessor(expr);
+        else if (isPunctuation("."))
+            return parseStructAccessor(expr);
+    }
+
+    return expr;
 }
 
 
