@@ -22,12 +22,13 @@ struct StreamPoint
 
 class InputStream
 {
-  public:
+public:
     InputStream() = delete;
     InputStream(const std::string fileString);
 
     char next();
     char peek() const;
+    char *peek2();
 
     inline bool isEof() const
     {
@@ -42,8 +43,8 @@ class InputStream
         return (peek() == '"');
     }
 
-  protected:
-    bool isComment() const;
+protected:
+    bool isComment();
     bool isPunctuation() const;
     bool isWhiteSpace() const;
     bool isDigit() const;
@@ -57,7 +58,7 @@ class InputStream
         return _grammar;
     }
 
-  private:
+private:
     void consume();
 
     char *_basePtr{nullptr};

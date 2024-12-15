@@ -72,6 +72,11 @@ void Tokenizer::generateTokens()
 
 Token &Tokenizer::peek()
 {
+    if (_tokens.empty())
+    {
+        EucleiaError("Cannot peek(). No tokens remaining");
+    }
+
     return _tokens.front();
 }
 
