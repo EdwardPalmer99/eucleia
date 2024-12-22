@@ -95,6 +95,47 @@ void IOModuleNode::defineFunctions()
     defineFunction("print", closure);
 }
 
+void ArrayModuleNode::defineFunctions()
+{
+    auto closure = [this](ProgramNode &callArgs, Scope &scope) -> BaseObject *
+    {
+        auto argValues = evaluateArgs(callArgs, scope);
+        assert(argValues.size() == 1);
+
+        ArrayObject &arrayObject = argValues.front()->castObject<ArrayObject>();
+        arrayObject.values.clear();
+        return nullptr;
+    };
+
+    defineFunction("clear", closure);
+
+    auto closure2 = [this](ProgramNode &callArgs, Scope &scope) -> BaseObject *
+    {
+        auto argValues = evaluateArgs(callArgs, scope);
+        assert(argValues.size() == 1);
+
+        ArrayObject &arrayObject = argValues.front()->castObject<ArrayObject>();
+
+        return scope.createManagedObject<IntObject>(arrayObject.values.size());
+    };
+
+    defineFunction("length", closure2);
+
+    auto closure3 = [this](ProgramNode &callArgs, Scope &scope) -> BaseObject *
+    {
+        auto argValues = evaluateArgs(callArgs, scope);
+        assert(argValues.size() == 2);
+
+        ArrayObject &arrayObject = argValues.front()->castObject<ArrayObject>();
+        BaseObject &someObject = *argValues.back();
+
+        arrayObject.values.push_back(someObject.clone()); // NB: must clone!
+        return nullptr;
+    };
+
+    defineFunction("append", closure3);
+}
+
 
 ModuleNode *EucleiaModuleLoader::getModule(const std::string &name) const
 {
@@ -104,6 +145,8 @@ ModuleNode *EucleiaModuleLoader::getModule(const std::string &name) const
         return new MathModuleNode();
     else if (name == "test")
         return new TestModule();
+    else if (name == "stdarray")
+        return new ArrayModuleNode();
     else
         EucleiaError("no library with name '%s'.", name.c_str());
 }

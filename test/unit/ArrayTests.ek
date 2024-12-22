@@ -1,5 +1,6 @@
 import <io>
 import <test>
+import <stdarray>
 
 {
     array first = [1, 2, 3];
@@ -31,4 +32,13 @@ import <test>
 
     a = a + [4];
     TEST(a[3] == 4, "add array with [] on RHS");
+
+    // Array operations.
+    TEST(length(first) == 3, "length(array)");
+    
+    append(first, 4);
+    TEST(length(first) == 4, "append");
+    
+    clear(first);
+    TEST(length(first) == 0, "clear array");
 }
