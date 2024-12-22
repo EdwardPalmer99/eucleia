@@ -97,6 +97,8 @@ void IOModuleNode::defineFunctions()
 
 void ArrayModuleNode::defineFunctions()
 {
+    // TODO: - would be good to add these as available methods.
+    // TODO: - enable these core functions for other object types.
     auto closure = [this](ProgramNode &callArgs, Scope &scope) -> BaseObject *
     {
         auto argValues = evaluateArgs(callArgs, scope);
