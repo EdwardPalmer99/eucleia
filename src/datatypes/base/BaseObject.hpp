@@ -26,6 +26,12 @@ public:
         EucleiaError("copy assignment not implemented.");
     }
 
+    // Implement addition. Returns unmanaged pointer to result.
+    virtual BaseObject *operator+(const BaseObject &other) const
+    {
+        EucleiaError("addition not implemented.");
+    }
+
     /// Cast to object type.
     template <class TObject>
     const TObject &castObject() const

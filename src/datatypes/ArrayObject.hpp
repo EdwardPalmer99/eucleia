@@ -21,6 +21,9 @@ public:
 
     ArrayObject(std::vector<BaseObject *> values_);
 
+    /// Add two array objects and return an unmanaged pointer to result.
+    ArrayObject *operator+(const BaseObject &other) const override;
+
     ArrayObject &operator=(const BaseObject &other) override;
 
     /// Performs a deep copy of array. This will enable the array to be returned

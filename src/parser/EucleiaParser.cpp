@@ -843,6 +843,7 @@ void Parser::skipSemicolonLineEndingIfRequired(const BaseNode &node)
     bool doSkipPunctuation = (node.isNodeType<ModuleNode>() || // Bit ugly.
                               node.isNodeType<MathModuleNode>() ||
                               node.isNodeType<IOModuleNode>() ||
+                              node.isNodeType<ArrayModuleNode>() ||
                               node.isNodeType<TestModule>() ||
                               node.isNodeType<FileNode>() ||
                               node.isNodeType<ProgramNode>() ||

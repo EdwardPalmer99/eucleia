@@ -37,6 +37,12 @@ private:
     std::map<std::string, Function> _functionsMap;
 };
 
+class ArrayModuleNode : public ModuleNode
+{
+protected:
+    void defineFunctions() override;
+};
+
 
 /// Library functions for maths.
 class MathModuleNode : public ModuleNode

@@ -1,5 +1,6 @@
 import <io>
 import <test>
+import <stdarray>
 
 {
     array first = [1, 2, 3];
@@ -23,4 +24,21 @@ import <test>
 
     second[0] = 100;
     TEST(second[0] == 100 && first[0] == 2, "modify copied array");
+
+    array a = [1, 2, 3];
+    array b = [4, 5, 6];
+    array c = a + b;
+    TEST(c[2] == 3 && c[5] == 6, "add two arrays");
+
+    a = a + [4];
+    TEST(a[3] == 4, "add array with [] on RHS");
+
+    // Array operations.
+    TEST(length(first) == 3, "length(array)");
+    
+    append(first, 4);
+    TEST(length(first) == 4, "append");
+    
+    clear(first);
+    TEST(length(first) == 0, "clear array");
 }

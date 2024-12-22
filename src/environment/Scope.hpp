@@ -65,6 +65,13 @@ public:
         return newObject;
     }
 
+    /// Wrapper around allocated object. Add and store in the scope.
+    BaseObject *addManagedObject(BaseObject *object)
+    {
+        objectsCreatedInScope.insert(object);
+        return object;
+    }
+
     /// Clones and object and assumes ownership.
     // TODO: - move into cpp file.
     BaseObject *cloneObject(const BaseObject *object)
