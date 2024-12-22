@@ -64,6 +64,35 @@ ArrayObject &ArrayObject::operator=(const BaseObject &other)
 }
 
 
+ArrayObject *ArrayObject::operator+(const BaseObject &other) const
+{
+    const ArrayObject &otherArray = other.castObject<ArrayObject>();
+
+    // NB: special case where we add ourself to ourself. Currently, we will be
+    // cloning the same object twice which is okay. But might want to think about
+    // references in future.
+
+    // Create an array to store objects from both.
+    std::vector<BaseObject *> combinedArray;
+    combinedArray.reserve(values.size() + otherArray.values.size());
+
+    // Now we iterate over array and add to vector.
+    for (BaseObject *object : values)
+    {
+        combinedArray.push_back(object);
+    }
+
+    for (BaseObject *object : otherArray.values)
+    {
+        combinedArray.push_back(object);
+    }
+
+    // Now create new array object. Caller responsible for handling memory.
+    // Ideally, should be added to scope of caller.
+    return new ArrayObject(std::move(combinedArray));
+}
+
+
 ArrayObject *ArrayObject::clone() const
 {
     std::vector<BaseObject *> cloneValues(values.size());

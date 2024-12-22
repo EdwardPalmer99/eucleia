@@ -8,6 +8,7 @@
  */
 
 #include "BinaryNode.hpp"
+#include "ArrayObject.hpp"
 
 BaseObject *BinaryNode::evaluate(Scope &scope)
 {
@@ -119,6 +120,10 @@ BaseObject *BinaryNode::applyOperator(Scope &scope, const BaseObject &left, cons
     else if (left.isObjectType<StringObject>() && right.isObjectType<StringObject>())
     {
         return applyOperator(scope, left.castObject<StringObject>(), right.castObject<StringObject>());
+    }
+    else if (left.isObjectType<ArrayObject>() && right.isObjectType<ArrayObject>())
+    {        
+        return scope.addManagedObject(left + right);
     }
     else
     {
