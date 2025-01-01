@@ -11,6 +11,7 @@
 #include "ArrayObject.hpp"
 #include "FloatObject.hpp"
 #include "IntObject.hpp"
+#include "ReferenceObject.hpp"
 #include "StringObject.hpp"
 
 BaseObject *AddVariableNode::evaluate(Scope &scope)
@@ -80,4 +81,20 @@ std::string AddVariableNode::description() const
         default:
             return "Unknown";
     }
+}
+
+
+AddReferenceVariableNode::AddReferenceVariableNode(std::string name_, ObjectType type_)
+    : AddVariableNode(name_, type_)
+{
+}
+
+
+BaseObject *AddReferenceVariableNode::evaluate(Scope &scope)
+{
+    // TODO: - the reference should have knowledge of the type to bind to itself.
+    BaseObject *objectPtr = scope.createManagedObject<ReferenceObject>();
+
+    scope.linkObject(name, objectPtr);
+    return objectPtr;
 }

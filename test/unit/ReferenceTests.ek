@@ -1,0 +1,31 @@
+import <test>
+import <io>
+
+int a = 1;
+int &b = a; // Reference to a.
+
+b = 2;
+TEST(a == 2, "a == 2");
+
+//----------------------------
+func inOutFunction(int &refParam)
+{
+    refParam = 4;
+}
+
+int c = 2;
+inOutFunction(c);
+TEST(c == 4, "function reference");
+
+
+//----------------------------
+// Scope tests and lifetime.
+// Because we require an immediate assignment, the reference 
+// cannot live in an outerscope and refer to an innerscope variable.
+{
+    {
+        int a = 3;
+
+        int &ref = a;    // Bind the reference.
+    }
+}

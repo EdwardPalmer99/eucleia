@@ -214,24 +214,26 @@ BaseNode *Parser::parseVariableDefinition()
     Token typeToken = nextToken();
     assert(typeToken.type == Token::Keyword);
 
+    bool isReference = false;
+
+    if (peekToken().value == "&") // Reference.
+    {
+        skipToken();
+        isReference = true;
+    }
+
     Token nameToken = nextToken();
     assert(nameToken.type == Token::Variable);
 
     std::string &typeName = typeToken.value;
     std::string &variableName = nameToken.value;
 
-    if (typeName == "int")
-        return new AddVariableNode(variableName, ObjectType::Int);
-    else if (typeName == "float")
-        return new AddVariableNode(variableName, ObjectType::Float);
-    else if (typeName == "bool")
-        return new AddVariableNode(variableName, ObjectType::Bool);
-    else if (typeName == "string")
-        return new AddVariableNode(variableName, ObjectType::String);
-    else if (typeName == "array")
-        return new AddVariableNode(variableName, ObjectType::Array);
+    ObjectType typeOfObject = objectTypeForName(typeName);
+
+    if (isReference)
+        return new AddReferenceVariableNode(variableName, typeOfObject);
     else
-        EucleiaError("expected variable type for variable %s.", typeName.c_str());
+        return new AddVariableNode(variableName, typeOfObject);
 }
 
 

@@ -30,3 +30,13 @@ public:
 
     const ObjectType type;
 };
+
+
+class AddReferenceVariableNode : public AddVariableNode
+{
+public:
+    AddReferenceVariableNode(std::string name_, ObjectType type_);
+
+    // Returns a null reference variable. To be bound later.
+    BaseObject *evaluate(Scope &scope) override;
+};
