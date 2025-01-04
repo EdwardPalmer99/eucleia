@@ -45,6 +45,9 @@ import <io>
 
     ref[0] = 10;
     TEST(items[0] == 10, "array ref modification");
+
+    // TODO: - cannot bind to item in array.
+    //int &binding = items[0];
 }
 
 {
