@@ -20,7 +20,8 @@ enum class ObjectType
     Float,
     String,
     Array,
-    UserDefined
+    Struct,
+    Class
 };
 
 /**

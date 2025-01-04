@@ -47,16 +47,37 @@ import <io>
     TEST(items[0] == 10, "array ref modification");
 }
 
-// NB: references to structs and classes have not been implemented yet!
 {
-   // struct SomeStruct 
-   // {
-   //     int a;
-   //     int b;
-   //     int c;
-   // };
-//
-   // struct SomeStruct instance;
-//
-   // struct SomeStruct &ref = instance;
+   struct SomeStruct 
+   {
+       int a;
+       int b;
+       int c;
+   };
+
+   struct SomeStruct instance;
+   instance.a = 2;
+
+   struct SomeStruct &ref = instance;
+   ref.a = 3;
+   TEST(instance.a == 3, "struct reference");
+}
+
+{
+   class SomeClass 
+   {
+       int a;
+       int b;
+       int c;
+   };
+
+   class SomeClass instance;
+   instance.a = 2;
+
+   class SomeClass &ref = instance;
+   ref.a = 3;
+   TEST(instance.a == 3, "class reference");
+
+   // TODO: - Special case. Cannot get it to bind to class variable!
+   int &anotherRef = instance.a;
 }

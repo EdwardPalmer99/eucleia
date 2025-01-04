@@ -456,6 +456,12 @@ BaseNode *Parser::parseStruct()
     }
     else
     {
+        // Case: "struct STRUCT_TYPE_NAME & STRUCT_REF_INSTANCE_NAME = STRUCT_VARIABLE_NAME_TO_BIND"
+        if (isOperator("&"))
+        {
+            return parseReference(ObjectType::Struct);
+        }
+
         auto structInstanceName = nextToken().value;
 
         return new StructObject(structTypeName, structInstanceName);
@@ -529,6 +535,12 @@ BaseNode *Parser::parseClass()
     }
     else
     {
+        // Case: "class CLASS_INSTANCE_NAME & CLASS_REF_NAME = CLASS_VARIABLE_NAME_TO_BIND"
+        if (isOperator("&"))
+        {
+            return parseReference(ObjectType::Class);
+        }
+
         auto classInstanceName = nextToken().value;
 
         return new ClassObject(classTypeName, classInstanceName);

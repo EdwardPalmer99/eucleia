@@ -103,7 +103,7 @@ BaseObject *AddReferenceVariableNode::evaluate(Scope &scope)
     // object.
     bool passesTypeChecking{false};
 
-    // TODO: - improve this.
+    // TODO: - add type checking for classes and struct references.
     switch (type)
     {
         case ObjectType::Int:
@@ -121,7 +121,8 @@ BaseObject *AddReferenceVariableNode::evaluate(Scope &scope)
         case ObjectType::Array:
             passesTypeChecking = boundObject->isObjectType<ArrayObject>();
             break;
-        case ObjectType::UserDefined:
+        case ObjectType::Struct:
+        case ObjectType::Class:
         default:
             passesTypeChecking = true;
             break; // No type checking currently!

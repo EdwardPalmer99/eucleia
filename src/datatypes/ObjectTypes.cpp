@@ -8,6 +8,7 @@
  */
 
 #include "ObjectTypes.hpp"
+#include "EucleiaUtility.hpp"
 #include <unordered_map>
 
 ObjectType objectTypeForName(const std::string &typeName)
@@ -18,7 +19,9 @@ ObjectType objectTypeForName(const std::string &typeName)
         {"bool", ObjectType::Bool},
         {"float", ObjectType::Float},
         {"string", ObjectType::String},
-        {"array", ObjectType::Array}};
+        {"array", ObjectType::Array},
+        {"struct", ObjectType::Struct},
+        {"class", ObjectType::Class}};
 
     auto iter = objectTypeMap.find(typeName);
     if (iter != objectTypeMap.end())
@@ -26,5 +29,6 @@ ObjectType objectTypeForName(const std::string &typeName)
         return iter->second;
     }
 
-    return ObjectType::UserDefined; // Some other type.
+    // Uh-oh. Unrecognized type-name.
+    EucleiaError("Unrecognized type-name '%s'", typeName.c_str());
 }
