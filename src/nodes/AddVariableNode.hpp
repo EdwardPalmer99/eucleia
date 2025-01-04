@@ -32,11 +32,27 @@ public:
 };
 
 
+/**
+ * Construct a reference to an existing variable declared in the scope or a parent
+ * scope. This is similar to C++ and avoids unnecessary copies.
+ */
 class AddReferenceVariableNode : public AddVariableNode
 {
 public:
-    AddReferenceVariableNode(std::string name_, ObjectType type_);
+    /**
+     * @param referenceName_ Name of the reference.
+     * @param boundName_ Name of the variable to be bound to the reference.
+     * @param boundType_ Type of the bound variable. To be checked when evaluate() called.
+     */
+    AddReferenceVariableNode(std::string referenceName_, std::string boundName_, ObjectType boundType_);
 
-    // Returns a null reference variable. To be bound later.
+    /**
+     * @param scope
+     * @return Pointer to the object in the scope now bound to the variable name and
+     * the reference name.
+     */
     BaseObject *evaluate(Scope &scope) override;
+
+protected:
+    const std::string referenceName;
 };

@@ -9,7 +9,6 @@
 
 #include "AssignNode.hpp"
 #include "ArrayAccessNode.hpp"
-#include "ReferenceObject.hpp"
 #include "StructAccessNode.hpp"
 #include <iostream>
 
@@ -28,25 +27,6 @@ BaseObject *AssignNode::evaluate(Scope &scope)
         StructAccessNode &accessor = left->castNode<StructAccessNode>();
 
         *(accessor.evaluateNoClone(scope)) = *(right->evaluate(scope));
-        return nullptr;
-    }
-    // Special case of a reference.
-    else if (left->isNodeType<AddReferenceVariableNode>())
-    {
-        // A reference must be bound to another variable so the RHS must be a
-        // lookupVariableNode type (an already defined variable).
-        assert(right->isNodeType<LookupVariableNode>());
-
-        // We have a reference to the object in the scope! Not a copy!!
-        BaseObject *objectRHS = right->evaluate(scope);
-
-        // TODO: - there will be issues if linked object is destroyed first due
-        // to scopes.
-
-        // Now we create a reference object and link to the object on the RHS.
-        ReferenceObject *objectLHS = left->evaluate<ReferenceObject>(scope);
-        objectLHS->linkedObject = objectRHS;
-
         return nullptr;
     }
 

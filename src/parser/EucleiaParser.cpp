@@ -214,26 +214,41 @@ BaseNode *Parser::parseVariableDefinition()
     Token typeToken = nextToken();
     assert(typeToken.type == Token::Keyword);
 
-    bool isReference = false;
+    ObjectType typeOfObject = objectTypeForName(typeToken.value);
 
-    if (peekToken().value == "&") // Reference.
+    if (peekToken().value == "&") // Is reference.
     {
-        skipToken();
-        isReference = true;
+        return parseReference(typeOfObject);
     }
 
     Token nameToken = nextToken();
     assert(nameToken.type == Token::Variable);
 
-    std::string &typeName = typeToken.value;
-    std::string &variableName = nameToken.value;
+    return new AddVariableNode(nameToken.value, typeOfObject);
+}
 
-    ObjectType typeOfObject = objectTypeForName(typeName);
+/**
+ * Bind a reference to an already declared variable in this scope or a parent
+ * scope. We do not allow any unbound references and once bound, references
+ * cannot be unbound. By default, we pass by value to functions, but the use
+ * of a reference as in other languages such as C++ avoids copying.
+ *
+ * Reference definition:
+ * VARIABLE_TO_BIND_TO_TYPE & REFERENCE_NAME = VARIABLE_TO_BIND_TO;
+ */
+BaseNode *Parser::parseReference(ObjectType boundVariableType)
+{
+    skipOperator("&");
 
-    if (isReference)
-        return new AddReferenceVariableNode(variableName, typeOfObject);
-    else
-        return new AddVariableNode(variableName, typeOfObject);
+    Token referenceNameToken = nextToken();
+    assert(referenceNameToken.type == Token::Variable);
+
+    skipOperator("=");
+
+    Token boundVariableNameToken = nextToken();
+    assert(boundVariableNameToken.type == Token::Variable);
+
+    return new AddReferenceVariableNode(referenceNameToken.value, boundVariableNameToken.value, boundVariableType);
 }
 
 

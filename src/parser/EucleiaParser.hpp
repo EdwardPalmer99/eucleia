@@ -36,6 +36,8 @@ protected:
     BaseNode *parseVariableDefinition();
     BaseNode *parseVariableName();
 
+    BaseNode *parseReference(ObjectType boundObjectType);
+
     DoWhileNode *parseDoWhile();
     WhileNode *parseWhile();
     ForLoopNode *parseFor();

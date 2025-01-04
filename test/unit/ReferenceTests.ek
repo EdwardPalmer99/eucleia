@@ -1,31 +1,62 @@
 import <test>
 import <io>
 
-int a = 1;
-int &b = a; // Reference to a.
-
-b = 2;
-TEST(a == 2, "a == 2");
-
-//----------------------------
-func inOutFunction(int &refParam)
 {
-    refParam = 4;
+    int a = 1;
+    int &b = a; // Reference to a.
+    TEST(b == 1, "int ref assignment");
+
+    a = 2;
+    TEST(b == 2, "int ref, a = 2");
+
+    b = 4;
+    TEST(b == 4 && a == 4, "int ref, a = 4");
+
+    ++b;
+    TEST(b == 5 && a == 5, "int ref, ++ operator");
+
+    int c = b;
+    TEST(c == a, "assign from ref");
+
+    int &d = b;
+    TEST(d == b, "ref from ref");
+
+    d = 10;
+    TEST(a == 10 && b == 10  && d == 10, "modify ref to ref");
 }
 
-int c = 2;
-inOutFunction(c);
-TEST(c == 4, "function reference");
-
-
-//----------------------------
-// Scope tests and lifetime.
-// Because we require an immediate assignment, the reference 
-// cannot live in an outerscope and refer to an innerscope variable.
 {
-    {
-        int a = 3;
+    int a = 4;
 
-        int &ref = a;    // Bind the reference.
+    {
+        int &b = a;
+
+        b = 2;
     }
+
+    TEST(a == 2, "scope of references");
+}
+
+{
+    array items = [1, 2, 3, 4];
+
+    array &ref = items;
+    TEST(ref[0] == 1, "array ref access");
+
+    ref[0] = 10;
+    TEST(items[0] == 10, "array ref modification");
+}
+
+// NB: references to structs and classes have not been implemented yet!
+{
+   // struct SomeStruct 
+   // {
+   //     int a;
+   //     int b;
+   //     int c;
+   // };
+//
+   // struct SomeStruct instance;
+//
+   // struct SomeStruct &ref = instance;
 }
