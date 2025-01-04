@@ -2,7 +2,6 @@ import <io>
 import <test>
 
 {
-    //int result = (((3 * 2) / 3 + 4) - 1) / (4 + 1);
-    //print(result);
-    //TEST(result == 5, "operation order");
+    int result = (((3 * 2) / 3 + 4) - 1) / (4 + 1);
+    TEST(result == 1, "operation order");
 }

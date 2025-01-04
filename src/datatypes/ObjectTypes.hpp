@@ -8,6 +8,7 @@
  */
 
 #pragma once
+#include <string>
 
 /**
  * enum for supported object types.
@@ -18,7 +19,12 @@ enum class ObjectType
     Bool,
     Float,
     String,
-    Array
+    Array,
+    Struct,
+    Class
 };
 
-
+/**
+ * Returns an object type for the type name.
+ */
+ObjectType objectTypeForName(const std::string &typeName);

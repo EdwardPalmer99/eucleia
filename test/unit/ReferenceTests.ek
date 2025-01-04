@@ -1,0 +1,86 @@
+import <test>
+import <io>
+
+{
+    int a = 1;
+    int &b = a; // Reference to a.
+    TEST(b == 1, "int ref assignment");
+
+    a = 2;
+    TEST(b == 2, "int ref, a = 2");
+
+    b = 4;
+    TEST(b == 4 && a == 4, "int ref, a = 4");
+
+    ++b;
+    TEST(b == 5 && a == 5, "int ref, ++ operator");
+
+    int c = b;
+    TEST(c == a, "assign from ref");
+
+    int &d = b;
+    TEST(d == b, "ref from ref");
+
+    d = 10;
+    TEST(a == 10 && b == 10  && d == 10, "modify ref to ref");
+}
+
+{
+    int a = 4;
+
+    {
+        int &b = a;
+
+        b = 2;
+    }
+
+    TEST(a == 2, "scope of references");
+}
+
+{
+    array items = [1, 2, 3, 4];
+
+    array &ref = items;
+    TEST(ref[0] == 1, "array ref access");
+
+    ref[0] = 10;
+    TEST(items[0] == 10, "array ref modification");
+
+    // TODO: - cannot bind to item in array.
+    //int &binding = items[0];
+}
+
+{
+   struct SomeStruct 
+   {
+       int a;
+       int b;
+       int c;
+   };
+
+   struct SomeStruct instance;
+   instance.a = 2;
+
+   struct SomeStruct &ref = instance;
+   ref.a = 3;
+   TEST(instance.a == 3, "struct reference");
+}
+
+{
+   class SomeClass 
+   {
+       int a;
+       int b;
+       int c;
+   };
+
+   class SomeClass instance;
+   instance.a = 2;
+
+   class SomeClass &ref = instance;
+   ref.a = 3;
+   TEST(instance.a == 3, "class reference");
+
+   // TODO: - Special case. Cannot get it to bind to class variable!
+   int &anotherRef = instance.a;
+}

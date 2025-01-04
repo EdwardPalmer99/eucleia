@@ -214,24 +214,41 @@ BaseNode *Parser::parseVariableDefinition()
     Token typeToken = nextToken();
     assert(typeToken.type == Token::Keyword);
 
+    ObjectType typeOfObject = objectTypeForName(typeToken.value);
+
+    if (peekToken().value == "&") // Is reference.
+    {
+        return parseReference(typeOfObject);
+    }
+
     Token nameToken = nextToken();
     assert(nameToken.type == Token::Variable);
 
-    std::string &typeName = typeToken.value;
-    std::string &variableName = nameToken.value;
+    return new AddVariableNode(nameToken.value, typeOfObject);
+}
 
-    if (typeName == "int")
-        return new AddVariableNode(variableName, ObjectType::Int);
-    else if (typeName == "float")
-        return new AddVariableNode(variableName, ObjectType::Float);
-    else if (typeName == "bool")
-        return new AddVariableNode(variableName, ObjectType::Bool);
-    else if (typeName == "string")
-        return new AddVariableNode(variableName, ObjectType::String);
-    else if (typeName == "array")
-        return new AddVariableNode(variableName, ObjectType::Array);
-    else
-        EucleiaError("expected variable type for variable %s.", typeName.c_str());
+/**
+ * Bind a reference to an already declared variable in this scope or a parent
+ * scope. We do not allow any unbound references and once bound, references
+ * cannot be unbound. By default, we pass by value to functions, but the use
+ * of a reference as in other languages such as C++ avoids copying.
+ *
+ * Reference definition:
+ * VARIABLE_TO_BIND_TO_TYPE & REFERENCE_NAME = VARIABLE_TO_BIND_TO;
+ */
+BaseNode *Parser::parseReference(ObjectType boundVariableType)
+{
+    skipOperator("&");
+
+    Token referenceNameToken = nextToken();
+    assert(referenceNameToken.type == Token::Variable);
+
+    skipOperator("=");
+
+    Token boundVariableNameToken = nextToken();
+    assert(boundVariableNameToken.type == Token::Variable);
+
+    return new AddReferenceVariableNode(referenceNameToken.value, boundVariableNameToken.value, boundVariableType);
 }
 
 
@@ -439,6 +456,12 @@ BaseNode *Parser::parseStruct()
     }
     else
     {
+        // Case: "struct STRUCT_TYPE_NAME & STRUCT_REF_INSTANCE_NAME = STRUCT_VARIABLE_NAME_TO_BIND"
+        if (isOperator("&"))
+        {
+            return parseReference(ObjectType::Struct);
+        }
+
         auto structInstanceName = nextToken().value;
 
         return new StructObject(structTypeName, structInstanceName);
@@ -512,6 +535,12 @@ BaseNode *Parser::parseClass()
     }
     else
     {
+        // Case: "class CLASS_INSTANCE_NAME & CLASS_REF_NAME = CLASS_VARIABLE_NAME_TO_BIND"
+        if (isOperator("&"))
+        {
+            return parseReference(ObjectType::Class);
+        }
+
         auto classInstanceName = nextToken().value;
 
         return new ClassObject(classTypeName, classInstanceName);

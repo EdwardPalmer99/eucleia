@@ -81,3 +81,62 @@ std::string AddVariableNode::description() const
             return "Unknown";
     }
 }
+
+
+AddReferenceVariableNode::AddReferenceVariableNode(std::string referenceName_,
+                                                   std::string boundName_,
+                                                   ObjectType boundType_)
+    : AddVariableNode(boundName_, boundType_),
+      referenceName(referenceName_)
+{
+}
+
+
+BaseObject *AddReferenceVariableNode::evaluate(Scope &scope)
+{
+    // 1. Lookup the object associated with the variable name defined in this
+    // scope or a parent scope (no issue with lifetimes such as to be bound
+    // object going out of scope before our reference.
+    BaseObject *boundObject = scope.getNamedObject(name);
+
+    // 2. Type checking. The type of the reference must match that of the bound
+    // object.
+    bool passesTypeChecking{false};
+
+    // TODO: - add type checking for classes and struct references.
+    switch (type)
+    {
+        case ObjectType::Int:
+            passesTypeChecking = boundObject->isObjectType<IntObject>();
+            break;
+        case ObjectType::Float:
+            passesTypeChecking = boundObject->isObjectType<FloatObject>();
+            break;
+        case ObjectType::String:
+            passesTypeChecking = boundObject->isObjectType<StringObject>();
+            break;
+        case ObjectType::Bool:
+            passesTypeChecking = boundObject->isObjectType<StringObject>();
+            break;
+        case ObjectType::Array:
+            passesTypeChecking = boundObject->isObjectType<ArrayObject>();
+            break;
+        case ObjectType::Struct:
+        case ObjectType::Class:
+        default:
+            passesTypeChecking = true;
+            break; // No type checking currently!
+    }
+
+    if (!passesTypeChecking)
+    {
+        EucleiaError("Cannot bind reference '%s' to variable '%s'. Types do not match!",
+                     referenceName.c_str(), name.c_str());
+    }
+
+    // 3. Instead of creating a new object, we add the reference name and link
+    // to this existing object in the scope.
+    scope.linkObject(referenceName, boundObject);
+
+    return boundObject;
+}
