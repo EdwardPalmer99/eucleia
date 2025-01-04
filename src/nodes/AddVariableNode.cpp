@@ -103,6 +103,7 @@ BaseObject *AddReferenceVariableNode::evaluate(Scope &scope)
     // object.
     bool passesTypeChecking{false};
 
+    // TODO: - improve this.
     switch (type)
     {
         case ObjectType::Int:
