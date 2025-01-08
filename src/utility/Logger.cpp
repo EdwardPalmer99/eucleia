@@ -12,6 +12,7 @@
 #include <string>
 #include <string_view>
 #include <ctime>
+#include <stdexcept>
 #include "Logger.hpp"
 
 bool Logger::isLoggable(Level level)
@@ -33,16 +34,16 @@ bool Logger::isLoggable(Level level)
   return true; // unknown filter, everything logged
 }
 
-static constexpr std::string_view getLevelName(Level level)
+static constexpr std::string_view getLevelName(Logger::Level level)
 {
   switch (level)
   {
-    case Level::error: return "error";
-    case Level::warning: return "warning";
-    case Level::severe: return "severe";
-    case Level::info: return "info";
-    case Level::fine: return "fine";
-    default: return level;
+    case Logger::Level::error: return "error";
+    case Logger::Level::warning: return "warning";
+    case Logger::Level::severe: return "severe";
+    case Logger::Level::info: return "info";
+    case Logger::Level::fine: return "fine";
+    default: throw std::invalid_argument("Invalid Level enum.");
   }
 }
 

@@ -8,7 +8,7 @@
  */
 
 
-#include <cstdio>
+#include <iostream>
 #include <string_view>
 
 class Logger
@@ -41,7 +41,7 @@ class Logger
     {
     }
 
-    Logger(std::string_view name, Filter filter, ostream logStream)
+    Logger(std::string_view name, Filter filter, std::ostream& logStream)
       : name {name}
       , filter {filter}
       , logStream {logStream}
@@ -60,9 +60,11 @@ class Logger
   private:
     std::string name;
     Filter filter;
-    ostream logStream;
+    std::ostream& logStream;
 
     bool isLoggable(Level level);
 
+    std::string getLevelName(Level level);
 
-}
+
+};
