@@ -64,7 +64,7 @@ class Logger
 
     bool isLoggable(Level level);
 
-    std::string getLevelName(Level level);
+    static constexpr std::string_view getLevelName(Level level);
 
 
 };

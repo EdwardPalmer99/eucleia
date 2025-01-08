@@ -34,7 +34,7 @@ bool Logger::isLoggable(Level level)
   return true; // unknown filter, everything logged
 }
 
-static constexpr std::string_view getLevelName(Logger::Level level)
+constexpr std::string_view Logger::getLevelName(Logger::Level level)
 {
   switch (level)
   {
@@ -53,7 +53,7 @@ void Logger::log(Level level, std::string_view message)
 
     std::time_t result = std::time(nullptr);
     std::string timestamp = std::asctime(std::localtime(&result));
-    logStream  << '[' << timestamp << '] (' << getLevelName(level) << ') ' << message << '\n';
+    logStream  << '[' << timestamp << ']' << '(' << getLevelName(level) << ')' << message << '\n';
   }
 }
 
