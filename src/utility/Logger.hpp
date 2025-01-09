@@ -59,6 +59,9 @@ private:
     Filter filter;
     std::ostream &logStream;
 
+    // ISO 8601 date time format
+    inline static const std::string timestampFormat{"yyyy-mm-ddThh:mm:ssZ"};
+
     bool isLoggable(Level level);
 
     static constexpr std::string_view getLevelName(Level level);

@@ -11,6 +11,7 @@
 #include "Logger.hpp"
 #include <cstdio>
 #include <ctime>
+#include <iterator>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -59,9 +60,12 @@ void Logger::log(Level level, std::string_view message)
     if (isLoggable(level))
     {
 
-        std::time_t result = std::time(nullptr);
-        std::string timestamp = std::asctime(std::localtime(&result));
-        logStream << '[' << timestamp << ']' << '(' << getLevelName(level) << ')' << message << '\n';
+        std::time_t now = std::time(nullptr);
+
+        char timestamp[std::size(Logger::timestampFormat)];
+        std::strftime(timestamp, std::size(Logger::timestampFormat),
+                      "%FT%TZ", std::localtime(&now));
+        logStream << '[' << timestamp << "] " << '(' << name << ") " << '[' << getLevelName(level) << "] " << message << '\n';
     }
 }
 
