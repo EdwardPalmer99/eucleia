@@ -9,11 +9,11 @@
 
 EucleiaGrammar::EucleiaGrammar()
 {
-    _punctuation = {',', ';', '(', ')', '{', '}', '[', ']', '.'};
+    punctuation = {',', ';', '(', ')', '{', '}', '[', ']', '.'};
 
-    _operators = {'+', '-', '*', '/', '%', '&', '|', '<', '>', '=', '!'};
+    operators = {'+', '-', '*', '/', '%', '&', '|', '<', '>', '=', '!'};
 
-    _keywords = {
+    keywords = {
         "if",
         "else",
         "true",
@@ -34,7 +34,7 @@ EucleiaGrammar::EucleiaGrammar()
         "class",
         "extends"};
 
-    _dataTypes = {
+    dataTypes = {
         "int",
         "float",
         "bool",
