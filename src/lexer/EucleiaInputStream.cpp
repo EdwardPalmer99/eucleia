@@ -6,8 +6,8 @@
 //
 
 #include "EucleiaInputStream.hpp"
-#include "EucleiaGrammar.hpp"
 #include "EucleiaUtility.hpp"
+#include "Grammar.hpp"
 #include <algorithm>
 #include <cstring>
 #include <stdarg.h>
@@ -67,13 +67,13 @@ bool InputStream::isComment()
 
 bool InputStream::isOperator() const
 {
-    return EucleiaGrammar::instance().isOperator(peek());
+    return Grammar::instance().isOperator(peek());
 }
 
 
 bool InputStream::isPunctuation() const
 {
-    return EucleiaGrammar::instance().isPunctuation(peek());
+    return Grammar::instance().isPunctuation(peek());
 }
 
 

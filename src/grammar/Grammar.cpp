@@ -1,13 +1,15 @@
-//
-//  EucleiaGrammar.cpp
-//  Eucleia
-//
-//  Created by Edward on 03/02/2024.
-//
+/**
+ * @file Grammar.cpp
+ * @author Edward Palmer
+ * @date 2025-01-10
+ *
+ * @copyright Copyright (c) 2025
+ *
+ */
 
-#include "EucleiaGrammar.hpp"
+#include "Grammar.hpp"
 
-EucleiaGrammar::EucleiaGrammar()
+Grammar::Grammar()
     : punctuation{',', ';', '(', ')', '{', '}', '[', ']', '.'},
       operators{'+', '-', '*', '/', '%', '&', '|', '<', '>', '=', '!'},
       keywords{"if", "else", "true", "false", "func", "while", "do", "for", "int",
@@ -17,9 +19,9 @@ EucleiaGrammar::EucleiaGrammar()
 {
 }
 
-EucleiaGrammar &EucleiaGrammar::instance()
+Grammar &Grammar::instance()
 {
-    static EucleiaGrammar instance;
+    static Grammar instance;
 
     return instance;
 }

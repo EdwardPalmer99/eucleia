@@ -1,18 +1,20 @@
-//
-//  EucleiaGrammar.hpp
-//  Eucleia
-//
-//  Created by Edward on 03/02/2024.
-//
+/**
+ * @file Grammar.hpp
+ * @author Edward Palmer
+ * @date 2025-01-10
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
 
 #pragma once
 #include <string>
 #include <unordered_set>
 
-class EucleiaGrammar
+class Grammar
 {
 public:
-    static EucleiaGrammar &instance();
+    static Grammar &instance();
 
     inline bool isDataType(const std::string &value) const
     {
@@ -32,7 +34,7 @@ public:
     }
 
 protected:
-    EucleiaGrammar();
+    Grammar();
 
 private:
     const std::unordered_set<char> punctuation;
