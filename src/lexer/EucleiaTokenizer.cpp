@@ -7,6 +7,7 @@
 
 #include "EucleiaTokenizer.hpp"
 #include "EucleiaFileReader.hpp"
+#include "EucleiaGrammar.hpp"
 #include "EucleiaUtility.hpp"
 #include <iostream>
 
@@ -93,7 +94,7 @@ Token Tokenizer::next()
 
 bool Tokenizer::isDataTypeToken()
 {
-    return grammar().isDataType(peek().value);
+    return EucleiaGrammar::instance().isDataType(peek().value);
 }
 
 
@@ -290,5 +291,5 @@ Token Tokenizer::readOperator()
 
 bool Tokenizer::isKeyword(const std::string &possibleKeyword) const
 {
-    return grammar().isKeyword(possibleKeyword);
+    return EucleiaGrammar::instance().isKeyword(possibleKeyword);
 }

@@ -5,18 +5,14 @@
 //  Created by Edward on 03/02/2024.
 //
 
-#ifndef EucleiaGrammar_hpp
-#define EucleiaGrammar_hpp
-
-#include <memory>
+#pragma once
 #include <string>
 #include <unordered_set>
 
 class EucleiaGrammar
 {
 public:
-    EucleiaGrammar();
-    ~EucleiaGrammar() = default;
+    static EucleiaGrammar &instance();
 
     inline bool isDataType(const std::string &value) const
     {
@@ -35,12 +31,13 @@ public:
         return punctuation.count(c);
     }
 
+protected:
+    EucleiaGrammar();
+
 private:
-    std::unordered_set<char> punctuation;
-    std::unordered_set<char> operators;
+    const std::unordered_set<char> punctuation;
+    const std::unordered_set<char> operators;
 
-    std::unordered_set<std::string> keywords;
-    std::unordered_set<std::string> dataTypes;
+    const std::unordered_set<std::string> keywords;
+    const std::unordered_set<std::string> dataTypes;
 };
-
-#endif /* EucleiaGrammar_hpp */

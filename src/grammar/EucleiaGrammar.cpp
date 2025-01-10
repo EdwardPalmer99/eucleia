@@ -8,36 +8,18 @@
 #include "EucleiaGrammar.hpp"
 
 EucleiaGrammar::EucleiaGrammar()
+    : punctuation{',', ';', '(', ')', '{', '}', '[', ']', '.'},
+      operators{'+', '-', '*', '/', '%', '&', '|', '<', '>', '=', '!'},
+      keywords{"if", "else", "true", "false", "func", "while", "do", "for", "int",
+               "float", "bool", "array", "string", "break", "return", "import",
+               "struct", "class", "extends"},
+      dataTypes{"int", "float", "bool", "array", "string"}
 {
-    punctuation = {',', ';', '(', ')', '{', '}', '[', ']', '.'};
+}
 
-    operators = {'+', '-', '*', '/', '%', '&', '|', '<', '>', '=', '!'};
+EucleiaGrammar &EucleiaGrammar::instance()
+{
+    static EucleiaGrammar instance;
 
-    keywords = {
-        "if",
-        "else",
-        "true",
-        "false",
-        "func",
-        "while",
-        "do",
-        "for",
-        "int",
-        "float",
-        "bool",
-        "array",
-        "string",
-        "break",
-        "return",
-        "import",
-        "struct",
-        "class",
-        "extends"};
-
-    dataTypes = {
-        "int",
-        "float",
-        "bool",
-        "array",
-        "string"};
+    return instance;
 }
