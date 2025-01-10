@@ -94,7 +94,7 @@ Token Tokenizer::next()
 
 bool Tokenizer::isDataTypeToken()
 {
-    return Grammar::instance().isDataType(peek().value);
+    return Grammar::isDataType(peek().value);
 }
 
 
@@ -291,5 +291,5 @@ Token Tokenizer::readOperator()
 
 bool Tokenizer::isKeyword(const std::string &possibleKeyword) const
 {
-    return Grammar::instance().isKeyword(possibleKeyword);
+    return Grammar::isKeyword(possibleKeyword);
 }

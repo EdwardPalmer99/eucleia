@@ -25,3 +25,23 @@ Grammar &Grammar::instance()
 
     return instance;
 }
+
+bool Grammar::isDataType(const std::string &value)
+{
+    return instance().dataTypes.count(value);
+}
+
+bool Grammar::isKeyword(const std::string &value)
+{
+    return instance().keywords.count(value);
+}
+
+bool Grammar::isOperator(char c)
+{
+    return instance().operators.count(c);
+}
+
+bool Grammar::isPunctuation(char c)
+{
+    return instance().punctuation.count(c);
+}

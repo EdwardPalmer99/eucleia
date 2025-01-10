@@ -2,9 +2,9 @@
  * @file Grammar.hpp
  * @author Edward Palmer
  * @date 2025-01-10
- * 
+ *
  * @copyright Copyright (c) 2025
- * 
+ *
  */
 
 #pragma once
@@ -16,22 +16,13 @@ class Grammar
 public:
     static Grammar &instance();
 
-    inline bool isDataType(const std::string &value) const
-    {
-        return dataTypes.count(value);
-    }
-    inline bool isKeyword(const std::string &value) const
-    {
-        return keywords.count(value);
-    }
-    inline bool isOperator(char c) const
-    {
-        return operators.count(c);
-    }
-    inline bool isPunctuation(char c) const
-    {
-        return punctuation.count(c);
-    }
+    static bool isDataType(const std::string &value);
+
+    static bool isKeyword(const std::string &value);
+
+    static bool isOperator(char c);
+
+    static bool isPunctuation(char c);
 
 protected:
     Grammar();

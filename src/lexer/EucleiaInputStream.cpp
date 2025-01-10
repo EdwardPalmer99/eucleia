@@ -67,13 +67,13 @@ bool InputStream::isComment()
 
 bool InputStream::isOperator() const
 {
-    return Grammar::instance().isOperator(peek());
+    return Grammar::isOperator(peek());
 }
 
 
 bool InputStream::isPunctuation() const
 {
-    return Grammar::instance().isPunctuation(peek());
+    return Grammar::isPunctuation(peek());
 }
 
 
