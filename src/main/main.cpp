@@ -10,46 +10,37 @@
 #include <string>
 #include <time.h>
 
+#include "CLIParser.hpp"
 #include "EucleiaInputStream.hpp"
 #include "EucleiaInterpreter.hpp"
 #include "EucleiaParser.hpp"
 #include "EucleiaTokenizer.hpp"
 #include "EucleiaUtility.hpp"
 
-void printUsage(const char *argv[])
-{
-    printf("usage: %s [--help] [FILE]\n\n"
-           "options:\n"
-           "--help show this message and exit\n"
-           "FILE   path to Eucleia file to run\n",
-           argv[0]);
-}
-
 
 int main(int argc, const char *argv[])
 {
-    if (argc == 2)
+    try
     {
-        if (strcmp(argv[1], "--help") == 0)
+        CLIParser parser("eucleia");
+
+        parser.addFlagArg("--help", "display available options");
+        parser.addPositionalArg("fileName");
+        parser.parseArgs(argc, argv);
+
+        if (parser.isSet("--help") || !parser.isSet("fileName"))
         {
-            printUsage(argv);
+            parser.printOptions();
             return EXIT_SUCCESS;
         }
-        else
-        {
-            const char *fpath = argv[1];
 
-            clock_t tick = clock();
-            Interpreter::evaluateFile(std::string(fpath));
-            clock_t tock = clock();
-
-            fprintf(stdout, "run time: %d ms\n", (int)((1000.0 * (double)(tock - tick)) / (double)CLOCKS_PER_SEC));
-            return EXIT_SUCCESS;
-        }
+        Interpreter::evaluateFile(parser["fileName"]);
     }
-    else
+    catch (std::exception &exception)
     {
-        printUsage(argv);
+        std::cout << exception.what() << std::endl;
         return EXIT_FAILURE;
     }
+
+    return EXIT_SUCCESS;
 }
