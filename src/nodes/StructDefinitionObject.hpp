@@ -50,7 +50,7 @@ public:
      */
     StructDefinitionObject *clone() const final
     {
-        EucleiaError("not implemented.");
+        ThrowException("not implemented");
     }
 
     /**

@@ -8,7 +8,7 @@
  */
 
 #include "ObjectTypes.hpp"
-#include "EucleiaUtility.hpp"
+#include "Exceptions.hpp"
 #include <unordered_map>
 
 ObjectType objectTypeForName(const std::string &typeName)
@@ -30,5 +30,5 @@ ObjectType objectTypeForName(const std::string &typeName)
     }
 
     // Uh-oh. Unrecognized type-name.
-    EucleiaError("Unrecognized type-name '%s'", typeName.c_str());
+    ThrowException("unrecognized type-name: " + typeName);
 }

@@ -8,7 +8,7 @@
  */
 
 #include "DoWhileNode.hpp"
-#include "EucleiaUtility.hpp"
+#include "Exceptions.hpp"
 #include "ExpressionScope.hpp"
 #include "IntObject.hpp"
 #include "JumpPoints.hpp"

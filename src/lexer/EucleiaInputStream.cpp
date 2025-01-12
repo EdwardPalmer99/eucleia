@@ -6,7 +6,7 @@
 //
 
 #include "EucleiaInputStream.hpp"
-#include "EucleiaUtility.hpp"
+#include "Exceptions.hpp"
 #include "Grammar.hpp"
 #include <algorithm>
 #include <cstring>

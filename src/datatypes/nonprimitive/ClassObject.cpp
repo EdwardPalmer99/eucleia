@@ -21,8 +21,7 @@ BaseObject *ClassObject::evaluate(Scope &scope)
     // TODO: - inefficient, should have another method we can call to do most of StructObject::evaluate.
     if (active)
     {
-        EucleiaError("ClassObject named '%s' of type '%s' is already active",
-                     name.c_str(), typeName.c_str());
+        ThrowException("ClassObject named " + name + " of type " + typeName + " is already active");
     }
 
     active = true;

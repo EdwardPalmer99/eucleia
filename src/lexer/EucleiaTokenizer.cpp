@@ -7,7 +7,7 @@
 
 #include "EucleiaTokenizer.hpp"
 #include "EucleiaFileReader.hpp"
-#include "EucleiaUtility.hpp"
+#include "Exceptions.hpp"
 #include "Grammar.hpp"
 #include <iostream>
 
@@ -75,7 +75,7 @@ Token &Tokenizer::peek()
 {
     if (_tokens.empty())
     {
-        EucleiaError("Cannot peek(). No tokens remaining");
+        ThrowException("cannot peek(). No tokens remaining");
     }
 
     return _tokens.front();
@@ -188,7 +188,7 @@ Token Tokenizer::readString()
             void *tempPtr = realloc(value, sizeof(char) * capacity);
             if (!tempPtr) // Failed to resize array.
             {
-                EucleiaError("failed to resize array.");
+                ThrowException("failed to resize array");
             }
 
             value = (char *)tempPtr; // Resized array.
