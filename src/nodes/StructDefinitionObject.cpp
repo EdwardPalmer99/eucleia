@@ -46,7 +46,7 @@ BaseObject *StructDefinitionObject::evaluate(Scope &scope)
 {
     if (active) // Expect one definition only!
     {
-        EucleiaError("%s is already defined", typeName.c_str());
+        ThrowException(typeName + " is already defined");
     }
 
     // Definition is now active.
@@ -69,7 +69,7 @@ void StructDefinitionObject::installVariablesInScope(Scope &scope, std::unordere
 {
     if (!active)
     {
-        EucleiaError("The struct definition is inactive!");
+        ThrowException("the struct definition is inactive!");
     }
 
     variableNames.clear();
@@ -104,7 +104,7 @@ void StructDefinitionObject::buildVariableDefHashMap(const Scope &scope)
         auto iter = allVariableDefsMap.find(variableDef->name);
         if (iter != allVariableDefsMap.end())
         {
-            EucleiaError("duplicate class variable '%s'.", iter->first.c_str());
+            ThrowException("duplicate class variable " + iter->first);
         }
 
         allVariableDefsMap[variableDef->name] = variableDef;

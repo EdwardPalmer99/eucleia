@@ -10,7 +10,7 @@
 #pragma once
 #include "BaseNode.hpp"
 #include "BaseObject.hpp"
-#include "EucleiaUtility.hpp"
+#include "Exceptions.hpp"
 #include "Scope.hpp"
 #include "StructDefinitionObject.hpp"
 #include <ostream>
@@ -44,7 +44,7 @@ public:
     // TODO: - implement in future.
     StructObject *clone() const override
     {
-        EucleiaError("not implemented!");
+        ThrowException("not implemented!");
     }
 
     /**
