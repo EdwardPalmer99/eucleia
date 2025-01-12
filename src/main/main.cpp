@@ -5,18 +5,12 @@
 //  Created by Edward on 12/11/2023.
 //
 
-#include <cstring>
-#include <iostream>
-#include <string>
-#include <time.h>
-
 #include "CLIParser.hpp"
 #include "EucleiaInputStream.hpp"
 #include "EucleiaInterpreter.hpp"
-#include "EucleiaParser.hpp"
-#include "EucleiaTokenizer.hpp"
-#include "EucleiaUtility.hpp"
-
+#include <exception>
+#include <iostream>
+#include <string>
 
 int main(int argc, const char *argv[])
 {
