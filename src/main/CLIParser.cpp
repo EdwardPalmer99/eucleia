@@ -68,9 +68,9 @@ void CLIParser::setNextPositionalArg(const std::string &value)
 {
     for (auto &iter : cliPositionalArgs) // Set in order provided.
     {
-        if (!iter.second)
+        if (iter.second == std::nullopt)
         {
-            (*iter.second) = value;
+            iter.second = std::make_optional<std::string>(value);
             return;
         }
     }
