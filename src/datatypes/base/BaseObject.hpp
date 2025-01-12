@@ -8,7 +8,7 @@
  */
 
 #pragma once
-#include "EucleiaUtility.hpp"
+#include "Exceptions.hpp"
 #include <string>
 #include <typeinfo>
 
@@ -23,13 +23,13 @@ public:
     // Implement copy assignment in derived classes.
     virtual BaseObject &operator=(const BaseObject &other)
     {
-        EucleiaError("copy assignment not implemented.");
+        ThrowException("copy assignment not implemented");
     }
 
     // Implement addition. Returns unmanaged pointer to result.
     virtual BaseObject *operator+(const BaseObject &other) const
     {
-        EucleiaError("addition not implemented.");
+        ThrowException("addition not implemented");
     }
 
     /// Cast to object type.

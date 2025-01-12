@@ -150,5 +150,5 @@ ModuleNode *EucleiaModuleLoader::getModule(const std::string &name) const
     else if (name == "stdarray")
         return new ArrayModuleNode();
     else
-        EucleiaError("no library with name '%s'.", name.c_str());
+        ThrowException("no library with name " + name);
 }

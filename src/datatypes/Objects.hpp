@@ -10,7 +10,7 @@
 #include "BaseObject.hpp"
 #include "ClassDefinitionObject.hpp"
 #include "ClassObject.hpp"
-#include "EucleiaUtility.hpp"
+#include "Exceptions.hpp"
 #include "FloatObject.hpp"
 #include "FunctionObject.hpp"
 #include "IntObject.hpp"

@@ -24,8 +24,7 @@ BaseObject *StructObject::evaluate(Scope &scope)
 {
     if (active)
     {
-        EucleiaError("StructObject named '%s' of type '%s' is already active",
-                     name.c_str(), typeName.c_str());
+        ThrowException("StructObject named " + name + " of type " + typeName + " is already active");
     }
 
     active = true;
@@ -54,7 +53,7 @@ StructObject &StructObject::operator=(const BaseObject &other)
     // 2. check that both are instances of the same struct type.
     if (otherStruct.structDefinition != structDefinition)
     {
-        EucleiaError("attempting to assign different struct types.");
+        ThrowException("attempting to assign different struct types");
     }
 
     // 3. iterate over the objects stored in the scopes and assign.
