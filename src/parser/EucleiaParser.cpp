@@ -47,7 +47,7 @@ FileNode *Parser::buildAST()
 {
     std::vector<BaseNode *> nodes;
 
-    while (!tokenizer.empty() && peekToken().type != Token::None)
+    while (!tokenizer.empty() && peekToken().type != Token::EndOfFile)
     {
         auto node = parseExpression();
 
@@ -1016,5 +1016,5 @@ void Parser::unexpectedToken()
 {
     Token &token = peekToken();
 
-    ThrowException("unexpected token of type " + token.description() + " and value " + token.value);
+    ThrowException("unexpected token: " + token.print());
 }

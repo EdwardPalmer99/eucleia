@@ -8,48 +8,31 @@
  */
 
 #pragma once
-#include <ostream>
 #include <string>
 
-// TODO: - bang in a namespace.
-
-struct Token
+class Token
 {
+public:
     enum TokenType
     {
-        None,
+        EndOfFile,
         Punctuation,
         Keyword,
         Variable,
         String,
         Operator,
         Int,
-        Float,
-        Bool
+        Float
     };
 
-    Token(TokenType _type, std::string &&_value)
-        : type{_type}, value{_value}
-    {
-    }
-    Token(TokenType _type, std::string &_value)
-        : type{_type}, value{_value}
-    {
-    }
+    Token() = delete;
+    Token(TokenType type, std::string value);
 
-    static Token blank()
-    {
-        return Token(None, "");
-    }
+    std::string print() const;
 
-    std::string description() const;
+    const TokenType type;
+    const std::string value;
 
-    TokenType type;
-    std::string value;
+private:
+    std::string typeName() const;
 };
-
-
-inline std::ostream &operator<<(std::ostream &out, const Token &token)
-{
-    return (out << std::string("(" + token.description() + ", " + token.value + ")"));
-}

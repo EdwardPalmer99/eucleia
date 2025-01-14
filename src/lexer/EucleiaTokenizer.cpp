@@ -21,34 +21,6 @@ Tokenizer Tokenizer::loadFromFile(const std::string &fpath)
 }
 
 
-std::string Token::description() const
-{
-    switch (type)
-    {
-        case None:
-            return "None";
-        case Punctuation:
-            return "Punctuation";
-        case Keyword:
-            return "Keyword";
-        case Variable:
-            return "Variable";
-        case String:
-            return "String";
-        case Operator:
-            return "Operator";
-        case Int:
-            return "Int";
-        case Float:
-            return "Float";
-        case Bool:
-            return "Bool";
-        default:
-            return "Unknown";
-    }
-}
-
-
 Tokenizer::Tokenizer(const std::string fileString)
     : InputStream(std::move(fileString))
 {
@@ -62,7 +34,7 @@ void Tokenizer::generateTokens()
     {
         auto token = buildNextToken();
 
-        if (token.type != Token::None)
+        if (token.type != Token::EndOfFile)
         {
             // std::cout << token << std::endl;
             _tokens.push(std::move(token));
@@ -129,7 +101,7 @@ Token Tokenizer::buildNextToken()
     }
     else if (isEof())
     {
-        return Token::blank();
+        return Token(Token::EndOfFile, "");
     }
     else
     {
