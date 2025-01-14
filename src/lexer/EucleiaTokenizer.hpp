@@ -5,9 +5,7 @@
 //  Created by Edward on 18/01/2024.
 //
 
-#ifndef EucleiaTokenizer_hpp
-#define EucleiaTokenizer_hpp
-
+#pragma once
 #include "EucleiaInputStream.hpp"
 #include <queue>
 #include <set>
@@ -93,5 +91,3 @@ protected:
 private:
     std::queue<Token> _tokens;
 };
-
-#endif /* EucleiaTokenzier_hpp */
