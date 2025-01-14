@@ -8,6 +8,7 @@
 #include "EucleiaParser.hpp"
 #include "EucleiaModules.hpp"
 #include "Exceptions.hpp"
+#include "Grammar.hpp"
 #include "ObjectTypes.hpp"
 #include "TestModule.hpp"
 #include <assert.h>
@@ -954,7 +955,7 @@ bool Parser::isKeyword(const std::string &keyword)
 
 bool Parser::isDataTypeKeyword()
 {
-    return (tokenizer.isDataTypeToken());
+    return (Grammar::isDataType(peekToken().value));
 }
 
 

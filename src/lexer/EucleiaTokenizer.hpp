@@ -59,7 +59,7 @@ inline std::ostream &operator<<(std::ostream &out, const Token &token)
 
 class Tokenizer : public InputStream
 {
-  public:
+public:
     Tokenizer() = delete;
     Tokenizer(const std::string fileString);
     ~Tokenizer() = default;
@@ -75,9 +75,7 @@ class Tokenizer : public InputStream
         return _tokens.empty();
     }
 
-    bool isDataTypeToken();
-
-  protected:
+protected:
     void skipComment();
     void skipWhitespace();
 
@@ -88,13 +86,11 @@ class Tokenizer : public InputStream
     Token readOperator();
     Token readPunctuation();
 
-    bool isKeyword(const std::string &possibleKeyword) const;
-
     void generateTokens();
+
     Token buildNextToken();
 
-  private:
-    std::set<std::string> _allowedKeywords;
+private:
     std::queue<Token> _tokens;
 };
 

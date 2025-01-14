@@ -92,11 +92,6 @@ Token Tokenizer::next()
     return next;
 }
 
-bool Tokenizer::isDataTypeToken()
-{
-    return Grammar::isDataType(peek().value);
-}
-
 
 Token Tokenizer::buildNextToken()
 {
@@ -258,7 +253,7 @@ Token Tokenizer::readID()
 
     std::string stringID(buffer.data());
 
-    return Token(isKeyword(stringID) ? Token::Keyword : Token::Variable, stringID);
+    return Token(Grammar::isKeyword(stringID) ? Token::Keyword : Token::Variable, stringID);
 }
 
 
@@ -284,12 +279,4 @@ Token Tokenizer::readOperator()
     buffer.push_back('\0');
 
     return Token(Token::Operator, std::string(buffer.data()));
-}
-
-
-#pragma mark -
-
-bool Tokenizer::isKeyword(const std::string &possibleKeyword) const
-{
-    return Grammar::isKeyword(possibleKeyword);
 }
