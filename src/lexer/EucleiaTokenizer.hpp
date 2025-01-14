@@ -5,61 +5,16 @@
 //  Created by Edward on 18/01/2024.
 //
 
-#ifndef EucleiaTokenizer_hpp
-#define EucleiaTokenizer_hpp
-
+#pragma once
 #include "EucleiaInputStream.hpp"
+#include "Token.hpp"
 #include <queue>
 #include <set>
 #include <string>
 
-// TODO: - bang in a namespace.
-
-struct Token
-{
-    enum TokenType
-    {
-        None,
-        Punctuation,
-        Keyword,
-        Variable,
-        String,
-        Operator,
-        Int,
-        Float,
-        Bool
-    };
-
-    Token(TokenType _type, std::string &&_value)
-        : type{_type}, value{_value}
-    {
-    }
-    Token(TokenType _type, std::string &_value)
-        : type{_type}, value{_value}
-    {
-    }
-
-    static Token blank()
-    {
-        return Token(None, "");
-    }
-
-    std::string description() const;
-
-    TokenType type;
-    std::string value;
-};
-
-
-inline std::ostream &operator<<(std::ostream &out, const Token &token)
-{
-    return (out << std::string("(" + token.description() + ", " + token.value + ")"));
-}
-
-
 class Tokenizer : public InputStream
 {
-  public:
+public:
     Tokenizer() = delete;
     Tokenizer(const std::string fileString);
     ~Tokenizer() = default;
@@ -75,9 +30,7 @@ class Tokenizer : public InputStream
         return _tokens.empty();
     }
 
-    bool isDataTypeToken();
-
-  protected:
+protected:
     void skipComment();
     void skipWhitespace();
 
@@ -88,14 +41,10 @@ class Tokenizer : public InputStream
     Token readOperator();
     Token readPunctuation();
 
-    bool isKeyword(const std::string &possibleKeyword) const;
-
     void generateTokens();
+
     Token buildNextToken();
 
-  private:
-    std::set<std::string> _allowedKeywords;
+private:
     std::queue<Token> _tokens;
 };
-
-#endif /* EucleiaTokenzier_hpp */

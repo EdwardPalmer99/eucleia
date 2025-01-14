@@ -8,6 +8,7 @@
 #include "EucleiaParser.hpp"
 #include "EucleiaModules.hpp"
 #include "Exceptions.hpp"
+#include "Grammar.hpp"
 #include "ObjectTypes.hpp"
 #include "TestModule.hpp"
 #include <assert.h>
@@ -46,7 +47,7 @@ FileNode *Parser::buildAST()
 {
     std::vector<BaseNode *> nodes;
 
-    while (!tokenizer.empty() && peekToken().type != Token::None)
+    while (!tokenizer.empty() && peekToken().type != Token::EndOfFile)
     {
         auto node = parseExpression();
 
@@ -954,7 +955,7 @@ bool Parser::isKeyword(const std::string &keyword)
 
 bool Parser::isDataTypeKeyword()
 {
-    return (tokenizer.isDataTypeToken());
+    return (Grammar::isDataType(peekToken().value));
 }
 
 
@@ -1015,5 +1016,5 @@ void Parser::unexpectedToken()
 {
     Token &token = peekToken();
 
-    ThrowException("unexpected token of type " + token.description() + " and value " + token.value);
+    ThrowException("unexpected token: " + token.print());
 }

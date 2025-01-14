@@ -21,34 +21,6 @@ Tokenizer Tokenizer::loadFromFile(const std::string &fpath)
 }
 
 
-std::string Token::description() const
-{
-    switch (type)
-    {
-        case None:
-            return "None";
-        case Punctuation:
-            return "Punctuation";
-        case Keyword:
-            return "Keyword";
-        case Variable:
-            return "Variable";
-        case String:
-            return "String";
-        case Operator:
-            return "Operator";
-        case Int:
-            return "Int";
-        case Float:
-            return "Float";
-        case Bool:
-            return "Bool";
-        default:
-            return "Unknown";
-    }
-}
-
-
 Tokenizer::Tokenizer(const std::string fileString)
     : InputStream(std::move(fileString))
 {
@@ -62,7 +34,7 @@ void Tokenizer::generateTokens()
     {
         auto token = buildNextToken();
 
-        if (token.type != Token::None)
+        if (token.type != Token::EndOfFile)
         {
             // std::cout << token << std::endl;
             _tokens.push(std::move(token));
@@ -90,11 +62,6 @@ Token Tokenizer::next()
         _tokens.pop();
 
     return next;
-}
-
-bool Tokenizer::isDataTypeToken()
-{
-    return Grammar::isDataType(peek().value);
 }
 
 
@@ -134,7 +101,7 @@ Token Tokenizer::buildNextToken()
     }
     else if (isEof())
     {
-        return Token::blank();
+        return Token(Token::EndOfFile, "");
     }
     else
     {
@@ -258,7 +225,7 @@ Token Tokenizer::readID()
 
     std::string stringID(buffer.data());
 
-    return Token(isKeyword(stringID) ? Token::Keyword : Token::Variable, stringID);
+    return Token(Grammar::isKeyword(stringID) ? Token::Keyword : Token::Variable, stringID);
 }
 
 
@@ -284,12 +251,4 @@ Token Tokenizer::readOperator()
     buffer.push_back('\0');
 
     return Token(Token::Operator, std::string(buffer.data()));
-}
-
-
-#pragma mark -
-
-bool Tokenizer::isKeyword(const std::string &possibleKeyword) const
-{
-    return Grammar::isKeyword(possibleKeyword);
 }
