@@ -74,7 +74,8 @@ protected:
     void skipPunctuation(const std::string &punctuation);
     void skipOperator(const std::string &operatorName);
 
-    Token &peekToken() { return tokenizer.peek(); }
+    const Token &peekToken() const { return tokenizer.peek(); }
+
     Token nextToken() { return tokenizer.next(); }
     void skipToken() { (void)tokenizer.next(); }
 
