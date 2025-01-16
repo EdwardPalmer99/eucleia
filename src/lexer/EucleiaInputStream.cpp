@@ -8,8 +8,8 @@
  */
 
 #include "EucleiaInputStream.hpp"
-#include "EucleiaFileReader.hpp"
 #include "Exceptions.hpp"
+#include "FileUtils.hpp"
 #include "Grammar.hpp"
 #include "Stringify.hpp"
 #include <algorithm>
@@ -17,23 +17,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-InputStream::InputStream(const std::string &path)
+InputStream::InputStream(const std::string &path_) : path(path_)
 {
     // Load file from path and set pointer.
-    fileContents = eucleia::loadFileContents(path.c_str());
-    current.ptr = fileContents;
+    file.base = file.ptr = eucleia::loadFileContents(path.c_str());
 }
 
 
 InputStream::~InputStream()
 {
-    if (fileContents != nullptr)
-        free(fileContents);
+    if (file.base != nullptr)
+        free(file.base);
 }
 
 char InputStream::peek() const
 {
-    return (current.ptr ? *current.ptr : '\0');
+    return (file.ptr ? *file.ptr : '\0');
 }
 
 char *InputStream::peek2()
@@ -45,9 +44,9 @@ char *InputStream::peek2()
 
     if (buffer[0] != '\0')
     {
-        current.ptr++;
+        file.ptr++;
         buffer[1] = peek();
-        current.ptr--;
+        file.ptr--;
     }
 
     return buffer;
@@ -112,22 +111,28 @@ void InputStream::consume()
 {
     if (isEof())
     {
+        if (file.base) // Free memory now file read.
+        {
+            free(file.base);
+            file.base = file.ptr = nullptr;
+        }
+
         return;
     }
     else if (isNewLine())
     {
-        current.line++;
-        current.col = 1;
+        file.line++;
+        file.col = 1;
     }
     else
     {
-        current.col++;
+        file.col++;
     }
 
-    current.ptr++;
+    file.ptr++;
 }
 
 std::string InputStream::location() const
 {
-    return eucleia::stringify("[line: %4d, col: %3d]", current.line, current.col);
+    return eucleia::stringify("File \"%s\", Ln %d, Col %d", path.c_str(), file.line, file.col);
 }

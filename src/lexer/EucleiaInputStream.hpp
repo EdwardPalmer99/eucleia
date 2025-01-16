@@ -14,8 +14,8 @@ class InputStream
 {
 public:
     InputStream() = delete;
-
     InputStream(const std::string &path);
+
     ~InputStream();
 
     // Consumes token and reads the next character.
@@ -31,7 +31,7 @@ public:
     bool isNewLine() const;
     bool isStringStart() const;
 
-    // Prints stream location: [line: #, col: #]
+    // Prints stream's location.
     std::string location() const;
 
 protected:
@@ -46,15 +46,19 @@ private:
     // Consumes token and updates stream info.
     void consume();
 
-    struct StreamPoint
+    struct FileContents
     {
+        // Pointer to start of file.
+        char *base{nullptr};
+
         // Pointer to stream position.
         char *ptr{nullptr};
 
         // Track line and column.
         int line{1};
         int col{1};
-    } current;
+    } file;
 
-    char *fileContents{nullptr};
+    // Path to the file.
+    const std::string path;
 };

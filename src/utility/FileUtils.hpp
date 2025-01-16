@@ -1,5 +1,5 @@
 /**
- * @file EucleiaFileReader.hpp
+ * @file FileUtils.hpp
  * @author Edward Palmer
  * @date 2025-01-16
  *

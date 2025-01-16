@@ -1,5 +1,5 @@
 /**
- * @file EucleiaFileReader.cpp
+ * @file FileUtils.cpp
  * @author Edward Palmer
  * @date 2025-01-16
  *
@@ -8,7 +8,7 @@
  */
 
 
-#include "EucleiaFileReader.hpp"
+#include "FileUtils.hpp"
 #include "Exceptions.hpp"
 #include "Stringify.hpp"
 #include <cstdio>

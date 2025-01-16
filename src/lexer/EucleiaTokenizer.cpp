@@ -6,7 +6,6 @@
 //
 
 #include "EucleiaTokenizer.hpp"
-#include "EucleiaFileReader.hpp"
 #include "Exceptions.hpp"
 #include "Grammar.hpp"
 #include "Stringify.hpp"
