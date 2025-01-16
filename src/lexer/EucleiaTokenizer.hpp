@@ -16,35 +16,28 @@ class Tokenizer : public InputStream
 {
 public:
     Tokenizer() = delete;
-    Tokenizer(const std::string fileString);
-    ~Tokenizer() = default;
+    Tokenizer(const std::string &path);
 
-    /// Create a tokenizer instance from a file path.
-    static Tokenizer loadFromFile(const std::string &fpath);
+    const Token &peek() const;
 
-    Token &peek();
     Token next();
 
-    inline bool empty() const
-    {
-        return _tokens.empty();
-    }
+    bool empty() const;
 
 protected:
+    void generateTokens();
+
     void skipComment();
     void skipWhitespace();
 
-    // TODO: - should be const methods.
     Token readString();
     Token readNumber();
     Token readID();
     Token readOperator();
     Token readPunctuation();
 
-    void generateTokens();
-
     Token buildNextToken();
 
 private:
-    std::queue<Token> _tokens;
+    std::queue<Token> tokens;
 };

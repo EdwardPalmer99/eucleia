@@ -9,20 +9,12 @@
 #include "EucleiaFileReader.hpp"
 #include "Exceptions.hpp"
 #include "Grammar.hpp"
+#include "Stringify.hpp"
 #include <iostream>
 
-Tokenizer Tokenizer::loadFromFile(const std::string &fpath)
-{
-    using namespace eucleia;
 
-    EucleiaFileReader fileReader;
-
-    return Tokenizer(fileReader.readFile(fpath));
-}
-
-
-Tokenizer::Tokenizer(const std::string fileString)
-    : InputStream(std::move(fileString))
+Tokenizer::Tokenizer(const std::string &fpath)
+    : InputStream(fpath)
 {
     generateTokens();
 }
@@ -37,20 +29,20 @@ void Tokenizer::generateTokens()
         if (token.type != Token::EndOfFile)
         {
             // std::cout << token << std::endl;
-            _tokens.push(std::move(token));
+            tokens.push(std::move(token));
         }
     }
 }
 
 
-Token &Tokenizer::peek()
+const Token &Tokenizer::peek() const
 {
-    if (_tokens.empty())
+    if (tokens.empty())
     {
         ThrowException("cannot peek(). No tokens remaining");
     }
 
-    return _tokens.front();
+    return tokens.front();
 }
 
 
@@ -58,10 +50,16 @@ Token Tokenizer::next()
 {
     auto next = Tokenizer::peek();
 
-    if (!_tokens.empty())
-        _tokens.pop();
+    if (!tokens.empty())
+        tokens.pop();
 
     return next;
+}
+
+
+bool Tokenizer::empty() const
+{
+    return tokens.empty();
 }
 
 
@@ -103,11 +101,8 @@ Token Tokenizer::buildNextToken()
     {
         return Token(Token::EndOfFile, "");
     }
-    else
-    {
-        reportError("Failed to process character '%c'\n", c);
-        exit(EXIT_FAILURE);
-    }
+
+    ThrowException(location() + eucleia::stringify(": failed to process character '%c'", c));
 }
 
 
@@ -126,8 +121,6 @@ void Tokenizer::skipWhitespace(void)
 }
 
 
-#pragma mark -
-
 Token Tokenizer::readString()
 {
     size_t capacity = 100;
@@ -136,7 +129,7 @@ Token Tokenizer::readString()
     char *value = (char *)malloc(sizeof(char) * capacity);
     if (!value)
     {
-        exit(EXIT_FAILURE);
+        ThrowException(location() + ": failed to malloc array");
     }
 
     char c = InputStream::next();
@@ -155,7 +148,8 @@ Token Tokenizer::readString()
             void *tempPtr = realloc(value, sizeof(char) * capacity);
             if (!tempPtr) // Failed to resize array.
             {
-                ThrowException("failed to resize array");
+                free(value); // Free old block.
+                ThrowException(location() + ": failed to resize array");
             }
 
             value = (char *)tempPtr; // Resized array.
@@ -197,7 +191,7 @@ Token Tokenizer::readNumber()
         {
             if (readDecimal == true) // Oh dear! We've seen '.' twice now.
             {
-                reportError("Seen multiple '.' characters in number.");
+                ThrowException(location() + ": seen multiple '.' characters in number");
             }
 
             readDecimal = true;
