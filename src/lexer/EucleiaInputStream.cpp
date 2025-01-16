@@ -1,33 +1,39 @@
-//
-//  EucleiaInputStream.cpp
-//  Eucleia
-//
-//  Created by Edward on 18/01/2024.
-//
+/**
+ * @file EucleiaInputStream.cpp
+ * @author Edward Palmer
+ * @date 2025-01-16
+ *
+ * @copyright Copyright (c) 2025
+ *
+ */
 
 #include "EucleiaInputStream.hpp"
+#include "EucleiaFileReader.hpp"
 #include "Exceptions.hpp"
 #include "Grammar.hpp"
+#include "Stringify.hpp"
 #include <algorithm>
 #include <cstring>
-#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-static long getFileSize(FILE *fp);
-static const char *getFileContents(const char *fpath);
-
-
-InputStream::InputStream(const std::string fileContents)
-    : _fileContents(std::move(fileContents))
+InputStream::InputStream(const std::string &path)
 {
-    _current.ptr = (char *)_fileContents.c_str();
+    // Load file from path and set pointer.
+    fileContents = eucleia::loadFileContents(path.c_str());
+    current.ptr = fileContents;
 }
 
 
+InputStream::~InputStream()
+{
+    if (fileContents != nullptr)
+        free(fileContents);
+}
+
 char InputStream::peek() const
 {
-    return (_current.ptr ? *_current.ptr : '\0');
+    return (current.ptr ? *current.ptr : '\0');
 }
 
 char *InputStream::peek2()
@@ -39,14 +45,13 @@ char *InputStream::peek2()
 
     if (buffer[0] != '\0')
     {
-        _current.ptr++;
+        current.ptr++;
         buffer[1] = peek();
-        _current.ptr--;
+        current.ptr--;
     }
 
     return buffer;
 }
-
 
 char InputStream::next()
 {
@@ -57,37 +62,44 @@ char InputStream::next()
     return c;
 }
 
+bool InputStream::isEof() const
+{
+    return (peek() == '\0');
+}
 
-#pragma mark -
+bool InputStream::isNewLine() const
+{
+    return (peek() == '\n');
+}
+
+bool InputStream::isStringStart() const
+{
+    return (peek() == '"');
+}
 
 bool InputStream::isComment()
 {
     return (strcmp(peek2(), "//") == 0);
 }
-
 bool InputStream::isOperator() const
 {
     return Grammar::isOperator(peek());
 }
-
 
 bool InputStream::isPunctuation() const
 {
     return Grammar::isPunctuation(peek());
 }
 
-
 bool InputStream::isDigit() const
 {
     return isdigit(peek());
 }
 
-
 bool InputStream::isWhiteSpace() const
 {
     return (isspace(peek()));
 }
-
 
 bool InputStream::isID() const
 {
@@ -95,9 +107,6 @@ bool InputStream::isID() const
 
     return (c == '_' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
 }
-
-
-#pragma mark -
 
 void InputStream::consume()
 {
@@ -107,86 +116,18 @@ void InputStream::consume()
     }
     else if (isNewLine())
     {
-        _current.line++;
-        _current.col = 1;
+        current.line++;
+        current.col = 1;
     }
     else
     {
-        _current.col++;
+        current.col++;
     }
 
-    _current.ptr++;
+    current.ptr++;
 }
 
-
-void InputStream::reportError(const char *format, ...)
+std::string InputStream::location() const
 {
-    const size_t kBufferSize = 500;
-    char errorBuffer[kBufferSize];
-
-    va_list args;
-    va_start(args, format);
-
-    long nchars = vsnprintf(errorBuffer, kBufferSize, format, args);
-
-    // Add NULL terminator:
-    auto endOffset = (nchars < (kBufferSize - 1)) ? nchars : (kBufferSize - 1);
-
-    errorBuffer[endOffset] = '\0';
-
-    va_end(args);
-
-    fprintf(stderr, "Error on line %d, col %d: '%s'\n", _current.line, _current.col, errorBuffer);
-}
-
-
-#pragma mark -
-
-static long getFileSize(FILE *fp)
-{
-    if (!fp)
-        return 0;
-
-    fseek(fp, 0, SEEK_END); // Jump to end.
-
-    const long nBytes = ftell(fp);
-
-    rewind(fp); // Jump to start.
-
-    return nBytes;
-}
-
-
-static const char *getFileContents(const char *fpath)
-{
-    if (!fpath)
-        return NULL;
-
-    FILE *fp = fopen(fpath, "r");
-    if (!fp)
-        return NULL;
-
-    const long bufferSize = getFileSize(fp);
-    if (bufferSize <= 0)
-    {
-        fclose(fp);
-        return NULL;
-    }
-
-    // NB: add 1 for '\0' character.
-    char *fileBuffer = (char *)malloc(sizeof(char) * (bufferSize + 1));
-    if (!fileBuffer)
-    {
-        fclose(fp);
-        return NULL;
-    }
-
-    // Read from file.
-    fileBuffer[bufferSize] = '\0';
-    fread((void *)fileBuffer, sizeof(char), bufferSize, fp);
-
-    // Cleanup.
-    fclose(fp);
-
-    return (const char *)fileBuffer;
+    return eucleia::stringify("[line: %4d, col: %3d]", current.line, current.col);
 }

@@ -1,46 +1,38 @@
-//
-//  EucleiaInputStream.hpp
-//  Eucleia
-//
-//  Created by Edward on 18/01/2024.
-//
+/**
+ * @file EucleiaInputStream.hpp
+ * @author Edward Palmer
+ * @date 2025-01-16
+ *
+ * @copyright Copyright (c) 2025
+ *
+ */
 
-#ifndef EucleiaInputStream_hpp
-#define EucleiaInputStream_hpp
-
-#include <set>
+#pragma once
 #include <string>
-
-struct StreamPoint
-{
-    char *ptr{nullptr};
-    int line{1};
-    int col{1};
-};
-
 
 class InputStream
 {
 public:
     InputStream() = delete;
-    InputStream(const std::string fileString);
 
+    InputStream(const std::string &path);
+    ~InputStream();
+
+    // Consumes token and reads the next character.
     char next();
-    char peek() const;
-    char *peek2();
 
-    inline bool isEof() const
-    {
-        return (peek() == '\0');
-    }
-    inline bool isNewLine() const
-    {
-        return (peek() == '\n');
-    }
-    inline bool isStringStart() const
-    {
-        return (peek() == '"');
-    }
+    // Peeks the next character.
+    char peek() const;
+
+    // Peeks the next two characters.
+    char *peek2(); // TODO: - bad to use static variable if multithreading.
+
+    bool isEof() const;
+    bool isNewLine() const;
+    bool isStringStart() const;
+
+    // Prints stream location: [line: #, col: #]
+    std::string location() const;
 
 protected:
     bool isComment();
@@ -50,16 +42,19 @@ protected:
     bool isOperator() const;
     bool isID() const;
 
-    void reportError(const char *format, ...);
-
 private:
+    // Consumes token and updates stream info.
     void consume();
 
-    char *_basePtr{nullptr};
-    StreamPoint _current;
+    struct StreamPoint
+    {
+        // Pointer to stream position.
+        char *ptr{nullptr};
 
-    const std::string _fileContents;
+        // Track line and column.
+        int line{1};
+        int col{1};
+    } current;
+
+    char *fileContents{nullptr};
 };
-
-
-#endif /* EucleiaInputStream_hpp */
