@@ -1,50 +1,65 @@
+/**
+ * @file EucleiaFileReader.cpp
+ * @author Edward Palmer
+ * @date 2025-01-16
+ *
+ * @copyright Copyright (c) 2025
+ *
+ */
+
+
 #include "EucleiaFileReader.hpp"
+#include "Exceptions.hpp"
+#include "Stringify.hpp"
+#include <cstdio>
+#include <cstdlib>
 
 namespace eucleia
 {
 
-std::string EucleiaFileReader::readFile(const std::string &fpath)
+static long numBytesInFile(FILE *fp);
+
+
+char *loadFileContents(const char *path)
 {
-    if (fpath.empty())
-        return std::string();
-
-    FILE *fp = fopen(fpath.c_str(), "r");
-    if (!fp)
-        return std::string(); // TODO: - warning or try / catch. throws.
-
-    const long bufferSize = fileSize(fp);
-    if (bufferSize <= 0)
+    if (!path)
     {
-        fclose(fp);
-        return std::string();
+        ThrowException("path cannot be NULL");
     }
 
-    // NB: add 1 for '\0' character.
-    char *fileBuffer = (char *)malloc(sizeof(char) * (bufferSize + 1));
-    if (!fileBuffer)
+    FILE *fp = fopen(path, "r");
+    if (!fp)
+    {
+        ThrowException(eucleia::stringify("failed to open file %s", path));
+    }
+
+    const long kBufferSize = numBytesInFile(fp);
+    if (kBufferSize <= 0)
     {
         fclose(fp);
-        return std::string();
+        ThrowException("file is empty");
+    }
+
+    // NB: +1 for '\0' character.
+    char *buffer = (char *)malloc(sizeof(char) * (kBufferSize + 1));
+    if (!buffer)
+    {
+        fclose(fp);
+        ThrowException("failed to malloc file buffer");
     }
 
     // Read from file.
-    fileBuffer[bufferSize] = '\0';
-    (void)fread((void *)fileBuffer, sizeof(char), bufferSize, fp);
+    buffer[kBufferSize] = '\0';
+    (void)fread((void *)buffer, sizeof(char), kBufferSize, fp);
 
-    // Cleanup.
+    // Close file pointer.
     fclose(fp);
 
-    // Now put into a string.
-    std::string output(fileBuffer);
-
-    // Free memory since string makes a copy.
-    free(fileBuffer);
-
-    return output;
+    return buffer;
 }
 
 
-long EucleiaFileReader::fileSize(FILE *fp) const
+static long numBytesInFile(FILE *fp)
 {
     if (!fp)
         return 0;

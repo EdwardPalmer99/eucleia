@@ -1,33 +1,18 @@
-//
-//  EucleiaFileReader.hpp
-//  Eucleia
-//
-//  Created by Edward on 20/10/2024.
-//
-//  Convert a file to a string.
-//
+/**
+ * @file EucleiaFileReader.hpp
+ * @author Edward Palmer
+ * @date 2025-01-16
+ *
+ * @copyright Copyright (c) 2025
+ *
+ */
 
-#ifndef EucleiaFileReader_hpp
-#define EucleiaFileReader_hpp
-
-#include <cstdio>
-#include <string>
+#pragma once
 
 namespace eucleia
 {
 
-class EucleiaFileReader
-{
-  public:
-    /// Returns a std::string for a file path.
-    std::string readFile(const std::string &fpath);
-
-  protected:
-    /// Returns the size of a file in bytes.
-    long fileSize(FILE *fp) const;
-};
-
+// Returns a C-string containing the file contents.
+char *loadFileContents(const char *fpath);
 
 } // namespace eucleia
-
-#endif // EucleiaFileReader_hpp
