@@ -60,6 +60,6 @@ void Logger::log(Level level, std::string_view message) const
                   "%FT%TZ", std::localtime(&now));
 
     char outputInfo[1024];
-    snprintf(outputInfo, 1024, "[%s][%s] ", timestamp, getLevelName(level).data());
-    logStream << outputInfo << message << '\n';
+    snprintf(outputInfo, 1024, "%s %s: ", timestamp, getLevelName(level).data());
+    logStream << outputInfo << message << std::endl;
 }
