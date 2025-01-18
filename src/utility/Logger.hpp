@@ -26,12 +26,14 @@ public:
     Logger(std::string_view name, Level thresholdLevel = Level::info, std::ostream &logStream = std::cout);
     Logger() = delete;
 
-    void log(Level level, std::string_view message);
 
     inline void error(std::string_view message) { log(Level::error, message); };
     inline void warning(std::string_view message) { log(Level::warning, message); };
     inline void info(std::string_view message) { log(Level::info, message); };
     inline void debug(std::string_view message) { log(Level::debug, message); };
+
+protected:
+    void log(Level level, std::string_view message);
 
 private:
     const std::string name;
