@@ -31,11 +31,6 @@ const Logger &Logger::instance()
 }
 
 
-bool Logger::isLoggable(Level level) const
-{
-    return (level >= thresholdLevel);
-}
-
 constexpr std::string_view Logger::getLevelName(Logger::Level level)
 {
     switch (level)
