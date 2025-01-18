@@ -35,15 +35,18 @@ protected:
 
     void log(Level level, std::string_view message) const;
 
+    // Returns true if message should be printed to the log.
+    inline bool isLoggable(Level level) const { return (level >= thresholdLevel); }
+
+    // Returns a timestamp string using the timestamp format.
+    std::string timestamp() const;
+
 private:
     const Level thresholdLevel;
     std::ostream &logStream;
 
     // ISO 8601 date time format
     inline static const std::string timestampFormat{"yyyy-mm-ddThh:mm:ssZ"};
-
-    // Returns true if message should be printed to the log.
-    inline bool isLoggable(Level level) const { return (level >= thresholdLevel); }
 
     static constexpr std::string_view getLevelName(Level level);
 };

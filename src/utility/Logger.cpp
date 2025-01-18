@@ -53,13 +53,21 @@ void Logger::log(Level level, std::string_view message) const
     if (!isLoggable(level))
         return;
 
+    char outputInfo[1024];
+    snprintf(outputInfo, 1024, "%s %s: ", timestamp().c_str(), getLevelName(level).data());
+    logStream << outputInfo << message << std::endl;
+}
+
+
+std::string Logger::timestamp() const
+{
     std::time_t now = std::time(nullptr);
 
-    char timestamp[std::size(Logger::timestampFormat)];
-    std::strftime(timestamp, std::size(Logger::timestampFormat),
-                  "%FT%TZ", std::localtime(&now));
+    const std::size_t timestampFormatSize = std::size(Logger::timestampFormat);
 
-    char outputInfo[1024];
-    snprintf(outputInfo, 1024, "%s %s: ", timestamp, getLevelName(level).data());
-    logStream << outputInfo << message << std::endl;
+    char timestamp[timestampFormatSize];
+    std::strftime(timestamp, timestampFormatSize, "%FT%TZ", std::localtime(&now));
+
+    // NB: will copy bytes in buffer.
+    return std::string(timestamp);
 }
