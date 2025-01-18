@@ -70,33 +70,3 @@ void Logger::log(Level level, std::string_view message)
         logStream << '[' << timestamp << "] " << '(' << name << ") " << '[' << getLevelName(level) << "] " << message << '\n';
     }
 }
-
-void Logger::error(std::string_view message)
-{
-    log(Level::error, message);
-}
-
-void Logger::warning(std::string_view message)
-{
-    log(Level::warning, message);
-}
-
-void Logger::severe(std::string_view message)
-{
-    log(Level::severe, message);
-}
-
-void Logger::info(std::string_view message)
-{
-    log(Level::info, message);
-}
-
-void Logger::fine(std::string_view message)
-{
-    log(Level::fine, message);
-}
-
-void Logger::debug(std::string_view message)
-{
-    log(Level::debug, message);
-}

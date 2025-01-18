@@ -49,12 +49,13 @@ public:
     void setFilter(Filter filterToSet) { filter = filterToSet; }
 
     void log(Level level, std::string_view message);
-    void error(std::string_view message);
-    void warning(std::string_view message);
-    void severe(std::string_view message);
-    void info(std::string_view message);
-    void fine(std::string_view message);
-    void debug(std::string_view message);
+    
+    inline void error(std::string_view message) { log(Level::error, message); };
+    inline void warning(std::string_view message) { log(Level::warning, message); };
+    inline void severe(std::string_view message) { log(Level::severe, message); };
+    inline void info(std::string_view message) { log(Level::info, message); };
+    inline void fine(std::string_view message) { log(Level::fine, message); };
+    inline void debug(std::string_view message) { log(Level::debug, message); };
 
 private:
     std::string name;
