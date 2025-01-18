@@ -23,7 +23,7 @@ Logger::Logger(std::string_view name, Level thresholdLevel, std::ostream &logStr
 }
 
 
-bool Logger::isLoggable(Level level)
+bool Logger::isLoggable(Level level) const
 {
     return (level >= thresholdLevel);
 }
@@ -45,7 +45,7 @@ constexpr std::string_view Logger::getLevelName(Logger::Level level)
     }
 }
 
-void Logger::log(Level level, std::string_view message)
+void Logger::log(Level level, std::string_view message) const
 {
     if (!isLoggable(level))
         return;

@@ -26,13 +26,13 @@ public:
     Logger(std::string_view name, Level thresholdLevel = Level::info, std::ostream &logStream = std::cout);
     Logger() = delete;
 
-    inline void debug(std::string_view message) { log(Level::debug, message); };
-    inline void info(std::string_view message) { log(Level::info, message); };
-    inline void warning(std::string_view message) { log(Level::warning, message); };
-    inline void error(std::string_view message) { log(Level::error, message); };
+    inline void debug(std::string_view message) const { log(Level::debug, message); };
+    inline void info(std::string_view message) const { log(Level::info, message); };
+    inline void warning(std::string_view message) const { log(Level::warning, message); };
+    inline void error(std::string_view message) const { log(Level::error, message); };
 
 protected:
-    void log(Level level, std::string_view message);
+    void log(Level level, std::string_view message) const;
 
 private:
     const std::string name;
@@ -42,7 +42,7 @@ private:
     // ISO 8601 date time format
     inline static const std::string timestampFormat{"yyyy-mm-ddThh:mm:ssZ"};
 
-    bool isLoggable(Level level);
+    bool isLoggable(Level level) const;
 
     static constexpr std::string_view getLevelName(Level level);
 };
