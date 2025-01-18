@@ -25,9 +25,7 @@ public:
     enum class Level
     {
         debug,
-        fine,
         info,
-        severe,
         warning,
         error
     };
@@ -53,9 +51,7 @@ public:
 
     inline void error(const char *file, unsigned int line, const char *func, std::string_view message) { log(Level::error, file, line, func, message); };
     inline void warning(const char *file, unsigned int line, const char *func, std::string_view message) { log(Level::warning, file, line, func, message); };
-    inline void severe(const char *file, unsigned int line, const char *func, std::string_view message) { log(Level::severe, file, line, func, message); };
     inline void info(const char *file, unsigned int line, const char *func, std::string_view message) { log(Level::info, file, line, func, message); };
-    inline void fine(const char *file, unsigned int line, const char *func, std::string_view message) { log(Level::fine, file, line, func, message); };
     inline void debug(const char *file, unsigned int line, const char *func, std::string_view message) { log(Level::debug, file, line, func, message); };
 
 private:

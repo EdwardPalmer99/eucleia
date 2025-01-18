@@ -26,7 +26,7 @@ bool Logger::isLoggable(Level level)
 
     if (filter == Filter::important)
     {
-        return level == Level::error || level == Level::warning || level == Level::severe;
+        return (level == Level::error || level == Level::warning);
     }
 
     if (filter == Filter::verbose)
@@ -45,12 +45,8 @@ constexpr std::string_view Logger::getLevelName(Logger::Level level)
             return "error";
         case Logger::Level::warning:
             return "warning";
-        case Logger::Level::severe:
-            return "severe";
         case Logger::Level::info:
             return "info";
-        case Logger::Level::fine:
-            return "fine";
         case Logger::Level::debug:
             return "debug";
         default:
