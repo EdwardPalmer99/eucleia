@@ -2,19 +2,18 @@
  * @file Tokenizer.hpp
  * @author Edward Palmer
  * @date 2025-01-18
- * 
+ *
  * @copyright Copyright (c) 2025
- * 
+ *
  */
 
 #pragma once
-#include "InputStream.hpp"
+#include "CharStream.hpp"
 #include "Token.hpp"
 #include <queue>
-#include <set>
 #include <string>
 
-class Tokenizer : public InputStream
+class Tokenizer
 {
 public:
     Tokenizer() = delete;
@@ -26,20 +25,18 @@ public:
 
     bool empty() const;
 
-protected:
-    void generateTokens();
-
-    void skipComment();
-    void skipWhitespace();
-
-    Token readString();
-    Token readNumber();
-    Token readID();
-    Token readOperator();
-    Token readPunctuation();
-
+private:
     Token buildNextToken();
 
-private:
+    void buildTokens();
+    void skipLine();
+
+    Token buildStringToken();
+    Token buildNumberToken();
+    Token buildIDToken();
+    Token buildOperatorToken();
+    Token buildPunctuationToken();
+
+    CharStream stream;
     std::queue<Token> tokens;
 };

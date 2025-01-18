@@ -2,9 +2,9 @@
  * @file Tokenizer.cpp
  * @author Edward Palmer
  * @date 2025-01-18
- * 
+ *
  * @copyright Copyright (c) 2025
- * 
+ *
  */
 
 #include "Tokenizer.hpp"
@@ -15,23 +15,23 @@
 
 
 Tokenizer::Tokenizer(const std::string &fpath)
-    : InputStream(fpath)
+    : stream(fpath)
 {
-    generateTokens();
+    buildTokens();
 }
 
 
-void Tokenizer::generateTokens()
+void Tokenizer::buildTokens()
 {
-    while (!InputStream::isEof())
+    while (!stream.isLast())
     {
-        auto token = buildNextToken();
+        Token token = buildNextToken();
 
-        if (token.type != Token::EndOfFile)
-        {
-            // std::cout << token << std::endl;
+        // TODO: - log token here as debug along with stream location.
+        // std::cout << stream.location() << ": " << token.print() << std::endl;
+
+        if (!token.type == Token::EndOfFile)
             tokens.push(std::move(token));
-        }
     }
 }
 
@@ -39,9 +39,7 @@ void Tokenizer::generateTokens()
 const Token &Tokenizer::peek() const
 {
     if (tokens.empty())
-    {
         ThrowException("cannot peek(). No tokens remaining");
-    }
 
     return tokens.front();
 }
@@ -49,7 +47,7 @@ const Token &Tokenizer::peek() const
 
 Token Tokenizer::next()
 {
-    auto next = Tokenizer::peek();
+    Token next = peek();
 
     if (!tokens.empty())
         tokens.pop();
@@ -66,81 +64,84 @@ bool Tokenizer::empty() const
 
 Token Tokenizer::buildNextToken()
 {
-    char c = InputStream::peek();
-
-    if (isComment())
-    {
-        skipComment();
-        return buildNextToken();
-    }
-    else if (isStringStart())
-    {
-        return readString();
-    }
-    else if (isDigit())
-    {
-        return readNumber();
-    }
-    else if (isWhiteSpace())
-    {
-        skipWhitespace();
-        return buildNextToken();
-    }
-    else if (isPunctuation())
-    {
-        return readPunctuation();
-    }
-    else if (isOperator())
-    {
-        return readOperator();
-    }
-    else if (isID())
-    {
-        return readID();
-    }
-    else if (isEof())
+    if (stream.isLast())
     {
         return Token(Token::EndOfFile, "");
     }
+    else if (stream.isComment())
+    {
+        skipLine();
+        return buildNextToken();
+    }
+    else if (stream.isQuote())
+    {
+        return buildStringToken();
+    }
+    else if (stream.isDigit())
+    {
+        return buildNumberToken();
+    }
+    else if (stream.isWhiteSpace())
+    {
+        (void)stream.increment();
+        return buildNextToken();
+    }
+    else if (stream.isPunctuation())
+    {
+        return buildPunctuationToken();
+    }
+    else if (stream.isOperator())
+    {
+        return buildOperatorToken();
+    }
+    else if (stream.isID())
+    {
+        return buildIDToken();
+    }
 
-    ThrowException(location() + eucleia::stringify(": failed to process character '%c'", c));
+    ThrowException(stream.location() + eucleia::stringify(": failed to process character: %c", stream.current()));
 }
 
 
-void Tokenizer::skipComment()
+void Tokenizer::skipLine()
 {
     do
     {
-        InputStream::next();
-    } while (!isEof() && !isNewLine());
+        (void)stream.increment();
+    } while (!stream.isLast() && !stream.isNewLine());
 }
 
 
-void Tokenizer::skipWhitespace(void)
+Token Tokenizer::buildStringToken()
 {
-    InputStream::next();
-}
+    if (!stream.isQuote())
+    {
+        ThrowException(stream.location() + ": missing opening quote for string");
+    }
 
-
-Token Tokenizer::readString()
-{
+    // Allocate:
     size_t capacity = 100;
     size_t count = 0;
 
     char *value = (char *)malloc(sizeof(char) * capacity);
     if (!value)
     {
-        ThrowException(location() + ": failed to malloc array");
+        ThrowException(stream.location() + ": failed to malloc array");
     }
 
-    char c = InputStream::next();
+    bool foundEndQuote = false;
 
-    do
+    while (!stream.isLast())
     {
-        if (c != '"')
+        (void)stream.increment();
+
+        if (stream.isQuote())
         {
-            value[count++] = c;
+            foundEndQuote = true;
+            break;
         }
+
+        value[count++] = stream.current();
 
         if (count >= capacity)
         {
@@ -150,70 +151,89 @@ Token Tokenizer::readString()
             if (!tempPtr) // Failed to resize array.
             {
                 free(value); // Free old block.
-                ThrowException(location() + ": failed to resize array");
+                ThrowException(stream.location() + ": failed to resize array");
             }
 
             value = (char *)tempPtr; // Resized array.
         }
+    }
 
-        c = InputStream::next();
-    } while (!(isEof() || c == '"'));
+    if (!stream.isQuote()) // Should be the endquote.
+    {
+        free(value); // Cleanup memory.
+        ThrowException(stream.location() + ": missing end quote");
+    }
 
-    // Terminate value string.
+    // Skip end-quote.
+    (void)stream.increment();
+
+    // Terminate string:
     value[count++] = '\0';
 
-    // Resize to fit.
+    // Resize to fit:
     if (count < capacity)
     {
         value = (char *)realloc(value, sizeof(char) * count);
     }
 
+    // Create string token:
     Token token = Token(Token::String, std::string(value));
 
-    // Handle memory.
+    // Handle memory:
     free(value);
 
     return token;
 }
 
 
-Token Tokenizer::readNumber()
+Token Tokenizer::buildNumberToken()
 {
+    if (!stream.isDigit())
+    {
+        ThrowException(stream.location() + " : expected digit");
+    }
+
     bool readDecimal = false;
 
     int count = 0;
     char value[100];
 
-    while (isdigit(InputStream::peek()) || InputStream::peek() == '.')
+    while (stream.isDigit() || (stream.current() == '.'))
     {
-        char c = InputStream::next();
-
-        if (c == '.')
+        if (stream.current() == '.')
         {
             if (readDecimal == true) // Oh dear! We've seen '.' twice now.
             {
-                ThrowException(location() + ": seen multiple '.' characters in number");
+                ThrowException(stream.location() + ": seen multiple '.' characters in number");
             }
 
             readDecimal = true;
         }
 
-        value[count++] = c;
+        value[count++] = stream.current();
+
+        (void)stream.increment();
     }
 
-    value[count] = '\0'; // Terminate string.
+    value[count] = '\0'; // Terminate.
 
     return Token(readDecimal ? Token::Float : Token::Int, std::string(value));
 }
 
 
-Token Tokenizer::readID()
+Token Tokenizer::buildIDToken()
 {
+    if (!stream.isID())
+    {
+        ThrowException(stream.location() + " : unexpected ID character");
+    }
+
     std::vector<char> buffer;
 
-    while (isID())
+    while (stream.isID())
     {
-        buffer.push_back(InputStream::next());
+        buffer.push_back(stream.current());
+        (void)stream.increment();
     }
 
     buffer.push_back('\0');
@@ -224,23 +244,33 @@ Token Tokenizer::readID()
 }
 
 
-Token Tokenizer::readPunctuation()
+Token Tokenizer::buildPunctuationToken()
 {
-    char c = InputStream::next();
+    if (!stream.isPunctuation())
+    {
+        ThrowException(stream.location() + ": expected punctuation");
+    }
 
-    char buffer[2] = {c, '\0'};
+    char buffer[2] = {stream.current(), '\0'};
+    (void)stream.increment();
 
     return Token(Token::Punctuation, std::string(buffer));
 }
 
 
-Token Tokenizer::readOperator()
+Token Tokenizer::buildOperatorToken()
 {
+    if (!stream.isOperator())
+    {
+        ThrowException(stream.location() + ": expected operator");
+    }
+
     std::vector<char> buffer; // Will allow other operators in future (ie +=).
 
-    while (isOperator())
+    while (stream.isOperator())
     {
-        buffer.push_back(InputStream::next());
+        buffer.push_back(stream.current());
+        (void)stream.increment();
     }
 
     buffer.push_back('\0');

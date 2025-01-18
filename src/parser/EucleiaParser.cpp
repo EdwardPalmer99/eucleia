@@ -47,7 +47,7 @@ FileNode *Parser::buildAST()
 {
     std::vector<BaseNode *> nodes;
 
-    while (!tokenizer.empty() && peekToken().type != Token::EndOfFile)
+    while (!tokenizer.empty())
     {
         auto node = parseExpression();
 

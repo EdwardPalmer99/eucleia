@@ -6,7 +6,6 @@
 //
 
 #include "CLIParser.hpp"
-#include "InputStream.hpp"
 #include "EucleiaInterpreter.hpp"
 #include <exception>
 #include <iostream>
