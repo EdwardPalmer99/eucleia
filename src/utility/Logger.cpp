@@ -23,6 +23,14 @@ Logger::Logger(std::string_view name, Level thresholdLevel, std::ostream &logStr
 }
 
 
+const Logger &Logger::instance()
+{
+    static Logger instance("default");
+
+    return instance;
+}
+
+
 bool Logger::isLoggable(Level level) const
 {
     return (level >= thresholdLevel);
