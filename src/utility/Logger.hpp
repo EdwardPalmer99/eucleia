@@ -15,13 +15,6 @@
 class Logger
 {
 public:
-    enum class Filter
-    {
-        quiet,
-        verbose,
-        important
-    };
-
     enum class Level
     {
         debug,
@@ -31,17 +24,17 @@ public:
     };
 
     Logger(std::string_view name)
-        : Logger{name, Filter::important, std::cout}
+        : Logger(name, Level::info, std::cout)
     {
     }
 
-    Logger(std::string_view name, Filter filter)
-        : Logger{name, filter, std::cout}
+    Logger(std::string_view name, Level thresholdLevel)
+        : Logger(name, thresholdLevel, std::cout)
     {
     }
 
-    Logger(std::string_view name, Filter filter, std::ostream &logStream)
-        : name{name}, filter{filter}, logStream{logStream}
+    Logger(std::string_view name, Level thresholdLevel, std::ostream &logStream)
+        : name(name), thresholdLevel(thresholdLevel), logStream(logStream)
     {
     }
 
@@ -56,7 +49,7 @@ public:
 
 private:
     const std::string name;
-    const Filter filter;
+    const Level thresholdLevel;
     std::ostream &logStream;
 
     // ISO 8601 date time format

@@ -19,22 +19,7 @@
 
 bool Logger::isLoggable(Level level)
 {
-    if (filter == Filter::quiet)
-    {
-        return false;
-    }
-
-    if (filter == Filter::important)
-    {
-        return (level == Level::error || level == Level::warning);
-    }
-
-    if (filter == Filter::verbose)
-    {
-        return true;
-    }
-
-    return true; // unknown filter, everything logged
+    return (level < thresholdLevel);
 }
 
 constexpr std::string_view Logger::getLevelName(Logger::Level level)
