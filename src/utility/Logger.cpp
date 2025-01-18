@@ -19,7 +19,7 @@
 
 bool Logger::isLoggable(Level level)
 {
-    return (level < thresholdLevel);
+    return (level >= thresholdLevel);
 }
 
 constexpr std::string_view Logger::getLevelName(Logger::Level level)
