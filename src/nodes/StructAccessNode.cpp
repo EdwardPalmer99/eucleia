@@ -8,7 +8,7 @@
  */
 
 #include "StructAccessNode.hpp"
-#include "EucleiaUtility.hpp"
+#include "Exceptions.hpp"
 #include "StructDefinitionObject.hpp"
 #include "StructObject.hpp"
 

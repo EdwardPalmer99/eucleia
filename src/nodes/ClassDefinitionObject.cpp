@@ -36,7 +36,7 @@ BaseObject *ClassDefinitionObject::evaluate(Scope &scope)
     // NB: override method defined in StructDefinitionObject.
     if (active)
     {
-        EucleiaError("%s is already defined", typeName.c_str());
+        ThrowException(typeName + " is already defined");
     }
 
     active = true;
@@ -57,7 +57,7 @@ void ClassDefinitionObject::installMethodsInScope(Scope &scope) const
 {
     if (!active)
     {
-        EucleiaError("The class definition is inactive!");
+        ThrowException("The class definition is inactive!");
     }
 
     for (auto &[name, funcNode] : allMethodDefsMap)

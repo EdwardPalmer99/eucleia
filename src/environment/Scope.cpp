@@ -8,7 +8,7 @@
  */
 
 #include "Scope.hpp"
-#include "EucleiaUtility.hpp"
+#include "Exceptions.hpp"
 #include <cassert>
 
 Scope::Scope(const Scope &_parent)
@@ -55,7 +55,7 @@ BaseObject *Scope::getNamedObject(const std::string &name) const
     BaseObject *obj = getOptionalNamedObject(name);
     if (!obj)
     {
-        EucleiaError("undefined variable '%s'.", name.c_str());
+        ThrowException("undefined variable " + name);
     }
 
     return obj;
@@ -77,7 +77,7 @@ void Scope::linkObject(const std::string &name, BaseObject *object)
     auto iter = linkedObjectForName.find(name);
     if (iter != linkedObjectForName.end())
     {
-        EucleiaError("%s is already defined in current scope.", name.c_str());
+        ThrowException(name + " is already defined in current scope");
     }
 
     // 2. Add to map. This will ensure that we now ignore any outer-scope variables

@@ -7,7 +7,8 @@
 
 #include "EucleiaParser.hpp"
 #include "EucleiaModules.hpp"
-#include "EucleiaUtility.hpp"
+#include "Exceptions.hpp"
+#include "Grammar.hpp"
 #include "ObjectTypes.hpp"
 #include "TestModule.hpp"
 #include <assert.h>
@@ -46,7 +47,7 @@ FileNode *Parser::buildAST()
 {
     std::vector<BaseNode *> nodes;
 
-    while (!tokenizer.empty() && peekToken().type != Token::None)
+    while (!tokenizer.empty() && peekToken().type != Token::EndOfFile)
     {
         auto node = parseExpression();
 
@@ -101,7 +102,7 @@ FileNode *Parser::parseFileImport()
     auto ast = Parser(filePath).buildAST(); // NB: don't use static method as this will clear loaded modules/files.
     if (!ast)
     {
-        EucleiaError("failed to import file with path '%s'.", filePath.c_str());
+        ThrowException("failed to import file with path " + filePath);
     }
 
     return ast;
@@ -311,7 +312,7 @@ ForLoopNode *Parser::parseFor()
 
     if (forLoopArgs.size() != 3)
     {
-        EucleiaError("expected 3 arguments for for-loop but got %ld.", brackets->programNodes.size());
+        ThrowException("expected 3 arguments for for-loop but got " + std::to_string(brackets->programNodes.size()));
     }
 
     auto start = forLoopArgs[0];
@@ -528,7 +529,7 @@ BaseNode *Parser::parseClass()
             else if (node->isNodeType<FunctionNode>())
                 classMethods.push_back(reinterpret_cast<FunctionNode *>(node));
             else
-                EucleiaError("unexpected node type for class definition %s\n", classTypeName.c_str());
+                ThrowException("unexpected node type for class definition " + classTypeName);
         }
 
         return new ClassDefinitionObject(classTypeName, classParentTypeName, classVariables, classMethods);
@@ -578,7 +579,7 @@ BaseNode *Parser::parseStructAccessor(BaseNode *lastExpression)
     }
     else
     {
-        EucleiaError("unexpected node type while accessing struct/class member.");
+        ThrowException("unexpected node type while accessing struct/class member");
     }
 }
 
@@ -954,7 +955,7 @@ bool Parser::isKeyword(const std::string &keyword)
 
 bool Parser::isDataTypeKeyword()
 {
-    return (tokenizer.isDataTypeToken());
+    return (Grammar::isDataType(peekToken().value));
 }
 
 
@@ -980,7 +981,7 @@ void Parser::skipKeyword(const std::string &name)
 {
     if (!isKeyword(name))
     {
-        EucleiaError("expected keyword '%s' while parsing %s.", name.c_str(), fileInfo.nameWithExt.c_str());
+        ThrowException("expected keyword " + name + " while parsing " + fileInfo.nameWithExt);
     }
 
     skipToken();
@@ -991,7 +992,7 @@ void Parser::skipPunctuation(const std::string &name)
 {
     if (!isPunctuation(name))
     {
-        EucleiaError("expected punctuation '%s' while parsing %s.", name.c_str(), fileInfo.nameWithExt.c_str());
+        ThrowException("expected punctuation " + name + " while parsing " + fileInfo.nameWithExt);
     }
 
     skipToken();
@@ -1002,7 +1003,7 @@ void Parser::skipOperator(const std::string &name)
 {
     if (!isOperator(name))
     {
-        EucleiaError("expected operator '%s' while parsing %s.", name.c_str(), fileInfo.nameWithExt.c_str());
+        ThrowException("expected operator " + name + " while parsing " + fileInfo.nameWithExt);
     }
 
     skipToken();
@@ -1015,5 +1016,5 @@ void Parser::unexpectedToken()
 {
     Token &token = peekToken();
 
-    EucleiaError("Unexpected token of type '%s' and value '%s'.", token.description().c_str(), token.value.c_str());
+    ThrowException("unexpected token: " + token.print());
 }

@@ -8,7 +8,6 @@
 #ifndef EucleiaInputStream_hpp
 #define EucleiaInputStream_hpp
 
-#include "EucleiaGrammar.hpp"
 #include <set>
 #include <string>
 
@@ -53,18 +52,11 @@ protected:
 
     void reportError(const char *format, ...);
 
-    inline const EucleiaGrammar &grammar() const
-    {
-        return _grammar;
-    }
-
 private:
     void consume();
 
     char *_basePtr{nullptr};
     StreamPoint _current;
-
-    EucleiaGrammar _grammar;
 
     const std::string _fileContents;
 };
