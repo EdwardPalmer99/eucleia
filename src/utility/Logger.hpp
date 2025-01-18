@@ -28,6 +28,7 @@ public:
         severe,
         info,
         fine,
+        debug
     };
 
     Logger(std::string_view name)
@@ -53,6 +54,7 @@ public:
     void severe(std::string_view message);
     void info(std::string_view message);
     void fine(std::string_view message);
+    void debug(std::string_view message);
 
 private:
     std::string name;

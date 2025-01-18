@@ -50,6 +50,8 @@ constexpr std::string_view Logger::getLevelName(Logger::Level level)
             return "info";
         case Logger::Level::fine:
             return "fine";
+        case Logger::Level::debug:
+            return "debug";
         default:
             throw std::invalid_argument("Invalid Level enum.");
     }
@@ -92,4 +94,9 @@ void Logger::info(std::string_view message)
 void Logger::fine(std::string_view message)
 {
     log(Level::fine, message);
+}
+
+void Logger::debug(std::string_view message)
+{
+    log(Level::debug, message);
 }
