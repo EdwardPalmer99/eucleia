@@ -23,17 +23,7 @@ public:
         error
     };
 
-    Logger(std::string_view name)
-        : Logger(name, Level::info, std::cout)
-    {
-    }
-
-    Logger(std::string_view name, Level thresholdLevel)
-        : Logger(name, thresholdLevel, std::cout)
-    {
-    }
-
-    Logger(std::string_view name, Level thresholdLevel, std::ostream &logStream)
+    Logger(std::string_view name, Level thresholdLevel = Level::info, std::ostream &logStream = std::cout)
         : name(name), thresholdLevel(thresholdLevel), logStream(logStream)
     {
     }
