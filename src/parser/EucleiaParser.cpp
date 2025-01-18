@@ -22,7 +22,7 @@ std::unordered_set<std::string> importedFileNames;
 
 
 Parser::Parser(const std::string &fpath)
-    : tokenizer(Tokenizer::loadFromFile(fpath)),
+    : tokenizer(fpath),
       fileInfo(fpath)
 {
     // Add this file info so we don't accidentally import twice.
@@ -47,7 +47,7 @@ FileNode *Parser::buildAST()
 {
     std::vector<BaseNode *> nodes;
 
-    while (!tokenizer.empty() && peekToken().type != Token::EndOfFile)
+    while (!tokenizer.empty())
     {
         auto node = parseExpression();
 
@@ -628,7 +628,7 @@ BaseNode *Parser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
 
     // Take a peek look at the next token. Is it an operator token. If it is then
     // we need to create a binary node.
-    Token &next = peekToken();
+    const Token &next = peekToken();
 
     if (next.type == Token::Operator)
     {
@@ -767,7 +767,7 @@ BaseNode *Parser::parseAtomicallyExpression()
     else if (isOperator("-"))
         return parseNegation();
 
-    Token &token = peekToken();
+    const Token &token = peekToken();
 
     switch (token.type)
     {
@@ -911,7 +911,7 @@ ProgramNode *Parser::parseProgramLines()
 
 int Parser::getPrecedence()
 {
-    Token &token = peekToken();
+    const Token &token = peekToken();
 
     if (token.type != Token::Operator)
     {
@@ -947,7 +947,7 @@ int Parser::getPrecedence()
 
 bool Parser::isKeyword(const std::string &keyword)
 {
-    Token &token = peekToken();
+    const Token &token = peekToken();
 
     return (token.type == Token::Keyword && token.value == keyword);
 }
@@ -961,7 +961,7 @@ bool Parser::isDataTypeKeyword()
 
 bool Parser::isPunctuation(const std::string &punctuation)
 {
-    Token &token = peekToken();
+    const Token &token = peekToken();
 
     return (token.type == Token::Punctuation && token.value == punctuation);
 }
@@ -969,7 +969,7 @@ bool Parser::isPunctuation(const std::string &punctuation)
 
 bool Parser::isOperator(const std::string &operatorName)
 {
-    Token &token = peekToken();
+    const Token &token = peekToken();
 
     return (token.type == Token::Operator && token.value == operatorName);
 }
@@ -1014,7 +1014,7 @@ void Parser::skipOperator(const std::string &name)
 
 void Parser::unexpectedToken()
 {
-    Token &token = peekToken();
+    const Token &token = peekToken();
 
     ThrowException("unexpected token: " + token.print());
 }
