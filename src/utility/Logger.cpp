@@ -10,12 +10,9 @@
 
 #include "Logger.hpp"
 #include "Exceptions.hpp"
+#include "Stringify.hpp"
 #include <cstdio>
 #include <ctime>
-#include <iterator>
-#include <stdexcept>
-#include <string>
-#include <string_view>
 
 Logger::Logger(Level thresholdLevel, std::ostream &logStream)
     : thresholdLevel(thresholdLevel), logStream(logStream)
@@ -23,7 +20,7 @@ Logger::Logger(Level thresholdLevel, std::ostream &logStream)
 }
 
 
-const Logger &Logger::instance()
+Logger &Logger::instance()
 {
     static Logger instance;
 
@@ -31,31 +28,29 @@ const Logger &Logger::instance()
 }
 
 
-constexpr std::string_view Logger::getLevelName(Logger::Level level)
+constexpr std::string Logger::levelName(Level level) const
 {
     switch (level)
     {
         case Logger::Level::error:
             return "error";
         case Logger::Level::warning:
-            return "warning";
+            return "warn ";
         case Logger::Level::info:
-            return "info";
+            return "info ";
         case Logger::Level::debug:
             return "debug";
         default:
-            ThrowException("Invalid Level enum.");
+            ThrowException("invalid Level enum");
     }
 }
 
-void Logger::log(Level level, std::string_view message) const
+void Logger::log(Level level, std::string message) const
 {
     if (!isLoggable(level))
         return;
 
-    char outputInfo[1024];
-    snprintf(outputInfo, 1024, "%s %s: ", timestamp().c_str(), getLevelName(level).data());
-    logStream << outputInfo << message << std::endl;
+    logStream << timestamp() << " " << levelName(level) << " " << message << std::endl;
 }
 
 
