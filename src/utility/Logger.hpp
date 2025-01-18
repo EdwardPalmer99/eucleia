@@ -23,11 +23,7 @@ public:
         error
     };
 
-    Logger(std::string_view name, Level thresholdLevel = Level::info, std::ostream &logStream = std::cout)
-        : name(name), thresholdLevel(thresholdLevel), logStream(logStream)
-    {
-    }
-
+    Logger(std::string_view name, Level thresholdLevel = Level::info, std::ostream &logStream = std::cout);
     Logger() = delete;
 
     void log(Level level, std::string_view message);

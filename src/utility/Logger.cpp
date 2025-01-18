@@ -17,6 +17,12 @@
 #include <string>
 #include <string_view>
 
+Logger::Logger(std::string_view name, Level thresholdLevel, std::ostream &logStream)
+    : name(name), thresholdLevel(thresholdLevel), logStream(logStream)
+{
+}
+
+
 bool Logger::isLoggable(Level level)
 {
     return (level >= thresholdLevel);
