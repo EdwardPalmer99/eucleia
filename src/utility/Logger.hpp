@@ -7,6 +7,7 @@
  *
  */
 
+#pragma once
 
 #include <iostream>
 #include <string_view>
@@ -23,12 +24,12 @@ public:
 
     enum class Level
     {
-        error,
-        warning,
-        severe,
-        info,
+        debug,
         fine,
-        debug
+        info,
+        severe,
+        warning,
+        error
     };
 
     Logger(std::string_view name)
@@ -46,20 +47,20 @@ public:
     {
     }
 
-    void setFilter(Filter filterToSet) { filter = filterToSet; }
+    Logger() = delete;
 
-    void log(Level level, std::string_view message);
-    
-    inline void error(std::string_view message) { log(Level::error, message); };
-    inline void warning(std::string_view message) { log(Level::warning, message); };
-    inline void severe(std::string_view message) { log(Level::severe, message); };
-    inline void info(std::string_view message) { log(Level::info, message); };
-    inline void fine(std::string_view message) { log(Level::fine, message); };
-    inline void debug(std::string_view message) { log(Level::debug, message); };
+    void log(Level level, const char *file, unsigned int line, const char *func, std::string_view message);
+
+    inline void error(const char *file, unsigned int line, const char *func, std::string_view message) { log(Level::error, file, line, func, message); };
+    inline void warning(const char *file, unsigned int line, const char *func, std::string_view message) { log(Level::warning, file, line, func, message); };
+    inline void severe(const char *file, unsigned int line, const char *func, std::string_view message) { log(Level::severe, file, line, func, message); };
+    inline void info(const char *file, unsigned int line, const char *func, std::string_view message) { log(Level::info, file, line, func, message); };
+    inline void fine(const char *file, unsigned int line, const char *func, std::string_view message) { log(Level::fine, file, line, func, message); };
+    inline void debug(const char *file, unsigned int line, const char *func, std::string_view message) { log(Level::debug, file, line, func, message); };
 
 private:
-    std::string name;
-    Filter filter;
+    const std::string name;
+    const Filter filter;
     std::ostream &logStream;
 
     // ISO 8601 date time format

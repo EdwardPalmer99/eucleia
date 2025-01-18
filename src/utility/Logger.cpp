@@ -9,6 +9,7 @@
 
 
 #include "Logger.hpp"
+#include "Exceptions.hpp"
 #include <cstdio>
 #include <ctime>
 #include <iterator>
@@ -53,20 +54,22 @@ constexpr std::string_view Logger::getLevelName(Logger::Level level)
         case Logger::Level::debug:
             return "debug";
         default:
-            throw std::invalid_argument("Invalid Level enum.");
+            ThrowException("Invalid Level enum.");
     }
 }
 
-void Logger::log(Level level, std::string_view message)
+void Logger::log(Level level, const char *file, unsigned int line, const char *func, std::string_view message)
 {
-    if (isLoggable(level))
-    {
+    if (!isLoggable(level))
+        return;
 
-        std::time_t now = std::time(nullptr);
+    std::time_t now = std::time(nullptr);
 
-        char timestamp[std::size(Logger::timestampFormat)];
-        std::strftime(timestamp, std::size(Logger::timestampFormat),
-                      "%FT%TZ", std::localtime(&now));
-        logStream << '[' << timestamp << "] " << '(' << name << ") " << '[' << getLevelName(level) << "] " << message << '\n';
-    }
+    char timestamp[std::size(Logger::timestampFormat)];
+    std::strftime(timestamp, std::size(Logger::timestampFormat),
+                  "%FT%TZ", std::localtime(&now));
+
+    char outputInfo[1024];
+    snprintf(outputInfo, 1024, "[%s](%s)[%s]@%s:%d:%s() ", timestamp, name.c_str(), getLevelName(level).data(), file, line, func);
+    logStream << outputInfo << message << '\n';
 }
