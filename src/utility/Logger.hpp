@@ -40,12 +40,12 @@ public:
 
     Logger() = delete;
 
-    void log(Level level, const char *file, unsigned int line, const char *func, std::string_view message);
+    void log(Level level, std::string_view message);
 
-    inline void error(const char *file, unsigned int line, const char *func, std::string_view message) { log(Level::error, file, line, func, message); };
-    inline void warning(const char *file, unsigned int line, const char *func, std::string_view message) { log(Level::warning, file, line, func, message); };
-    inline void info(const char *file, unsigned int line, const char *func, std::string_view message) { log(Level::info, file, line, func, message); };
-    inline void debug(const char *file, unsigned int line, const char *func, std::string_view message) { log(Level::debug, file, line, func, message); };
+    inline void error(std::string_view message) { log(Level::error, message); };
+    inline void warning(std::string_view message) { log(Level::warning, message); };
+    inline void info(std::string_view message) { log(Level::info, message); };
+    inline void debug(std::string_view message) { log(Level::debug, message); };
 
 private:
     const std::string name;

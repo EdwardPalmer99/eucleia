@@ -39,7 +39,7 @@ constexpr std::string_view Logger::getLevelName(Logger::Level level)
     }
 }
 
-void Logger::log(Level level, const char *file, unsigned int line, const char *func, std::string_view message)
+void Logger::log(Level level, std::string_view message)
 {
     if (!isLoggable(level))
         return;
@@ -51,6 +51,6 @@ void Logger::log(Level level, const char *file, unsigned int line, const char *f
                   "%FT%TZ", std::localtime(&now));
 
     char outputInfo[1024];
-    snprintf(outputInfo, 1024, "[%s](%s)[%s]@%s:%d:%s() ", timestamp, name.c_str(), getLevelName(level).data(), file, line, func);
+    snprintf(outputInfo, 1024, "[%s](%s)[%s] ", timestamp, name.c_str(), getLevelName(level).data());
     logStream << outputInfo << message << '\n';
 }
