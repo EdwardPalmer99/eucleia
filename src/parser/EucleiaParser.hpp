@@ -7,7 +7,7 @@
 
 #pragma once
 #include "EucleiaModules.hpp"
-#include "EucleiaTokenizer.hpp"
+#include "Tokenizer.hpp"
 #include "FileInfoRec.hpp"
 #include "Nodes.hpp"
 #include <unordered_set>

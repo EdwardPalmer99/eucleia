@@ -7,7 +7,7 @@
  *
  */
 
-#include "EucleiaInputStream.hpp"
+#include "InputStream.hpp"
 #include "Exceptions.hpp"
 #include "FileUtils.hpp"
 #include "Grammar.hpp"

@@ -1,12 +1,14 @@
-//
-//  EucleiaTokenizer.hpp
-//  Eucleia
-//
-//  Created by Edward on 18/01/2024.
-//
+/**
+ * @file Tokenizer.hpp
+ * @author Edward Palmer
+ * @date 2025-01-18
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
 
 #pragma once
-#include "EucleiaInputStream.hpp"
+#include "InputStream.hpp"
 #include "Token.hpp"
 #include <queue>
 #include <set>

@@ -1,11 +1,13 @@
-//
-//  EucleiaTokenizer.cpp
-//  Eucleia
-//
-//  Created by Edward on 18/01/2024.
-//
+/**
+ * @file Tokenizer.cpp
+ * @author Edward Palmer
+ * @date 2025-01-18
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
 
-#include "EucleiaTokenizer.hpp"
+#include "Tokenizer.hpp"
 #include "Exceptions.hpp"
 #include "Grammar.hpp"
 #include "Stringify.hpp"

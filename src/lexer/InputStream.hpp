@@ -1,5 +1,5 @@
 /**
- * @file EucleiaInputStream.hpp
+ * @file InputStream.hpp
  * @author Edward Palmer
  * @date 2025-01-16
  *
