@@ -6,8 +6,8 @@
 //
 
 #include "EucleiaInputStream.hpp"
-#include "EucleiaGrammar.hpp"
-#include "EucleiaUtility.hpp"
+#include "Exceptions.hpp"
+#include "Grammar.hpp"
 #include <algorithm>
 #include <cstring>
 #include <stdarg.h>
@@ -19,8 +19,7 @@ static const char *getFileContents(const char *fpath);
 
 
 InputStream::InputStream(const std::string fileContents)
-    : _grammar(),
-      _fileContents(std::move(fileContents))
+    : _fileContents(std::move(fileContents))
 {
     _current.ptr = (char *)_fileContents.c_str();
 }
@@ -68,13 +67,13 @@ bool InputStream::isComment()
 
 bool InputStream::isOperator() const
 {
-    return _grammar.isOperator(peek());
+    return Grammar::isOperator(peek());
 }
 
 
 bool InputStream::isPunctuation() const
 {
-    return _grammar.isPunctuation(peek());
+    return Grammar::isPunctuation(peek());
 }
 
 

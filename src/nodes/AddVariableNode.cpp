@@ -34,7 +34,7 @@ BaseObject *AddVariableNode::evaluate(Scope &scope)
             break;
         // TODO: - handle function type. (will need to think about this.)
         default:
-            EucleiaError("cannot create a variable of specified type.");
+            ThrowException("cannot create a variable of specified type");
     }
 
     scope.linkObject(name, objectPtr); // TODO: - could call this linkObjectToVariableName()
@@ -130,8 +130,7 @@ BaseObject *AddReferenceVariableNode::evaluate(Scope &scope)
 
     if (!passesTypeChecking)
     {
-        EucleiaError("Cannot bind reference '%s' to variable '%s'. Types do not match!",
-                     referenceName.c_str(), name.c_str());
+        ThrowException("Cannot bind reference " + referenceName + " to variable " + name + ". Types do not match!");
     }
 
     // 3. Instead of creating a new object, we add the reference name and link

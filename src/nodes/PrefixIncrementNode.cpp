@@ -32,6 +32,6 @@ BaseObject *PrefixIncrementNode::evaluate(Scope &scope)
     }
     else
     {
-        EucleiaError("cannot use prefix operator on object of type.");
+        ThrowException("cannot use prefix operator on object of type");
     }
 }

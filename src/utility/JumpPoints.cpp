@@ -8,7 +8,7 @@
  */
 
 #include "JumpPoints.hpp"
-#include "EucleiaUtility.hpp"
+#include "Exceptions.hpp"
 #include <stack>
 
 std::stack<jmp_buf *> gBreakJumpPointStack;
@@ -22,7 +22,7 @@ void popBreakJumpPoint()
 {
     if (gBreakJumpPointStack.empty())
     {
-        EucleiaError("break jump stack is empty!");
+        ThrowException("break jump stack is empty!");
     }
 
     gBreakJumpPointStack.pop();
@@ -32,7 +32,7 @@ void jumpToBreakJumpPoint()
 {
     if (gBreakJumpPointStack.empty())
     {
-        EucleiaError("break jump stack is empty!");
+        ThrowException("break jump stack is empty!");
     }
 
     jmp_buf *top = gBreakJumpPointStack.top();

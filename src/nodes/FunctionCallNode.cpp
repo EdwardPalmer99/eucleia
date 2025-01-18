@@ -32,10 +32,13 @@ BaseObject *FunctionCallNode::evaluate(Scope &scope)
     // function we are calling.
     if (funcArgs->programNodes.size() != funcNode->funcArgs->programNodes.size())
     {
-        EucleiaError("expected %ld arguments but got %ld arguments for function '%s'.",
-                     funcNode->funcArgs->programNodes.size(),
-                     funcArgs->programNodes.size(),
-                     funcName->name.c_str());
+        char buffer[150];
+        snprintf(buffer, 150, "expected %ld arguments but got %ld arguments for function '%s'.",
+                 funcNode->funcArgs->programNodes.size(),
+                 funcArgs->programNodes.size(),
+                 funcName->name.c_str());
+
+        ThrowException(buffer);
     }
 
     // 3. Extend current scope (outside function) with names and values of function
@@ -58,10 +61,13 @@ BaseObject *FunctionCallNode::evaluate(Scope &scope)
 
         if (!argVariable.passesAssignmentTypeCheck(*evaluatedArg))
         {
-            EucleiaError("incorrect type for argument '%s' of function '%s'. Expected type '%s'.",
-                         argVariable.name.c_str(),
-                         funcName->name.c_str(),
-                         argVariable.description().c_str());
+            char buffer[150];
+            snprintf(buffer, 150, "incorrect type for argument '%s' of function '%s'. Expected type '%s'.",
+                     argVariable.name.c_str(),
+                     funcName->name.c_str(),
+                     argVariable.description().c_str());
+
+            ThrowException(buffer);
         }
 
         // Define variable in the function's scope.
