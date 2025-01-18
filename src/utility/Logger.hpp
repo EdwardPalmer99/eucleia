@@ -31,13 +31,11 @@ public:
 protected:
     static const Logger &instance();
 
-    Logger(std::string_view name, Level thresholdLevel = Level::info, std::ostream &logStream = std::cout);
-    Logger() = delete;
+    Logger(Level thresholdLevel = Level::info, std::ostream &logStream = std::cout);
 
     void log(Level level, std::string_view message) const;
 
 private:
-    const std::string name;
     const Level thresholdLevel;
     std::ostream &logStream;
 

@@ -17,15 +17,15 @@
 #include <string>
 #include <string_view>
 
-Logger::Logger(std::string_view name, Level thresholdLevel, std::ostream &logStream)
-    : name(name), thresholdLevel(thresholdLevel), logStream(logStream)
+Logger::Logger(Level thresholdLevel, std::ostream &logStream)
+    : thresholdLevel(thresholdLevel), logStream(logStream)
 {
 }
 
 
 const Logger &Logger::instance()
 {
-    static Logger instance("default");
+    static Logger instance;
 
     return instance;
 }
@@ -65,6 +65,6 @@ void Logger::log(Level level, std::string_view message) const
                   "%FT%TZ", std::localtime(&now));
 
     char outputInfo[1024];
-    snprintf(outputInfo, 1024, "[%s](%s)[%s] ", timestamp, name.c_str(), getLevelName(level).data());
+    snprintf(outputInfo, 1024, "[%s][%s] ", timestamp, getLevelName(level).data());
     logStream << outputInfo << message << '\n';
 }
