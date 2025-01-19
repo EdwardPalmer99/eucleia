@@ -7,6 +7,7 @@
 
 #include "CLIParser.hpp"
 #include "EucleiaInterpreter.hpp"
+#include "Logger.hpp"
 #include <exception>
 #include <iostream>
 #include <string>
@@ -18,6 +19,8 @@ int main(int argc, const char *argv[])
         CLIParser parser("eucleia");
 
         parser.addFlagArg("--help", "display available options");
+        parser.addFlagArg("--verbose", "logs all debug messages");
+
         parser.addPositionalArg("fileName");
         parser.parseArgs(argc, argv);
 
@@ -25,6 +28,11 @@ int main(int argc, const char *argv[])
         {
             parser.printOptions();
             return EXIT_SUCCESS;
+        }
+
+        if (parser.isSet("--verbose"))
+        {
+            Logger::threshold() = Logger::Level::debug;
         }
 
         Interpreter::evaluateFile(parser["fileName"]);
