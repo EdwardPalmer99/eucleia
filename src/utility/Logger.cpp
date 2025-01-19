@@ -10,66 +10,59 @@
 
 #include "Logger.hpp"
 #include "Exceptions.hpp"
+#include "Stringify.hpp"
 #include <cstdio>
 #include <ctime>
-#include <iterator>
-#include <stdexcept>
-#include <string>
-#include <string_view>
 
-bool Logger::isLoggable(Level level)
+Logger::Logger(Level thresholdLevel, std::ostream &logStream)
+    : thresholdLevel(thresholdLevel), logStream(logStream)
 {
-    if (filter == Filter::quiet)
-    {
-        return false;
-    }
-
-    if (filter == Filter::important)
-    {
-        return level == Level::error || level == Level::warning || level == Level::severe;
-    }
-
-    if (filter == Filter::verbose)
-    {
-        return true;
-    }
-
-    return true; // unknown filter, everything logged
 }
 
-constexpr std::string_view Logger::getLevelName(Logger::Level level)
+
+Logger &Logger::instance()
+{
+    static Logger instance;
+
+    return instance;
+}
+
+
+constexpr std::string Logger::levelName(Level level) const
 {
     switch (level)
     {
         case Logger::Level::error:
             return "error";
         case Logger::Level::warning:
-            return "warning";
-        case Logger::Level::severe:
-            return "severe";
+            return "warn ";
         case Logger::Level::info:
-            return "info";
-        case Logger::Level::fine:
-            return "fine";
+            return "info ";
         case Logger::Level::debug:
             return "debug";
         default:
-            ThrowException("Invalid Level enum.");
+            ThrowException("invalid Level enum");
     }
 }
 
-void Logger::log(Level level, const char *file, unsigned int line, const char *func, std::string_view message)
+void Logger::log(Level level, std::string message) const
 {
     if (!isLoggable(level))
         return;
 
+    logStream << timestamp() << " " << levelName(level) << " " << message << std::endl;
+}
+
+
+std::string Logger::timestamp() const
+{
     std::time_t now = std::time(nullptr);
 
-    char timestamp[std::size(Logger::timestampFormat)];
-    std::strftime(timestamp, std::size(Logger::timestampFormat),
-                  "%FT%TZ", std::localtime(&now));
+    const std::size_t timestampFormatSize = std::size(Logger::timestampFormat);
 
-    char outputInfo[1024];
-    snprintf(outputInfo, 1024, "[%s](%s)[%s]@%s:%d:%s() ", timestamp, name.c_str(), getLevelName(level).data(), file, line, func);
-    logStream << outputInfo << message << '\n';
+    char timestamp[timestampFormatSize];
+    std::strftime(timestamp, timestampFormatSize, "%FT%TZ", std::localtime(&now));
+
+    // NB: will copy bytes in buffer.
+    return std::string(timestamp);
 }

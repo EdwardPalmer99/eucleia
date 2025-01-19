@@ -8,65 +8,50 @@
  */
 
 #pragma once
-
 #include <iostream>
-#include <string_view>
+#include <string>
 
 class Logger
 {
 public:
-    enum class Filter
-    {
-        quiet,
-        verbose,
-        important
-    };
-
     enum class Level
     {
         debug,
-        fine,
         info,
-        severe,
         warning,
         error
     };
 
-    Logger(std::string_view name)
-        : Logger{name, Filter::important, std::cout}
-    {
-    }
+    static void debug(std::string message) { instance().log(Level::debug, std::move(message)); };
+    static void info(std::string message) { instance().log(Level::info, std::move(message)); };
+    static void warning(std::string message) { instance().log(Level::warning, std::move(message)); };
+    static void error(std::string message) { instance().log(Level::error, std::move(message)); };
 
-    Logger(std::string_view name, Filter filter)
-        : Logger{name, filter, std::cout}
-    {
-    }
+    // Returns non-const reference to singleton's thresholdLevel variable which enables it to be set.
+    static Level &threshold() { return instance().thresholdLevel; }
 
-    Logger(std::string_view name, Filter filter, std::ostream &logStream)
-        : name{name}, filter{filter}, logStream{logStream}
-    {
-    }
+protected:
+    // Returns a singleton instance.
+    static Logger &instance();
 
-    Logger() = delete;
+    Logger(Level thresholdLevel = Level::info, std::ostream &logStream = std::cout);
 
-    void log(Level level, const char *file, unsigned int line, const char *func, std::string_view message);
+    // Logs a message at a given level.
+    void log(Level level, std::string message) const;
 
-    inline void error(const char *file, unsigned int line, const char *func, std::string_view message) { log(Level::error, file, line, func, message); };
-    inline void warning(const char *file, unsigned int line, const char *func, std::string_view message) { log(Level::warning, file, line, func, message); };
-    inline void severe(const char *file, unsigned int line, const char *func, std::string_view message) { log(Level::severe, file, line, func, message); };
-    inline void info(const char *file, unsigned int line, const char *func, std::string_view message) { log(Level::info, file, line, func, message); };
-    inline void fine(const char *file, unsigned int line, const char *func, std::string_view message) { log(Level::fine, file, line, func, message); };
-    inline void debug(const char *file, unsigned int line, const char *func, std::string_view message) { log(Level::debug, file, line, func, message); };
+    // Returns true if message should be printed to the log.
+    inline bool isLoggable(Level level) const { return (level >= thresholdLevel); }
+
+    // Returns a timestamp string using the timestamp format.
+    std::string timestamp() const;
+
+    // Returns a string for the level of the message.
+    constexpr std::string levelName(Level level) const;
 
 private:
-    const std::string name;
-    const Filter filter;
+    Level thresholdLevel;
     std::ostream &logStream;
 
     // ISO 8601 date time format
     inline static const std::string timestampFormat{"yyyy-mm-ddThh:mm:ssZ"};
-
-    bool isLoggable(Level level);
-
-    static constexpr std::string_view getLevelName(Level level);
 };

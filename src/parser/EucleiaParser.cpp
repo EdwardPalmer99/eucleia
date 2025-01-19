@@ -9,6 +9,7 @@
 #include "EucleiaModules.hpp"
 #include "Exceptions.hpp"
 #include "Grammar.hpp"
+#include "Logger.hpp"
 #include "ObjectTypes.hpp"
 #include "TestModule.hpp"
 #include <assert.h>
@@ -98,6 +99,7 @@ FileNode *Parser::parseFileImport()
 
     // Build the file path:
     std::string filePath = fileInfo.dirPath + token.value;
+    Logger::debug("importing file: " + filePath);
 
     auto ast = Parser(filePath).buildAST(); // NB: don't use static method as this will clear loaded modules/files.
     if (!ast)
@@ -130,6 +132,7 @@ ModuleNode *Parser::parseLibraryImport()
     }
 
     importedModuleNames.insert(token.value);
+    Logger::debug("importing library: " + token.value);
 
     return EucleiaModuleLoader::getModuleInstance(libraryName);
 }
