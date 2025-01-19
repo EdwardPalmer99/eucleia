@@ -6,6 +6,7 @@
 //
 
 #include "EucleiaModules.hpp"
+#include "Logger.hpp"
 #include "ProgramNode.hpp"
 #include "TestModule.hpp"
 #include <cmath>
@@ -22,6 +23,7 @@ BaseObject *ModuleNode::evaluate(Scope &scope)
     // Iterate over functions and add to scope.
     for (const auto &[name, function] : _functionsMap)
     {
+        Logger::debug("adding function " + name + " to scope");
         LibraryFunctionObject *object = scope.createManagedObject<LibraryFunctionObject>(function);
         scope.linkObject(name, object);
     }

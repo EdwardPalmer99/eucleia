@@ -10,6 +10,7 @@
 #include "Tokenizer.hpp"
 #include "Exceptions.hpp"
 #include "Grammar.hpp"
+#include "Logger.hpp"
 #include "Stringify.hpp"
 #include <iostream>
 
@@ -26,9 +27,7 @@ void Tokenizer::buildTokens()
     while (!stream.isLast())
     {
         Token token = buildNextToken();
-
-        // TODO: - log token here as debug along with stream location.
-        // std::cout << stream.location() << ": " << token.print() << std::endl;
+        Logger::debug(stream.location() + ": " + token.print());
 
         if (!token.type == Token::EndOfFile)
             tokens.push(std::move(token));
