@@ -11,31 +11,47 @@
 #include "BaseObject.hpp"
 
 /* Template wrapper around BaseObject with accessors */
-template <class TStored>
+template <class TValue>
 class BaseObjectT : public BaseObject
 {
 public:
-    /* Returns const accessor */
-    [[nodiscard]] const TStored &operator*() const
-    {
-        return _values;
-    }
+    /* Constructor */
+    explicit BaseObjectT(TValue value) : _value(std::move(value)) {}
 
     /* Returns non-const accessor */
-    [[nodiscard]] const TStored &operator*()
+    [[nodiscard]] TValue &operator*()
     {
-        return _values;
+        return _value;
+    }
+
+    /* Returns const accessor */
+    [[nodiscard]] const TValue &operator*() const
+    {
+        return _value;
+    }
+
+    /* Overrides clone method */
+    BaseObjectT<TValue> *clone() const override
+    {
+        return new BaseObjectT<TValue>(_value);
+    }
+
+    /* Const-accessor */
+    [[nodiscard]] const TValue &value() const
+    {
+        return _value;
+    }
+
+    /* Non-const accessor */
+    [[nodiscard]] TValue &value()
+    {
+        return _value;
     }
 
 protected:
+    /* Enable subclasses to use default constructor */
     BaseObjectT() = default;
 
-    /* Accessor for child classes */
-    [[nodiscard]] TStored &values()
-    {
-        return values;
-    }
-
-private:
-    TStored _values;
+    /* Stores some value */
+    TValue _value;
 };
