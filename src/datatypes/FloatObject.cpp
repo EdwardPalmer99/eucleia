@@ -11,5 +11,5 @@
 
 FloatObject IntObject::castToFloat() const
 {
-    return FloatObject((double)value);
+    return FloatObject((double)_value);
 }

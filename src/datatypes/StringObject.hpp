@@ -8,20 +8,20 @@
  */
 
 #pragma once
-#include "BaseObject.hpp"
+#include "BaseObjectT.hpp"
 #include "IntObject.hpp"
 #include <string>
 
-class StringObject : public BaseObject
+class StringObject : public BaseObjectT<std::string>
 {
 public:
-    StringObject(std::string value_ = "") : value(std::move(value_)) {}
+    StringObject(std::string value = "") : BaseObjectT<std::string>(value) {}
 
     StringObject &operator=(const BaseObject &other) override
     {
         if (this != &other)
         {
-            value = other.castObject<StringObject>().value;
+            _value = other.castObject<StringObject>().value();
         }
 
         return (*this);
@@ -29,31 +29,29 @@ public:
 
     StringObject *clone() const override
     {
-        return new StringObject(value);
+        return new StringObject(_value);
     }
 
     StringObject operator+(const StringObject &other) const
     {
-        return StringObject(value + other.value);
+        return StringObject(_value + other.value());
     }
 
     StringObject &operator+=(const StringObject &other)
     {
-        value += other.value;
+        _value += other.value();
         return *this;
     }
 
 
     IntObject operator==(const StringObject &other) const
     {
-        return IntObject((value == other.value));
+        return IntObject((_value == other.value()));
     }
 
 
     IntObject operator!=(const StringObject &other) const
     {
-        return IntObject((value != other.value));
+        return IntObject((_value != other.value()));
     }
-
-    std::string value;
 };

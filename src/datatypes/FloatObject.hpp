@@ -8,22 +8,22 @@
  */
 
 #pragma once
-#include "BaseObject.hpp"
+#include "BaseObjectT.hpp"
 #include "IntObject.hpp"
 
 /**
  * Class for double type.
  */
-class FloatObject : public BaseObject
+class FloatObject : public BaseObjectT<double>
 {
 public:
-    FloatObject(double value_ = 0.0) : value(value_) {}
+    FloatObject(double value = 0.0) : BaseObjectT<double>(value) {}
 
     FloatObject &operator=(const BaseObject &other) override
     {
         if (this != &other)
         {
-            value = other.castObject<FloatObject>().value;
+            _value = *(other.castObject<BaseObjectT<double>>());
         }
 
         return (*this);
@@ -31,76 +31,74 @@ public:
 
     FloatObject *clone() const override
     {
-        return new FloatObject(value);
+        return new FloatObject(_value);
     }
 
     FloatObject &operator++()
     {
-        ++value;
+        ++_value;
         return *this;
     }
 
     FloatObject &operator--()
     {
-        --value;
+        --_value;
         return *this;
     }
 
     FloatObject operator-() const // Negation.
     {
-        return FloatObject(-value);
+        return FloatObject(-_value);
     }
 
     // Add addition / subtraction operations.
     FloatObject operator+(const FloatObject &other) const
     {
-        return FloatObject(value + other.value);
+        return FloatObject(_value + other._value);
     }
 
     FloatObject operator-(const FloatObject &other) const
     {
-        return FloatObject(value - other.value);
+        return FloatObject(_value - other._value);
     }
 
     FloatObject operator*(const FloatObject &other) const
     {
-        return FloatObject(value * other.value);
+        return FloatObject(_value * other._value);
     }
 
     FloatObject operator/(const FloatObject &other) const
     {
-        return FloatObject(value / other.value);
+        return FloatObject(_value / other._value);
     }
 
     IntObject operator==(const FloatObject &other) const
     {
-        return IntObject(value == other.value);
+        return IntObject(_value == other._value);
     }
 
     IntObject operator!=(const FloatObject &other) const
     {
-        return IntObject(value != other.value);
+        return IntObject(_value != other._value);
     }
 
     IntObject operator>=(const FloatObject &other) const
     {
-        return IntObject(value >= other.value);
+        return IntObject(_value >= other._value);
     }
 
     IntObject operator>(const FloatObject &other) const
     {
-        return IntObject(value > other.value);
+        return IntObject(_value > other._value);
     }
 
     IntObject operator<=(const FloatObject &other) const
     {
-        return IntObject(value <= other.value);
+        return IntObject(_value <= other._value);
     }
 
     IntObject operator<(const FloatObject &other) const
     {
-        return IntObject(value <= other.value);
+        return IntObject(_value <= other._value);
     }
-
-    double value;
 };

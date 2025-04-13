@@ -21,12 +21,12 @@ BaseObject *FunctionCallNode::evaluate(Scope &scope)
     {
         ProgramNode &programNode = (*funcArgs);
 
-        return libraryFunc->castObject<LibraryFunctionObject>().evaluate(programNode, scope);
+        return libraryFunc->castObject<LibraryFunctionObject>()(programNode, scope);
     }
 
     // TODO: - finish implementing here. Should not be a shared pointer.
     // 1. Get a pointer to the function node stored in this scope.
-    auto funcNode = scope.getNamedObject<FunctionObject>(funcName->name)->functionValue;
+    auto funcNode = scope.getNamedObject<FunctionObject>(funcName->name)->value();
 
     // 2. Verify that the number of arguments matches those required for the
     // function we are calling.

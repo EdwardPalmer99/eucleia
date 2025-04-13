@@ -23,17 +23,17 @@
 inline std::ostream &operator<<(std::ostream &out, const BaseObject &object)
 {
     if (object.isObjectType<IntObject>())
-        return (out << object.castObject<IntObject>().value);
+        return (out << object.castObject<IntObject>().value());
     else if (object.isObjectType<FloatObject>())
-        return (out << object.castObject<FloatObject>().value);
+        return (out << object.castObject<FloatObject>().value());
     else if (object.isObjectType<StringObject>())
-        return (out << object.castObject<StringObject>().value);
+        return (out << object.castObject<StringObject>().value());
     else if (object.isObjectType<ArrayObject>())
     {
         auto &arrayObject = object.castObject<ArrayObject>();
 
         out << "[";
-        for (int i = 0; i < arrayObject.values.size(); i++)
+        for (int i = 0; i < arrayObject.value().size(); i++)
         {
             out << *arrayObject[i] << ", ";
         }

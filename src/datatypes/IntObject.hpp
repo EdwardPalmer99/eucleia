@@ -8,7 +8,7 @@
  */
 
 #pragma once
-#include "BaseObject.hpp"
+#include "BaseObjectT.hpp"
 #include "PoolAllocator.hpp"
 #include <cassert>
 
@@ -20,16 +20,16 @@ class FloatObject;
 /**
  * @brief Long integer type.
  */
-class IntObject : public BaseObject
+class IntObject : public BaseObjectT<long>
 {
 public:
-    IntObject(long value_ = 0) : value(value_) {}
+    IntObject(long value = 0) : BaseObjectT<long>(value) {}
 
     IntObject &operator=(const BaseObject &other) override
     {
         if (this != &other)
         {
-            value = other.castObject<IntObject>().value;
+            _value = other.castObject<IntObject>().value();
         }
 
         return (*this);
@@ -47,101 +47,99 @@ public:
 
     IntObject *clone() const override
     {
-        return new IntObject(value);
+        return new IntObject(_value);
     }
 
     FloatObject castToFloat() const;
 
     IntObject &operator++()
     {
-        ++value;
+        ++_value;
         return *this;
     }
 
     IntObject &operator--()
     {
-        --value;
+        --_value;
         return *this;
     }
 
     IntObject operator-() const // Negation.
     {
-        return IntObject(-value);
+        return IntObject(-_value);
     }
 
     IntObject operator!() const // Not.
     {
-        bool state = (value > 0);
+        bool state = (_value > 0);
         return IntObject(!state);
     }
 
     IntObject operator+(const IntObject &other) const
     {
-        return IntObject(value + other.value);
+        return IntObject(_value + other._value);
     }
 
     IntObject operator-(const IntObject &other) const
     {
-        return IntObject(value - other.value);
+        return IntObject(_value - other._value);
     }
 
     IntObject operator*(const IntObject &other) const
     {
-        return IntObject(value * other.value);
+        return IntObject(_value * other._value);
     }
 
     IntObject operator/(const IntObject &other) const
     {
-        return IntObject(value / other.value);
+        return IntObject(_value / other._value);
     }
 
     IntObject operator==(const IntObject &other) const
     {
-        return IntObject(value == other.value);
+        return IntObject(_value == other._value);
     }
 
     IntObject operator!=(const IntObject &other) const
     {
-        return IntObject(value != other.value);
+        return IntObject(_value != other._value);
     }
 
     IntObject operator>=(const IntObject &other) const
     {
-        return IntObject(value >= other.value);
+        return IntObject(_value >= other._value);
     }
 
     IntObject operator>(const IntObject &other) const
     {
-        return IntObject(value > other.value);
+        return IntObject(_value > other._value);
     }
 
     IntObject operator<=(const IntObject &other) const
     {
-        return IntObject(value <= other.value);
+        return IntObject(_value <= other._value);
     }
 
     IntObject operator<(const IntObject &other) const
     {
-        return IntObject(value <= other.value);
+        return IntObject(_value <= other._value);
     }
 
     IntObject operator%(const IntObject &other) const
     {
-        assert(other.value > 0);
-        return IntObject(value % other.value);
+        assert(other._value > 0);
+        return IntObject(_value % other._value);
     }
 
     IntObject operator&&(const IntObject &other) const
     {
-        return IntObject(value && other.value);
+        return IntObject(_value && other._value);
     }
 
     IntObject operator||(const IntObject &other) const
     {
-        return IntObject(value || other.value);
+        return IntObject(_value || other._value);
     }
-
-    long value;
 };
 
 using BoolObject = IntObject;

@@ -9,7 +9,9 @@
 
 #pragma once
 #include "BaseObject.hpp"
+#include "BaseObjectT.hpp"
 #include "Scope.hpp"
+
 
 class BaseNode
 {
@@ -50,4 +52,14 @@ public:
     {
         return static_cast<T *>(evaluate(scope));
     }
+
+    /* Returns a non-const reference to the stored value */
+    // template <typename TValue>
+    // TValue &evaluate(Scope &scope)
+    // {
+    //     auto obj = evaluate(scope);
+
+    //     /* Cast and apply '*' operator */
+    //     return (*static_cast<BaseObjectT<TValue>>(obj);
+    // }
 };
