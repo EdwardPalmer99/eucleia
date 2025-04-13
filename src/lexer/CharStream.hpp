@@ -37,6 +37,8 @@ public:
 
     bool isComment();
 
+    bool isShebang();
+
     bool isPunctuation() const;
 
     bool isWhiteSpace() const;

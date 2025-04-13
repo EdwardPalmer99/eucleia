@@ -67,7 +67,7 @@ Token Tokenizer::buildNextToken()
     {
         return Token(Token::EndOfFile, "");
     }
-    else if (stream.isComment())
+    else if (stream.isComment() || stream.isShebang())
     {
         skipLine();
         return buildNextToken();
