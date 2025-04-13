@@ -105,10 +105,26 @@ bool CharStream::isComment()
     if (isLast() || current() != '/')
         return false;
 
+    /* Find the next '/' for comment begin */
     char next = increment();
     decrement(); // Reset the pointer.
 
     return (next == '/');
+}
+
+
+bool CharStream::isShebang()
+{
+    /* Special UNIX char sequence '#!' */
+
+    if (isLast() || current() != '#')
+        return false;
+
+    /* Find the next '!' for shebang */
+    char next = increment();
+    decrement(); // Reset the pointer.
+
+    return (next == '!');
 }
 
 
