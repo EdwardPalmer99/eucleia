@@ -17,7 +17,7 @@ BaseObject *ForLoopNode::evaluate(Scope &scope)
     // Initialization.
     Scope loopScope(scope); // Extend scope.
 
-    start->evaluate(loopScope);
+    (void)start->evaluate(loopScope);
 
     jmp_buf local;
     pushBreakJumpPoint(&local);
@@ -26,7 +26,7 @@ BaseObject *ForLoopNode::evaluate(Scope &scope)
     if (setjmp(local) != 1)
     {
         for (;
-             evaluateExpression<BoolObject>(condition, loopScope).value(); // TODO: - not very efficient repeatedly recalculating...
+             evaluateExpression<BoolObject::Type>(condition, loopScope); // TODO: - not very efficient repeatedly recalculating...
              update->evaluate(loopScope))
         {
             (void)body->evaluate(loopScope);

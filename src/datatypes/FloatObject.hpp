@@ -23,7 +23,7 @@ public:
     {
         if (this != &other)
         {
-            _value = *(other.castObject<BaseObjectT<double>>());
+            _value = FloatObject::value(other);
         }
 
         return (*this);

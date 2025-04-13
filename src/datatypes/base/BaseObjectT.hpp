@@ -9,12 +9,31 @@
 
 #pragma once
 #include "BaseObject.hpp"
+#include <utility>
 
 /* Template wrapper around BaseObject with accessors */
 template <class TValue>
 class BaseObjectT : public BaseObject
 {
 public:
+    /* Use this to ensure that stored value type is correct */
+    using Type = TValue;
+
+    /* Elegant wrapper to extract value from a base object */
+    static const TValue &value(const BaseObject &obj)
+    {
+        const auto &upcast = static_cast<const BaseObjectT<TValue> &>(obj);
+
+        return (*upcast); /* Return value */
+    }
+
+    static TValue &value(BaseObject &obj)
+    {
+        const auto &upcast = static_cast<BaseObjectT<TValue> &>(obj);
+
+        return (*upcast); /* Return value */
+    }
+
     /* Constructor */
     explicit BaseObjectT(TValue value) : _value(std::move(value)) {}
 

@@ -21,7 +21,7 @@ public:
     {
         if (this != &other)
         {
-            _value = other.castObject<StringObject>().value();
+            _value = StringObject::value(other);
         }
 
         return (*this);

@@ -29,7 +29,7 @@ public:
     {
         if (this != &other)
         {
-            _value = other.castObject<IntObject>().value();
+            _value = IntObject::value(other);
         }
 
         return (*this);

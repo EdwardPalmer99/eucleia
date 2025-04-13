@@ -92,7 +92,7 @@ BaseObject *FunctionCallNode::evaluateFunctionBody(BaseNode &funcBody, Scope &fu
     // Evaluate each node and return last result.
     if (setjmp(local) != 1)
     {
-        funcBody.evaluate(funcScope);
+        (void)funcBody.evaluate(funcScope);
     }
 
     gEnvironmentContext.returnJumpPoint = original;

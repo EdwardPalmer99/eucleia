@@ -10,6 +10,7 @@
 #include "ArrayAccessNode.hpp"
 #include "ArrayObject.hpp"
 #include "BaseNode.hpp"
+#include "BaseObjectT.hpp"
 
 ArrayAccessNode::~ArrayAccessNode()
 {
@@ -22,9 +23,8 @@ BaseObject *ArrayAccessNode::evaluateNoClone(Scope &scope)
 {
     // Lookup in array.
     auto &arrayObj = arrayLookup->evaluate(scope)->castObject<ArrayObject>();
-    auto &indexObject = index->evaluate(scope)->castObject<IntObject>();
 
-    return arrayObj[indexObject.value()];
+    return arrayObj[index->evaluateObject<IntObject::Type>(scope)];
 }
 
 

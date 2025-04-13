@@ -23,11 +23,11 @@
 inline std::ostream &operator<<(std::ostream &out, const BaseObject &object)
 {
     if (object.isObjectType<IntObject>())
-        return (out << object.castObject<IntObject>().value());
+        return (out << IntObject::value(object));
     else if (object.isObjectType<FloatObject>())
-        return (out << object.castObject<FloatObject>().value());
+        return (out << FloatObject::value(object));
     else if (object.isObjectType<StringObject>())
-        return (out << object.castObject<StringObject>().value());
+        return (out << StringObject::value(object));
     else if (object.isObjectType<ArrayObject>())
     {
         auto &arrayObject = object.castObject<ArrayObject>();
