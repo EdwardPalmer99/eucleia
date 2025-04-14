@@ -7,9 +7,9 @@
 
 #pragma once
 #include "EucleiaModules.hpp"
-#include "Tokenizer.hpp"
 #include "FileInfoRec.hpp"
 #include "Nodes.hpp"
+#include "Tokenizer.hpp"
 #include <unordered_set>
 
 
@@ -58,7 +58,7 @@ protected:
     PrefixDecrementNode *parsePrefixDecrement();
     NegationNode *parseNegation();
 
-    ModuleNode *parseLibraryImport();
+    BaseNode *parseLibraryImport();
     FileNode *parseFileImport();
     BaseNode *parseImport();
 

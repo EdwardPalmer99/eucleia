@@ -6,6 +6,7 @@
 //
 
 #include "EucleiaParser.hpp"
+#include "DynamicLibraryLoader.hpp"
 #include "EucleiaModules.hpp"
 #include "Exceptions.hpp"
 #include "Grammar.hpp"
@@ -115,7 +116,7 @@ FileNode *Parser::parseFileImport()
 /// This is for importing functions from a stdlib as opposed to user-defined functions
 /// into this scope.
 
-ModuleNode *Parser::parseLibraryImport()
+BaseNode *Parser::parseLibraryImport()
 {
     skipOperator("<");
 
@@ -884,7 +885,8 @@ void Parser::skipSemicolonLineEndingIfRequired(const BaseNode &node)
                               node.isNodeType<WhileNode>() ||
                               node.isNodeType<DoWhileNode>() ||
                               node.isNodeType<ForLoopNode>() ||
-                              node.isNodeType<FunctionNode>());
+                              node.isNodeType<FunctionNode>() ||
+                              node.isNodeType<DynamicLibraryLoader>());
 
     if (!doSkipPunctuation)
         skipPunctuation(";");
