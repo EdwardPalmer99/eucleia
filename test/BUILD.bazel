@@ -1,0 +1,11 @@
+cc_test(
+    name = "unit",
+    srcs = glob(["*.cpp"]),
+    deps = [
+        "@googletest//:gtest",
+        "@googletest//:gtest_main",
+        "//src:eucleia_lib",
+    ],
+    size = "small",
+    visibility = ["//visibility:private"]
+)
