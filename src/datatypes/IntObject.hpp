@@ -122,7 +122,7 @@ public:
 
     IntObject operator<(const IntObject &other) const
     {
-        return IntObject(value <= other.value);
+        return IntObject(value < other.value);
     }
 
     IntObject operator%(const IntObject &other) const

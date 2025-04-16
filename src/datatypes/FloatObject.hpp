@@ -99,7 +99,7 @@ public:
 
     IntObject operator<(const FloatObject &other) const
     {
-        return IntObject(value <= other.value);
+        return IntObject(value < other.value);
     }
 
     double value;
