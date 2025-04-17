@@ -17,11 +17,12 @@
  * to a bool value. This ensures that the objects created in this scope are
  * destroyed once we have a value.
  */
-template <class TObject>
-TObject evaluateExpression(BaseNode *node, const Scope &parent)
+template <typename TValue>
+TValue evaluateExpression(BaseNode *node, const Scope &parent)
 {
     Scope evalScope(parent);
-    auto *output = node->evaluate<TObject>(evalScope);
+    TValue output = node->evaluateObject<TValue>(evalScope);
 
-    return (*output); // Copy.
+    /* Returns copy */
+    return output;
 }

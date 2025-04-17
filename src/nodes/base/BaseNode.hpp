@@ -9,7 +9,9 @@
 
 #pragma once
 #include "BaseObject.hpp"
+#include "BaseObjectT.hpp"
 #include "Scope.hpp"
+
 
 class BaseNode
 {
@@ -45,9 +47,24 @@ public:
 
     virtual BaseObject *evaluate(Scope &scope) = 0;
 
-    template <typename T>
-    T *evaluate(Scope &scope)
+    /* Evaluates object */
+    template <typename TObject>
+    TObject *evaluate(Scope &scope)
     {
-        return static_cast<T *>(evaluate(scope));
+        return static_cast<TObject *>(evaluate(scope));
+    }
+
+    /* Evaluates object and returns the object's stored value directly */
+    template <typename TValue>
+    TValue &evaluateObject(Scope &scope)
+    {
+        /* BaseObject ptr */
+        BaseObject *baseObjPtr = evaluate(scope);
+
+        /* Up-cast */
+        auto &upcastedObj = static_cast<BaseObjectT<TValue> &>(*baseObjPtr);
+
+        /* Apply operator overload to get stored value */
+        return (*upcastedObj);
     }
 };

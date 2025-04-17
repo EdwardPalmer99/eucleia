@@ -13,7 +13,7 @@ BaseObject *FileNode::evaluate(Scope &globalScope)
 {
     for (const auto &node : programNodes)
     {
-        node->evaluate(globalScope);
+        (void)node->evaluate(globalScope);
     }
 
     return nullptr;
