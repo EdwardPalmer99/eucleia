@@ -1,5 +1,6 @@
 # Global build options (always want -g flag!):
-build --copt='-g' --copt='-Wall' --copt='-Wextra' --copt='-Wpedantic'
+build --strip=never
+build --copt='-Wall' --copt='-Wextra' --copt='-Wpedantic'
 build --cxxopt='-std=c++17'
 build --color=yes
 
