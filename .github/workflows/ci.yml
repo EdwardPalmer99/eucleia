@@ -1,20 +1,27 @@
-name: C++ Build
+name: Eucleia Build & Test
 
 on:
   push:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
-
+  
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
-    - name: make
-      run: make
-    - name: make test
-      run: make test
-
+    - uses: bazel-contrib/setup-bazel@0.14.0
+      with:
+        # Avoid downloading Bazel every time.
+        bazelisk-cache: true
+        # Store build cache per workflow.
+        disk-cache: ${{ github.workflow }}
+        # Share repository cache between workflows.
+        repository-cache: true
+    - name: Release Build
+      run: bazel build //... --config=release
+    - name: Unit Tests
+      run: bazel test //... --config=release
+      run: Functional Tests
+      run: bazel run src:eucleia -- $(realpath src/test/unit/Main.ek)
