@@ -23,5 +23,5 @@ jobs:
       run: bazel build //... --config=release
     - name: Unit Tests
       run: bazel test //... --config=release
-      run: Functional Tests
+    - name: Functional Tests
       run: bazel run src:eucleia -- $(realpath src/test/unit/Main.ek)
