@@ -1,0 +1,16 @@
+# Global build options (always want -g flag!):
+build --strip=never
+build --copt='-Wall' --copt='-Wextra' --copt='-Wpedantic'
+build --cxxopt='-std=c++17'
+build --color=yes
+
+# Release:
+build:release --compilation_mode=opt
+build:release --copt='-O2'
+
+# Debug:
+build:debug --compilation_mode=dbg
+build:debug --copt='-O0'
+
+# Test:
+test --test_output=all

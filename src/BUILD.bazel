@@ -1,0 +1,33 @@
+cc_library(
+    name = "eucleia_lib",
+
+    hdrs = glob(["**/*.hpp"]),
+    srcs = glob(["**/*.cpp"]),
+    includes = [
+        "datatypes/", 
+        "allocators/",
+        "modules",
+        "datatypes/base/", 
+        "datatypes/nonprimitive/", 
+        "grammar/",
+        "interpreter/", 
+        "lexer/", 
+        "parser",
+        "nodes/", 
+        "nodes/base/", 
+        "environment/",
+        "utility/",
+    ],
+    visibility = ["//src:__pkg__", "//test:__pkg__"]
+)
+
+
+cc_binary(
+    name = "eucleia",
+    srcs = ["eucleia.cpp"],
+    deps = [
+        ":eucleia_lib",
+    ],
+    linkstatic = True,     # Prefer static linking rather than have a .so
+    visibility = ["//visibility:public"]
+)

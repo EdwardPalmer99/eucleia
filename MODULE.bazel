@@ -1,0 +1,4 @@
+# MODULE.bazel
+
+# https://registry.bazel.build/modules/googletest
+bazel_dep(name = "googletest", version = "1.16.0")
