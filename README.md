@@ -11,14 +11,14 @@ Build Instructions
 ------------------
 On Unix, Linux, macOS:
 ```
-make
+bazel build //...
 ```
 
 Test Instructions
 ------------------
 On Unix, Linux, macOS:
 ```
-make test
+bazel test //...
 ```
 
 Using Eucleia
