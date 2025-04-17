@@ -34,15 +34,15 @@ public:
     BaseObject *getNamedObject(const std::string &name) const;
 
     /// Get an object from the scope and cast to a subclass.
-    template <typename T>
-    T *getNamedObject(const std::string &name) const
+    template <typename TObject>
+    TObject *getNamedObject(const std::string &name) const
     {
         BaseObject *ownedObject = getNamedObject(name);
-        return static_cast<T *>(ownedObject);
+        return static_cast<TObject *>(ownedObject);
     }
 
-    template <typename T>
-    T *getOptionalNamedObject(const std::string &name) const
+    template <typename TObject>
+    TObject *getOptionalNamedObject(const std::string &name) const
     {
         BaseObject *obj = getOptionalNamedObject(name);
         if (!obj)
@@ -50,7 +50,7 @@ public:
             return nullptr;
         }
 
-        return static_cast<T *>(obj);
+        return static_cast<TObject *>(obj);
     }
 
     /// Create and return a new object in the current scope. We store in the scope

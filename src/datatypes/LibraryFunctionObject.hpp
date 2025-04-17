@@ -9,25 +9,33 @@
 
 #pragma once
 #include "BaseObject.hpp"
+#include "BaseObjectT.hpp"
 #include <functional>
 
 class ProgramNode;
 class Scope;
 
+using LibraryFunction = std::function<BaseObject *(ProgramNode &, Scope &)>;
+
 /// Library function allows us to define lambdas which wrap around existing stdlib
 /// functions. These can then be added to a global scope after seeing "import <...>"
 /// with angled-brackets.
-class LibraryFunctionObject : public BaseObject
+class LibraryFunctionObject : public BaseObjectT<LibraryFunction>
 {
 public:
-    using LibraryFunction = std::function<BaseObject *(ProgramNode &, Scope &)>;
-
-    LibraryFunctionObject(LibraryFunction function_) : evaluate(std::move(function_)) {}
+    /* Set evaluate to be a reference to _value */
+    LibraryFunctionObject(LibraryFunction function) : BaseObjectT<LibraryFunction>(function)
+    {
+    }
 
     LibraryFunctionObject *clone() const override
     {
-        return new LibraryFunctionObject(evaluate);
+        return new LibraryFunctionObject(_value);
     }
 
-    LibraryFunction evaluate;
+    /* Elegant operator overload allowing user to call function */
+    BaseObject *operator()(ProgramNode &args, Scope &scope) const
+    {
+        return _value(args, scope);
+    }
 };

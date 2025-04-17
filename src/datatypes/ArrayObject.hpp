@@ -9,17 +9,20 @@
 
 #pragma once
 #include "BaseObject.hpp"
+#include "BaseObjectT.hpp"
 #include <cassert>
 #include <vector>
 
-class ArrayObject : public BaseObject
+using ArrayValue = std::vector<BaseObject *>;
+
+class ArrayObject : public BaseObjectT<ArrayValue>
 {
 public:
     ArrayObject() = default;
+    ArrayObject(ArrayValue values);
 
     ~ArrayObject() override;
 
-    ArrayObject(std::vector<BaseObject *> values_);
 
     /// Add two array objects and return an unmanaged pointer to result.
     ArrayObject *operator+(const BaseObject &other) const override;
@@ -32,9 +35,7 @@ public:
 
     BaseObject *operator[](std::size_t index) const
     {
-        assert(index < values.size());
-        return (values.at(index)); // TODO: - fix this. Just return a reference or something.
+        assert(index < value().size());
+        return (value().at(index)); // TODO: - fix this. Just return a reference or something.
     }
-
-    std::vector<BaseObject *> values;
 };

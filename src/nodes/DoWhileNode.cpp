@@ -25,7 +25,7 @@ BaseObject *DoWhileNode::evaluate(Scope &scope)
         do
         {
             (void)body->evaluate(loopScope);
-        } while (evaluateExpression<BoolObject>(condition, scope).value);
+        } while (evaluateExpression<BoolObject::Type>(condition, scope));
     }
 
     // Restore original context.

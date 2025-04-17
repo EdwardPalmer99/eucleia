@@ -21,7 +21,7 @@ BaseObject *WhileNode::evaluate(Scope &scope)
     {
         Scope loopScope(scope); // Extend scope.
 
-        while (evaluateExpression<BoolObject>(condition, scope).value)
+        while (evaluateExpression<BoolObject::Type>(condition, scope))
         {
             (void)body->evaluate(loopScope);
         }

@@ -9,28 +9,28 @@
 
 #include "ArrayObject.hpp"
 
-ArrayObject::ArrayObject(std::vector<BaseObject *> values_)
+ArrayObject::ArrayObject(ArrayValue arrayValue)
 {
-    values.reserve(values_.size());
+    _value.reserve(arrayValue.size());
 
     // Clone each object in vector. We have ownership of these! The objects in
     // the vector probably are owned by some scope and we do not want to share
     // ownership.
-    for (BaseObject *obj : values_)
+    for (BaseObject *obj : arrayValue)
     {
-        values.push_back(obj->clone());
+        _value.push_back(obj->clone());
     }
 }
 
 ArrayObject::~ArrayObject()
 {
     // Delete objects we have ownership of.
-    for (BaseObject *obj : values)
+    for (BaseObject *obj : _value)
     {
         delete obj;
     }
 
-    values.clear();
+    _value.clear();
 }
 
 ArrayObject &ArrayObject::operator=(const BaseObject &other)
@@ -46,18 +46,18 @@ ArrayObject &ArrayObject::operator=(const BaseObject &other)
     // responsibility of managing their memory. The scope only owns the array
     // and not the objects inside the array!
     // 1. clear objects in existing vector.
-    for (BaseObject *obj : values)
+    for (BaseObject *obj : _value)
     {
         delete obj;
     }
 
-    values.resize(otherArray.values.size());
+    _value.resize(otherArray.value().size());
 
-    for (size_t i = 0; i < otherArray.values.size(); ++i)
+    for (size_t i = 0; i < otherArray.value().size(); ++i)
     {
         BaseObject *otherObj = otherArray[i];
 
-        values[i] = otherObj->clone();
+        _value[i] = otherObj->clone();
     }
 
     return (*this);
@@ -74,15 +74,15 @@ ArrayObject *ArrayObject::operator+(const BaseObject &other) const
 
     // Create an array to store objects from both.
     std::vector<BaseObject *> combinedArray;
-    combinedArray.reserve(values.size() + otherArray.values.size());
+    combinedArray.reserve(_value.size() + otherArray.value().size());
 
     // Now we iterate over array and add to vector.
-    for (BaseObject *object : values)
+    for (BaseObject *object : _value)
     {
         combinedArray.push_back(object);
     }
 
-    for (BaseObject *object : otherArray.values)
+    for (BaseObject *object : otherArray.value())
     {
         combinedArray.push_back(object);
     }
@@ -95,9 +95,9 @@ ArrayObject *ArrayObject::operator+(const BaseObject &other) const
 
 ArrayObject *ArrayObject::clone() const
 {
-    std::vector<BaseObject *> cloneValues(values.size());
+    std::vector<BaseObject *> cloneValues(value().size());
 
-    for (BaseObject *obj : values)
+    for (BaseObject *obj : value())
     {
         cloneValues.push_back(obj->clone());
     }

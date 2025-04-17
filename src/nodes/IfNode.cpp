@@ -15,7 +15,7 @@ BaseObject *IfNode::evaluate(Scope &scope)
 {
     // NB: the condition should be evaluated in its own scope as it is within ()
     // brackets. We don't want it to persist once evaluated.
-    if (evaluateExpression<BoolObject>(ifCondition, scope).value)
+    if (evaluateExpression<BoolObject::Type>(ifCondition, scope))
         return thenDo->evaluate(scope);
     else if (elseDo != nullptr) // Optional "else"
         return elseDo->evaluate(scope);

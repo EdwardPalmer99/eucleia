@@ -8,22 +8,23 @@
  */
 
 #pragma once
-#include "BaseObject.hpp"
+#include "BaseObjectT.hpp"
 
-class FunctionNode; // NB: - not ideal. Move FunctionNode into separate file.
+/* Forward declaration */
+class FunctionNode;
+
+using FunctionNodePtr = FunctionNode *;
 
 /// FunctionObject contains a pointer to the original function definition which
 /// allows us to call its evaluate() method and perform type-checking of the
 /// supplied function arguments with the expected arguments.
-class FunctionObject : public BaseObject
+class FunctionObject : public BaseObjectT<FunctionNodePtr>
 {
 public:
-    FunctionObject(FunctionNode *function_) : functionValue(function_) {}
+    FunctionObject(FunctionNodePtr function) : BaseObjectT<FunctionNodePtr>(function) {}
 
     FunctionObject *clone() const override
     {
-        return new FunctionObject(functionValue);
+        return new FunctionObject(_value);
     }
-
-    FunctionNode *functionValue{nullptr}; // TODO: - weird code.
 };

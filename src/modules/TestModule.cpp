@@ -25,10 +25,10 @@ void TestModule::defineFunctions()
         auto description = argValues.at(1)->castObject<StringObject>();
 
         // Print pass or fail depending on the test case.
-        const char *statusString = result.value ? "PASSED" : "FAILED";
-        const char *statusColor  = result.value ? kOkGreenColor : kFailColor;
+        const char *statusString = result.value() ? "PASSED" : "FAILED";
+        const char *statusColor  = result.value() ? kOkGreenColor : kFailColor;
 
-        fprintf(stdout, "%-50s %s%s%s\n", description.value.c_str(), statusColor, statusString,  kClearColor);
+        fprintf(stdout, "%-50s %s%s%s\n", description.value().c_str(), statusColor, statusString,  kClearColor);
         return nullptr; });
 
     defineFunction("ASSERT", [*this](ProgramNode &callArgs, Scope &scope) -> BaseObject *
@@ -37,7 +37,7 @@ void TestModule::defineFunctions()
         assert(argValues.size() == 1);
 
         auto result = argValues.at(0)->castObject<BoolObject>();
-        assert(result.value);
+        assert(result.value());
         return nullptr; });
 
     defineFunction("abort", [*this](ProgramNode &callArgs, Scope &scope) -> BaseObject *
@@ -54,7 +54,7 @@ void TestModule::defineFunctions()
         assert(argValues.size() == 1);
 
         auto exitCode = argValues.at(0)->castObject<IntObject>();
-        exit(exitCode.value);
+        exit(exitCode.value());
 
         return nullptr; });
 }

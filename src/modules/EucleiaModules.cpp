@@ -60,7 +60,7 @@ void MathModuleNode::defineFunctions()
     	assert(argValues.size() == 1);
 
     	auto & first = argValues.front()->castObject<FloatObject>();
-    	return scope.createManagedObject<FloatObject>(sqrt(first.value)); });
+    	return scope.createManagedObject<FloatObject>(sqrt(first.value())); });
 
     defineFunction("pow", [*this](ProgramNode &callArgs, Scope &scope) -> BaseObject *
                    {
@@ -70,7 +70,7 @@ void MathModuleNode::defineFunctions()
     	auto &first = argValues.at(0)->castObject<FloatObject>();
     	auto &second = argValues.at(1)->castObject<FloatObject>();
 
-    	return scope.createManagedObject<FloatObject>(pow(first.value, second.value)); });
+    	return scope.createManagedObject<FloatObject>(pow(first.value(), second.value())); });
 }
 
 
@@ -107,7 +107,7 @@ void ArrayModuleNode::defineFunctions()
         assert(argValues.size() == 1);
 
         ArrayObject &arrayObject = argValues.front()->castObject<ArrayObject>();
-        arrayObject.values.clear();
+        arrayObject.value().clear();
         return nullptr;
     };
 
@@ -120,7 +120,7 @@ void ArrayModuleNode::defineFunctions()
 
         ArrayObject &arrayObject = argValues.front()->castObject<ArrayObject>();
 
-        return scope.createManagedObject<IntObject>(arrayObject.values.size());
+        return scope.createManagedObject<IntObject>(arrayObject.value().size());
     };
 
     defineFunction("length", closure2);
@@ -133,7 +133,7 @@ void ArrayModuleNode::defineFunctions()
         ArrayObject &arrayObject = argValues.front()->castObject<ArrayObject>();
         BaseObject &someObject = *argValues.back();
 
-        arrayObject.values.push_back(someObject.clone()); // NB: must clone!
+        arrayObject.value().push_back(someObject.clone()); // NB: must clone!
         return nullptr;
     };
 
