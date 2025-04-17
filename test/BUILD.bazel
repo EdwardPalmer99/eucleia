@@ -1,6 +1,6 @@
 cc_test(
     name = "unit",
-    srcs = glob(["*.cpp"]),
+    srcs = glob(["unit/*.cpp"]),
     deps = [
         "@googletest//:gtest",
         "@googletest//:gtest_main",
