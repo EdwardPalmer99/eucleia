@@ -14,54 +14,41 @@
 #include "Stringify.hpp"
 #include <iostream>
 
-
-Tokenizer::Tokenizer(const std::string &fpath)
-    : stream(fpath)
+Token Tokens::dequeue()
 {
-    buildTokens();
-}
-
-
-void Tokenizer::buildTokens()
-{
-    while (!stream.isLast())
+    if (empty())
     {
-        Token token = buildNextToken();
-        Logger::debug(stream.location() + ": " + token.print());
-
-        if (!token.type == Token::EndOfFile)
-            tokens.push(std::move(token));
+        ThrowException("Token queue is empty!");
     }
-}
 
-
-const Token &Tokenizer::peek() const
-{
-    if (tokens.empty())
-        ThrowException("cannot peek(). No tokens remaining");
-
-    return tokens.front();
-}
-
-
-Token Tokenizer::next()
-{
-    Token next = peek();
-
-    if (!tokens.empty())
-        tokens.pop();
+    Token next = front();
+    pop();
 
     return next;
 }
 
 
-bool Tokenizer::empty() const
+Tokens Tokenizer::buildTokens(const std::string &path)
 {
-    return tokens.empty();
+    /* Construct char stream from file */
+    CharStream stream(path);
+
+    Tokens tokens;
+
+    while (!stream.isLast())
+    {
+        Token token = buildNextToken(stream);
+        Logger::debug(stream.location() + ": " + token.print());
+
+        if (!token.type == Token::EndOfFile)
+            tokens.push(std::move(token));
+    }
+
+    return tokens;
 }
 
 
-Token Tokenizer::buildNextToken()
+Token Tokenizer::buildNextToken(CharStream &stream)
 {
     if (stream.isLast())
     {
@@ -69,40 +56,40 @@ Token Tokenizer::buildNextToken()
     }
     else if (stream.isComment() || stream.isShebang())
     {
-        skipLine();
-        return buildNextToken();
+        skipLine(stream);
+        return buildNextToken(stream);
     }
     else if (stream.isQuote())
     {
-        return buildStringToken();
+        return buildStringToken(stream);
     }
     else if (stream.isDigit())
     {
-        return buildNumberToken();
+        return buildNumberToken(stream);
     }
     else if (stream.isWhiteSpace())
     {
         (void)stream.increment();
-        return buildNextToken();
+        return buildNextToken(stream);
     }
     else if (stream.isPunctuation())
     {
-        return buildPunctuationToken();
+        return buildPunctuationToken(stream);
     }
     else if (stream.isOperator())
     {
-        return buildOperatorToken();
+        return buildOperatorToken(stream);
     }
     else if (stream.isID())
     {
-        return buildIDToken();
+        return buildIDToken(stream);
     }
 
     ThrowException(stream.location() + eucleia::stringify(": failed to process character: %c", stream.current()));
 }
 
 
-void Tokenizer::skipLine()
+void Tokenizer::skipLine(CharStream &stream)
 {
     do
     {
@@ -111,7 +98,7 @@ void Tokenizer::skipLine()
 }
 
 
-Token Tokenizer::buildStringToken()
+Token Tokenizer::buildStringToken(CharStream &stream)
 {
     if (!stream.isQuote())
     {
@@ -185,7 +172,7 @@ Token Tokenizer::buildStringToken()
 }
 
 
-Token Tokenizer::buildNumberToken()
+Token Tokenizer::buildNumberToken(CharStream &stream)
 {
     if (!stream.isDigit())
     {
@@ -220,7 +207,7 @@ Token Tokenizer::buildNumberToken()
 }
 
 
-Token Tokenizer::buildIDToken()
+Token Tokenizer::buildIDToken(CharStream &stream)
 {
     if (!stream.isID())
     {
@@ -243,7 +230,7 @@ Token Tokenizer::buildIDToken()
 }
 
 
-Token Tokenizer::buildPunctuationToken()
+Token Tokenizer::buildPunctuationToken(CharStream &stream)
 {
     if (!stream.isPunctuation())
     {
@@ -257,7 +244,7 @@ Token Tokenizer::buildPunctuationToken()
 }
 
 
-Token Tokenizer::buildOperatorToken()
+Token Tokenizer::buildOperatorToken(CharStream &stream)
 {
     if (!stream.isOperator())
     {
