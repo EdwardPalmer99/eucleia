@@ -212,7 +212,7 @@ Token Tokenizer::buildIDToken(CharStream &stream)
 
     std::string stringID(buffer.data());
 
-    return Token(std::move(stringID), Grammar::isKeyword(stringID) ? Token::Keyword : Token::Variable);
+    return Token(std::move(stringID), Grammar::instance().isKeyword(stringID) ? Token::Keyword : Token::Variable);
 }
 
 

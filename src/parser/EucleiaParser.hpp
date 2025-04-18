@@ -12,14 +12,19 @@
 #include "Tokenizer.hpp"
 #include <unordered_set>
 
-
-class Parser
+/* Parser for a single file */
+class FileParser
 {
 public:
-    static FileNode *buildAST(const std::string &fpath);
+    [[nodiscard]] static inline FileNode *parse(std::string filePath)
+    {
+        return FileParser(filePath).buildAST();
+    }
 
 protected:
-    Parser(const std::string &fpath);
+    /* Default constructor */
+    FileParser() = delete;
+    FileParser(const std::string &fpath);
 
     FileNode *buildAST();
 
