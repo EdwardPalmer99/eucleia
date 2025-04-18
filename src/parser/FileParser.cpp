@@ -1,11 +1,11 @@
 //
-//  EucleiaParser.cpp
+//  FileParser.cpp
 //  Eucleia
 //
 //  Created by Edward on 20/01/2024.
 //
 
-#include "EucleiaParser.hpp"
+#include "FileParser.hpp"
 #include "EucleiaModules.hpp"
 #include "Exceptions.hpp"
 #include "Grammar.hpp"
