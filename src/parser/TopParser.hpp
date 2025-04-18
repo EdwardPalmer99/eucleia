@@ -13,9 +13,15 @@
 #include <string>
 
 /* Top-level parser for entire project (NB: wrap-in a singleton) */
-class RootParser
+class RootParser : public SingletonT<RootParser>
 {
 public:
     /* Provide path to the project entry-point */
     FileNode *parse(std::string entryPointPath);
+
+protected:
+    friend class SingletonT<RootParser>; /* Access to default constructor */
+
+    /* Protect to avoid direct initialization */
+    RootParser() = default;
 };
