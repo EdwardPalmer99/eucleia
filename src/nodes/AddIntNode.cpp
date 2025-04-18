@@ -8,6 +8,7 @@
  */
 
 #include "AddIntNode.hpp"
+#include <memory>
 
 IntObject *AddIntNode::evaluate(Scope &scope)
 {

@@ -9,6 +9,8 @@
 
 #pragma once
 #include "Exceptions.hpp"
+#include <cassert>
+#include <cstdlib>
 #include <queue>
 #include <string>
 
@@ -44,6 +46,18 @@ public:
     [[nodiscard]] inline Type type() const
     {
         return _type;
+    }
+
+    [[nodiscard]] inline double toFloat() const
+    {
+        assert(_type == Token::Float);
+        return strtof(data(), nullptr);
+    }
+
+    [[nodiscard]] inline long toInt() const
+    {
+        assert(_type == Token::Int);
+        return strtold(data(), nullptr);
     }
 
 private:

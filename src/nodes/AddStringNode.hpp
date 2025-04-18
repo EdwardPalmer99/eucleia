@@ -10,6 +10,7 @@
 #pragma once
 #include "BaseNode.hpp"
 #include "StringObject.hpp"
+#include "Token.hpp"
 #include <string>
 
 class AddStringNode : public BaseNode
@@ -19,7 +20,6 @@ public:
 
     // Creates a StringObject in the scope and returns managed pointer to it.
     StringObject *evaluate(Scope &scope) override;
-
 
     StringObject stringObject;
 };

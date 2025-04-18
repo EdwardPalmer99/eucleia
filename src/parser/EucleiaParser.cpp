@@ -161,26 +161,6 @@ BaseNode *Parser::parseProgram()
 }
 
 
-AddIntNode *Parser::parseInt()
-{
-    Token token = nextToken();
-
-    long intValue = strtold(token.c_str(), NULL);
-
-    return new AddIntNode(intValue);
-}
-
-
-AddFloatNode *Parser::parseFloat()
-{
-    Token token = nextToken();
-
-    double floatValue = strtof(token.c_str(), NULL);
-
-    return new AddFloatNode(floatValue);
-}
-
-
 AddBoolNode *Parser::parseBool()
 {
     Token token = nextToken();
@@ -188,14 +168,6 @@ AddBoolNode *Parser::parseBool()
     bool state = (token == "true");
 
     return new AddBoolNode(state);
-}
-
-
-AddStringNode *Parser::parseString()
-{
-    Token token = nextToken();
-
-    return new AddStringNode(token);
 }
 
 
@@ -777,11 +749,11 @@ BaseNode *Parser::parseAtomicallyExpression()
         case Token::Variable:
             return parseVariableName();
         case Token::String:
-            return parseString();
+            return new AddStringNode(_tokens.dequeue());
         case Token::Int:
-            return parseInt();
+            return new AddIntNode(_tokens.dequeue());
         case Token::Float:
-            return parseFloat();
+            return new AddFloatNode(_tokens.dequeue());
         default:
             unexpectedToken();
             exit(EXIT_FAILURE);

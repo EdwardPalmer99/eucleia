@@ -8,6 +8,7 @@
  */
 
 #include "AddFloatNode.hpp"
+#include <memory>
 
 FloatObject *AddFloatNode::evaluate(Scope &scope)
 {

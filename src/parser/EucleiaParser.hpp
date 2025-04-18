@@ -19,14 +19,12 @@ public:
     static FileNode *buildAST(const std::string &fpath);
 
 protected:
+    /* TODO: - constructor should just be tokens to parse */
     Parser(const std::string &fpath);
 
     FileNode *buildAST();
 
     AddBoolNode *parseBool();
-    AddStringNode *parseString();
-    AddIntNode *parseInt();
-    AddFloatNode *parseFloat();
 
     BaseNode *parseBrackets();
 
