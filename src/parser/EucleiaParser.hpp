@@ -74,15 +74,6 @@ protected:
     void skipPunctuation(const std::string &punctuation);
     void skipOperator(const std::string &operatorName);
 
-    const Token &peekToken() const { return _tokens.front(); }
-
-    Token nextToken()
-    {
-        return _tokens.dequeue();
-    }
-
-    void skipToken() { _tokens.pop(); }
-
     void unexpectedToken();
 
     FunctionCallNode *parseFunctionCall(BaseNode *lastExpression);
