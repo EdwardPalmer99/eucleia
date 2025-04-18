@@ -9,6 +9,7 @@
 #include "EucleiaModules.hpp"
 #include "FileInfoRec.hpp"
 #include "Nodes.hpp"
+#include "ParserFunctors.hpp"
 #include "Tokenizer.hpp"
 #include <unordered_set>
 
@@ -66,10 +67,6 @@ protected:
 
     bool isDataTypeKeyword();
 
-    void skipKeyword(const std::string &keyword);
-    void skipPunctuation(const std::string &punctuation);
-    void skipOperator(const std::string &operatorName);
-
     void unexpectedToken();
 
     FunctionCallNode *parseFunctionCall(BaseNode *lastExpression);
@@ -104,4 +101,7 @@ private:
 
     Tokens _tokens;
     FileComponentsRec _fileInfo;
+
+    /* Functor for skipping a token */
+    SkipFunctor _skipFunctor;
 };

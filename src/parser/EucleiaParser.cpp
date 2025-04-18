@@ -24,7 +24,8 @@ std::unordered_set<std::string> importedFileNames;
 
 Parser::Parser(const std::string &fpath)
     : _tokens(Tokenizer::build(fpath)),
-      _fileInfo(fpath)
+      _fileInfo(fpath),
+      _skipFunctor(_tokens) /* TODO: - need some method for init */
 {
     // Add this file info so we don't accidentally import twice.
     importedFileNames.insert(_fileInfo.nameWithExt);
@@ -65,7 +66,7 @@ FileNode *Parser::buildAST()
 
 BaseNode *Parser::parseImport()
 {
-    skipKeyword("import");
+    _skipFunctor("import");
 
     auto token = _tokens.front();
 
@@ -117,12 +118,12 @@ FileNode *Parser::parseFileImport()
 
 ModuleNode *Parser::parseLibraryImport()
 {
-    skipOperator("<");
+    _skipFunctor("<");
 
     auto token = _tokens.dequeue();
     assert(token.type() == Token::Variable);
 
-    skipOperator(">");
+    _skipFunctor(">");
 
     auto libraryName = token;
 
@@ -163,11 +164,11 @@ BaseNode *Parser::parseProgram()
 
 BaseNode *Parser::parseBrackets()
 {
-    skipPunctuation("(");
+    _skipFunctor("(");
 
     BaseNode *expression = parseExpression();
 
-    skipPunctuation(")");
+    _skipFunctor(")");
 
     return expression;
 }
@@ -210,12 +211,12 @@ BaseNode *Parser::parseVariableDefinition()
  */
 BaseNode *Parser::parseReference(ObjectType boundVariableType)
 {
-    skipOperator("&");
+    _skipFunctor("&");
 
     Token referenceNameToken = _tokens.dequeue();
     assert(referenceNameToken.type() == Token::Variable);
 
-    skipOperator("=");
+    _skipFunctor("=");
 
     Token boundVariableNameToken = _tokens.dequeue();
     assert(boundVariableNameToken.type() == Token::Variable);
@@ -233,9 +234,9 @@ BaseNode *Parser::parseReference(ObjectType boundVariableType)
 /// while ([condition is true]);
 DoWhileNode *Parser::parseDoWhile()
 {
-    skipKeyword("do");
+    _skipFunctor("do");
     BaseNode *body = parseProgram();
-    skipKeyword("while");
+    _skipFunctor("while");
     BaseNode *condition = parseBrackets();
 
     return new DoWhileNode(condition, body);
@@ -248,7 +249,7 @@ DoWhileNode *Parser::parseDoWhile()
 /// }
 WhileNode *Parser::parseWhile()
 {
-    skipKeyword("while");
+    _skipFunctor("while");
 
     BaseNode *condition = parseBrackets();
     BaseNode *body = parseProgram();
@@ -263,7 +264,7 @@ WhileNode *Parser::parseWhile()
 /// }
 ForLoopNode *Parser::parseFor()
 {
-    skipKeyword("for");
+    _skipFunctor("for");
 
     ProgramNode *brackets = parseDelimited("(", ")", ";", std::bind(&Parser::parseExpression, this));
 
@@ -290,7 +291,7 @@ ForLoopNode *Parser::parseFor()
 IfNode *Parser::parseIf()
 {
     // For now, only permit a single if statement.
-    skipKeyword("if");
+    _skipFunctor("if");
 
     auto condition = parseBrackets();
     auto thenDo = parseProgram();
@@ -299,7 +300,7 @@ IfNode *Parser::parseIf()
     BaseNode *elseDo{nullptr}; // Optional.
     if (_tokens.front() == "else")
     {
-        skipKeyword("else");
+        _skipFunctor("else");
 
         // Option 1: else if (condition) { [statement]; }
         if (_tokens.front() == "if")
@@ -315,7 +316,7 @@ IfNode *Parser::parseIf()
 
 BreakNode *Parser::parseBreak()
 {
-    skipKeyword("break");
+    _skipFunctor("break");
 
     return new BreakNode();
 }
@@ -323,7 +324,7 @@ BreakNode *Parser::parseBreak()
 
 ReturnNode *Parser::parseReturn()
 {
-    skipKeyword("return");
+    _skipFunctor("return");
 
     BaseNode *returnedExpression{nullptr};
 
@@ -344,7 +345,7 @@ ReturnNode *Parser::parseReturn()
 /// }
 FunctionNode *Parser::parseFunctionDefinition()
 {
-    skipKeyword("func");
+    _skipFunctor("func");
 
     auto funcName = new LookupVariableNode(_tokens.dequeue());
     auto funcArgs = parseDelimited("(", ")", ",", std::bind(&Parser::parseVariableDefinition, this)); // Func variables.
@@ -384,7 +385,7 @@ FunctionCallNode *Parser::parseFunctionCall(BaseNode *lastExpression)
  */
 BaseNode *Parser::parseStruct()
 {
-    skipKeyword("struct");
+    _skipFunctor("struct");
 
     auto structTypeName = _tokens.dequeue();
 
@@ -395,7 +396,7 @@ BaseNode *Parser::parseStruct()
 
         if (isKeyword("extends"))
         {
-            skipKeyword("extends");
+            _skipFunctor("extends");
 
             structParentTypeName = _tokens.dequeue();
         }
@@ -454,7 +455,7 @@ BaseNode *Parser::parseStruct()
  */
 BaseNode *Parser::parseClass()
 {
-    skipKeyword("class");
+    _skipFunctor("class");
 
     auto classTypeName = _tokens.dequeue();
 
@@ -466,7 +467,7 @@ BaseNode *Parser::parseClass()
 
         if (isKeyword("extends"))
         {
-            skipKeyword("extends");
+            _skipFunctor("extends");
 
             classParentTypeName = _tokens.dequeue();
         }
@@ -522,7 +523,7 @@ BaseNode *Parser::parseStructAccessor(BaseNode *lastExpression)
     auto instanceName = lastExpression->castNode<LookupVariableNode>().name;
     delete lastExpression; // NB: ugly.
 
-    skipPunctuation(".");
+    _skipFunctor(".");
 
     BaseNode *expression = maybeFunctionCall(std::bind(&Parser::parseVariableName, this));
 
@@ -554,11 +555,11 @@ ArrayAccessNode *Parser::parseArrayAccessor(BaseNode *lastExpression)
 {
     auto arrayName = static_cast<LookupVariableNode *>(lastExpression);
 
-    skipPunctuation("[");
+    _skipFunctor("[");
 
     auto arrayIndex = static_cast<AddIntNode *>(parseExpression());
 
-    skipPunctuation("]");
+    _skipFunctor("]");
 
     return new ArrayAccessNode(arrayName, arrayIndex);
 }
@@ -749,7 +750,7 @@ BaseNode *Parser::parseAtomicallyExpression()
 
 NotNode *Parser::parseNot()
 {
-    skipOperator("!");
+    _skipFunctor("!");
 
     return new NotNode(parseAtomically());
 }
@@ -757,7 +758,7 @@ NotNode *Parser::parseNot()
 
 PrefixIncrementNode *Parser::parsePrefixIncrement()
 {
-    skipOperator("++");
+    _skipFunctor("++");
 
     return new PrefixIncrementNode(parseAtomically());
 }
@@ -765,7 +766,7 @@ PrefixIncrementNode *Parser::parsePrefixIncrement()
 
 PrefixDecrementNode *Parser::parsePrefixDecrement()
 {
-    skipOperator("--");
+    _skipFunctor("--");
 
     return new PrefixDecrementNode(parseAtomically());
 }
@@ -773,7 +774,7 @@ PrefixDecrementNode *Parser::parsePrefixDecrement()
 
 NegationNode *Parser::parseNegation()
 {
-    skipOperator("-");
+    _skipFunctor("-");
 
     return new NegationNode(parseAtomically());
 }
@@ -792,7 +793,7 @@ ProgramNode *Parser::parseDelimited(std::string start,
                                     std::string separator,
                                     ParseMethod parseMethod)
 {
-    skipPunctuation(start); // Skip the punctuation at the start.
+    _skipFunctor(start); // Skip the punctuation at the start.
 
     std::vector<BaseNode *> parsedNodes;
 
@@ -808,7 +809,7 @@ ProgramNode *Parser::parseDelimited(std::string start,
         }
         else
         {
-            skipPunctuation(separator);
+            _skipFunctor(separator);
         }
 
         if (isPunctuation(stop))
@@ -820,7 +821,7 @@ ProgramNode *Parser::parseDelimited(std::string start,
         parsedNodes.push_back(parseMethod());
     }
 
-    skipPunctuation(stop); // Skip the punctuation at the end.
+    _skipFunctor(stop); // Skip the punctuation at the end.
 
     // Resize to fit.
     parsedNodes.shrink_to_fit();
@@ -831,27 +832,27 @@ ProgramNode *Parser::parseDelimited(std::string start,
 
 void Parser::skipSemicolonLineEndingIfRequired(const BaseNode &node)
 {
-    bool doSkipPunctuation = (node.isNodeType<ModuleNode>() || // Bit ugly.
-                              node.isNodeType<MathModuleNode>() ||
-                              node.isNodeType<IOModuleNode>() ||
-                              node.isNodeType<ArrayModuleNode>() ||
-                              node.isNodeType<TestModule>() ||
-                              node.isNodeType<FileNode>() ||
-                              node.isNodeType<ProgramNode>() ||
-                              node.isNodeType<IfNode>() ||
-                              node.isNodeType<WhileNode>() ||
-                              node.isNodeType<DoWhileNode>() ||
-                              node.isNodeType<ForLoopNode>() ||
-                              node.isNodeType<FunctionNode>());
+    bool do_skipper = (node.isNodeType<ModuleNode>() || // Bit ugly.
+                       node.isNodeType<MathModuleNode>() ||
+                       node.isNodeType<IOModuleNode>() ||
+                       node.isNodeType<ArrayModuleNode>() ||
+                       node.isNodeType<TestModule>() ||
+                       node.isNodeType<FileNode>() ||
+                       node.isNodeType<ProgramNode>() ||
+                       node.isNodeType<IfNode>() ||
+                       node.isNodeType<WhileNode>() ||
+                       node.isNodeType<DoWhileNode>() ||
+                       node.isNodeType<ForLoopNode>() ||
+                       node.isNodeType<FunctionNode>());
 
-    if (!doSkipPunctuation)
-        skipPunctuation(";");
+    if (!do_skipper)
+        _skipFunctor(";");
 }
 
 
 ProgramNode *Parser::parseProgramLines()
 {
-    skipPunctuation("{");
+    _skipFunctor("{");
 
     std::vector<BaseNode *> parsedNodes;
 
@@ -864,7 +865,7 @@ ProgramNode *Parser::parseProgramLines()
         skipSemicolonLineEndingIfRequired(*expression);
     }
 
-    skipPunctuation("}");
+    _skipFunctor("}");
 
     return new ProgramNode(std::move(parsedNodes));
 }
@@ -933,41 +934,6 @@ bool Parser::isOperator(const std::string &operatorName)
     const Token &token = _tokens.front();
 
     return (token.type() == Token::Operator && token == operatorName);
-}
-
-
-#pragma mark - *** skip... ***
-
-void Parser::skipKeyword(const std::string &name)
-{
-    if (!isKeyword(name))
-    {
-        ThrowException("expected keyword " + name + " while parsing " + _fileInfo.nameWithExt);
-    }
-
-    _tokens.pop();
-}
-
-
-void Parser::skipPunctuation(const std::string &name)
-{
-    if (!isPunctuation(name))
-    {
-        ThrowException("expected punctuation " + name + " while parsing " + _fileInfo.nameWithExt);
-    }
-
-    _tokens.pop();
-}
-
-
-void Parser::skipOperator(const std::string &name)
-{
-    if (!isOperator(name))
-    {
-        ThrowException("expected operator " + name + " while parsing " + _fileInfo.nameWithExt);
-    }
-
-    _tokens.pop();
 }
 
 
