@@ -161,16 +161,6 @@ BaseNode *Parser::parseProgram()
 }
 
 
-AddBoolNode *Parser::parseBool()
-{
-    Token token = _tokens.dequeue();
-
-    bool state = (token == "true");
-
-    return new AddBoolNode(state);
-}
-
-
 BaseNode *Parser::parseBrackets()
 {
     skipPunctuation("(");
@@ -180,6 +170,12 @@ BaseNode *Parser::parseBrackets()
     skipPunctuation(")");
 
     return expression;
+}
+
+
+BaseNode *Parser::parseVariableName()
+{
+    return new LookupVariableNode(_tokens.dequeue());
 }
 
 
@@ -225,16 +221,6 @@ BaseNode *Parser::parseReference(ObjectType boundVariableType)
     assert(boundVariableNameToken.type() == Token::Variable);
 
     return new AddReferenceVariableNode(referenceNameToken, boundVariableNameToken, boundVariableType);
-}
-
-
-/// [VARIABLE_NAME]
-BaseNode *Parser::parseVariableName()
-{
-    Token token = _tokens.dequeue();
-    assert(token.type() == Token::Variable);
-
-    return new LookupVariableNode(token);
 }
 
 
@@ -360,7 +346,7 @@ FunctionNode *Parser::parseFunctionDefinition()
 {
     skipKeyword("func");
 
-    auto funcName = parseVariableName();
+    auto funcName = new LookupVariableNode(_tokens.dequeue());
     auto funcArgs = parseDelimited("(", ")", ",", std::bind(&Parser::parseVariableDefinition, this)); // Func variables.
     auto funcBody = parseProgram();
 
@@ -706,7 +692,7 @@ BaseNode *Parser::parseAtomicallyExpression()
     else if (isPunctuation("{"))
         return parseProgram();
     else if (isKeyword("true") || isKeyword("false"))
-        return parseBool();
+        return new AddBoolNode(_tokens.dequeue());
     else if (isKeyword("while"))
         return parseWhile();
     else if (isKeyword("do"))
@@ -747,7 +733,7 @@ BaseNode *Parser::parseAtomicallyExpression()
     switch (token.type())
     {
         case Token::Variable:
-            return parseVariableName();
+            return new LookupVariableNode(_tokens.dequeue());
         case Token::String:
             return new AddStringNode(_tokens.dequeue());
         case Token::Int:

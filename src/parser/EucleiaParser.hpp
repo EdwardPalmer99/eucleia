@@ -24,8 +24,6 @@ protected:
 
     FileNode *buildAST();
 
-    AddBoolNode *parseBool();
-
     BaseNode *parseBrackets();
 
     BaseNode *parseProgram();
