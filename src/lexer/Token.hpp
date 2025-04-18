@@ -9,6 +9,7 @@
 
 #pragma once
 #include "Exceptions.hpp"
+#include <cassert>
 #include <queue>
 #include <string>
 
@@ -44,6 +45,34 @@ public:
     [[nodiscard]] inline Type type() const
     {
         return _type;
+    }
+
+    /* Validates the type of a token */
+    [[nodiscard]] inline Token &validated(Type type)
+    {
+        assert(_type == type);
+        return (*this);
+    }
+
+    /* Cast to float */
+    [[nodiscard]] inline double toFloat() const
+    {
+        assert(_type == Token::Float);
+        return strtof(data(), nullptr);
+    }
+
+    /* Cast to int */
+    [[nodiscard]] inline long toInt() const
+    {
+        assert(_type == Token::Int);
+        return strtold(data(), nullptr);
+    }
+
+    /* Cast to bool */
+    [[nodiscard]] inline bool toBool() const
+    {
+        assert(_type == Token::Keyword);
+        return (*this == "true");
     }
 
 private:
