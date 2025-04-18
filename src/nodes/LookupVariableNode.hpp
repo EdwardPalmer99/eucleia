@@ -9,12 +9,14 @@
 
 #pragma once
 #include "BaseNode.hpp"
+#include "Token.hpp"
 #include <string>
 
 class LookupVariableNode : public BaseNode
 {
 public:
     LookupVariableNode(std::string name_) : name(std::move(name_)) {}
+    LookupVariableNode(Token token) : name(token.validated(Token::Variable)) {}
 
     // Returns the object in the scope associated with a variable name.
     BaseObject *evaluate(Scope &scope) override;
