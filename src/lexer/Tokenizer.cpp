@@ -14,20 +14,6 @@
 #include "Stringify.hpp"
 #include <iostream>
 
-Token Tokens::dequeue()
-{
-    if (empty())
-    {
-        ThrowException("Token queue is empty!");
-    }
-
-    Token next = front();
-    pop();
-
-    return next;
-}
-
-
 Tokens Tokenizer::buildTokens(const std::string &path)
 {
     /* Construct char stream from file */
