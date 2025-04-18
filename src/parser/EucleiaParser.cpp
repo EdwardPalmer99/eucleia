@@ -67,7 +67,7 @@ BaseNode *Parser::parseImport()
 {
     skipKeyword("import");
 
-    auto token = peekToken();
+    auto token = _tokens.front();
 
     if (token.type() == Token::String)
         return parseFileImport();
@@ -192,7 +192,7 @@ BaseNode *Parser::parseVariableDefinition()
 
     ObjectType typeOfObject = objectTypeForName(typeToken);
 
-    if (peekToken() == "&") // Is reference.
+    if (_tokens.front() == "&") // Is reference.
     {
         return parseReference(typeOfObject);
     }
@@ -311,12 +311,12 @@ IfNode *Parser::parseIf()
 
 
     BaseNode *elseDo{nullptr}; // Optional.
-    if (peekToken() == "else")
+    if (_tokens.front() == "else")
     {
         skipKeyword("else");
 
         // Option 1: else if (condition) { [statement]; }
-        if (peekToken() == "if")
+        if (_tokens.front() == "if")
             elseDo = parseIf();
         // Option 2: else { [statement]; }
         else
@@ -603,7 +603,7 @@ BaseNode *Parser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
 
     // Take a peek look at the next token. Is it an operator token. If it is then
     // we need to create a binary node.
-    const Token &next = peekToken();
+    const Token &next = _tokens.front();
 
     if (next.type() == Token::Operator)
     {
@@ -742,7 +742,7 @@ BaseNode *Parser::parseAtomicallyExpression()
     else if (isOperator("-"))
         return parseNegation();
 
-    const Token &token = peekToken();
+    const Token &token = _tokens.front();
 
     switch (token.type())
     {
@@ -886,7 +886,7 @@ ProgramNode *Parser::parseProgramLines()
 
 int Parser::getPrecedence()
 {
-    const Token &token = peekToken();
+    const Token &token = _tokens.front();
 
     if (token.type() != Token::Operator)
     {
@@ -922,7 +922,7 @@ int Parser::getPrecedence()
 
 bool Parser::isKeyword(const std::string &keyword)
 {
-    const Token &token = peekToken();
+    const Token &token = _tokens.front();
 
     return (token.type() == Token::Keyword && token == keyword);
 }
@@ -930,13 +930,13 @@ bool Parser::isKeyword(const std::string &keyword)
 
 bool Parser::isDataTypeKeyword()
 {
-    return (Grammar::isDataType(peekToken()));
+    return (Grammar::isDataType(_tokens.front()));
 }
 
 
 bool Parser::isPunctuation(const std::string &punctuation)
 {
-    const Token &token = peekToken();
+    const Token &token = _tokens.front();
 
     return (token.type() == Token::Punctuation && token == punctuation);
 }
@@ -944,7 +944,7 @@ bool Parser::isPunctuation(const std::string &punctuation)
 
 bool Parser::isOperator(const std::string &operatorName)
 {
-    const Token &token = peekToken();
+    const Token &token = _tokens.front();
 
     return (token.type() == Token::Operator && token == operatorName);
 }
@@ -989,7 +989,7 @@ void Parser::skipOperator(const std::string &name)
 
 void Parser::unexpectedToken()
 {
-    const Token &token = peekToken();
+    const Token &token = _tokens.front();
 
     ThrowException("unexpected token: " + token);
 }
