@@ -1,5 +1,5 @@
 //
-//  EucleiaParser.hpp
+//  FileParser.hpp
 //  Eucleia
 //
 //  Created by Edward on 20/01/2024.

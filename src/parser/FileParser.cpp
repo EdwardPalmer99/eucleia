@@ -1,11 +1,11 @@
 //
-//  EucleiaParser.cpp
+//  FileParser.cpp
 //  Eucleia
 //
 //  Created by Edward on 20/01/2024.
 //
 
-#include "EucleiaParser.hpp"
+#include "FileParser.hpp"
 #include "EucleiaModules.hpp"
 #include "Exceptions.hpp"
 #include "Grammar.hpp"
@@ -149,7 +149,7 @@ BaseNode *FileParser::parseProgram()
 
 AddIntNode *FileParser::parseInt()
 {
-    Token token = nextToken();
+    Token token = _tokens.dequeue();
 
     long intValue = strtold(token.c_str(), NULL);
 
@@ -159,7 +159,7 @@ AddIntNode *FileParser::parseInt()
 
 AddFloatNode *FileParser::parseFloat()
 {
-    Token token = nextToken();
+    Token token = _tokens.dequeue();
 
     double floatValue = strtof(token.c_str(), NULL);
 
@@ -179,7 +179,7 @@ AddBoolNode *FileParser::parseBool()
 
 AddStringNode *FileParser::parseString()
 {
-    Token token = nextToken();
+    Token token = _tokens.dequeue();
 
     return new AddStringNode(token);
 }
@@ -243,7 +243,7 @@ BaseNode *FileParser::parseReference(ObjectType boundVariableType)
 
 
 /// [VARIABLE_NAME]
-BaseNode *Parser::parseVariableName()
+BaseNode *FileParser::parseVariableName()
 {
     Token token = _tokens.dequeue();
     assert(token.type() == Token::Variable);
@@ -375,7 +375,7 @@ FunctionNode *FileParser::parseFunctionDefinition()
     skipKeyword("func");
 
     auto funcName = parseVariableName();
-    auto funcArgs = parseDelimited("(", ")", ",", std::bind(&Parser::parseVariableDefinition, this)); // Func variables.
+    auto funcArgs = parseDelimited("(", ")", ",", std::bind(&FileParser::parseVariableDefinition, this)); // Func variables.
     auto funcBody = parseProgram();
 
     return new FunctionNode(funcName, funcArgs, funcBody);
@@ -966,7 +966,7 @@ bool FileParser::isOperator(const std::string &operatorName)
 
 #pragma mark - *** skip... ***
 
-void Parser::skipKeyword(const std::string &name)
+void FileParser::skipKeyword(const std::string &name)
 {
     if (!isKeyword(name))
     {
@@ -977,7 +977,7 @@ void Parser::skipKeyword(const std::string &name)
 }
 
 
-void Parser::skipPunctuation(const std::string &name)
+void FileParser::skipPunctuation(const std::string &name)
 {
     if (!isPunctuation(name))
     {
@@ -988,7 +988,7 @@ void Parser::skipPunctuation(const std::string &name)
 }
 
 
-void Parser::skipOperator(const std::string &name)
+void FileParser::skipOperator(const std::string &name)
 {
     if (!isOperator(name))
     {
