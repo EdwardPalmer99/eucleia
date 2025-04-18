@@ -20,7 +20,7 @@
 #include <stdlib.h>
 
 
-Parser::Parser(const std::string &fpath)
+FileParser::FileParser(const std::string &fpath)
     : _tokens(Tokenizer::build(fpath)),
       _fileInfo(fpath),
       _skipFunctor(_tokens) /* TODO: - need some method for init */
@@ -30,17 +30,7 @@ Parser::Parser(const std::string &fpath)
 
 #pragma mark -
 
-FileNode *Parser::buildAST(const std::string &fpath)
-{
-    /* NOTE: Global parser entry */
-    ParserData::instance().clearImports();
-
-    Parser parser(fpath);
-    return parser.buildAST();
-}
-
-
-FileNode *Parser::buildAST()
+FileNode *FileParser::buildAST()
 {
     std::vector<BaseNode *> nodes;
 
@@ -59,7 +49,7 @@ FileNode *Parser::buildAST()
 }
 
 
-BaseNode *Parser::parseImport()
+BaseNode *FileParser::parseImport()
 {
     _skipFunctor("import");
 
@@ -79,7 +69,7 @@ BaseNode *Parser::parseImport()
 /// import "path_to_some_file"
 ///
 /// Imports a file and its functions into this scope.
-FileNode *Parser::parseFileImport()
+FileNode *FileParser::parseFileImport()
 {
     // File name token:
     auto token = _tokens.dequeue();
@@ -99,7 +89,7 @@ FileNode *Parser::parseFileImport()
     std::string filePath = _fileInfo.dirPath + token;
     Logger::debug("importing file: " + filePath);
 
-    auto ast = Parser(filePath).buildAST(); // NB: don't use static method as this will clear loaded modules/files.
+    auto ast = FileParser(filePath).buildAST(); // NB: don't use static method as this will clear loaded modules/files.
     if (!ast)
     {
         ThrowException("failed to import file with path " + filePath);
@@ -113,7 +103,7 @@ FileNode *Parser::parseFileImport()
 /// This is for importing functions from a stdlib as opposed to user-defined functions
 /// into this scope.
 
-ModuleNode *Parser::parseLibraryImport()
+ModuleNode *FileParser::parseLibraryImport()
 {
     _skipFunctor("<");
 
@@ -142,7 +132,7 @@ ModuleNode *Parser::parseLibraryImport()
 /// Parses a sequence of expression. If there is only one expression within the
 /// brackets then we just return that.
 /// TODO: - add handling for no expressions within the brackets.
-BaseNode *Parser::parseProgram()
+BaseNode *FileParser::parseProgram()
 {
     ProgramNode *program = parseProgramLines();
 
@@ -158,7 +148,7 @@ BaseNode *Parser::parseProgram()
 }
 
 
-BaseNode *Parser::parseBrackets()
+BaseNode *FileParser::parseBrackets()
 {
     _skipFunctor("(");
 
@@ -170,7 +160,7 @@ BaseNode *Parser::parseBrackets()
 }
 
 
-BaseNode *Parser::parseVariableName()
+BaseNode *FileParser::parseVariableName()
 {
     return new LookupVariableNode(_tokens.dequeue());
 }
@@ -178,7 +168,7 @@ BaseNode *Parser::parseVariableName()
 
 /// Variable definition:
 /// int/float/string/bool/array [VARIABLE_NAME]
-BaseNode *Parser::parseVariableDefinition()
+BaseNode *FileParser::parseVariableDefinition()
 {
     Token typeToken = _tokens.dequeue();
     assert(typeToken.type() == Token::Keyword);
@@ -205,7 +195,7 @@ BaseNode *Parser::parseVariableDefinition()
  * Reference definition:
  * VARIABLE_TO_BIND_TO_TYPE & REFERENCE_NAME = VARIABLE_TO_BIND_TO;
  */
-BaseNode *Parser::parseReference(ObjectType boundVariableType)
+BaseNode *FileParser::parseReference(ObjectType boundVariableType)
 {
     _skipFunctor("&");
 
@@ -228,7 +218,7 @@ BaseNode *Parser::parseReference(ObjectType boundVariableType)
 /// 	[code]
 /// }
 /// while ([condition is true]);
-DoWhileNode *Parser::parseDoWhile()
+DoWhileNode *FileParser::parseDoWhile()
 {
     _skipFunctor("do");
     BaseNode *body = parseProgram();
@@ -243,7 +233,7 @@ DoWhileNode *Parser::parseDoWhile()
 /// {
 /// 	[code]
 /// }
-WhileNode *Parser::parseWhile()
+WhileNode *FileParser::parseWhile()
 {
     _skipFunctor("while");
 
@@ -258,11 +248,11 @@ WhileNode *Parser::parseWhile()
 /// {
 /// 	[code]
 /// }
-ForLoopNode *Parser::parseFor()
+ForLoopNode *FileParser::parseFor()
 {
     _skipFunctor("for");
 
-    ProgramNode *brackets = parseDelimited("(", ")", ";", std::bind(&Parser::parseExpression, this));
+    ProgramNode *brackets = parseDelimited("(", ")", ";", std::bind(&FileParser::parseExpression, this));
 
     std::vector<BaseNode *> forLoopArgs = brackets->releaseNodes();
 
@@ -284,7 +274,7 @@ ForLoopNode *Parser::parseFor()
 
 #pragma mark - *** Control Flow ***
 
-IfNode *Parser::parseIf()
+IfNode *FileParser::parseIf()
 {
     // For now, only permit a single if statement.
     _skipFunctor("if");
@@ -310,7 +300,7 @@ IfNode *Parser::parseIf()
 }
 
 
-BreakNode *Parser::parseBreak()
+BreakNode *FileParser::parseBreak()
 {
     _skipFunctor("break");
 
@@ -318,7 +308,7 @@ BreakNode *Parser::parseBreak()
 }
 
 
-ReturnNode *Parser::parseReturn()
+ReturnNode *FileParser::parseReturn()
 {
     _skipFunctor("return");
 
@@ -339,12 +329,12 @@ ReturnNode *Parser::parseReturn()
 /// {
 ///		[BODY]
 /// }
-FunctionNode *Parser::parseFunctionDefinition()
+FunctionNode *FileParser::parseFunctionDefinition()
 {
     _skipFunctor("func");
 
     auto funcName = new LookupVariableNode(_tokens.dequeue());
-    auto funcArgs = parseDelimited("(", ")", ",", std::bind(&Parser::parseVariableDefinition, this)); // Func variables.
+    auto funcArgs = parseDelimited("(", ")", ",", std::bind(&FileParser::parseVariableDefinition, this)); // Func variables.
     auto funcBody = parseProgram();
 
     return new FunctionNode(funcName, funcArgs, funcBody);
@@ -354,10 +344,10 @@ FunctionNode *Parser::parseFunctionDefinition()
 ///
 /// Example: test(a, b, c);
 ///
-FunctionCallNode *Parser::parseFunctionCall(BaseNode *lastExpression)
+FunctionCallNode *FileParser::parseFunctionCall(BaseNode *lastExpression)
 {
     auto functionName = std::move(lastExpression);
-    auto functionArgs = parseDelimited("(", ")", ",", std::bind(&Parser::parseExpression, this));
+    auto functionArgs = parseDelimited("(", ")", ",", std::bind(&FileParser::parseExpression, this));
 
     return new FunctionCallNode(functionName, functionArgs);
 }
@@ -379,7 +369,7 @@ FunctionCallNode *Parser::parseFunctionCall(BaseNode *lastExpression)
  *
  * struct SomeStruct aStruct;
  */
-BaseNode *Parser::parseStruct()
+BaseNode *FileParser::parseStruct()
 {
     _skipFunctor("struct");
 
@@ -397,7 +387,7 @@ BaseNode *Parser::parseStruct()
             structParentTypeName = _tokens.dequeue();
         }
 
-        auto structMemberVars = parseDelimited("{", "}", ";", std::bind(&Parser::parseVariableDefinition, this));
+        auto structMemberVars = parseDelimited("{", "}", ";", std::bind(&FileParser::parseVariableDefinition, this));
 
         std::vector<BaseNode *> nodes = structMemberVars->releaseNodes();
 
@@ -449,7 +439,7 @@ BaseNode *Parser::parseStruct()
  *
  * class SomeClass aClass;
  */
-BaseNode *Parser::parseClass()
+BaseNode *FileParser::parseClass()
 {
     _skipFunctor("class");
 
@@ -514,14 +504,14 @@ BaseNode *Parser::parseClass()
  *
  * aStruct.i --> returns int object stored in struct instance.
  */
-BaseNode *Parser::parseStructAccessor(BaseNode *lastExpression)
+BaseNode *FileParser::parseStructAccessor(BaseNode *lastExpression)
 {
     auto instanceName = lastExpression->castNode<LookupVariableNode>().name;
     delete lastExpression; // NB: ugly.
 
     _skipFunctor(".");
 
-    BaseNode *expression = maybeFunctionCall(std::bind(&Parser::parseVariableName, this));
+    BaseNode *expression = maybeFunctionCall(std::bind(&FileParser::parseVariableName, this));
 
     if (expression->isNodeType<FunctionCallNode>()) // Method.
     {
@@ -547,7 +537,7 @@ BaseNode *Parser::parseStructAccessor(BaseNode *lastExpression)
 ///
 /// Expression: array_variable[0].
 ///
-ArrayAccessNode *Parser::parseArrayAccessor(BaseNode *lastExpression)
+ArrayAccessNode *FileParser::parseArrayAccessor(BaseNode *lastExpression)
 {
     auto arrayName = static_cast<LookupVariableNode *>(lastExpression);
 
@@ -562,9 +552,9 @@ ArrayAccessNode *Parser::parseArrayAccessor(BaseNode *lastExpression)
 
 
 /// [1, 2, 3, 4] OR [true, false, true] OR [1.2, 2.4] OR ["hello, ", "world!"].
-AddArrayNode *Parser::parseArray()
+AddArrayNode *FileParser::parseArray()
 {
-    auto programNodes = parseDelimited("[", "]", ",", std::bind(&Parser::parseExpression, this));
+    auto programNodes = parseDelimited("[", "]", ",", std::bind(&FileParser::parseExpression, this));
 
     auto nodesVector = programNodes->releaseNodes();
 
@@ -576,7 +566,7 @@ AddArrayNode *Parser::parseArray()
 
 #pragma mark - *** Assignment/Binary ***
 
-BaseNode *Parser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
+BaseNode *FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
 {
     // Special case: tokens empty. Cannot be binary expression.
     if (_tokens.empty())
@@ -622,7 +612,7 @@ BaseNode *Parser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
 
 #pragma mark - *** Maybe ***
 
-BaseNode *Parser::maybeFunctionCall(ParseMethod expression)
+BaseNode *FileParser::maybeFunctionCall(ParseMethod expression)
 {
     auto expr = expression(); // Possible function name.
 
@@ -630,7 +620,7 @@ BaseNode *Parser::maybeFunctionCall(ParseMethod expression)
 }
 
 
-BaseNode *Parser::maybeArrayAccess(ParseMethod expression)
+BaseNode *FileParser::maybeArrayAccess(ParseMethod expression)
 {
     auto expr = expression(); // Possible array variable name.
 
@@ -638,7 +628,7 @@ BaseNode *Parser::maybeArrayAccess(ParseMethod expression)
 }
 
 
-BaseNode *Parser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
+BaseNode *FileParser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
 {
     auto expr = expression();
     assert(expr != nullptr);
@@ -659,27 +649,27 @@ BaseNode *Parser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
 
 #pragma mark - *** Utility ***
 
-BaseNode *Parser::parseExpression()
+BaseNode *FileParser::parseExpression()
 {
-    return maybeFunctionCallOrArrayAccess(std::bind(&Parser::parseExpressionHelper, this));
+    return maybeFunctionCallOrArrayAccess(std::bind(&FileParser::parseExpressionHelper, this));
 }
 
 
-BaseNode *Parser::parseExpressionHelper()
+BaseNode *FileParser::parseExpressionHelper()
 {
     return maybeBinary(parseAtomically(), 0);
 }
 
 
-BaseNode *Parser::parseAtomically()
+BaseNode *FileParser::parseAtomically()
 {
     // 1. Call parseAtomicallyExpression() -> This may be the function name.
     // 2. Do we have a next token which is "("? --> YES --> FUNCTION CALL!
-    return maybeFunctionCallOrArrayAccess(std::bind(&Parser::parseAtomicallyExpression, this));
+    return maybeFunctionCallOrArrayAccess(std::bind(&FileParser::parseAtomicallyExpression, this));
 }
 
 
-BaseNode *Parser::parseAtomicallyExpression()
+BaseNode *FileParser::parseAtomicallyExpression()
 {
     // TODO: - breakup
     if (isPunctuation("("))
@@ -744,7 +734,7 @@ BaseNode *Parser::parseAtomicallyExpression()
 }
 
 
-NotNode *Parser::parseNot()
+NotNode *FileParser::parseNot()
 {
     _skipFunctor("!");
 
@@ -752,7 +742,7 @@ NotNode *Parser::parseNot()
 }
 
 
-PrefixIncrementNode *Parser::parsePrefixIncrement()
+PrefixIncrementNode *FileParser::parsePrefixIncrement()
 {
     _skipFunctor("++");
 
@@ -760,7 +750,7 @@ PrefixIncrementNode *Parser::parsePrefixIncrement()
 }
 
 
-PrefixDecrementNode *Parser::parsePrefixDecrement()
+PrefixDecrementNode *FileParser::parsePrefixDecrement()
 {
     _skipFunctor("--");
 
@@ -768,7 +758,7 @@ PrefixDecrementNode *Parser::parsePrefixDecrement()
 }
 
 
-NegationNode *Parser::parseNegation()
+NegationNode *FileParser::parseNegation()
 {
     _skipFunctor("-");
 
@@ -784,10 +774,10 @@ NegationNode *Parser::parseNegation()
 ///
 /// function aFunction(a, b, c) --> start = (, stop = ), separator = ,
 ///
-ProgramNode *Parser::parseDelimited(std::string start,
-                                    std::string stop,
-                                    std::string separator,
-                                    ParseMethod parseMethod)
+ProgramNode *FileParser::parseDelimited(std::string start,
+                                        std::string stop,
+                                        std::string separator,
+                                        ParseMethod parseMethod)
 {
     _skipFunctor(start); // Skip the punctuation at the start.
 
@@ -826,7 +816,7 @@ ProgramNode *Parser::parseDelimited(std::string start,
 }
 
 
-void Parser::skipSemicolonLineEndingIfRequired(const BaseNode &node)
+void FileParser::skipSemicolonLineEndingIfRequired(const BaseNode &node)
 {
     bool do_skipper = (node.isNodeType<ModuleNode>() || // Bit ugly.
                        node.isNodeType<MathModuleNode>() ||
@@ -846,7 +836,7 @@ void Parser::skipSemicolonLineEndingIfRequired(const BaseNode &node)
 }
 
 
-ProgramNode *Parser::parseProgramLines()
+ProgramNode *FileParser::parseProgramLines()
 {
     _skipFunctor("{");
 
@@ -867,7 +857,7 @@ ProgramNode *Parser::parseProgramLines()
 }
 
 
-int Parser::getPrecedence()
+int FileParser::getPrecedence()
 {
     const Token &token = _tokens.front();
 
@@ -903,7 +893,7 @@ int Parser::getPrecedence()
 
 #pragma mark - *** is... ***
 
-bool Parser::isKeyword(const std::string &keyword)
+bool FileParser::isKeyword(const std::string &keyword)
 {
     const Token &token = _tokens.front();
 
@@ -911,13 +901,13 @@ bool Parser::isKeyword(const std::string &keyword)
 }
 
 
-bool Parser::isDataTypeKeyword()
+bool FileParser::isDataTypeKeyword()
 {
-    return (Grammar::isDataType(_tokens.front()));
+    return (Grammar::instance().isDataType(_tokens.front()));
 }
 
 
-bool Parser::isPunctuation(const std::string &punctuation)
+bool FileParser::isPunctuation(const std::string &punctuation)
 {
     const Token &token = _tokens.front();
 
@@ -925,7 +915,7 @@ bool Parser::isPunctuation(const std::string &punctuation)
 }
 
 
-bool Parser::isOperator(const std::string &operatorName)
+bool FileParser::isOperator(const std::string &operatorName)
 {
     const Token &token = _tokens.front();
 
@@ -935,7 +925,7 @@ bool Parser::isOperator(const std::string &operatorName)
 
 #pragma mark -
 
-void Parser::unexpectedToken()
+void FileParser::unexpectedToken()
 {
     const Token &token = _tokens.front();
 

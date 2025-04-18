@@ -130,13 +130,13 @@ bool CharStream::isShebang()
 
 bool CharStream::isOperator() const
 {
-    return Grammar::isOperator(current());
+    return Grammar::instance().isOperator(current());
 }
 
 
 bool CharStream::isPunctuation() const
 {
-    return Grammar::isPunctuation(current());
+    return Grammar::instance().isPunctuation(current());
 }
 
 

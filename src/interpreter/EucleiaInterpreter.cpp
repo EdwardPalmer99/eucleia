@@ -11,13 +11,15 @@
 #include "EucleiaParser.hpp"
 #include "Objects.hpp"
 #include "Scope.hpp"
+#include "SingletonT.hpp"
+#include "TopParser.hpp"
 #include <iostream>
 
 // TODO: - Parser() should have empty constructor. Should call parseFile method with string to run parser.
 void Interpreter::evaluateFile(const std::string &fpath)
 {
     // 1. Generate abstract symbol tree.
-    FileNode *ast = Parser::buildAST(fpath);
+    FileNode *ast = SingletonT<RootParser>::instance().parse(fpath);
 
     // 2. Create global scope.
     Scope globalScope;
