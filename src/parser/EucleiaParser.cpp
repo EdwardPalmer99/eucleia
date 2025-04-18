@@ -69,7 +69,7 @@ BaseNode *Parser::parseImport()
 
     auto token = peekToken();
 
-    if (token.type == Token::String)
+    if (token.type() == Token::String)
         return parseFileImport();
     else if (isOperator("<"))
         return parseLibraryImport();
@@ -87,18 +87,18 @@ FileNode *Parser::parseFileImport()
 {
     // File name token:
     auto token = nextToken();
-    assert(token.type == Token::String);
+    assert(token.type() == Token::String);
 
     // Check: has file already been imported somewhere? If it has then we don't
     // want to import it a second time! (i.e. A imports B, C and B imports C. In
     // this case, PARSE A set[A]--> PARSE B set[A,B]--> PARSE C set[A,B,C].
-    if (importedFileNames.count(token.value))
+    if (importedFileNames.count(token))
     {
         return new FileNode(); // Return "empty file".
     }
 
     // Build the file path:
-    std::string filePath = _fileInfo.dirPath + token.value;
+    std::string filePath = _fileInfo.dirPath + token;
     Logger::debug("importing file: " + filePath);
 
     auto ast = Parser(filePath).buildAST(); // NB: don't use static method as this will clear loaded modules/files.
@@ -120,19 +120,19 @@ ModuleNode *Parser::parseLibraryImport()
     skipOperator("<");
 
     auto token = nextToken();
-    assert(token.type == Token::Variable);
+    assert(token.type() == Token::Variable);
 
     skipOperator(">");
 
-    auto libraryName = token.value;
+    auto libraryName = token;
 
-    if (importedModuleNames.count(token.value))
+    if (importedModuleNames.count(token))
     {
         return new ModuleNode(); // Return "empty module".
     }
 
-    importedModuleNames.insert(token.value);
-    Logger::debug("importing library: " + token.value);
+    importedModuleNames.insert(token);
+    Logger::debug("importing library: " + token);
 
     return EucleiaModuleLoader::getModuleInstance(libraryName);
 }
@@ -165,7 +165,7 @@ AddIntNode *Parser::parseInt()
 {
     Token token = nextToken();
 
-    long intValue = strtold(token.value.c_str(), NULL);
+    long intValue = strtold(token.c_str(), NULL);
 
     return new AddIntNode(intValue);
 }
@@ -175,7 +175,7 @@ AddFloatNode *Parser::parseFloat()
 {
     Token token = nextToken();
 
-    double floatValue = strtof(token.value.c_str(), NULL);
+    double floatValue = strtof(token.c_str(), NULL);
 
     return new AddFloatNode(floatValue);
 }
@@ -185,7 +185,7 @@ AddBoolNode *Parser::parseBool()
 {
     Token token = nextToken();
 
-    bool state = (token.value == "true");
+    bool state = (token == "true");
 
     return new AddBoolNode(state);
 }
@@ -195,7 +195,7 @@ AddStringNode *Parser::parseString()
 {
     Token token = nextToken();
 
-    return new AddStringNode(token.value);
+    return new AddStringNode(token);
 }
 
 
@@ -216,19 +216,19 @@ BaseNode *Parser::parseBrackets()
 BaseNode *Parser::parseVariableDefinition()
 {
     Token typeToken = nextToken();
-    assert(typeToken.type == Token::Keyword);
+    assert(typeToken.type() == Token::Keyword);
 
-    ObjectType typeOfObject = objectTypeForName(typeToken.value);
+    ObjectType typeOfObject = objectTypeForName(typeToken);
 
-    if (peekToken().value == "&") // Is reference.
+    if (peekToken() == "&") // Is reference.
     {
         return parseReference(typeOfObject);
     }
 
     Token nameToken = nextToken();
-    assert(nameToken.type == Token::Variable);
+    assert(nameToken.type() == Token::Variable);
 
-    return new AddVariableNode(nameToken.value, typeOfObject);
+    return new AddVariableNode(nameToken, typeOfObject);
 }
 
 /**
@@ -245,14 +245,14 @@ BaseNode *Parser::parseReference(ObjectType boundVariableType)
     skipOperator("&");
 
     Token referenceNameToken = nextToken();
-    assert(referenceNameToken.type == Token::Variable);
+    assert(referenceNameToken.type() == Token::Variable);
 
     skipOperator("=");
 
     Token boundVariableNameToken = nextToken();
-    assert(boundVariableNameToken.type == Token::Variable);
+    assert(boundVariableNameToken.type() == Token::Variable);
 
-    return new AddReferenceVariableNode(referenceNameToken.value, boundVariableNameToken.value, boundVariableType);
+    return new AddReferenceVariableNode(referenceNameToken, boundVariableNameToken, boundVariableType);
 }
 
 
@@ -260,9 +260,9 @@ BaseNode *Parser::parseReference(ObjectType boundVariableType)
 BaseNode *Parser::parseVariableName()
 {
     Token token = nextToken();
-    assert(token.type == Token::Variable);
+    assert(token.type() == Token::Variable);
 
-    return new LookupVariableNode(token.value);
+    return new LookupVariableNode(token);
 }
 
 
@@ -339,12 +339,12 @@ IfNode *Parser::parseIf()
 
 
     BaseNode *elseDo{nullptr}; // Optional.
-    if (peekToken().value == "else")
+    if (peekToken() == "else")
     {
         skipKeyword("else");
 
         // Option 1: else if (condition) { [statement]; }
-        if (peekToken().value == "if")
+        if (peekToken() == "if")
             elseDo = parseIf();
         // Option 2: else { [statement]; }
         else
@@ -428,7 +428,7 @@ BaseNode *Parser::parseStruct()
 {
     skipKeyword("struct");
 
-    auto structTypeName = nextToken().value;
+    auto structTypeName = nextToken();
 
     // Do we have a '{' token next? If we do then it is definition of new struct.
     if (isPunctuation("{") || isKeyword("extends"))
@@ -439,7 +439,7 @@ BaseNode *Parser::parseStruct()
         {
             skipKeyword("extends");
 
-            structParentTypeName = nextToken().value;
+            structParentTypeName = nextToken();
         }
 
         auto structMemberVars = parseDelimited("{", "}", ";", std::bind(&Parser::parseVariableDefinition, this));
@@ -466,7 +466,7 @@ BaseNode *Parser::parseStruct()
             return parseReference(ObjectType::Struct);
         }
 
-        auto structInstanceName = nextToken().value;
+        auto structInstanceName = nextToken();
 
         return new StructObject(structTypeName, structInstanceName);
     }
@@ -498,7 +498,7 @@ BaseNode *Parser::parseClass()
 {
     skipKeyword("class");
 
-    auto classTypeName = nextToken().value;
+    auto classTypeName = nextToken();
 
     // Do we have a '{' token next? If we do then it is definition of new struct.
     if (isPunctuation("{") || isKeyword("extends"))
@@ -510,7 +510,7 @@ BaseNode *Parser::parseClass()
         {
             skipKeyword("extends");
 
-            classParentTypeName = nextToken().value;
+            classParentTypeName = nextToken();
         }
 
         // NB: have to be a bit careful with parseProgram. If there is only
@@ -545,7 +545,7 @@ BaseNode *Parser::parseClass()
             return parseReference(ObjectType::Class);
         }
 
-        auto classInstanceName = nextToken().value;
+        auto classInstanceName = nextToken();
 
         return new ClassObject(classTypeName, classInstanceName);
     }
@@ -633,7 +633,7 @@ BaseNode *Parser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
     // we need to create a binary node.
     const Token &next = peekToken();
 
-    if (next.type == Token::Operator)
+    if (next.type() == Token::Operator)
     {
         // Yes it is an operator. Does it have a higher precedence than the
         // left-hand expression?
@@ -647,12 +647,12 @@ BaseNode *Parser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
             // Create binary or assign node.
             BaseNode *node{nullptr};
 
-            bool isAssignNode = (next.value == "=");
+            bool isAssignNode = (next == "=");
 
             if (isAssignNode)
                 node = new AssignNode(leftExpression, rightExpression);
             else
-                node = new BinaryNode(leftExpression, rightExpression, next.value);
+                node = new BinaryNode(leftExpression, rightExpression, next);
 
             // Wrap binary node by calling ourselves should the next operator
             // be of a greater precedence.
@@ -772,7 +772,7 @@ BaseNode *Parser::parseAtomicallyExpression()
 
     const Token &token = peekToken();
 
-    switch (token.type)
+    switch (token.type())
     {
         case Token::Variable:
             return parseVariableName();
@@ -916,30 +916,30 @@ int Parser::getPrecedence()
 {
     const Token &token = peekToken();
 
-    if (token.type != Token::Operator)
+    if (token.type() != Token::Operator)
     {
         return 0;
     }
 
-    if (token.value == "=")
+    if (token == "=")
         return 1;
-    else if (token.value == "||")
+    else if (token == "||")
         return 2;
-    else if (token.value == "&&")
+    else if (token == "&&")
         return 3;
-    else if ((token.value == "<") ||
-             (token.value == ">") ||
-             (token.value == "<=") ||
-             (token.value == ">=") ||
-             (token.value == "==") ||
-             (token.value == "!="))
+    else if ((token == "<") ||
+             (token == ">") ||
+             (token == "<=") ||
+             (token == ">=") ||
+             (token == "==") ||
+             (token == "!="))
         return 7;
-    else if ((token.value == "+") ||
-             (token.value == "-"))
+    else if ((token == "+") ||
+             (token == "-"))
         return 10;
-    else if ((token.value == "*") ||
-             (token.value == "/") ||
-             (token.value == "%"))
+    else if ((token == "*") ||
+             (token == "/") ||
+             (token == "%"))
         return 20;
     else
         return 0;
@@ -952,13 +952,13 @@ bool Parser::isKeyword(const std::string &keyword)
 {
     const Token &token = peekToken();
 
-    return (token.type == Token::Keyword && token.value == keyword);
+    return (token.type() == Token::Keyword && token == keyword);
 }
 
 
 bool Parser::isDataTypeKeyword()
 {
-    return (Grammar::isDataType(peekToken().value));
+    return (Grammar::isDataType(peekToken()));
 }
 
 
@@ -966,7 +966,7 @@ bool Parser::isPunctuation(const std::string &punctuation)
 {
     const Token &token = peekToken();
 
-    return (token.type == Token::Punctuation && token.value == punctuation);
+    return (token.type() == Token::Punctuation && token == punctuation);
 }
 
 
@@ -974,7 +974,7 @@ bool Parser::isOperator(const std::string &operatorName)
 {
     const Token &token = peekToken();
 
-    return (token.type == Token::Operator && token.value == operatorName);
+    return (token.type() == Token::Operator && token == operatorName);
 }
 
 
@@ -1019,5 +1019,5 @@ void Parser::unexpectedToken()
 {
     const Token &token = peekToken();
 
-    ThrowException("unexpected token: " + token.print());
+    ThrowException("unexpected token: " + token);
 }

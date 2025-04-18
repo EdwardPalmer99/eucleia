@@ -10,33 +10,10 @@
 #pragma once
 #include "CharStream.hpp"
 #include "Token.hpp"
-#include <queue>
 #include <string>
 
-/* Stores all tokens */
-class Tokens : private std::queue<Token>
-{
-public:
-    /* Pops and returns the token at the front of the queue */
-    [[nodiscard]] Token dequeue();
 
-    /* Returns the front token */
-    using std::queue<Token>::front;
-
-    /* Skip token */
-    using std::queue<Token>::pop;
-
-    /* empty() */
-    using std::queue<Token>::empty;
-
-protected:
-    friend class Tokenizer;
-
-    using std::queue<Token>::push;
-};
-
-
-/* Constructs Tokens from a file */
+/* Builder class for Tokens */
 class Tokenizer
 {
 public:
