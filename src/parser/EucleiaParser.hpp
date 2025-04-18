@@ -79,8 +79,6 @@ protected:
         return _tokens.dequeue();
     }
 
-    void skipToken() { _tokens.pop(); }
-
     void unexpectedToken();
 
     FunctionCallNode *parseFunctionCall(BaseNode *lastExpression);

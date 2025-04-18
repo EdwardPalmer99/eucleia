@@ -612,7 +612,7 @@ BaseNode *Parser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
         const int nextPrecedence = getPrecedence();
         if (nextPrecedence > leftPrecedence)
         {
-            skipToken(); // Move along one.
+            _tokens.pop(); // Move along one.
 
             auto rightExpression = maybeBinary(parseAtomically(), nextPrecedence);
 
@@ -959,7 +959,7 @@ void Parser::skipKeyword(const std::string &name)
         ThrowException("expected keyword " + name + " while parsing " + _fileInfo.nameWithExt);
     }
 
-    skipToken();
+    _tokens.pop();
 }
 
 
@@ -970,7 +970,7 @@ void Parser::skipPunctuation(const std::string &name)
         ThrowException("expected punctuation " + name + " while parsing " + _fileInfo.nameWithExt);
     }
 
-    skipToken();
+    _tokens.pop();
 }
 
 
@@ -981,7 +981,7 @@ void Parser::skipOperator(const std::string &name)
         ThrowException("expected operator " + name + " while parsing " + _fileInfo.nameWithExt);
     }
 
-    skipToken();
+    _tokens.pop();
 }
 
 
