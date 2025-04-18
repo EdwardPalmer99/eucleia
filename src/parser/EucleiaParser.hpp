@@ -74,11 +74,6 @@ protected:
 
     const Token &peekToken() const { return _tokens.front(); }
 
-    Token nextToken()
-    {
-        return _tokens.dequeue();
-    }
-
     void unexpectedToken();
 
     FunctionCallNode *parseFunctionCall(BaseNode *lastExpression);

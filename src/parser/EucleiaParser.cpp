@@ -86,7 +86,7 @@ BaseNode *Parser::parseImport()
 FileNode *Parser::parseFileImport()
 {
     // File name token:
-    auto token = nextToken();
+    auto token = _tokens.dequeue();
     assert(token.type() == Token::String);
 
     // Check: has file already been imported somewhere? If it has then we don't
@@ -119,7 +119,7 @@ ModuleNode *Parser::parseLibraryImport()
 {
     skipOperator("<");
 
-    auto token = nextToken();
+    auto token = _tokens.dequeue();
     assert(token.type() == Token::Variable);
 
     skipOperator(">");
@@ -163,7 +163,7 @@ BaseNode *Parser::parseProgram()
 
 AddBoolNode *Parser::parseBool()
 {
-    Token token = nextToken();
+    Token token = _tokens.dequeue();
 
     bool state = (token == "true");
 
@@ -187,7 +187,7 @@ BaseNode *Parser::parseBrackets()
 /// int/float/string/bool/array [VARIABLE_NAME]
 BaseNode *Parser::parseVariableDefinition()
 {
-    Token typeToken = nextToken();
+    Token typeToken = _tokens.dequeue();
     assert(typeToken.type() == Token::Keyword);
 
     ObjectType typeOfObject = objectTypeForName(typeToken);
@@ -197,7 +197,7 @@ BaseNode *Parser::parseVariableDefinition()
         return parseReference(typeOfObject);
     }
 
-    Token nameToken = nextToken();
+    Token nameToken = _tokens.dequeue();
     assert(nameToken.type() == Token::Variable);
 
     return new AddVariableNode(nameToken, typeOfObject);
@@ -216,12 +216,12 @@ BaseNode *Parser::parseReference(ObjectType boundVariableType)
 {
     skipOperator("&");
 
-    Token referenceNameToken = nextToken();
+    Token referenceNameToken = _tokens.dequeue();
     assert(referenceNameToken.type() == Token::Variable);
 
     skipOperator("=");
 
-    Token boundVariableNameToken = nextToken();
+    Token boundVariableNameToken = _tokens.dequeue();
     assert(boundVariableNameToken.type() == Token::Variable);
 
     return new AddReferenceVariableNode(referenceNameToken, boundVariableNameToken, boundVariableType);
@@ -231,7 +231,7 @@ BaseNode *Parser::parseReference(ObjectType boundVariableType)
 /// [VARIABLE_NAME]
 BaseNode *Parser::parseVariableName()
 {
-    Token token = nextToken();
+    Token token = _tokens.dequeue();
     assert(token.type() == Token::Variable);
 
     return new LookupVariableNode(token);
@@ -400,7 +400,7 @@ BaseNode *Parser::parseStruct()
 {
     skipKeyword("struct");
 
-    auto structTypeName = nextToken();
+    auto structTypeName = _tokens.dequeue();
 
     // Do we have a '{' token next? If we do then it is definition of new struct.
     if (isPunctuation("{") || isKeyword("extends"))
@@ -411,7 +411,7 @@ BaseNode *Parser::parseStruct()
         {
             skipKeyword("extends");
 
-            structParentTypeName = nextToken();
+            structParentTypeName = _tokens.dequeue();
         }
 
         auto structMemberVars = parseDelimited("{", "}", ";", std::bind(&Parser::parseVariableDefinition, this));
@@ -438,7 +438,7 @@ BaseNode *Parser::parseStruct()
             return parseReference(ObjectType::Struct);
         }
 
-        auto structInstanceName = nextToken();
+        auto structInstanceName = _tokens.dequeue();
 
         return new StructObject(structTypeName, structInstanceName);
     }
@@ -470,7 +470,7 @@ BaseNode *Parser::parseClass()
 {
     skipKeyword("class");
 
-    auto classTypeName = nextToken();
+    auto classTypeName = _tokens.dequeue();
 
     // Do we have a '{' token next? If we do then it is definition of new struct.
     if (isPunctuation("{") || isKeyword("extends"))
@@ -482,7 +482,7 @@ BaseNode *Parser::parseClass()
         {
             skipKeyword("extends");
 
-            classParentTypeName = nextToken();
+            classParentTypeName = _tokens.dequeue();
         }
 
         // NB: have to be a bit careful with parseProgram. If there is only
@@ -517,7 +517,7 @@ BaseNode *Parser::parseClass()
             return parseReference(ObjectType::Class);
         }
 
-        auto classInstanceName = nextToken();
+        auto classInstanceName = _tokens.dequeue();
 
         return new ClassObject(classTypeName, classInstanceName);
     }
