@@ -26,8 +26,7 @@ Tokens Tokenizer::buildTokens(const std::string &path)
         Token token = buildNextToken(stream);
         Logger::debug(stream.location() + ": " + token);
 
-        if (!token.type() == Token::EndOfFile)
-            tokens.push(std::move(token));
+        if (token.type() != Token::EndOfFile)
     }
 
     return tokens;
