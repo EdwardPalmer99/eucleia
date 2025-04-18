@@ -1,5 +1,5 @@
 /**
- * @file Tokenizer.hpp
+ * @file Tokens.hpp
  * @author Edward Palmer
  * @date 2025-01-18
  *
@@ -13,30 +13,52 @@
 #include <queue>
 #include <string>
 
+/* Stores all tokens */
+class Tokens : private std::queue<Token>
+{
+public:
+    /* Pops and returns the token at the front of the queue */
+    [[nodiscard]] Token dequeue();
+
+    /* Returns the front token */
+    using std::queue<Token>::front;
+
+    /* Skip token */
+    using std::queue<Token>::pop;
+
+    /* empty() */
+    using std::queue<Token>::empty;
+
+protected:
+    friend class Tokenizer;
+
+    using std::queue<Token>::push;
+};
+
+
+/* Constructs Tokens from a file */
 class Tokenizer
 {
 public:
-    Tokenizer() = delete;
-    Tokenizer(const std::string &path);
+    static Tokens build(const std::string &path)
+    {
+        return Tokenizer().buildTokens(path);
+    }
 
-    const Token &peek() const;
+protected:
+    /* Prevent direct initialization */
+    Tokenizer() = default;
 
-    Token next();
+    /* Construct tokens from a file */
+    Tokens buildTokens(const std::string &path);
 
-    bool empty() const;
+    void skipLine(CharStream &stream);
 
-private:
-    Token buildNextToken();
+    Token buildNextToken(CharStream &stream);
 
-    void buildTokens();
-    void skipLine();
-
-    Token buildStringToken();
-    Token buildNumberToken();
-    Token buildIDToken();
-    Token buildOperatorToken();
-    Token buildPunctuationToken();
-
-    CharStream stream;
-    std::queue<Token> tokens;
+    Token buildStringToken(CharStream &stream);
+    Token buildNumberToken(CharStream &stream);
+    Token buildIDToken(CharStream &stream);
+    Token buildOperatorToken(CharStream &stream);
+    Token buildPunctuationToken(CharStream &stream);
 };

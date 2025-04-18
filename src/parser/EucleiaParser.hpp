@@ -7,9 +7,9 @@
 
 #pragma once
 #include "EucleiaModules.hpp"
-#include "Tokenizer.hpp"
 #include "FileInfoRec.hpp"
 #include "Nodes.hpp"
+#include "Tokenizer.hpp"
 #include <unordered_set>
 
 
@@ -74,10 +74,14 @@ protected:
     void skipPunctuation(const std::string &punctuation);
     void skipOperator(const std::string &operatorName);
 
-    const Token &peekToken() const { return tokenizer.peek(); }
+    const Token &peekToken() const { return _tokens.front(); }
 
-    Token nextToken() { return tokenizer.next(); }
-    void skipToken() { (void)tokenizer.next(); }
+    Token nextToken()
+    {
+        return _tokens.dequeue();
+    }
+
+    void skipToken() { _tokens.pop(); }
 
     void unexpectedToken();
 
@@ -111,7 +115,6 @@ private:
     BaseNode *maybeBinary(BaseNode *leftExpression,
                           int leftPrecedence);
 
-    Tokenizer tokenizer;
-
-    FileComponentsRec fileInfo;
+    Tokens _tokens;
+    FileComponentsRec _fileInfo;
 };

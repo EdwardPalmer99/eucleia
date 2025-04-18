@@ -23,11 +23,11 @@ std::unordered_set<std::string> importedFileNames;
 
 
 Parser::Parser(const std::string &fpath)
-    : tokenizer(fpath),
-      fileInfo(fpath)
+    : _tokens(Tokenizer::build(fpath)),
+      _fileInfo(fpath)
 {
     // Add this file info so we don't accidentally import twice.
-    importedFileNames.insert(fileInfo.nameWithExt);
+    importedFileNames.insert(_fileInfo.nameWithExt);
 }
 
 
@@ -48,7 +48,7 @@ FileNode *Parser::buildAST()
 {
     std::vector<BaseNode *> nodes;
 
-    while (!tokenizer.empty())
+    while (!_tokens.empty())
     {
         auto node = parseExpression();
 
@@ -98,7 +98,7 @@ FileNode *Parser::parseFileImport()
     }
 
     // Build the file path:
-    std::string filePath = fileInfo.dirPath + token.value;
+    std::string filePath = _fileInfo.dirPath + token.value;
     Logger::debug("importing file: " + filePath);
 
     auto ast = Parser(filePath).buildAST(); // NB: don't use static method as this will clear loaded modules/files.
@@ -624,7 +624,7 @@ AddArrayNode *Parser::parseArray()
 BaseNode *Parser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
 {
     // Special case: tokens empty. Cannot be binary expression.
-    if (tokenizer.empty())
+    if (_tokens.empty())
     {
         return leftExpression;
     }
@@ -688,7 +688,7 @@ BaseNode *Parser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
     auto expr = expression();
     assert(expr != nullptr);
 
-    if (!tokenizer.empty())
+    if (!_tokens.empty())
     {
         if (isPunctuation("("))
             return parseFunctionCall(expr);
@@ -841,7 +841,7 @@ ProgramNode *Parser::parseDelimited(std::string start,
     // Iterate while we still have tokens and haven't reached stop token.
     bool firstCall = true;
 
-    while (!tokenizer.empty() && !isPunctuation(stop))
+    while (!_tokens.empty() && !isPunctuation(stop))
     {
         // Skip separator on each subsequent call (i.e. a, b)
         if (firstCall)
@@ -897,7 +897,7 @@ ProgramNode *Parser::parseProgramLines()
 
     std::vector<BaseNode *> parsedNodes;
 
-    while (!tokenizer.empty() && !isPunctuation("}"))
+    while (!_tokens.empty() && !isPunctuation("}"))
     {
         auto expression = parseExpression();
 
@@ -984,7 +984,7 @@ void Parser::skipKeyword(const std::string &name)
 {
     if (!isKeyword(name))
     {
-        ThrowException("expected keyword " + name + " while parsing " + fileInfo.nameWithExt);
+        ThrowException("expected keyword " + name + " while parsing " + _fileInfo.nameWithExt);
     }
 
     skipToken();
@@ -995,7 +995,7 @@ void Parser::skipPunctuation(const std::string &name)
 {
     if (!isPunctuation(name))
     {
-        ThrowException("expected punctuation " + name + " while parsing " + fileInfo.nameWithExt);
+        ThrowException("expected punctuation " + name + " while parsing " + _fileInfo.nameWithExt);
     }
 
     skipToken();
@@ -1006,7 +1006,7 @@ void Parser::skipOperator(const std::string &name)
 {
     if (!isOperator(name))
     {
-        ThrowException("expected operator " + name + " while parsing " + fileInfo.nameWithExt);
+        ThrowException("expected operator " + name + " while parsing " + _fileInfo.nameWithExt);
     }
 
     skipToken();
