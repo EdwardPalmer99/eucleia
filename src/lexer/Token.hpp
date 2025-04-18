@@ -10,11 +10,13 @@
 #pragma once
 #include <string>
 
-class Token
+/* Stores the tokens read from the user's file */
+class Token : public std::string
 {
 public:
-    enum TokenType
+    enum Type
     {
+        NotSet = (-1),
         EndOfFile,
         Punctuation,
         Keyword,
@@ -25,14 +27,23 @@ public:
         Float
     };
 
-    Token() = delete;
-    Token(TokenType type, std::string value);
+    /* Constructors */
+    Token(Type type) : _type(type) {}
+    Token(std::string &value, Type type = NotSet) : std::string(value), _type(type) {}
+    Token(std::string &&value = "", Type type = NotSet) : std::string(value), _type(type) {}
 
-    std::string print() const;
+    /* Reference to type */
+    [[nodiscard]] inline Type &type()
+    {
+        return _type;
+    }
 
-    const TokenType type;
-    const std::string value;
+    [[nodiscard]] inline Type type() const
+    {
+        return _type;
+    }
 
 private:
-    std::string typeName() const;
+    /* Type of the token */
+    Type _type{Type::NotSet};
 };

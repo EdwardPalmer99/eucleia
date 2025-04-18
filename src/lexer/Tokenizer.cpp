@@ -38,9 +38,9 @@ Tokens Tokenizer::buildTokens(const std::string &path)
     while (!stream.isLast())
     {
         Token token = buildNextToken(stream);
-        Logger::debug(stream.location() + ": " + token.print());
+        Logger::debug(stream.location() + ": " + token);
 
-        if (!token.type == Token::EndOfFile)
+        if (!token.type() == Token::EndOfFile)
             tokens.push(std::move(token));
     }
 
@@ -52,7 +52,7 @@ Token Tokenizer::buildNextToken(CharStream &stream)
 {
     if (stream.isLast())
     {
-        return Token(Token::EndOfFile, "");
+        return Token(Token::EndOfFile);
     }
     else if (stream.isComment() || stream.isShebang())
     {
@@ -163,7 +163,7 @@ Token Tokenizer::buildStringToken(CharStream &stream)
     }
 
     // Create string token:
-    Token token = Token(Token::String, std::string(value));
+    Token token = Token(std::string(value), Token::String);
 
     // Handle memory:
     free(value);
@@ -203,7 +203,7 @@ Token Tokenizer::buildNumberToken(CharStream &stream)
 
     value[count] = '\0'; // Terminate.
 
-    return Token(readDecimal ? Token::Float : Token::Int, std::string(value));
+    return Token(std::string(value), readDecimal ? Token::Float : Token::Int);
 }
 
 
@@ -226,7 +226,7 @@ Token Tokenizer::buildIDToken(CharStream &stream)
 
     std::string stringID(buffer.data());
 
-    return Token(Grammar::isKeyword(stringID) ? Token::Keyword : Token::Variable, stringID);
+    return Token(std::move(stringID), Grammar::isKeyword(stringID) ? Token::Keyword : Token::Variable);
 }
 
 
@@ -240,7 +240,7 @@ Token Tokenizer::buildPunctuationToken(CharStream &stream)
     char buffer[2] = {stream.current(), '\0'};
     (void)stream.increment();
 
-    return Token(Token::Punctuation, std::string(buffer));
+    return Token(std::string(buffer), Token::Punctuation);
 }
 
 
@@ -261,5 +261,5 @@ Token Tokenizer::buildOperatorToken(CharStream &stream)
 
     buffer.push_back('\0');
 
-    return Token(Token::Operator, std::string(buffer.data()));
+    return Token(std::string(buffer.data()), Token::Operator);
 }
