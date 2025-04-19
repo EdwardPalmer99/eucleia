@@ -11,6 +11,8 @@
 #include "ArrayObject.hpp"
 #include "BaseNode.hpp"
 #include "BaseObjectT.hpp"
+#include "FileParser.hpp"
+
 
 ArrayAccessNode::~ArrayAccessNode()
 {
@@ -34,4 +36,18 @@ BaseObject *ArrayAccessNode::evaluate(Scope &scope)
 
     // Return a safe copy of object.
     return scope.cloneObject(currentObject);
+}
+
+
+ArrayAccessNode *ArrayAccessNode::parse(FileParser &parser, BaseNode *arrayVarName)
+{
+    auto &arrayName = arrayVarName->castNode<LookupVariableNode>();
+
+    parser._skipFunctor("[");
+
+    auto arrayIndex = static_cast<AddIntNode *>(parser.parseExpression());
+
+    parser._skipFunctor("]");
+
+    return new ArrayAccessNode(&arrayName, arrayIndex);
 }

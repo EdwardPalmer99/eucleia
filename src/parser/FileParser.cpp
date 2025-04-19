@@ -308,25 +308,6 @@ BaseNode *FileParser::parseStructAccessor(BaseNode *lastExpression)
 }
 
 
-#pragma mark - *** Arrays ***
-
-///
-/// Expression: array_variable[0].
-///
-ArrayAccessNode *FileParser::parseArrayAccessor(BaseNode *lastExpression)
-{
-    auto arrayName = static_cast<LookupVariableNode *>(lastExpression);
-
-    _skipFunctor("[");
-
-    auto arrayIndex = static_cast<AddIntNode *>(parseExpression());
-
-    _skipFunctor("]");
-
-    return new ArrayAccessNode(arrayName, arrayIndex);
-}
-
-
 #pragma mark - *** Assignment/Binary ***
 
 BaseNode *FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
@@ -387,7 +368,7 @@ BaseNode *FileParser::maybeArrayAccess(ParseMethod expression)
 {
     auto expr = expression(); // Possible array variable name.
 
-    return isPunctuation("[") ? parseArrayAccessor(expr) : expr;
+    return isPunctuation("[") ? ArrayAccessNode::parse(*this, expr) : expr;
 }
 
 
@@ -401,7 +382,7 @@ BaseNode *FileParser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
         if (isPunctuation("("))
             return parseFunctionCall(expr);
         else if (isPunctuation("["))
-            return parseArrayAccessor(expr);
+            return ArrayAccessNode::parse(*this, expr);
         else if (isPunctuation("."))
             return parseStructAccessor(expr);
     }

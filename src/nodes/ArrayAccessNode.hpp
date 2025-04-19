@@ -1,3 +1,4 @@
+
 /**
  * @file ArrayAccessNode.hpp
  * @author Edward Palmer
@@ -13,6 +14,9 @@
 #include "BaseObject.hpp"
 #include "BasePropertyNode.hpp"
 #include "Scope.hpp"
+
+class FileParser;
+
 
 class ArrayAccessNode : public BasePropertyNode
 {
@@ -30,6 +34,9 @@ public:
 
     // Returns copy of object.
     BaseObject *evaluate(Scope &scope) override;
+
+    /* Parse: array[0] */
+    static ArrayAccessNode *parse(FileParser &parser, BaseNode *arrayVarName);
 
     LookupVariableNode *arrayLookup{nullptr};
     AddIntNode *index{nullptr};

@@ -43,6 +43,7 @@ protected:
     friend class PrefixDecrementNode;
     friend class NegationNode;
     friend class FunctionNode;
+    friend class ArrayAccessNode;
 
 
     /* Default constructor */
@@ -62,8 +63,6 @@ protected:
     BaseNode *parseStructAccessor(BaseNode *lastExpression);
 
     BaseNode *parseClass();
-
-    ArrayAccessNode *parseArrayAccessor(BaseNode *lastExpression);
 
     bool isKeyword(const std::string &keyword);
     bool isPunctuation(const std::string &punctuation);
