@@ -26,7 +26,9 @@ public:
     // be added to the master file by using the same global scope - TODO: - think about this logic.
     BaseObject *evaluate(Scope &globalScope) override;
 
-    /// import "path_to_some_file"
-    /// Imports a file and its functions into this scope.
-    static FileNode *parse(FileParser &parser);
+    /* Parse: import "user-file" */
+    static FileNode *parseUserImport(FileParser &parser);
+
+    /* Parse: import "user-file" OR import <library> */
+    static BaseNode *parse(FileParser &parser);
 };

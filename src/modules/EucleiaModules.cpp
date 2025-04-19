@@ -6,7 +6,9 @@
 //
 
 #include "EucleiaModules.hpp"
+#include "FileParser.hpp"
 #include "Logger.hpp"
+#include "ParserData.hpp"
 #include "ProgramNode.hpp"
 #include "TestModule.hpp"
 #include <cmath>
@@ -29,6 +31,28 @@ BaseObject *ModuleNode::evaluate(Scope &scope)
     }
 
     return nullptr;
+}
+
+
+ModuleNode *ModuleNode::parse(FileParser &parser)
+{
+    parser._skipFunctor("<");
+
+    auto token = parser.tokens().dequeue();
+    assert(token.type() == Token::Variable);
+
+    parser._skipFunctor(">");
+
+    if (ParserData::instance().isImported(token, ParserData::Module))
+    {
+        return new ModuleNode(); // Return "empty module".
+    }
+
+    ParserData::instance().addImport(token, ParserData::Module);
+
+    Logger::debug("importing library: " + token);
+
+    return EucleiaModuleLoader::getModuleInstance(token);
 }
 
 

@@ -49,50 +49,6 @@ FileNode *FileParser::buildAST()
 }
 
 
-BaseNode *FileParser::parseImport()
-{
-    _skipFunctor("import");
-
-    auto token = _tokens.front();
-
-    if (token.type() == Token::String)
-        return FileNode::parse(*this);
-    else if (isOperator("<"))
-        return parseLibraryImport();
-    else
-    {
-        unexpectedToken();
-        exit(0);
-    }
-}
-
-/// import <io> or import <math>
-///
-/// This is for importing functions from a stdlib as opposed to user-defined functions
-/// into this scope.
-
-ModuleNode *FileParser::parseLibraryImport()
-{
-    _skipFunctor("<");
-
-    auto token = _tokens.dequeue();
-    assert(token.type() == Token::Variable);
-
-    _skipFunctor(">");
-
-    if (ParserData::instance().isImported(token, ParserData::Module))
-    {
-        return new ModuleNode(); // Return "empty module".
-    }
-
-    ParserData::instance().addImport(token, ParserData::Module);
-
-    Logger::debug("importing library: " + token);
-
-    return EucleiaModuleLoader::getModuleInstance(token);
-}
-
-
 #pragma mark - *** Simple Types ***
 
 
@@ -512,7 +468,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
     else if (isKeyword("if"))
         return IfNode::parse(*this);
     else if (isKeyword("import"))
-        return parseImport();
+        return FileNode::parse(*this);
     else if (isKeyword("func")) // Functions should be defined as in C --> will need void type
         return parseFunctionDefinition();
     else if (isKeyword("struct"))

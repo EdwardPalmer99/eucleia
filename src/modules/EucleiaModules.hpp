@@ -15,6 +15,9 @@
 #include <memory>
 #include <string>
 
+class FileParser;
+
+
 class ModuleNode : public BaseNode
 {
 public:
@@ -25,6 +28,13 @@ public:
 
     /// Add all library functions to the scope this is evaluated in.
     BaseObject *evaluate(Scope &scope) final;
+
+
+    /// import <io> or import <math>
+    ///
+    /// This is for importing functions from a stdlib as opposed to user-defined functions
+    /// into this scope.
+    static ModuleNode *parse(FileParser &parser);
 
 protected:
     void defineFunction(const std::string &name, Function function);

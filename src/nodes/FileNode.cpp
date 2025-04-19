@@ -8,6 +8,7 @@
  */
 
 #include "FileNode.hpp"
+#include "EucleiaModules.hpp"
 #include "FileParser.hpp"
 #include "Logger.hpp"
 #include "ParserData.hpp"
@@ -24,7 +25,7 @@ BaseObject *FileNode::evaluate(Scope &globalScope)
 }
 
 
-FileNode *FileNode::parse(FileParser &parser)
+FileNode *FileNode::parseUserImport(FileParser &parser)
 {
     // File name token:
     auto token = parser.tokens().dequeue();
@@ -51,4 +52,19 @@ FileNode *FileNode::parse(FileParser &parser)
     }
 
     return ast;
+}
+
+
+BaseNode *FileNode::parse(FileParser &parser)
+{
+    parser._skipFunctor("import");
+
+    auto token = parser.tokens().front();
+
+    if (token.type() == Token::String)
+        return FileNode::parseUserImport(parser);
+    else if (parser.isOperator("<"))
+        return ModuleNode::parse(parser);
+
+    ThrowException("unexpected token while parsing import: '" + token + "'");
 }

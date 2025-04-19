@@ -38,6 +38,8 @@ protected:
     friend class ReturnNode;
     friend class NotNode;
     friend class FileNode;
+    friend class ModuleNode;
+
 
     /* Default constructor */
     FileParser() = delete;
@@ -62,9 +64,6 @@ protected:
     PrefixIncrementNode *parsePrefixIncrement();
     PrefixDecrementNode *parsePrefixDecrement();
     NegationNode *parseNegation();
-
-    ModuleNode *parseLibraryImport();
-    BaseNode *parseImport();
 
     ArrayAccessNode *parseArrayAccessor(BaseNode *lastExpression);
 
