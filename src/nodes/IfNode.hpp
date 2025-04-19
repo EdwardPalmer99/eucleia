@@ -11,6 +11,8 @@
 #include "BaseNode.hpp"
 #include "Scope.hpp"
 
+class FileParser;
+
 class IfNode : public BaseNode
 {
 public:
@@ -33,6 +35,7 @@ public:
     // Evaluate an if/else statement in current scope. Returns nullptr.
     BaseObject *evaluate(Scope &scope) override;
 
+    static IfNode *parse(FileParser &parser);
 
     BaseNode *ifCondition{nullptr};
     BaseNode *thenDo{nullptr};

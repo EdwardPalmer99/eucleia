@@ -9,7 +9,9 @@
 
 #include "IfNode.hpp"
 #include "ExpressionScope.hpp"
+#include "FileParser.hpp"
 #include "IntObject.hpp"
+#include "ProgramNode.hpp"
 
 BaseObject *IfNode::evaluate(Scope &scope)
 {
@@ -21,4 +23,29 @@ BaseObject *IfNode::evaluate(Scope &scope)
         return elseDo->evaluate(scope);
     else
         return nullptr;
+}
+
+
+IfNode *IfNode::parse(FileParser &parser)
+{
+    // For now, only permit a single if statement.
+    parser._skipFunctor("if");
+
+    auto condition = parser.parseBrackets();
+    auto thenDo = ProgramNode::parse(parser, true);
+
+    BaseNode *elseDo{nullptr}; // Optional.
+    if (parser.tokens().front() == "else")
+    {
+        parser._skipFunctor("else");
+
+        // Option 1: else if (condition) { [statement]; }
+        if (parser.tokens().front() == "if")
+            elseDo = IfNode::parse(parser);
+        // Option 2: else { [statement]; }
+        else
+            elseDo = ProgramNode::parse(parser, true);
+    }
+
+    return new IfNode(condition, thenDo, elseDo);
 }

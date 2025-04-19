@@ -193,32 +193,6 @@ BaseNode *FileParser::parseReference(ObjectType boundVariableType)
 
 #pragma mark - *** Control Flow ***
 
-IfNode *FileParser::parseIf()
-{
-    // For now, only permit a single if statement.
-    _skipFunctor("if");
-
-    auto condition = parseBrackets();
-    auto thenDo = ProgramNode::parse(*this, true);
-
-
-    BaseNode *elseDo{nullptr}; // Optional.
-    if (_tokens.front() == "else")
-    {
-        _skipFunctor("else");
-
-        // Option 1: else if (condition) { [statement]; }
-        if (_tokens.front() == "if")
-            elseDo = parseIf();
-        // Option 2: else { [statement]; }
-        else
-            elseDo = ProgramNode::parse(*this, true);
-    }
-
-    return new IfNode(condition, thenDo, elseDo);
-}
-
-
 BreakNode *FileParser::parseBreak()
 {
     _skipFunctor("break");
@@ -593,7 +567,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
     else if (isKeyword("for"))
         return ForLoopNode::parse(*this);
     else if (isKeyword("if"))
-        return parseIf();
+        return IfNode::parse(*this);
     else if (isKeyword("import"))
         return parseImport();
     else if (isKeyword("func")) // Functions should be defined as in C --> will need void type

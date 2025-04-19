@@ -33,6 +33,7 @@ protected:
     friend class WhileNode;
     friend class DoWhileNode;
     friend class ForLoopNode;
+    friend class IfNode;
 
     /* Default constructor */
     FileParser() = delete;
@@ -49,7 +50,6 @@ protected:
 
     ForLoopNode *parseFor();
 
-    IfNode *parseIf();
     FunctionNode *parseFunctionDefinition();
 
     BaseNode *parseStruct();
