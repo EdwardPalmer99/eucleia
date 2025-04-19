@@ -10,6 +10,7 @@
 #include "FunctionNode.hpp"
 #include "FileParser.hpp"
 #include "FunctionObject.hpp"
+#include "ProgramNode.hpp"
 
 /// Create a new FunctionObject from a FunctionNode and register in current scope.
 BaseObject *FunctionNode::evaluate(Scope &scope)
