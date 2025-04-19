@@ -127,26 +127,6 @@ ModuleNode *FileParser::parseLibraryImport()
 
 #pragma mark - *** Simple Types ***
 
-/// parseProgram
-///
-/// Parses a sequence of expression. If there is only one expression within the
-/// brackets then we just return that.
-/// TODO: - add handling for no expressions within the brackets.
-BaseNode *FileParser::parseProgram()
-{
-    ProgramNode *program = parseProgramLines();
-
-    if (program->programNodes.size() == 1) // Return single node (more efficient).
-    {
-        BaseNode *first = program->releaseNodes()[0];
-        delete program;
-
-        return first;
-    }
-
-    return program;
-}
-
 
 BaseNode *FileParser::parseBrackets()
 {
@@ -221,7 +201,7 @@ BaseNode *FileParser::parseReference(ObjectType boundVariableType)
 DoWhileNode *FileParser::parseDoWhile()
 {
     _skipFunctor("do");
-    BaseNode *body = parseProgram();
+    BaseNode *body = ProgramNode::parse(*this, true);
     _skipFunctor("while");
     BaseNode *condition = parseBrackets();
 
@@ -238,7 +218,7 @@ WhileNode *FileParser::parseWhile()
     _skipFunctor("while");
 
     BaseNode *condition = parseBrackets();
-    BaseNode *body = parseProgram();
+    BaseNode *body = ProgramNode::parse(*this, true);
 
     return new WhileNode(condition, body);
 }
@@ -266,7 +246,7 @@ ForLoopNode *FileParser::parseFor()
     auto start = forLoopArgs[0];
     auto condition = forLoopArgs[1];
     auto update = forLoopArgs[2];
-    auto body = parseProgram();
+    auto body = ProgramNode::parse(*this, true);
 
     return new ForLoopNode(start, condition, update, body);
 }
@@ -280,7 +260,7 @@ IfNode *FileParser::parseIf()
     _skipFunctor("if");
 
     auto condition = parseBrackets();
-    auto thenDo = parseProgram();
+    auto thenDo = ProgramNode::parse(*this, true);
 
 
     BaseNode *elseDo{nullptr}; // Optional.
@@ -293,7 +273,7 @@ IfNode *FileParser::parseIf()
             elseDo = parseIf();
         // Option 2: else { [statement]; }
         else
-            elseDo = parseProgram();
+            elseDo = ProgramNode::parse(*this, true);
     }
 
     return new IfNode(condition, thenDo, elseDo);
@@ -335,7 +315,7 @@ FunctionNode *FileParser::parseFunctionDefinition()
 
     auto funcName = new LookupVariableNode(_tokens.dequeue());
     auto funcArgs = parseDelimited("(", ")", ",", std::bind(&FileParser::parseVariableDefinition, this)); // Func variables.
-    auto funcBody = parseProgram();
+    auto funcBody = ProgramNode::parse(*this, true);
 
     return new FunctionNode(funcName, funcArgs, funcBody);
 }
@@ -460,7 +440,7 @@ BaseNode *FileParser::parseClass()
 
         // NB: have to be a bit careful with parseProgram. If there is only
         // one node, it will return that!
-        ProgramNode *classBody = parseProgramLines();
+        ProgramNode *classBody = static_cast<ProgramNode *>(ProgramNode::parse(*this, false));
 
         std::vector<BaseNode *> nodes = classBody->releaseNodes();
 
@@ -664,7 +644,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
     else if (isPunctuation("["))
         return AddArrayNode::parse(*this);
     else if (isPunctuation("{"))
-        return parseProgram();
+        return ProgramNode::parse(*this, true);
     else if (isKeyword("true") || isKeyword("false"))
         return AddBoolNode::parse(*this);
     else if (isKeyword("while"))
@@ -820,27 +800,6 @@ void FileParser::skipSemicolonLineEndingIfRequired(const BaseNode &node)
 
     if (!do_skipper)
         _skipFunctor(";");
-}
-
-
-ProgramNode *FileParser::parseProgramLines()
-{
-    _skipFunctor("{");
-
-    std::vector<BaseNode *> parsedNodes;
-
-    while (!_tokens.empty() && !isPunctuation("}"))
-    {
-        auto expression = parseExpression();
-
-        parsedNodes.push_back(expression);
-
-        skipSemicolonLineEndingIfRequired(*expression);
-    }
-
-    _skipFunctor("}");
-
-    return new ProgramNode(std::move(parsedNodes));
 }
 
 

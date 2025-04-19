@@ -8,6 +8,7 @@
  */
 
 #include "ProgramNode.hpp"
+#include "FileParser.hpp"
 
 BaseObject *ProgramNode::evaluate(Scope &scope)
 {
@@ -24,4 +25,30 @@ BaseObject *ProgramNode::evaluate(Scope &scope)
     // Any memory allocations cleared-up when programScope variable goes out of scope.
 
     return nullptr; // Nothing returned.
+}
+
+
+BaseNode *ProgramNode::parse(FileParser &parser, bool singleExpr)
+{
+    parser._skipFunctor("{");
+
+    std::vector<BaseNode *> parsedNodes;
+
+    while (!parser._tokens.empty() && !parser.isPunctuation("}"))
+    {
+        auto expression = parser.parseExpression();
+
+        parsedNodes.push_back(expression);
+
+        parser.skipSemicolonLineEndingIfRequired(*expression);
+    }
+
+    parser._skipFunctor("}");
+
+    if (singleExpr && parsedNodes.size() == 1)
+    {
+        return parsedNodes.at(0);
+    }
+
+    return new ProgramNode(std::move(parsedNodes));
 }

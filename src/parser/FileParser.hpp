@@ -29,6 +29,7 @@ protected:
     friend class AddIntNode;
     friend class AddStringNode;
     friend class LookupVariableNode;
+    friend class ProgramNode;
 
     /* Default constructor */
     FileParser() = delete;
@@ -37,8 +38,6 @@ protected:
     FileNode *buildAST();
 
     BaseNode *parseBrackets();
-
-    BaseNode *parseProgram();
 
     BaseNode *parseVariableDefinition();
     BaseNode *parseVariableName();
@@ -108,8 +107,6 @@ private:
                                 std::string stop,
                                 std::string separator,
                                 ParseMethod expression);
-
-    ProgramNode *parseProgramLines();
 
     BaseNode *maybeBinary(BaseNode *leftExpression,
                           int leftPrecedence);

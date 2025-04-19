@@ -14,6 +14,9 @@
 #include <cassert>
 #include <vector>
 
+class FileParser;
+
+/* TODO: - rename to BlockNode */
 class ProgramNode : public BaseNode
 {
 public:
@@ -44,6 +47,12 @@ public:
 
     // Evaluates a vector of nodes sequentially. Returns nullptr.
     BaseObject *evaluate(Scope &scope) override;
+
+    /*
+     * Parse a program (block) of code (i.e. inside { ...  }). If singleExpr is set to true, then if we have a single
+     * expression in the block, we return that rather than a program node
+     */
+    static BaseNode *parse(FileParser &parser, bool singleExpr = true);
 
     std::vector<BaseNode *> programNodes;
 };
