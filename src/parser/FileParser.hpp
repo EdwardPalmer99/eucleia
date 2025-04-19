@@ -42,6 +42,7 @@ protected:
     friend class PrefixIncrementNode;
     friend class PrefixDecrementNode;
     friend class NegationNode;
+    friend class FunctionNode;
 
 
     /* Default constructor */
@@ -56,8 +57,6 @@ protected:
     BaseNode *parseVariableName();
 
     BaseNode *parseReference(ObjectType boundObjectType);
-
-    FunctionNode *parseFunctionDefinition();
 
     BaseNode *parseStruct();
     BaseNode *parseStructAccessor(BaseNode *lastExpression);

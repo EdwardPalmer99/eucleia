@@ -8,6 +8,7 @@
  */
 
 #include "FunctionNode.hpp"
+#include "FileParser.hpp"
 #include "FunctionObject.hpp"
 
 /// Create a new FunctionObject from a FunctionNode and register in current scope.
@@ -20,4 +21,16 @@ BaseObject *FunctionNode::evaluate(Scope &scope)
     scope.linkObject(funcNameNode.name, functionObject);
 
     return functionObject;
+}
+
+
+FunctionNode *FunctionNode::parse(FileParser &parser)
+{
+    parser._skipFunctor("func");
+
+    auto funcName = new LookupVariableNode(parser.tokens().dequeue());
+    auto funcArgs = parser.parseDelimited("(", ")", ",", std::bind(&FileParser::parseVariableDefinition, &parser)); // Func variables.
+    auto funcBody = ProgramNode::parse(parser, true);
+
+    return new FunctionNode(funcName, funcArgs, funcBody);
 }

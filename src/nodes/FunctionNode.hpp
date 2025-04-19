@@ -12,6 +12,9 @@
 #include "FunctionCallNode.hpp"
 #include "ProgramNode.hpp"
 
+class FileParser;
+
+
 class FunctionNode : public FunctionCallNode
 {
 public:
@@ -27,6 +30,16 @@ public:
     }
 
     BaseObject *evaluate(Scope &scope) override;
+
+    /**
+     * Parse:
+     *
+     * func funcName(int a, float b)
+     * {
+     *      body;
+     * }
+     */
+    static FunctionNode *parse(FileParser &parser);
 
     ProgramNode *funcBody{nullptr};
 };

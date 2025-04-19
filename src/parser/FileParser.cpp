@@ -117,22 +117,6 @@ BaseNode *FileParser::parseReference(ObjectType boundVariableType)
 
 #pragma mark - *** Functions ***
 
-/// func test(a, b, c)
-/// {
-///		[BODY]
-/// }
-FunctionNode *FileParser::parseFunctionDefinition()
-{
-    _skipFunctor("func");
-
-    auto funcName = new LookupVariableNode(_tokens.dequeue());
-    auto funcArgs = parseDelimited("(", ")", ",", std::bind(&FileParser::parseVariableDefinition, this)); // Func variables.
-    auto funcBody = ProgramNode::parse(*this, true);
-
-    return new FunctionNode(funcName, funcArgs, funcBody);
-}
-
-
 ///
 /// Example: test(a, b, c);
 ///
@@ -470,7 +454,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
     else if (isKeyword("import"))
         return FileNode::parse(*this);
     else if (isKeyword("func")) // Functions should be defined as in C --> will need void type
-        return parseFunctionDefinition();
+        return FunctionNode::parse(*this);
     else if (isKeyword("struct"))
         return parseStruct();
     else if (isKeyword("class"))
