@@ -191,31 +191,6 @@ BaseNode *FileParser::parseReference(ObjectType boundVariableType)
 }
 
 
-#pragma mark - *** Control Flow ***
-
-BreakNode *FileParser::parseBreak()
-{
-    _skipFunctor("break");
-
-    return new BreakNode();
-}
-
-
-ReturnNode *FileParser::parseReturn()
-{
-    _skipFunctor("return");
-
-    BaseNode *returnedExpression{nullptr};
-
-    if (!isPunctuation(";"))
-    {
-        returnedExpression = parseExpression();
-    }
-
-    return new ReturnNode(returnedExpression);
-}
-
-
 #pragma mark - *** Functions ***
 
 /// func test(a, b, c)
@@ -579,9 +554,9 @@ BaseNode *FileParser::parseAtomicallyExpression()
     else if (isDataTypeKeyword())
         return parseVariableDefinition();
     else if (isKeyword("break"))
-        return parseBreak();
+        return BreakNode::parse(*this);
     else if (isKeyword("return"))
-        return parseReturn();
+        return ReturnNode::parse(*this);
 
     // TODO: - split-up into separate method for unary operators.
     // Parse unary operators.

@@ -34,6 +34,8 @@ protected:
     friend class DoWhileNode;
     friend class ForLoopNode;
     friend class IfNode;
+    friend class BreakNode;
+    friend class ReturnNode;
 
     /* Default constructor */
     FileParser() = delete;
@@ -56,9 +58,6 @@ protected:
     BaseNode *parseStructAccessor(BaseNode *lastExpression);
 
     BaseNode *parseClass();
-
-    BreakNode *parseBreak();
-    ReturnNode *parseReturn();
 
     NotNode *parseNot();
     PrefixIncrementNode *parsePrefixIncrement();

@@ -8,6 +8,7 @@
  */
 
 #include "ReturnNode.hpp"
+#include "FileParser.hpp"
 #include "JumpPoints.hpp"
 #include <cassert>
 
@@ -35,4 +36,19 @@ BaseObject *ReturnNode::evaluate(Scope &scope)
 
     longjmp(*gEnvironmentContext.returnJumpPoint, 1);
     return nullptr;
+}
+
+
+ReturnNode *ReturnNode::parse(FileParser &parser)
+{
+    parser._skipFunctor("return");
+
+    BaseNode *returnedExpression{nullptr};
+
+    if (!parser.isPunctuation(";"))
+    {
+        returnedExpression = parser.parseExpression();
+    }
+
+    return new ReturnNode(returnedExpression);
 }

@@ -12,6 +12,7 @@
 #include "BaseObject.hpp"
 #include "Scope.hpp"
 
+class FileParser;
 
 class ReturnNode : public BaseNode
 {
@@ -27,6 +28,8 @@ public:
     }
 
     BaseObject *evaluate(Scope &scope) override;
+
+    static ReturnNode *parse(FileParser &parser);
 
     BaseNode *returnNode{nullptr};
 };
