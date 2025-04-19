@@ -666,7 +666,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
     else if (isPunctuation("{"))
         return parseProgram();
     else if (isKeyword("true") || isKeyword("false"))
-        return new AddBoolNode(_tokens.dequeue());
+        return AddBoolNode::parse(*this);
     else if (isKeyword("while"))
         return parseWhile();
     else if (isKeyword("do"))
@@ -707,13 +707,13 @@ BaseNode *FileParser::parseAtomicallyExpression()
     switch (token.type())
     {
         case Token::Variable:
-            return new LookupVariableNode(_tokens.dequeue());
+            return LookupVariableNode::parse(*this);
         case Token::String:
-            return new AddStringNode(_tokens.dequeue());
+            return AddStringNode::parse(*this);
         case Token::Int:
-            return new AddIntNode(_tokens.dequeue());
+            return AddIntNode::parse(*this);
         case Token::Float:
-            return new AddFloatNode(_tokens.dequeue());
+            return AddFloatNode::parse(*this);
         default:
             unexpectedToken();
             exit(EXIT_FAILURE);

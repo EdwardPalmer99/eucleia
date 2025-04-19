@@ -8,8 +8,14 @@
  */
 
 #include "AddStringNode.hpp"
+#include "FileParser.hpp"
 
 StringObject *AddStringNode::evaluate(Scope &scope)
 {
     return scope.createManagedObject<StringObject>(stringObject);
+}
+
+AddStringNode *AddStringNode::parse(FileParser &parser)
+{
+    return new AddStringNode(parser.tokens().dequeue());
 }

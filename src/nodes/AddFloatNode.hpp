@@ -12,14 +12,17 @@
 #include "FloatObject.hpp"
 #include "Token.hpp"
 
+class FileParser;
+
 class AddFloatNode : public BaseNode
 {
 public:
     AddFloatNode(double float_) : floatObject(float_) {}
-    AddFloatNode(Token token) : AddFloatNode(token.toFloat()) {}
 
     // Returns a FloatObject in the current scope and returns a managed pointer.
     FloatObject *evaluate(Scope &scope) override;
+
+    static AddFloatNode *parse(FileParser &parser);
 
     FloatObject floatObject;
 };

@@ -8,9 +8,17 @@
  */
 
 #include "AddFloatNode.hpp"
+#include "FileParser.hpp"
 #include <memory>
 
 FloatObject *AddFloatNode::evaluate(Scope &scope)
 {
     return scope.createManagedObject<FloatObject>(floatObject);
+}
+
+
+AddFloatNode *AddFloatNode::parse(FileParser &parser)
+{
+    Token token = parser.tokens().dequeue();
+    return new AddFloatNode(token.toFloat());
 }

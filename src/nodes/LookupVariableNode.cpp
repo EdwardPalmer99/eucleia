@@ -8,8 +8,14 @@
  */
 
 #include "LookupVariableNode.hpp"
+#include "FileParser.hpp"
 
 BaseObject *LookupVariableNode::evaluate(Scope &scope)
 {
     return scope.getNamedObject(name);
+}
+
+LookupVariableNode *LookupVariableNode::parse(FileParser &parser)
+{
+    return new LookupVariableNode(parser.tokens().dequeue().validated(Token::Variable));
 }

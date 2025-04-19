@@ -13,15 +13,18 @@
 #include "Scope.hpp"
 #include "Token.hpp"
 
+class FileParser;
+
+
 class AddBoolNode : public BaseNode
 {
 public:
     AddBoolNode(bool state_) : boolObject(state_) {}
-    AddBoolNode(Token token) : AddBoolNode(token.toBool()) {}
+
+    static AddBoolNode *parse(FileParser &parser);
 
     // Creates a BoolObject in the scope and returns managed pointer to it.
     BoolObject *evaluate(Scope &scope) override;
-
 
     BoolObject boolObject;
 };

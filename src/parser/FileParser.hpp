@@ -24,6 +24,11 @@ public:
 
 protected:
     friend class AddArrayNode;
+    friend class AddBoolNode;
+    friend class AddFloatNode;
+    friend class AddIntNode;
+    friend class AddStringNode;
+    friend class LookupVariableNode;
 
     /* Default constructor */
     FileParser() = delete;
@@ -77,6 +82,11 @@ protected:
     FunctionCallNode *parseFunctionCall(BaseNode *lastExpression);
 
     void skipSemicolonLineEndingIfRequired(const BaseNode &node);
+
+    [[nodsicard]] inline Tokens &tokens()
+    {
+        return _tokens;
+    }
 
 private:
     using ParseMethod = std::function<BaseNode *(void)>;

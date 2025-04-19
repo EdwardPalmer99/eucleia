@@ -13,6 +13,8 @@
 #include "Token.hpp"
 #include <string>
 
+class FileParser;
+
 class AddStringNode : public BaseNode
 {
 public:
@@ -20,6 +22,8 @@ public:
 
     // Creates a StringObject in the scope and returns managed pointer to it.
     StringObject *evaluate(Scope &scope) override;
+
+    static AddStringNode *parse(FileParser &parser);
 
     StringObject stringObject;
 };

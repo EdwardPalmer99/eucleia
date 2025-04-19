@@ -8,8 +8,16 @@
  */
 
 #include "AddBoolNode.hpp"
+#include "FileParser.hpp"
 
 BoolObject *AddBoolNode::evaluate(Scope &scope)
 {
     return scope.createManagedObject<BoolObject>(boolObject);
+}
+
+
+AddBoolNode *AddBoolNode::parse(FileParser &parser)
+{
+    Token token = parser.tokens().dequeue();
+    return new AddBoolNode(token.toBool());
 }
