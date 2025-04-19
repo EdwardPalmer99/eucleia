@@ -32,6 +32,7 @@ protected:
     friend class ProgramNode;
     friend class WhileNode;
     friend class DoWhileNode;
+    friend class ForLoopNode;
 
     /* Default constructor */
     FileParser() = delete;
@@ -82,7 +83,7 @@ protected:
 
     void skipSemicolonLineEndingIfRequired(const BaseNode &node);
 
-    [[nodsicard]] inline Tokens &tokens()
+    [[nodiscard]] inline Tokens &tokens()
     {
         return _tokens;
     }

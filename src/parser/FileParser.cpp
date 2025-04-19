@@ -191,36 +191,6 @@ BaseNode *FileParser::parseReference(ObjectType boundVariableType)
 }
 
 
-#pragma mark - *** Loops ***
-
-/// for ([start]; [condition]; [update])
-/// {
-/// 	[code]
-/// }
-ForLoopNode *FileParser::parseFor()
-{
-    _skipFunctor("for");
-
-    ProgramNode *brackets = parseDelimited("(", ")", ";", std::bind(&FileParser::parseExpression, this));
-
-    std::vector<BaseNode *> forLoopArgs = brackets->releaseNodes();
-
-    delete brackets;
-
-    if (forLoopArgs.size() != 3)
-    {
-        ThrowException("expected 3 arguments for for-loop but got " + std::to_string(brackets->programNodes.size()));
-    }
-
-    auto start = forLoopArgs[0];
-    auto condition = forLoopArgs[1];
-    auto update = forLoopArgs[2];
-    auto body = ProgramNode::parse(*this, true);
-
-    return new ForLoopNode(start, condition, update, body);
-}
-
-
 #pragma mark - *** Control Flow ***
 
 IfNode *FileParser::parseIf()
@@ -621,7 +591,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
     else if (isKeyword("do"))
         return DoWhileNode::parse(*this);
     else if (isKeyword("for"))
-        return parseFor();
+        return ForLoopNode::parse(*this);
     else if (isKeyword("if"))
         return parseIf();
     else if (isKeyword("import"))

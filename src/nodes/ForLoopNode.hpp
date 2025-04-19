@@ -11,6 +11,9 @@
 #include "BaseNode.hpp"
 #include "Scope.hpp"
 
+class FileParser;
+
+
 class ForLoopNode : public BaseNode
 {
 public:
@@ -32,6 +35,12 @@ public:
 
     // Evaluates a for-loop in current scope. Returns nullptr.
     BaseObject *evaluate(Scope &scope) override;
+
+    /// for ([start]; [condition]; [update])
+    /// {
+    /// 	[code]
+    /// }
+    static ForLoopNode *parse(FileParser &parser);
 
 
     BaseNode *start{nullptr};
