@@ -193,37 +193,6 @@ BaseNode *FileParser::parseReference(ObjectType boundVariableType)
 
 #pragma mark - *** Loops ***
 
-/// do
-/// {
-/// 	[code]
-/// }
-/// while ([condition is true]);
-DoWhileNode *FileParser::parseDoWhile()
-{
-    _skipFunctor("do");
-    BaseNode *body = ProgramNode::parse(*this, true);
-    _skipFunctor("while");
-    BaseNode *condition = parseBrackets();
-
-    return new DoWhileNode(condition, body);
-}
-
-
-/// while ([condition is true])
-/// {
-/// 	[code]
-/// }
-WhileNode *FileParser::parseWhile()
-{
-    _skipFunctor("while");
-
-    BaseNode *condition = parseBrackets();
-    BaseNode *body = ProgramNode::parse(*this, true);
-
-    return new WhileNode(condition, body);
-}
-
-
 /// for ([start]; [condition]; [update])
 /// {
 /// 	[code]
@@ -648,9 +617,9 @@ BaseNode *FileParser::parseAtomicallyExpression()
     else if (isKeyword("true") || isKeyword("false"))
         return AddBoolNode::parse(*this);
     else if (isKeyword("while"))
-        return parseWhile();
+        return WhileNode::parse(*this);
     else if (isKeyword("do"))
-        return parseDoWhile();
+        return DoWhileNode::parse(*this);
     else if (isKeyword("for"))
         return parseFor();
     else if (isKeyword("if"))

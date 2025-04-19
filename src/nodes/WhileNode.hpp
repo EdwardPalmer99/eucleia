@@ -13,6 +13,7 @@
 #include "DoWhileNode.hpp"
 #include "Scope.hpp"
 
+class FileParser;
 
 class WhileNode : public DoWhileNode
 {
@@ -24,4 +25,15 @@ public:
 
     // Evaluate a while loop in current scope. Returns nullptr.
     BaseObject *evaluate(Scope &scope) override;
+
+    /**
+     * Parse:
+     *
+     * while (condition is true)
+     * {
+     *      do some logic
+     * }
+     *
+     */
+    static WhileNode *parse(FileParser &parser);
 };

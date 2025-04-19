@@ -9,7 +9,10 @@
 
 #include "WhileNode.hpp"
 #include "ExpressionScope.hpp"
+#include "FileNode.hpp"
+#include "FileParser.hpp"
 #include "JumpPoints.hpp"
+#include "ProgramNode.hpp"
 
 BaseObject *WhileNode::evaluate(Scope &scope)
 {
@@ -31,4 +34,15 @@ BaseObject *WhileNode::evaluate(Scope &scope)
     popBreakJumpPoint();
 
     return nullptr;
+}
+
+
+WhileNode *WhileNode::parse(FileParser &parser)
+{
+    parser._skipFunctor("while");
+
+    BaseNode *condition = parser.parseBrackets();
+    BaseNode *body = ProgramNode::parse(parser, true);
+
+    return new WhileNode(condition, body);
 }

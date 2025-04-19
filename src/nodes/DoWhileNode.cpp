@@ -10,8 +10,10 @@
 #include "DoWhileNode.hpp"
 #include "Exceptions.hpp"
 #include "ExpressionScope.hpp"
+#include "FileParser.hpp"
 #include "IntObject.hpp"
 #include "JumpPoints.hpp"
+#include "ProgramNode.hpp"
 
 BaseObject *DoWhileNode::evaluate(Scope &scope)
 {
@@ -32,4 +34,15 @@ BaseObject *DoWhileNode::evaluate(Scope &scope)
     popBreakJumpPoint();
 
     return nullptr; // Return nothing.
+}
+
+
+DoWhileNode *DoWhileNode::parse(FileParser &parser)
+{
+    parser._skipFunctor("do");
+    BaseNode *body = ProgramNode::parse(parser, true);
+    parser._skipFunctor("while");
+    BaseNode *condition = parser.parseBrackets();
+
+    return new DoWhileNode(condition, body);
 }

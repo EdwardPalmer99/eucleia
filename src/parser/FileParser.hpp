@@ -30,6 +30,8 @@ protected:
     friend class AddStringNode;
     friend class LookupVariableNode;
     friend class ProgramNode;
+    friend class WhileNode;
+    friend class DoWhileNode;
 
     /* Default constructor */
     FileParser() = delete;
@@ -44,8 +46,6 @@ protected:
 
     BaseNode *parseReference(ObjectType boundObjectType);
 
-    DoWhileNode *parseDoWhile();
-    WhileNode *parseWhile();
     ForLoopNode *parseFor();
 
     IfNode *parseIf();
