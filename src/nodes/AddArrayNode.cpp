@@ -31,7 +31,7 @@ ArrayObject *AddArrayNode::evaluate(Scope &scope)
 
 AddArrayNode *AddArrayNode::parse(FileParser &parser)
 {
-    auto programNodes = parser.parseDelimited("[", "]", ",", std::bind(&FileParser::parseExpression, parser));
+    auto programNodes = parser.parseDelimited("[", "]", ",", std::bind(&FileParser::parseExpression, (&parser)));
 
     auto nodesVector = programNodes->releaseNodes();
 
