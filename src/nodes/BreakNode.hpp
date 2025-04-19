@@ -11,9 +11,13 @@
 #include "BaseNode.hpp"
 #include <csetjmp>
 
+class FileParser;
+
 class BreakNode : public BaseNode
 {
 public:
     // Jump to last set point and return nullptr.
     BaseObject *evaluate(Scope &scope) override;
+
+    static BreakNode *parse(FileParser &parser);
 };

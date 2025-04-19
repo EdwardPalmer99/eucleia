@@ -8,10 +8,18 @@
  */
 
 #include "BreakNode.hpp"
+#include "FileParser.hpp"
 #include "JumpPoints.hpp"
 
 BaseObject *BreakNode::evaluate(Scope &scope)
 {
     jumpToBreakJumpPoint();
     return nullptr;
+}
+
+
+BreakNode *BreakNode::parse(FileParser &parser)
+{
+    parser._skipFunctor("break");
+    return new BreakNode();
 }
