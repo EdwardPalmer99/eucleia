@@ -561,7 +561,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
     // TODO: - split-up into separate method for unary operators.
     // Parse unary operators.
     else if (isOperator("!"))
-        return parseNot();
+        return NotNode::parse(*this);
     // Parse prefix increment operator i.e.
     else if (isOperator("++"))
         return parsePrefixIncrement();
@@ -586,14 +586,6 @@ BaseNode *FileParser::parseAtomicallyExpression()
             unexpectedToken();
             exit(EXIT_FAILURE);
     }
-}
-
-
-NotNode *FileParser::parseNot()
-{
-    _skipFunctor("!");
-
-    return new NotNode(parseAtomically());
 }
 
 

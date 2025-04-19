@@ -12,6 +12,9 @@
 #include "BaseUnaryOperatorNode.hpp"
 #include "Scope.hpp"
 
+class FileParser;
+
+
 /// Unary not operator (e.g. !true --> false).
 class NotNode : public BaseUnaryOperatorNode
 {
@@ -22,4 +25,6 @@ public:
     }
 
     BaseObject *evaluate(Scope &scope) override;
+
+    static NotNode *parse(FileParser &parser);
 };

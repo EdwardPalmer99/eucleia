@@ -36,6 +36,7 @@ protected:
     friend class IfNode;
     friend class BreakNode;
     friend class ReturnNode;
+    friend class NotNode;
 
     /* Default constructor */
     FileParser() = delete;
@@ -59,7 +60,6 @@ protected:
 
     BaseNode *parseClass();
 
-    NotNode *parseNot();
     PrefixIncrementNode *parsePrefixIncrement();
     PrefixDecrementNode *parsePrefixDecrement();
     NegationNode *parseNegation();
