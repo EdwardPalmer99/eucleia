@@ -40,6 +40,7 @@ protected:
     friend class FileNode;
     friend class ModuleNode;
     friend class PrefixIncrementNode;
+    friend class PrefixDecrementNode;
 
 
     /* Default constructor */
@@ -62,7 +63,6 @@ protected:
 
     BaseNode *parseClass();
 
-    PrefixDecrementNode *parsePrefixDecrement();
     NegationNode *parseNegation();
 
     ArrayAccessNode *parseArrayAccessor(BaseNode *lastExpression);

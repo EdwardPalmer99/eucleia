@@ -8,6 +8,7 @@
  */
 
 #include "PrefixDecrementNode.hpp"
+#include "FileParser.hpp"
 #include "FloatObject.hpp"
 #include "IntObject.hpp"
 #include "LookupVariableNode.hpp"
@@ -33,4 +34,11 @@ BaseObject *PrefixDecrementNode::evaluate(Scope &scope)
     {
         ThrowException("cannot use prefix operator on object of type.");
     }
+}
+
+
+PrefixDecrementNode *PrefixDecrementNode::parse(FileParser &parser)
+{
+    parser._skipFunctor("--");
+    return new PrefixDecrementNode(parser.parseAtomically());
 }

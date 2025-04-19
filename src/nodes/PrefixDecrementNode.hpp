@@ -11,6 +11,8 @@
 #include "BaseObject.hpp"
 #include "BaseUnaryOperatorNode.hpp"
 
+class FileParser;
+
 /// Unary prefix decrement node (e.g. --a).
 class PrefixDecrementNode : public BaseUnaryOperatorNode
 {
@@ -21,4 +23,6 @@ public:
     }
 
     BaseObject *evaluate(Scope &scope) override;
+
+    static PrefixDecrementNode *parse(FileParser &parser);
 };

@@ -490,7 +490,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
     else if (isOperator("++"))
         return PrefixIncrementNode::parse(*this);
     else if (isOperator("--"))
-        return parsePrefixDecrement();
+        return PrefixDecrementNode::parse(*this);
     else if (isOperator("-"))
         return parseNegation();
 
@@ -510,14 +510,6 @@ BaseNode *FileParser::parseAtomicallyExpression()
             unexpectedToken();
             exit(EXIT_FAILURE);
     }
-}
-
-
-PrefixDecrementNode *FileParser::parsePrefixDecrement()
-{
-    _skipFunctor("--");
-
-    return new PrefixDecrementNode(parseAtomically());
 }
 
 
