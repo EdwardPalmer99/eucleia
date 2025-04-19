@@ -488,7 +488,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
         return NotNode::parse(*this);
     // Parse prefix increment operator i.e.
     else if (isOperator("++"))
-        return parsePrefixIncrement();
+        return PrefixIncrementNode::parse(*this);
     else if (isOperator("--"))
         return parsePrefixDecrement();
     else if (isOperator("-"))
@@ -510,14 +510,6 @@ BaseNode *FileParser::parseAtomicallyExpression()
             unexpectedToken();
             exit(EXIT_FAILURE);
     }
-}
-
-
-PrefixIncrementNode *FileParser::parsePrefixIncrement()
-{
-    _skipFunctor("++");
-
-    return new PrefixIncrementNode(parseAtomically());
 }
 
 

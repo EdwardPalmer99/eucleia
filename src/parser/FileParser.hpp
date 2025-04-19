@@ -8,7 +8,7 @@
 #pragma once
 #include "EucleiaModules.hpp"
 #include "FileInfoRec.hpp"
-#include "Nodes.hpp"
+#include "Nodes.hpp" /* TODO: - move into source file if possible */
 #include "ParserFunctors.hpp"
 #include "Tokenizer.hpp"
 #include <unordered_set>
@@ -39,6 +39,7 @@ protected:
     friend class NotNode;
     friend class FileNode;
     friend class ModuleNode;
+    friend class PrefixIncrementNode;
 
 
     /* Default constructor */
@@ -61,7 +62,6 @@ protected:
 
     BaseNode *parseClass();
 
-    PrefixIncrementNode *parsePrefixIncrement();
     PrefixDecrementNode *parsePrefixDecrement();
     NegationNode *parseNegation();
 

@@ -7,9 +7,11 @@
  *
  */
 
+#pragma once
 #include "BaseObject.hpp"
 #include "BaseUnaryOperatorNode.hpp"
 
+class FileParser;
 
 /// Unary prefix increment node (e.g. ++a).
 class PrefixIncrementNode : public BaseUnaryOperatorNode
@@ -21,4 +23,7 @@ public:
     }
 
     BaseObject *evaluate(Scope &scope) override;
+
+    /* Parse: "++value" */
+    static PrefixIncrementNode *parse(FileParser &parser);
 };

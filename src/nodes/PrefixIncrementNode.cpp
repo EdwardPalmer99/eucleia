@@ -8,6 +8,7 @@
  */
 
 #include "PrefixIncrementNode.hpp"
+#include "FileParser.hpp"
 #include "FloatObject.hpp"
 #include "IntObject.hpp"
 #include "LookupVariableNode.hpp"
@@ -34,4 +35,11 @@ BaseObject *PrefixIncrementNode::evaluate(Scope &scope)
     {
         ThrowException("cannot use prefix operator on object of type");
     }
+}
+
+
+PrefixIncrementNode *PrefixIncrementNode::parse(FileParser &parser)
+{
+    parser._skipFunctor("++");
+    return new PrefixIncrementNode(parser.parseAtomically());
 }
