@@ -13,10 +13,14 @@
 #include "Tokenizer.hpp"
 #include <unordered_set>
 
+// TODO: - need a global parser but something inbetween which holds all parsed Tokens and other state info
+// that can then be accessed by other parser static methods
+
 /* Parser for a single file */
 class FileParser
 {
 public:
+    // TODO: - should be a FileNode parse method
     [[nodiscard]] static inline FileNode *parse(std::string filePath)
     {
         return FileParser(filePath).buildAST();
@@ -44,7 +48,7 @@ protected:
     friend class NegationNode;
     friend class FunctionNode;
     friend class ArrayAccessNode;
-
+    friend class FunctionCallNode;
 
     /* Default constructor */
     FileParser() = delete;
@@ -71,8 +75,6 @@ protected:
     bool isDataTypeKeyword();
 
     void unexpectedToken();
-
-    FunctionCallNode *parseFunctionCall(BaseNode *lastExpression);
 
     void skipSemicolonLineEndingIfRequired(const BaseNode &node);
 

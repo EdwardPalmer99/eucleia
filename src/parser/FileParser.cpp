@@ -115,20 +115,6 @@ BaseNode *FileParser::parseReference(ObjectType boundVariableType)
 }
 
 
-#pragma mark - *** Functions ***
-
-///
-/// Example: test(a, b, c);
-///
-FunctionCallNode *FileParser::parseFunctionCall(BaseNode *lastExpression)
-{
-    auto functionName = std::move(lastExpression);
-    auto functionArgs = parseDelimited("(", ")", ",", std::bind(&FileParser::parseExpression, this));
-
-    return new FunctionCallNode(functionName, functionArgs);
-}
-
-
 #pragma mark - *** Struct ***
 
 /**
@@ -360,7 +346,7 @@ BaseNode *FileParser::maybeFunctionCall(ParseMethod expression)
 {
     auto expr = expression(); // Possible function name.
 
-    return isPunctuation("(") ? parseFunctionCall(expr) : expr;
+    return isPunctuation("(") ? FunctionCallNode::parse(*this, expr) : expr;
 }
 
 
@@ -380,7 +366,7 @@ BaseNode *FileParser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
     if (!_tokens.empty())
     {
         if (isPunctuation("("))
-            return parseFunctionCall(expr);
+            return FunctionCallNode::parse(*this, expr);
         else if (isPunctuation("["))
             return ArrayAccessNode::parse(*this, expr);
         else if (isPunctuation("."))

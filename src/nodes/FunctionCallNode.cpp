@@ -8,6 +8,7 @@
  */
 
 #include "FunctionCallNode.hpp"
+#include "FileParser.hpp"
 #include "FunctionNode.hpp"
 #include "FunctionObject.hpp"
 #include "JumpPoints.hpp"
@@ -99,4 +100,12 @@ BaseObject *FunctionCallNode::evaluateFunctionBody(BaseNode &funcBody, Scope &fu
 
     // Only return non-NULL if return seen.
     return gEnvironmentContext.returnValue;
+}
+
+
+FunctionCallNode *FunctionCallNode::parse(FileParser &parser, BaseNode *funcName)
+{
+    auto functionArgs = parser.parseDelimited("(", ")", ",", std::bind(&FileParser::parseExpression, &parser));
+
+    return new FunctionCallNode(funcName, functionArgs);
 }

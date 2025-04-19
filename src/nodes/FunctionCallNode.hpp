@@ -14,6 +14,8 @@
 #include "ProgramNode.hpp"
 #include "Scope.hpp"
 
+class FileParser;
+
 class FunctionCallNode : public BaseNode
 {
 public:
@@ -35,6 +37,8 @@ public:
 
     BaseObject *evaluateFunctionBody(BaseNode &funcBody, Scope &funcScope);
 
+    /* Parse: funcName(arg1, arg2, ...) */
+    static FunctionCallNode *parse(FileParser &parser, BaseNode *funcName);
 
     AddVariableNode *funcName{nullptr};
     ProgramNode *funcArgs{nullptr};
