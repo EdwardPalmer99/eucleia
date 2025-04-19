@@ -89,7 +89,7 @@ FileNode *FileParser::parseFileImport()
     std::string filePath = _fileInfo.dirPath + token;
     Logger::debug("importing file: " + filePath);
 
-    auto ast = FileParser(filePath).buildAST(); // NB: don't use static method as this will clear loaded modules/files.
+    auto ast = FileParser::parse(filePath);
     if (!ast)
     {
         ThrowException("failed to import file with path " + filePath);
@@ -551,19 +551,6 @@ ArrayAccessNode *FileParser::parseArrayAccessor(BaseNode *lastExpression)
 }
 
 
-/// [1, 2, 3, 4] OR [true, false, true] OR [1.2, 2.4] OR ["hello, ", "world!"].
-AddArrayNode *FileParser::parseArray()
-{
-    auto programNodes = parseDelimited("[", "]", ",", std::bind(&FileParser::parseExpression, this));
-
-    auto nodesVector = programNodes->releaseNodes();
-
-    delete programNodes;
-
-    return new AddArrayNode(nodesVector);
-}
-
-
 #pragma mark - *** Assignment/Binary ***
 
 BaseNode *FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
@@ -675,7 +662,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
     if (isPunctuation("("))
         return parseBrackets();
     else if (isPunctuation("["))
-        return parseArray();
+        return AddArrayNode::parse(*this);
     else if (isPunctuation("{"))
         return parseProgram();
     else if (isKeyword("true") || isKeyword("false"))

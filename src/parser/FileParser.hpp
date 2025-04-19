@@ -23,6 +23,8 @@ public:
     }
 
 protected:
+    friend class AddArrayNode;
+
     /* Default constructor */
     FileParser() = delete;
     FileParser(const std::string &fpath);
@@ -32,7 +34,6 @@ protected:
     BaseNode *parseBrackets();
 
     BaseNode *parseProgram();
-    AddArrayNode *parseArray();
 
     BaseNode *parseVariableDefinition();
     BaseNode *parseVariableName();
