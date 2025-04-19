@@ -8,6 +8,7 @@
  */
 
 #include "FunctionNode.hpp"
+#include "AddVariableNode.hpp"
 #include "FileParser.hpp"
 #include "FunctionObject.hpp"
 #include "ProgramNode.hpp"
@@ -30,7 +31,7 @@ FunctionNode *FunctionNode::parse(FileParser &parser)
     parser._skipFunctor("func");
 
     auto funcName = new LookupVariableNode(parser.tokens().dequeue());
-    auto funcArgs = parser.parseDelimited("(", ")", ",", std::bind(&FileParser::parseVariableDefinition, &parser)); // Func variables.
+    auto funcArgs = parser.parseDelimited("(", ")", ",", std::bind(&AddVariableNode::parse, std::placeholders::_1)); // Func variables.
     auto funcBody = ProgramNode::parse(parser, true);
 
     return new FunctionNode(funcName, funcArgs, funcBody);

@@ -26,6 +26,14 @@ public:
     // Creates a new empty variable of a given type to the scope (i.e. int a;).
     BaseObject *evaluate(Scope &scope) override;
 
+    /**
+     * Parses a reference or variable definition
+     *
+     * Variable definition:
+     * int/float/string/bool/array [VARIABLE_NAME]
+     */
+    static AddVariableNode *parse(FileParser &parser);
+
     std::string description() const;
 
     //  Type checking for variable assignment.

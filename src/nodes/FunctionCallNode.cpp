@@ -105,7 +105,7 @@ BaseObject *FunctionCallNode::evaluateFunctionBody(BaseNode &funcBody, Scope &fu
 
 FunctionCallNode *FunctionCallNode::parse(FileParser &parser, BaseNode *funcName)
 {
-    auto functionArgs = parser.parseDelimited("(", ")", ",", std::bind(&FileParser::parseExpression, &parser));
+    auto functionArgs = parser.parseDelimited("(", ")", ",", std::bind(&FileParser::parseExpression, std::placeholders::_1));
 
     return new FunctionCallNode(funcName, functionArgs);
 }

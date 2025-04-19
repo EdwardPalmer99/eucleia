@@ -157,3 +157,22 @@ AddReferenceVariableNode *AddReferenceVariableNode::parse(FileParser &parser, Ob
 
     return new AddReferenceVariableNode(referenceNameToken, boundVariableNameToken, boundVariableType);
 }
+
+
+AddVariableNode *AddVariableNode::parse(FileParser &parser)
+{
+    Token typeToken = parser.tokens().dequeue();
+    assert(typeToken.type() == Token::Keyword);
+
+    ObjectType typeOfObject = objectTypeForName(typeToken);
+
+    if (parser.tokens().front() == "&") // Is reference.
+    {
+        return AddReferenceVariableNode::parse(parser, typeOfObject);
+    }
+
+    Token nameToken = parser.tokens().dequeue();
+    assert(nameToken.type() == Token::Variable);
+
+    return new AddVariableNode(nameToken, typeOfObject);
+}

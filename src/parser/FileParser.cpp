@@ -70,26 +70,6 @@ BaseNode *FileParser::parseVariableName()
 }
 
 
-/// Variable definition:
-/// int/float/string/bool/array [VARIABLE_NAME]
-BaseNode *FileParser::parseVariableDefinition()
-{
-    Token typeToken = _tokens.dequeue();
-    assert(typeToken.type() == Token::Keyword);
-
-    ObjectType typeOfObject = objectTypeForName(typeToken);
-
-    if (_tokens.front() == "&") // Is reference.
-    {
-        return AddReferenceVariableNode::parse(*this, typeOfObject);
-    }
-
-    Token nameToken = _tokens.dequeue();
-    assert(nameToken.type() == Token::Variable);
-
-    return new AddVariableNode(nameToken, typeOfObject);
-}
-
 #pragma mark - *** Struct ***
 
 /**
@@ -124,7 +104,7 @@ BaseNode *FileParser::parseStruct()
             structParentTypeName = _tokens.dequeue();
         }
 
-        auto structMemberVars = parseDelimited("{", "}", ";", std::bind(&FileParser::parseVariableDefinition, this));
+        auto structMemberVars = parseDelimited("{", "}", ";", std::bind(&AddVariableNode::parse, std::placeholders::_1));
 
         std::vector<BaseNode *> nodes = structMemberVars->releaseNodes();
 
@@ -402,7 +382,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
     else if (isKeyword("class"))
         return parseClass();
     else if (isDataTypeKeyword())
-        return parseVariableDefinition();
+        return AddVariableNode::parse(*this);
     else if (isKeyword("break"))
         return BreakNode::parse(*this);
     else if (isKeyword("return"))
@@ -450,7 +430,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
 ProgramNode *FileParser::parseDelimited(std::string start,
                                         std::string stop,
                                         std::string separator,
-                                        ParseMethod parseMethod)
+                                        ParseMethod2 parseMethod)
 {
     _skipFunctor(start); // Skip the punctuation at the start.
 
@@ -477,7 +457,7 @@ ProgramNode *FileParser::parseDelimited(std::string start,
         }
 
         // Parse the token.
-        parsedNodes.push_back(parseMethod());
+        parsedNodes.push_back(parseMethod(*this));
     }
 
     _skipFunctor(stop); // Skip the punctuation at the end.

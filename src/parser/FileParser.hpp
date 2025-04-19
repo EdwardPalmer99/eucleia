@@ -49,6 +49,7 @@ protected:
     friend class FunctionNode;
     friend class ArrayAccessNode;
     friend class FunctionCallNode;
+    friend class AddVariableNode;
     friend class AddReferenceVariableNode;
 
     /* Default constructor */
@@ -59,8 +60,7 @@ protected:
 
     BaseNode *parseBrackets();
 
-    BaseNode *parseVariableDefinition();
-    BaseNode *parseVariableName();
+    BaseNode *parseVariableName(); /* TODO: - remove */
 
     BaseNode *parseStruct();
     BaseNode *parseStructAccessor(BaseNode *lastExpression);
@@ -84,6 +84,7 @@ protected:
 
 private:
     using ParseMethod = std::function<BaseNode *(void)>;
+    using ParseMethod2 = std::function<BaseNode *(FileParser &)>;
 
     BaseNode *parseExpression();
     BaseNode *parseExpressionHelper();
@@ -101,7 +102,7 @@ private:
     ProgramNode *parseDelimited(std::string start,
                                 std::string stop,
                                 std::string separator,
-                                ParseMethod expression);
+                                ParseMethod2 expression);
 
     BaseNode *maybeBinary(BaseNode *leftExpression,
                           int leftPrecedence);
