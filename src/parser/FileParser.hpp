@@ -60,8 +60,6 @@ protected:
 
     BaseNode *parseBrackets();
 
-    BaseNode *parseVariableName(); /* TODO: - remove */
-
     BaseNode *parseStruct();
     BaseNode *parseStructAccessor(BaseNode *lastExpression);
 
@@ -95,7 +93,7 @@ private:
 
     BaseNode *maybeArrayAccess(ParseMethod expression);
 
-    BaseNode *maybeFunctionCall(ParseMethod expression);
+    BaseNode *maybeFunctionCall(ParseMethod2 expression);
 
     BaseNode *maybeFunctionCallOrArrayAccess(ParseMethod expression);
 

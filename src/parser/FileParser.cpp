@@ -64,12 +64,6 @@ BaseNode *FileParser::parseBrackets()
 }
 
 
-BaseNode *FileParser::parseVariableName()
-{
-    return new LookupVariableNode(_tokens.dequeue());
-}
-
-
 #pragma mark - *** Struct ***
 
 /**
@@ -228,7 +222,7 @@ BaseNode *FileParser::parseStructAccessor(BaseNode *lastExpression)
 
     _skipFunctor(".");
 
-    BaseNode *expression = maybeFunctionCall(std::bind(&FileParser::parseVariableName, this));
+    BaseNode *expression = maybeFunctionCall(std::bind(&LookupVariableNode::parse, std::placeholders::_1));
 
     if (expression->isNodeType<FunctionCallNode>()) // Method.
     {
@@ -297,9 +291,9 @@ BaseNode *FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
 
 #pragma mark - *** Maybe ***
 
-BaseNode *FileParser::maybeFunctionCall(ParseMethod expression)
+BaseNode *FileParser::maybeFunctionCall(ParseMethod2 expression)
 {
-    auto expr = expression(); // Possible function name.
+    auto expr = expression(*this); // Possible function name.
 
     return isPunctuation("(") ? FunctionCallNode::parse(*this, expr) : expr;
 }

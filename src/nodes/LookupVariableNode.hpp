@@ -20,6 +20,7 @@ public:
     LookupVariableNode(std::string name_) : name(std::move(name_)) {}
     LookupVariableNode(Token token) : name(token.validated(Token::Variable)) {}
 
+    /* Parse some previously-declared variable name e.g. 'a' */
     static LookupVariableNode *parse(FileParser &parser);
 
     // Returns the object in the scope associated with a variable name.
