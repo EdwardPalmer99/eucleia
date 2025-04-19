@@ -13,6 +13,9 @@
 #include "ObjectTypes.hpp"
 #include "Scope.hpp"
 
+class FileParser;
+
+
 class AddVariableNode : public LookupVariableNode
 {
 public:
@@ -52,6 +55,17 @@ public:
      * the reference name.
      */
     BaseObject *evaluate(Scope &scope) override;
+
+    /**
+     * Bind a reference to an already declared variable in this scope or a parent
+     * scope. We do not allow any unbound references and once bound, references
+     * cannot be unbound. By default, we pass by value to functions, but the use
+     * of a reference as in other languages such as C++ avoids copying.
+     *
+     * Reference definition:
+     * VARIABLE_TO_BIND_TO_TYPE & REFERENCE_NAME = VARIABLE_TO_BIND_TO;
+     */
+    static AddReferenceVariableNode *parse(FileParser &parser, ObjectType boundVariableType);
 
 protected:
     const std::string referenceName;

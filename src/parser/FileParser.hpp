@@ -49,6 +49,7 @@ protected:
     friend class FunctionNode;
     friend class ArrayAccessNode;
     friend class FunctionCallNode;
+    friend class AddReferenceVariableNode;
 
     /* Default constructor */
     FileParser() = delete;
@@ -60,8 +61,6 @@ protected:
 
     BaseNode *parseVariableDefinition();
     BaseNode *parseVariableName();
-
-    BaseNode *parseReference(ObjectType boundObjectType);
 
     BaseNode *parseStruct();
     BaseNode *parseStructAccessor(BaseNode *lastExpression);

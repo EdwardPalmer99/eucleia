@@ -9,9 +9,11 @@
 
 #include "AddVariableNode.hpp"
 #include "ArrayObject.hpp"
+#include "FileParser.hpp"
 #include "FloatObject.hpp"
 #include "IntObject.hpp"
 #include "StringObject.hpp"
+
 
 BaseObject *AddVariableNode::evaluate(Scope &scope)
 {
@@ -138,4 +140,20 @@ BaseObject *AddReferenceVariableNode::evaluate(Scope &scope)
     scope.linkObject(referenceName, boundObject);
 
     return boundObject;
+}
+
+
+AddReferenceVariableNode *AddReferenceVariableNode::parse(FileParser &parser, ObjectType boundVariableType)
+{
+    parser._skipFunctor("&");
+
+    Token referenceNameToken = parser.tokens().dequeue();
+    assert(referenceNameToken.type() == Token::Variable);
+
+    parser._skipFunctor("=");
+
+    Token boundVariableNameToken = parser.tokens().dequeue();
+    assert(boundVariableNameToken.type() == Token::Variable);
+
+    return new AddReferenceVariableNode(referenceNameToken, boundVariableNameToken, boundVariableType);
 }

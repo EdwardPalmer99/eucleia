@@ -81,7 +81,7 @@ BaseNode *FileParser::parseVariableDefinition()
 
     if (_tokens.front() == "&") // Is reference.
     {
-        return parseReference(typeOfObject);
+        return AddReferenceVariableNode::parse(*this, typeOfObject);
     }
 
     Token nameToken = _tokens.dequeue();
@@ -89,31 +89,6 @@ BaseNode *FileParser::parseVariableDefinition()
 
     return new AddVariableNode(nameToken, typeOfObject);
 }
-
-/**
- * Bind a reference to an already declared variable in this scope or a parent
- * scope. We do not allow any unbound references and once bound, references
- * cannot be unbound. By default, we pass by value to functions, but the use
- * of a reference as in other languages such as C++ avoids copying.
- *
- * Reference definition:
- * VARIABLE_TO_BIND_TO_TYPE & REFERENCE_NAME = VARIABLE_TO_BIND_TO;
- */
-BaseNode *FileParser::parseReference(ObjectType boundVariableType)
-{
-    _skipFunctor("&");
-
-    Token referenceNameToken = _tokens.dequeue();
-    assert(referenceNameToken.type() == Token::Variable);
-
-    _skipFunctor("=");
-
-    Token boundVariableNameToken = _tokens.dequeue();
-    assert(boundVariableNameToken.type() == Token::Variable);
-
-    return new AddReferenceVariableNode(referenceNameToken, boundVariableNameToken, boundVariableType);
-}
-
 
 #pragma mark - *** Struct ***
 
@@ -170,7 +145,7 @@ BaseNode *FileParser::parseStruct()
         // Case: "struct STRUCT_TYPE_NAME & STRUCT_REF_INSTANCE_NAME = STRUCT_VARIABLE_NAME_TO_BIND"
         if (isOperator("&"))
         {
-            return parseReference(ObjectType::Struct);
+            return AddReferenceVariableNode::parse(*this, ObjectType::Struct);
         }
 
         auto structInstanceName = _tokens.dequeue();
@@ -249,7 +224,7 @@ BaseNode *FileParser::parseClass()
         // Case: "class CLASS_INSTANCE_NAME & CLASS_REF_NAME = CLASS_VARIABLE_NAME_TO_BIND"
         if (isOperator("&"))
         {
-            return parseReference(ObjectType::Class);
+            return AddReferenceVariableNode::parse(*this, ObjectType::Class);
         }
 
         auto classInstanceName = _tokens.dequeue();
