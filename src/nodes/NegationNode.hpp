@@ -10,6 +10,9 @@
 #pragma once
 #include "BaseUnaryOperatorNode.hpp"
 
+class FileParser;
+
+
 /// Unary - operator (.e.g. -1).
 class NegationNode : public BaseUnaryOperatorNode
 {
@@ -20,4 +23,6 @@ public:
     }
 
     BaseObject *evaluate(Scope &scope) override;
+
+    static NegationNode *parse(FileParser &parser);
 };

@@ -8,8 +8,10 @@
  */
 
 #include "NegationNode.hpp"
+#include "FileParser.hpp"
 #include "FloatObject.hpp"
 #include "IntObject.hpp"
+
 
 BaseObject *NegationNode::evaluate(Scope &scope)
 {
@@ -21,4 +23,11 @@ BaseObject *NegationNode::evaluate(Scope &scope)
         return scope.createManagedObject<FloatObject>(-bodyEvaluated->castObject<FloatObject>());
     else
         ThrowException("invalid object type");
+}
+
+
+NegationNode *NegationNode::parse(FileParser &parser)
+{
+    parser._skipFunctor("-");
+    return new NegationNode(parser.parseAtomically());
 }

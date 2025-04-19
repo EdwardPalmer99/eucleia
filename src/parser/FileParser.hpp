@@ -41,6 +41,7 @@ protected:
     friend class ModuleNode;
     friend class PrefixIncrementNode;
     friend class PrefixDecrementNode;
+    friend class NegationNode;
 
 
     /* Default constructor */
@@ -62,8 +63,6 @@ protected:
     BaseNode *parseStructAccessor(BaseNode *lastExpression);
 
     BaseNode *parseClass();
-
-    NegationNode *parseNegation();
 
     ArrayAccessNode *parseArrayAccessor(BaseNode *lastExpression);
 

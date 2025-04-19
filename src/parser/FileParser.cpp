@@ -492,7 +492,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
     else if (isOperator("--"))
         return PrefixDecrementNode::parse(*this);
     else if (isOperator("-"))
-        return parseNegation();
+        return NegationNode::parse(*this);
 
     const Token &token = _tokens.front();
 
@@ -510,14 +510,6 @@ BaseNode *FileParser::parseAtomicallyExpression()
             unexpectedToken();
             exit(EXIT_FAILURE);
     }
-}
-
-
-NegationNode *FileParser::parseNegation()
-{
-    _skipFunctor("-");
-
-    return new NegationNode(parseAtomically());
 }
 
 
