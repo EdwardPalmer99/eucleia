@@ -56,7 +56,7 @@ BaseNode *FileParser::parseImport()
     auto token = _tokens.front();
 
     if (token.type() == Token::String)
-        return parseFileImport();
+        return FileNode::parse(*this);
     else if (isOperator("<"))
         return parseLibraryImport();
     else
@@ -64,38 +64,6 @@ BaseNode *FileParser::parseImport()
         unexpectedToken();
         exit(0);
     }
-}
-
-/// import "path_to_some_file"
-///
-/// Imports a file and its functions into this scope.
-FileNode *FileParser::parseFileImport()
-{
-    // File name token:
-    auto token = _tokens.dequeue();
-    assert(token.type() == Token::String);
-
-    // Check: has file already been imported somewhere? If it has then we don't
-    // want to import it a second time! (i.e. A imports B, C and B imports C. In
-    // this case, PARSE A set[A]--> PARSE B set[A,B]--> PARSE C set[A,B,C].
-    if (ParserData::instance().isImported(token, ParserData::File))
-    {
-        return new FileNode(); // Return "empty file".
-    }
-
-    ParserData::instance().addImport(token, ParserData::File);
-
-    // Build the file path:
-    std::string filePath = _fileInfo.dirPath + token;
-    Logger::debug("importing file: " + filePath);
-
-    auto ast = FileParser::parse(filePath);
-    if (!ast)
-    {
-        ThrowException("failed to import file with path " + filePath);
-    }
-
-    return ast;
 }
 
 /// import <io> or import <math>

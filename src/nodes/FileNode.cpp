@@ -8,6 +8,10 @@
  */
 
 #include "FileNode.hpp"
+#include "FileParser.hpp"
+#include "Logger.hpp"
+#include "ParserData.hpp"
+
 
 BaseObject *FileNode::evaluate(Scope &globalScope)
 {
@@ -17,4 +21,34 @@ BaseObject *FileNode::evaluate(Scope &globalScope)
     }
 
     return nullptr;
+}
+
+
+FileNode *FileNode::parse(FileParser &parser)
+{
+    // File name token:
+    auto token = parser.tokens().dequeue();
+    assert(token.type() == Token::String);
+
+    // Check: has file already been imported somewhere? If it has then we don't
+    // want to import it a second time! (i.e. A imports B, C and B imports C. In
+    // this case, PARSE A set[A]--> PARSE B set[A,B]--> PARSE C set[A,B,C].
+    if (ParserData::instance().isImported(token, ParserData::File))
+    {
+        return new FileNode(); // Return "empty file".
+    }
+
+    ParserData::instance().addImport(token, ParserData::File);
+
+    // Build the file path:
+    std::string filePath = parser._fileInfo.dirPath + token;
+    Logger::debug("importing file: " + filePath);
+
+    auto ast = FileParser::parse(filePath);
+    if (!ast)
+    {
+        ThrowException("failed to import file with path " + filePath);
+    }
+
+    return ast;
 }

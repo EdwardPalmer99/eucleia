@@ -13,6 +13,9 @@
 #include "Scope.hpp"
 #include <vector>
 
+class FileParser;
+
+
 class FileNode : public ProgramNode
 {
 public:
@@ -22,4 +25,8 @@ public:
     // scope node in order to ensure that any functions declared in this file will
     // be added to the master file by using the same global scope - TODO: - think about this logic.
     BaseObject *evaluate(Scope &globalScope) override;
+
+    /// import "path_to_some_file"
+    /// Imports a file and its functions into this scope.
+    static FileNode *parse(FileParser &parser);
 };

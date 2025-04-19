@@ -37,6 +37,7 @@ protected:
     friend class BreakNode;
     friend class ReturnNode;
     friend class NotNode;
+    friend class FileNode;
 
     /* Default constructor */
     FileParser() = delete;
@@ -51,8 +52,6 @@ protected:
 
     BaseNode *parseReference(ObjectType boundObjectType);
 
-    ForLoopNode *parseFor();
-
     FunctionNode *parseFunctionDefinition();
 
     BaseNode *parseStruct();
@@ -65,7 +64,6 @@ protected:
     NegationNode *parseNegation();
 
     ModuleNode *parseLibraryImport();
-    FileNode *parseFileImport();
     BaseNode *parseImport();
 
     ArrayAccessNode *parseArrayAccessor(BaseNode *lastExpression);
