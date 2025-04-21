@@ -1,5 +1,5 @@
 //
-//  EucleiaParser.hpp
+//  FileParser.hpp
 //  Eucleia
 //
 //  Created by Edward on 20/01/2024.
@@ -12,14 +12,19 @@
 #include "Tokenizer.hpp"
 #include <unordered_set>
 
-
-class Parser
+/* Parser for a single file */
+class FileParser
 {
 public:
-    static FileNode *buildAST(const std::string &fpath);
+    [[nodiscard]] static inline FileNode *parse(std::string filePath)
+    {
+        return FileParser(filePath).buildAST();
+    }
 
 protected:
-    Parser(const std::string &fpath);
+    /* Default constructor */
+    FileParser() = delete;
+    FileParser(const std::string &fpath);
 
     FileNode *buildAST();
 
@@ -73,15 +78,6 @@ protected:
     void skipKeyword(const std::string &keyword);
     void skipPunctuation(const std::string &punctuation);
     void skipOperator(const std::string &operatorName);
-
-    const Token &peekToken() const { return _tokens.front(); }
-
-    Token nextToken()
-    {
-        return _tokens.dequeue();
-    }
-
-    void skipToken() { _tokens.pop(); }
 
     void unexpectedToken();
 

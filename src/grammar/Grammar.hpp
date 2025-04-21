@@ -8,29 +8,31 @@
  */
 
 #pragma once
+#include "SingletonT.hpp"
 #include <string>
 #include <unordered_set>
 
-class Grammar
+class GrammarImpl
 {
 public:
-    static Grammar &instance();
-
-    static bool isDataType(const std::string &value);
-
-    static bool isKeyword(const std::string &value);
-
-    static bool isOperator(char c);
-
-    static bool isPunctuation(char c);
+    bool isDataType(const std::string &value) { return dataTypes.count(value); }
+    bool isKeyword(const std::string &value) { return keywords.count(value); }
+    bool isOperator(char c) { return operators.count(c); }
+    bool isPunctuation(char c) { return punctuation.count(c); }
 
 protected:
-    Grammar();
+    friend class SingletonT<GrammarImpl>; /* Can use constructor */
+    GrammarImpl();                        /* Prevent initialization except in Singleton */
 
 private:
-    const std::unordered_set<char> punctuation;
-    const std::unordered_set<char> operators;
+    using StringSet = std::unordered_set<std::string>;
+    using CharSet = std::unordered_set<char>;
 
-    const std::unordered_set<std::string> keywords;
-    const std::unordered_set<std::string> dataTypes;
+    const CharSet punctuation;
+    const CharSet operators;
+
+    const StringSet keywords;
+    const StringSet dataTypes;
 };
+
+using Grammar = SingletonT<GrammarImpl>;
