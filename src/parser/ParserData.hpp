@@ -9,23 +9,17 @@
 
 #pragma once
 #include "FileNode.hpp"
+#include "SingletonT.hpp"
 #include "Token.hpp"
 #include <mutex>
 #include <string>
 #include <unordered_set>
 
 /* Stores info required by all program-parsers such as imported files */
-class ParserData
+class ParserDataImpl
 {
 public:
     using StringSet = std::unordered_set<std::string>;
-
-    /* Singleton (thread-safe) */
-    static ParserData &instance()
-    {
-        static ParserData info;
-        return info;
-    }
 
     enum Type
     {
@@ -40,20 +34,22 @@ public:
     bool isImported(std::string importName, Type importType) const;
 
 protected:
+    friend class SingletonT<ParserDataImpl>;
     friend class RootParser; /* Allow access to clearImports() */
 
     /* Clear all imports (protect to restrict access) */
     void clearImports();
 
     /* Prevent direct initialization */
-    ParserData() = default;
-
-    /* Delete implicit copy constructors */
-    ParserData &operator=(const ParserData &) = delete;
-    ParserData(const ParserData &) = delete;
+    ParserDataImpl() = default;
 
     StringSet _importedModuleNames;
     StringSet _importedFileNames;
 
+    using LockGuard = std::lock_guard<std::mutex>;
+
     mutable std::mutex _mutex;
 };
+
+
+using ParserData = SingletonT<ParserDataImpl>;

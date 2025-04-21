@@ -9,41 +9,35 @@
 
 #include "ParserData.hpp"
 
-void ParserData::clearImports()
+void ParserDataImpl::clearImports()
 {
-    _mutex.lock();
+    LockGuard lock(_mutex);
 
     _importedModuleNames.clear();
     _importedFileNames.clear();
-
-    _mutex.unlock();
 }
 
-void ParserData::addImport(std::string importName, Type importType)
+void ParserDataImpl::addImport(std::string importName, Type importType)
 {
-    _mutex.lock();
+    LockGuard lock(_mutex);
 
     if (importType == Module)
         _importedModuleNames.insert(importName);
     else
         _importedFileNames.insert(importName);
-
-    _mutex.unlock();
 }
 
 
-bool ParserData::isImported(std::string importName, Type importType) const
+bool ParserDataImpl::isImported(std::string importName, Type importType) const
 {
-    bool result{false};
+    LockGuard lock(_mutex);
 
-    _mutex.lock();
+    bool result{false};
 
     if (importType == Module)
         result = _importedModuleNames.count(importName);
     else
         result = _importedFileNames.count(importName);
-
-    _mutex.unlock();
 
     return result;
 }
