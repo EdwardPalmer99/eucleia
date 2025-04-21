@@ -77,12 +77,12 @@ FileNode *FileParser::parseFileImport()
     // Check: has file already been imported somewhere? If it has then we don't
     // want to import it a second time! (i.e. A imports B, C and B imports C. In
     // this case, PARSE A set[A]--> PARSE B set[A,B]--> PARSE C set[A,B,C].
-    if (ParserData::instance().isImported(token, ParserData::File))
+    if (ParserData::instance().isImported(token, ParserDataImpl::File))
     {
         return new FileNode(); // Return "empty file".
     }
 
-    ParserData::instance().addImport(token, ParserData::File);
+    ParserData::instance().addImport(token, ParserDataImpl::File);
 
     // Build the file path:
     std::string filePath = _fileInfo.dirPath + token;
@@ -111,12 +111,12 @@ ModuleNode *FileParser::parseLibraryImport()
 
     skipOperator(">");
 
-    if (ParserData::instance().isImported(token, ParserData::Module))
+    if (ParserData::instance().isImported(token, ParserDataImpl::Module))
     {
         return new ModuleNode(); // Return "empty module".
     }
 
-    ParserData::instance().addImport(token, ParserData::Module);
+    ParserData::instance().addImport(token, ParserDataImpl::Module);
 
     Logger::debug("importing library: " + token);
 
