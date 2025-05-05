@@ -20,10 +20,16 @@
 #include <stdlib.h>
 
 
+FileNode *FileParser::parse(std::string filePath_)
+{
+    return FileParser(filePath_).buildAST();
+}
+
+
 FileParser::FileParser(const std::string &fpath)
     : _tokens(Tokenizer::build(fpath)),
       _subParsers(*this),
-      _fileInfo(fpath)
+      _parentDirPath(buildParentDirPath(fpath))
 {
     // TODO: - any subparsers need to be initialized here after registration
 }
@@ -182,7 +188,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
         return _subParsers.classParser.parseStruct();
     else if (equals(Token::Keyword, "class"))
         return _subParsers.classParser.parseClass();
-    else if (isDataTypeKeyword())
+    else if (Grammar::instance().isDataType(tokens().front()))
         return _subParsers.variable.parseVariableDefinition();
     else if (equals(Token::Keyword, "break"))
         return _subParsers.controlFlow.parseBreak();
@@ -273,12 +279,6 @@ int FileParser::getPrecedence()
 }
 
 
-bool FileParser::isDataTypeKeyword()
-{
-    return (Grammar::instance().isDataType(tokens().front()));
-}
-
-
 BaseNode *FileParser::parseBrackets()
 {
     skip("(");
@@ -288,4 +288,20 @@ BaseNode *FileParser::parseBrackets()
     skip(")");
 
     return expression;
+}
+
+
+std::string FileParser::buildParentDirPath(const std::string &filePath_) const
+{
+    for (long i = (long)filePath_.size() - 1; i != 0; --i)
+    {
+        char c = filePath_.at(i);
+
+        if (c == '/') /* Hit our first '/' (successfully stripped file name and extension) */
+        {
+            return filePath_.substr(0, i + 1);
+        }
+    }
+
+    return "."; /* Failed */
 }

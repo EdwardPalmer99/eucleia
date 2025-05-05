@@ -11,7 +11,6 @@
 #include "ControlFlowSubParser.hpp"
 #include "DataTypeSubParser.hpp"
 #include "EucleiaModules.hpp"
-#include "FileInfoRec.hpp"
 #include "FunctionSubParser.hpp"
 #include "ImportSubParser.hpp"
 #include "LoopSubParser.hpp"
@@ -26,64 +25,55 @@
 class FileParser : public BaseParser
 {
 public:
-    [[nodiscard]] static inline FileNode *parse(std::string filePath)
-    {
-        return FileParser(filePath).buildAST();
-    }
-
-    [[nodiscard]] SubParsers &subParsers() { return _subParsers; }
-
-protected:
-    /* Default constructor */
+    /* Constructors */
     FileParser() = delete;
     FileParser(const std::string &fpath);
 
-    /* TODO: - make these methods public */
+    static FileNode *parse(std::string filePath_);
 
+    /* Returns reference to subparsers for file */
+    [[nodiscard]] SubParsers &subParsers() { return _subParsers; }
+
+    /* Returns tokenized file */
+    [[nodiscard]] Tokens &tokens() final { return _tokens; }
+
+    /* Returns parent directory path for file */
+    [[nodiscard]] const std::string &parentDirPath() const { return _parentDirPath; }
+
+    /* Construct AST for file */
     FileNode *buildAST();
+
+    /* Parse generic expression */
+    BaseNode *parseExpression();
+
+    /* Parse non-binary expression */
+    BaseNode *parseAtomically();
 
     /* Parse an expression in brackets, e.g. (a) */
     BaseNode *parseBrackets();
 
-
-    bool isDataTypeKeyword();
+    BaseNode *maybeFunctionCall(ParseMethod expression);
 
     void skipSemicolonLineEndingIfRequired(const BaseNode &node);
 
-    [[nodiscard]] Tokens &tokens() final { return _tokens; }
-
-private:
-    friend class SubParser; /* TODO: - remove once we've finished extracting stuff from class */
-    friend class LoopSubParser;
-    friend class ControlFlowSubParser;
-    friend class BlockSubParser;
-    friend class UnaryOperatorSubParser;
-    friend class DataTypeSubParser;
-    friend class FunctionSubParser;
-    friend class ImportSubParser;
-    friend class ClassSubParser;
-
-    BaseNode *parseExpression();
+protected:
     BaseNode *parseExpressionHelper();
-    BaseNode *parseAtomically();
+
     BaseNode *parseAtomicallyExpression();
 
     int getPrecedence(void);
 
     BaseNode *maybeArrayAccess(ParseMethod expression);
 
-    BaseNode *maybeFunctionCall(ParseMethod expression);
-
     BaseNode *maybeFunctionCallOrArrayAccess(ParseMethod expression);
 
-    BaseNode *maybeBinary(BaseNode *leftExpression,
-                          int leftPrecedence);
+    BaseNode *maybeBinary(BaseNode *leftExpression, int leftPrecedence);
 
-    /* TODO: - extract-out */
-    FileComponentsRec _fileInfo;
+    /* Convert a path 'a/b/c/fileName.ek' --> 'a/b/c/' */
+    std::string buildParentDirPath(const std::string &filePath_) const;
 
-    /* File tokens */
+private:
+    const std::string _parentDirPath;
     Tokens _tokens;
-
     SubParsers _subParsers;
 };

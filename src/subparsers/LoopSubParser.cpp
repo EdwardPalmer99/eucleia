@@ -59,7 +59,7 @@ ForLoopNode *LoopSubParser::parseFor()
 {
     skip("for");
 
-    ProgramNode *brackets = parent().parseDelimited("(", ")", ";", std::bind(&FileParser::parseExpression, &parent()));
+    ProgramNode *brackets = parseDelimited("(", ")", ";", std::bind(&FileParser::parseExpression, &parent()));
 
     std::vector<BaseNode *> forLoopArgs = brackets->releaseNodes();
 

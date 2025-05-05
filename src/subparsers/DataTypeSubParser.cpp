@@ -58,7 +58,7 @@ AddStringNode *DataTypeSubParser::parseString()
 
 AddArrayNode *DataTypeSubParser::parseArray()
 {
-    auto programNodes = parent().parseDelimited("[", "]", ",", std::bind(&FileParser::parseExpression, &parent()));
+    auto programNodes = parseDelimited("[", "]", ",", std::bind(&FileParser::parseExpression, &parent()));
 
     auto nodesVector = programNodes->releaseNodes();
 

@@ -49,7 +49,7 @@ FileNode *ImportSubParser::parseFileImport()
     ParserData::instance().addImport(token, ParserDataImpl::File);
 
     // Build the file path:
-    std::string filePath = parent()._fileInfo.dirPath + token;
+    std::string filePath = parent().parentDirPath() + token;
     Logger::debug("importing file: " + filePath);
 
     auto ast = FileParser(filePath).buildAST(); // NB: don't use static method as this will clear loaded modules/files.
