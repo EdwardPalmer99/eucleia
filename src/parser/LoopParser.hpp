@@ -11,26 +11,18 @@
 #include "BaseParser.hpp"
 #include "DoWhileNode.hpp"
 #include "ForLoopNode.hpp"
+#include "SubParser.hpp"
 #include "Tokenizer.hpp"
 #include "WhileNode.hpp"
 
-/* Forwards declaration of complete parser */
-class FileParser;
-
-
-class LoopParser
+class LoopParser : public SubParser
 {
 public:
-    LoopParser() = delete;
-    explicit LoopParser(FileParser &parser) : _parser(parser) {}
+    explicit LoopParser(FileParser &parser) : SubParser(parser) {}
 
     DoWhileNode *parseDoWhile();
 
     WhileNode *parseWhile();
 
     ForLoopNode *parseFor();
-
-private:
-    /* Store a reference to the complete-parser */
-    FileParser &_parser;
 };
