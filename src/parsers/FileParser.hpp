@@ -12,6 +12,7 @@
 #include "DataTypeSubParser.hpp"
 #include "EucleiaModules.hpp"
 #include "FileInfoRec.hpp"
+#include "FunctionSubParser.hpp"
 #include "LoopSubParser.hpp"
 #include "Nodes.hpp"
 #include "Tokenizer.hpp"
@@ -44,8 +45,6 @@ protected:
 
     BaseNode *parseReference(ObjectType boundObjectType);
 
-    FunctionNode *parseFunctionDefinition();
-
     /* Parse an expression in brackets, e.g. (a) */
     BaseNode *parseBrackets();
 
@@ -74,6 +73,7 @@ private:
     friend class BlockSubParser;
     friend class UnaryOperatorSubParser;
     friend class DataTypeSubParser;
+    friend class FunctionSubParser;
 
     /* Subparsers */
     LoopSubParser _loopParser;
@@ -81,6 +81,7 @@ private:
     BlockSubParser _blockParser;
     UnaryOperatorSubParser _unaryParser;
     DataTypeSubParser _dataTypeParser;
+    FunctionSubParser _functionParser;
 
     BaseNode *parseExpression();
     BaseNode *parseExpressionHelper();

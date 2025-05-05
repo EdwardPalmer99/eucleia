@@ -27,6 +27,7 @@ FileParser::FileParser(const std::string &fpath)
       _blockParser(*this),
       _unaryParser(*this),
       _dataTypeParser(*this),
+      _functionParser(*this),
       _fileInfo(fpath)
 {
 }
@@ -184,36 +185,6 @@ BaseNode *FileParser::parseVariableName()
     assert(token.type() == Token::Variable);
 
     return new LookupVariableNode(token);
-}
-
-
-#pragma mark - *** Functions ***
-
-/// func test(a, b, c)
-/// {
-///		[BODY]
-/// }
-FunctionNode *FileParser::parseFunctionDefinition()
-{
-    skip("func");
-
-    auto funcName = parseVariableName();
-    auto funcArgs = parseDelimited("(", ")", ",", std::bind(&FileParser::parseVariableDefinition, this)); // Func variables.
-    auto funcBody = _blockParser.parseBlock();
-
-    return new FunctionNode(funcName, funcArgs, funcBody);
-}
-
-
-///
-/// Example: test(a, b, c);
-///
-FunctionCallNode *FileParser::parseFunctionCall(BaseNode *lastExpression)
-{
-    auto functionName = std::move(lastExpression);
-    auto functionArgs = parseDelimited("(", ")", ",", std::bind(&FileParser::parseExpression, this));
-
-    return new FunctionCallNode(functionName, functionArgs);
 }
 
 
@@ -479,7 +450,7 @@ BaseNode *FileParser::maybeFunctionCall(ParseMethod expression)
 {
     auto expr = expression(); // Possible function name.
 
-    return equals(Token::Punctuation, "(") ? parseFunctionCall(expr) : expr;
+    return equals(Token::Punctuation, "(") ? _functionParser.parseFunctionCall(expr) : expr;
 }
 
 
@@ -499,7 +470,7 @@ BaseNode *FileParser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
     if (!_tokens.empty())
     {
         if (equals(Token::Punctuation, "("))
-            return parseFunctionCall(expr);
+            return _functionParser.parseFunctionCall(expr);
         else if (equals(Token::Punctuation, "["))
             return parseArrayAccessor(expr);
         else if (equals(Token::Punctuation, "."))
@@ -554,7 +525,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
     else if (equals(Token::Keyword, "import"))
         return parseImport();
     else if (equals(Token::Keyword, "func")) // Functions should be defined as in C --> will need void type
-        return parseFunctionDefinition();
+        return _functionParser.parseFunctionDefinition();
     else if (equals(Token::Keyword, "struct"))
         return parseStruct();
     else if (equals(Token::Keyword, "class"))
