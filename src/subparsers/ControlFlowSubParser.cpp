@@ -50,7 +50,7 @@ IfNode *ControlFlowSubParser::parseIf()
     skip("if");
 
     auto condition = parent().parseBrackets();
-    auto thenDo = parent()._blockParser.parseBlock();
+    auto thenDo = parent().subParsers().block.parseBlock();
 
 
     BaseNode *elseDo{nullptr}; // Optional.
@@ -63,7 +63,7 @@ IfNode *ControlFlowSubParser::parseIf()
             elseDo = parseIf();
         // Option 2: else { [statement]; }
         else
-            elseDo = parent()._blockParser.parseBlock();
+            elseDo = parent().subParsers().block.parseBlock();
     }
 
     return new IfNode(condition, thenDo, elseDo);

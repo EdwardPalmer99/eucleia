@@ -16,6 +16,7 @@
 #include "ImportSubParser.hpp"
 #include "LoopSubParser.hpp"
 #include "Nodes.hpp"
+#include "SubParsers.hpp"
 #include "Tokenizer.hpp"
 #include "UnaryOperatorSubParser.hpp"
 #include <unordered_set>
@@ -29,6 +30,8 @@ public:
     {
         return FileParser(filePath).buildAST();
     }
+
+    [[nodiscard]] SubParsers &subParsers() { return _subParsers; }
 
 protected:
     /* Default constructor */
@@ -71,13 +74,7 @@ private:
     friend class ImportSubParser;
 
     /* Subparsers */
-    LoopSubParser _loopParser;
-    ControlFlowSubParser _controlFlowParser;
-    BlockSubParser _blockParser;
-    UnaryOperatorSubParser _unaryParser;
-    DataTypeSubParser _dataTypeParser;
-    FunctionSubParser _functionParser;
-    ImportSubParser _importParser;
+    SubParsers _subParsers;
 
     BaseNode *parseExpression();
     BaseNode *parseExpressionHelper();

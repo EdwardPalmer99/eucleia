@@ -22,7 +22,7 @@
 DoWhileNode *LoopSubParser::parseDoWhile()
 {
     skip("do");
-    BaseNode *body = parent()._blockParser.parseBlock();
+    BaseNode *body = parent().subParsers().block.parseBlock();
     skip("while");
     BaseNode *condition = parent().parseBrackets();
 
@@ -42,7 +42,7 @@ WhileNode *LoopSubParser::parseWhile()
     skip("while");
 
     BaseNode *condition = parent().parseBrackets();
-    BaseNode *body = parent()._blockParser.parseBlock();
+    BaseNode *body = parent().subParsers().block.parseBlock();
 
     return new WhileNode(condition, body);
 }
@@ -73,7 +73,7 @@ ForLoopNode *LoopSubParser::parseFor()
     auto start = forLoopArgs[0];
     auto condition = forLoopArgs[1];
     auto update = forLoopArgs[2];
-    auto body = parent()._blockParser.parseBlock();
+    auto body = parent().subParsers().block.parseBlock();
 
     return new ForLoopNode(start, condition, update, body);
 }

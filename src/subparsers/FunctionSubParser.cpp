@@ -28,7 +28,7 @@ FunctionNode *FunctionSubParser::parseFunctionDefinition()
 
     auto funcName = parent().parseVariableName();
     auto funcArgs = parent().parseDelimited("(", ")", ",", std::bind(&FileParser::parseVariableDefinition, &parent())); // Func variables.
-    auto funcBody = parent()._blockParser.parseBlock();
+    auto funcBody = parent().subParsers().block.parseBlock();
 
     return new FunctionNode(funcName, funcArgs, funcBody);
 }

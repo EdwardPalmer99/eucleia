@@ -22,13 +22,7 @@
 
 FileParser::FileParser(const std::string &fpath)
     : _tokens(Tokenizer::build(fpath)),
-      _loopParser(*this), /* TODO: - initialize in a method */
-      _controlFlowParser(*this),
-      _blockParser(*this),
-      _unaryParser(*this),
-      _dataTypeParser(*this),
-      _functionParser(*this),
-      _importParser(*this),
+      _subParsers(*this),
       _fileInfo(fpath)
 {
     // TODO: - any subparsers need to be initialized here after registration
@@ -219,7 +213,7 @@ BaseNode *FileParser::parseClass()
         }
 
         // NB: have to be a bit careful with parseBlock. If there is only one node, it will return that!
-        ProgramNode *classBody = static_cast<ProgramNode *>(_blockParser.parseBlock(false));
+        ProgramNode *classBody = static_cast<ProgramNode *>(_subParsers.block.parseBlock(false));
 
         std::vector<BaseNode *> nodes = classBody->releaseNodes();
 
@@ -362,7 +356,7 @@ BaseNode *FileParser::maybeFunctionCall(ParseMethod expression)
 {
     auto expr = expression(); // Possible function name.
 
-    return equals(Token::Punctuation, "(") ? _functionParser.parseFunctionCall(expr) : expr;
+    return equals(Token::Punctuation, "(") ? _subParsers.function.parseFunctionCall(expr) : expr;
 }
 
 
@@ -382,7 +376,7 @@ BaseNode *FileParser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
     if (!tokens().empty())
     {
         if (equals(Token::Punctuation, "("))
-            return _functionParser.parseFunctionCall(expr);
+            return _subParsers.function.parseFunctionCall(expr);
         else if (equals(Token::Punctuation, "["))
             return parseArrayAccessor(expr);
         else if (equals(Token::Punctuation, "."))
@@ -421,23 +415,23 @@ BaseNode *FileParser::parseAtomicallyExpression()
     if (equals(Token::Punctuation, "("))
         return parseBrackets();
     else if (equals(Token::Punctuation, "["))
-        return _dataTypeParser.parseArray();
+        return _subParsers.dataType.parseArray();
     else if (equals(Token::Punctuation, "{"))
-        return _blockParser.parseBlock();
+        return _subParsers.block.parseBlock();
     else if (equals(Token::Keyword, "true") || equals(Token::Keyword, "false"))
-        return _dataTypeParser.parseBool();
+        return _subParsers.dataType.parseBool();
     else if (equals(Token::Keyword, "while"))
-        return _loopParser.parseWhile();
+        return _subParsers.loop.parseWhile();
     else if (equals(Token::Keyword, "do"))
-        return _loopParser.parseDoWhile();
+        return _subParsers.loop.parseDoWhile();
     else if (equals(Token::Keyword, "for"))
-        return _loopParser.parseFor();
+        return _subParsers.loop.parseFor();
     else if (equals(Token::Keyword, "if"))
-        return _controlFlowParser.parseIf();
+        return _subParsers.controlFlow.parseIf();
     else if (equals(Token::Keyword, "import"))
-        return _importParser.parseImport();
+        return _subParsers.import.parseImport();
     else if (equals(Token::Keyword, "func")) // Functions should be defined as in C --> will need void type
-        return _functionParser.parseFunctionDefinition();
+        return _subParsers.function.parseFunctionDefinition();
     else if (equals(Token::Keyword, "struct"))
         return parseStruct();
     else if (equals(Token::Keyword, "class"))
@@ -445,21 +439,21 @@ BaseNode *FileParser::parseAtomicallyExpression()
     else if (isDataTypeKeyword())
         return parseVariableDefinition();
     else if (equals(Token::Keyword, "break"))
-        return _controlFlowParser.parseBreak();
+        return _subParsers.controlFlow.parseBreak();
     else if (equals(Token::Keyword, "return"))
-        return _controlFlowParser.parseReturn();
+        return _subParsers.controlFlow.parseReturn();
 
     // TODO: - split-up into separate method for unary operators.
     // Parse unary operators.
     else if (equals(Token::Operator, "!"))
-        return _unaryParser.parseNot();
+        return _subParsers.unary.parseNot();
     // Parse prefix increment operator i.e.
     else if (equals(Token::Operator, "++"))
-        return _unaryParser.parsePrefixIncrement();
+        return _subParsers.unary.parsePrefixIncrement();
     else if (equals(Token::Operator, "--"))
-        return _unaryParser.parsePrefixDecrement();
+        return _subParsers.unary.parsePrefixDecrement();
     else if (equals(Token::Operator, "-"))
-        return _unaryParser.parseNegation();
+        return _subParsers.unary.parseNegation();
 
     const Token &token = tokens().front();
 
@@ -468,11 +462,11 @@ BaseNode *FileParser::parseAtomicallyExpression()
         case Token::Variable:
             return parseVariableName();
         case Token::String:
-            return _dataTypeParser.parseString();
+            return _subParsers.dataType.parseString();
         case Token::Int:
-            return _dataTypeParser.parseInt();
+            return _subParsers.dataType.parseInt();
         case Token::Float:
-            return _dataTypeParser.parseFloat();
+            return _subParsers.dataType.parseFloat();
         default:
             ThrowException("unexpected token: " + token);
     }
