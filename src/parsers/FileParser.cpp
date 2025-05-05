@@ -8,6 +8,7 @@
 #include "FileParser.hpp"
 #include "EucleiaModules.hpp"
 #include "Exceptions.hpp"
+#include "FileData.hpp"
 #include "Grammar.hpp"
 #include "Logger.hpp"
 #include "ObjectTypes.hpp"
@@ -21,8 +22,9 @@
 
 
 FileParser::FileParser(const std::string &fpath)
-    : BaseParser(Tokenizer::build(fpath)),
-      _loopParser(*this), /* TODO: - initialize in a method */
+    : _tokens(Tokenizer::build(fpath)),
+      BaseParser(_tokens), // TODO: - remove this
+      _loopParser(*this),  /* TODO: - initialize in a method */
       _controlFlowParser(*this),
       _blockParser(*this),
       _unaryParser(*this),
@@ -31,6 +33,10 @@ FileParser::FileParser(const std::string &fpath)
       _importParser(*this),
       _fileInfo(fpath)
 {
+    /* Register tokens */
+    // FileData::instance().registerTokens(*this, Tokenizer::build(fpath));
+
+    // TODO: - any subparsers need to be initialized here after registration
 }
 
 

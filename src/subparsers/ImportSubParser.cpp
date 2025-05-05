@@ -19,13 +19,13 @@
 
 BaseNode *ImportSubParser::parseImport()
 {
-    _parser.skip("import");
+    skip("import");
 
-    auto token = _parser._tokens.front();
+    auto token = tokens().front();
 
     if (token.type() == Token::String)
         return parseFileImport();
-    else if (_parser.equals(Token::Operator, "<"))
+    else if (equals(Token::Operator, "<"))
         return parseLibraryImport();
 
     ThrowException("unexpected token: " + token);
@@ -35,7 +35,7 @@ BaseNode *ImportSubParser::parseImport()
 FileNode *ImportSubParser::parseFileImport()
 {
     // File name token:
-    auto token = _parser._tokens.dequeue();
+    auto token = tokens().dequeue();
     assert(token.type() == Token::String);
 
     // Check: has file already been imported somewhere? If it has then we don't
@@ -49,7 +49,7 @@ FileNode *ImportSubParser::parseFileImport()
     ParserData::instance().addImport(token, ParserDataImpl::File);
 
     // Build the file path:
-    std::string filePath = _parser._fileInfo.dirPath + token;
+    std::string filePath = parent()._fileInfo.dirPath + token;
     Logger::debug("importing file: " + filePath);
 
     auto ast = FileParser(filePath).buildAST(); // NB: don't use static method as this will clear loaded modules/files.
@@ -64,12 +64,12 @@ FileNode *ImportSubParser::parseFileImport()
 
 ModuleNode *ImportSubParser::parseLibraryImport()
 {
-    _parser.skip("<");
+    skip("<");
 
-    auto token = _parser._tokens.dequeue();
+    auto token = tokens().dequeue();
     assert(token.type() == Token::Variable);
 
-    _parser.skip(">");
+    skip(">");
 
     if (ParserData::instance().isImported(token, ParserDataImpl::Module))
     {

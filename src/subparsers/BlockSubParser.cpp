@@ -13,22 +13,21 @@
 #include "ProgramNode.hpp"
 
 BaseNode *BlockSubParser::parseBlock(bool extractSingleExpr)
-
 {
-    _parser.skip("{");
+    skip("{");
 
     std::vector<BaseNode *> parsedNodes;
 
-    while (!_parser._tokens.empty() && !_parser.equals(Token::Punctuation, "}"))
+    while (!tokens().empty() && !equals(Token::Punctuation, "}"))
     {
-        auto expression = _parser.parseExpression();
+        auto expression = parent().parseExpression();
 
         parsedNodes.push_back(expression);
 
-        _parser.skipSemicolonLineEndingIfRequired(*expression);
+        parent().skipSemicolonLineEndingIfRequired(*expression);
     }
 
-    _parser.skip("}");
+    skip("}");
 
     if (extractSingleExpr && parsedNodes.size() == 1)
     {

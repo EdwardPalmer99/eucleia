@@ -16,7 +16,7 @@
 FunctionCallNode *FunctionSubParser::parseFunctionCall(BaseNode *lastExpression)
 {
     auto functionName = std::move(lastExpression);
-    auto functionArgs = _parser.parseDelimited("(", ")", ",", std::bind(&FileParser::parseExpression, &_parser));
+    auto functionArgs = parent().parseDelimited("(", ")", ",", std::bind(&FileParser::parseExpression, &parent()));
 
     return new FunctionCallNode(functionName, functionArgs);
 }
@@ -24,11 +24,11 @@ FunctionCallNode *FunctionSubParser::parseFunctionCall(BaseNode *lastExpression)
 
 FunctionNode *FunctionSubParser::parseFunctionDefinition()
 {
-    _parser.skip("func");
+    skip("func");
 
-    auto funcName = _parser.parseVariableName();
-    auto funcArgs = _parser.parseDelimited("(", ")", ",", std::bind(&FileParser::parseVariableDefinition, &_parser)); // Func variables.
-    auto funcBody = _parser._blockParser.parseBlock();
+    auto funcName = parent().parseVariableName();
+    auto funcArgs = parent().parseDelimited("(", ")", ",", std::bind(&FileParser::parseVariableDefinition, &parent())); // Func variables.
+    auto funcBody = parent()._blockParser.parseBlock();
 
     return new FunctionNode(funcName, funcArgs, funcBody);
 }

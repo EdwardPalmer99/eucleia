@@ -19,7 +19,7 @@
 
 AddIntNode *DataTypeSubParser::parseInt()
 {
-    Token token = _parser._tokens.dequeue();
+    Token token = tokens().dequeue();
 
     long intValue = strtold(token.c_str(), NULL);
 
@@ -29,7 +29,7 @@ AddIntNode *DataTypeSubParser::parseInt()
 
 AddFloatNode *DataTypeSubParser::parseFloat()
 {
-    Token token = _parser._tokens.dequeue();
+    Token token = tokens().dequeue();
 
     double floatValue = strtof(token.c_str(), NULL);
 
@@ -39,7 +39,7 @@ AddFloatNode *DataTypeSubParser::parseFloat()
 
 AddBoolNode *DataTypeSubParser::parseBool()
 {
-    Token token = _parser._tokens.dequeue();
+    Token token = tokens().dequeue();
 
     bool state = (token == "true");
 
@@ -49,7 +49,7 @@ AddBoolNode *DataTypeSubParser::parseBool()
 
 AddStringNode *DataTypeSubParser::parseString()
 {
-    Token token = _parser._tokens.dequeue();
+    Token token = tokens().dequeue();
 
     return new AddStringNode(token);
 }
@@ -57,7 +57,7 @@ AddStringNode *DataTypeSubParser::parseString()
 
 AddArrayNode *DataTypeSubParser::parseArray()
 {
-    auto programNodes = _parser.parseDelimited("[", "]", ",", std::bind(&FileParser::parseExpression, &_parser));
+    auto programNodes = parent().parseDelimited("[", "]", ",", std::bind(&FileParser::parseExpression, &parent()));
 
     auto nodesVector = programNodes->releaseNodes();
 

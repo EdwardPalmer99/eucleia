@@ -21,10 +21,10 @@
  */
 DoWhileNode *LoopSubParser::parseDoWhile()
 {
-    _parser.skip("do");
-    BaseNode *body = _parser._blockParser.parseBlock();
-    _parser.skip("while");
-    BaseNode *condition = _parser.parseBrackets();
+    skip("do");
+    BaseNode *body = parent()._blockParser.parseBlock();
+    skip("while");
+    BaseNode *condition = parent().parseBrackets();
 
     return new DoWhileNode(condition, body);
 }
@@ -39,10 +39,10 @@ DoWhileNode *LoopSubParser::parseDoWhile()
  */
 WhileNode *LoopSubParser::parseWhile()
 {
-    _parser.skip("while");
+    skip("while");
 
-    BaseNode *condition = _parser.parseBrackets();
-    BaseNode *body = _parser._blockParser.parseBlock();
+    BaseNode *condition = parent().parseBrackets();
+    BaseNode *body = parent()._blockParser.parseBlock();
 
     return new WhileNode(condition, body);
 }
@@ -57,9 +57,9 @@ WhileNode *LoopSubParser::parseWhile()
  */
 ForLoopNode *LoopSubParser::parseFor()
 {
-    _parser.skip("for");
+    skip("for");
 
-    ProgramNode *brackets = _parser.parseDelimited("(", ")", ";", std::bind(&FileParser::parseExpression, &_parser));
+    ProgramNode *brackets = parent().parseDelimited("(", ")", ";", std::bind(&FileParser::parseExpression, &parent()));
 
     std::vector<BaseNode *> forLoopArgs = brackets->releaseNodes();
 
@@ -73,7 +73,7 @@ ForLoopNode *LoopSubParser::parseFor()
     auto start = forLoopArgs[0];
     auto condition = forLoopArgs[1];
     auto update = forLoopArgs[2];
-    auto body = _parser._blockParser.parseBlock();
+    auto body = parent()._blockParser.parseBlock();
 
     return new ForLoopNode(start, condition, update, body);
 }

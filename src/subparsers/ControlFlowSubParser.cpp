@@ -18,9 +18,9 @@
 
 // bool ControlFlowSubParser::canParse()
 // {
-//     if (_parser.equals("if") ||
-//         _parser.equals("break") ||
-//         _parser.equals("return"))
+//     if (equals("if") ||
+//         equals("break") ||
+//         equals("return"))
 //     {
 //         return true;
 //     }
@@ -33,11 +33,11 @@
 // {
 //     /* TODO: - inefficient because we're already called canParse() */
 //     /* Should store matching condition somewhere from canParse */
-//     if (_parser.equals("if"))
+//     if (equals("if"))
 //         return parseIf();
-//     else if (_parser.equals("break"))
+//     else if (equals("break"))
 //         return parseBreak();
-//     else if (_parser.equals("return"))
+//     else if (equals("return"))
 //         return parseReturn();
 
 //     ThrowException("failed to match parse conditions");
@@ -47,23 +47,23 @@
 IfNode *ControlFlowSubParser::parseIf()
 {
     // For now, only permit a single if statement.
-    _parser.skip("if");
+    skip("if");
 
-    auto condition = _parser.parseBrackets();
-    auto thenDo = _parser._blockParser.parseBlock();
+    auto condition = parent().parseBrackets();
+    auto thenDo = parent()._blockParser.parseBlock();
 
 
     BaseNode *elseDo{nullptr}; // Optional.
-    if (_parser._tokens.front() == "else")
+    if (tokens().front() == "else")
     {
-        _parser.skip("else");
+        skip("else");
 
         // Option 1: else if (condition) { [statement]; }
-        if (_parser._tokens.front() == "if")
+        if (tokens().front() == "if")
             elseDo = parseIf();
         // Option 2: else { [statement]; }
         else
-            elseDo = _parser._blockParser.parseBlock();
+            elseDo = parent()._blockParser.parseBlock();
     }
 
     return new IfNode(condition, thenDo, elseDo);
@@ -72,7 +72,7 @@ IfNode *ControlFlowSubParser::parseIf()
 
 BreakNode *ControlFlowSubParser::parseBreak()
 {
-    _parser.skip("break");
+    skip("break");
 
     return new BreakNode();
 }
@@ -80,13 +80,13 @@ BreakNode *ControlFlowSubParser::parseBreak()
 
 ReturnNode *ControlFlowSubParser::parseReturn()
 {
-    _parser.skip("return");
+    skip("return");
 
     BaseNode *returnedExpression{nullptr};
 
-    if (!_parser.equals(Token::Punctuation, ";"))
+    if (!equals(Token::Punctuation, ";"))
     {
-        returnedExpression = _parser.parseExpression();
+        returnedExpression = parent().parseExpression();
     }
 
     return new ReturnNode(returnedExpression);

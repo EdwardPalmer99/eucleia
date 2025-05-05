@@ -59,6 +59,7 @@ protected:
     void skipSemicolonLineEndingIfRequired(const BaseNode &node);
 
 private:
+    friend class SubParser;
     friend class LoopSubParser;
     friend class ControlFlowSubParser;
     friend class BlockSubParser;
@@ -93,4 +94,7 @@ private:
                           int leftPrecedence);
 
     FileComponentsRec _fileInfo;
+
+    /* Stores tokens for file */
+    Tokens _tokens;
 };

@@ -17,31 +17,31 @@
 
 NotNode *UnaryOperatorSubParser::parseNot()
 {
-    _parser.skip("!");
+    skip("!");
 
-    return new NotNode(_parser.parseAtomically());
+    return new NotNode(parent().parseAtomically());
 }
 
 
 NegationNode *UnaryOperatorSubParser::parseNegation()
 {
-    _parser.skip("-");
+    skip("-");
 
-    return new NegationNode(_parser.parseAtomically());
+    return new NegationNode(parent().parseAtomically());
 }
 
 
 PrefixIncrementNode *UnaryOperatorSubParser::parsePrefixIncrement()
 {
-    _parser.skip("++");
+    skip("++");
 
-    return new PrefixIncrementNode(_parser.parseAtomically());
+    return new PrefixIncrementNode(parent().parseAtomically());
 }
 
 
 PrefixDecrementNode *UnaryOperatorSubParser::parsePrefixDecrement()
 {
-    _parser.skip("--");
+    skip("--");
 
-    return new PrefixDecrementNode(_parser.parseAtomically());
+    return new PrefixDecrementNode(parent().parseAtomically());
 }

@@ -11,11 +11,6 @@
 #include "Exceptions.hpp"
 
 
-BaseParser::BaseParser(Tokens &&tokens) : _tokens(tokens)
-{
-}
-
-
 ProgramNode *BaseParser::parseDelimited(std::string start,
                                         std::string stop,
                                         std::string separator,
