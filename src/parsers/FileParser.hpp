@@ -13,6 +13,7 @@
 #include "EucleiaModules.hpp"
 #include "FileInfoRec.hpp"
 #include "FunctionSubParser.hpp"
+#include "ImportSubParser.hpp"
 #include "LoopSubParser.hpp"
 #include "Nodes.hpp"
 #include "Tokenizer.hpp"
@@ -51,10 +52,6 @@ protected:
 
     BaseNode *parseClass();
 
-    ModuleNode *parseLibraryImport();
-    FileNode *parseFileImport();
-    BaseNode *parseImport();
-
     ArrayAccessNode *parseArrayAccessor(BaseNode *lastExpression);
 
     bool isDataTypeKeyword();
@@ -70,6 +67,7 @@ private:
     friend class UnaryOperatorSubParser;
     friend class DataTypeSubParser;
     friend class FunctionSubParser;
+    friend class ImportSubParser;
 
     /* Subparsers */
     LoopSubParser _loopParser;
@@ -78,6 +76,7 @@ private:
     UnaryOperatorSubParser _unaryParser;
     DataTypeSubParser _dataTypeParser;
     FunctionSubParser _functionParser;
+    ImportSubParser _importParser;
 
     BaseNode *parseExpression();
     BaseNode *parseExpressionHelper();

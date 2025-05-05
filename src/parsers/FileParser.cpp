@@ -28,6 +28,7 @@ FileParser::FileParser(const std::string &fpath)
       _unaryParser(*this),
       _dataTypeParser(*this),
       _functionParser(*this),
+      _importParser(*this),
       _fileInfo(fpath)
 {
 }
@@ -52,83 +53,6 @@ FileNode *FileParser::buildAST()
 
     return new FileNode(nodes);
 }
-
-
-BaseNode *FileParser::parseImport()
-{
-    skip("import");
-
-    auto token = _tokens.front();
-
-    if (token.type() == Token::String)
-        return parseFileImport();
-    else if (equals(Token::Operator, "<"))
-        return parseLibraryImport();
-    else
-    {
-        unexpectedToken();
-        exit(0);
-    }
-}
-
-/// import "path_to_some_file"
-///
-/// Imports a file and its functions into this scope.
-FileNode *FileParser::parseFileImport()
-{
-    // File name token:
-    auto token = _tokens.dequeue();
-    assert(token.type() == Token::String);
-
-    // Check: has file already been imported somewhere? If it has then we don't
-    // want to import it a second time! (i.e. A imports B, C and B imports C. In
-    // this case, PARSE A set[A]--> PARSE B set[A,B]--> PARSE C set[A,B,C].
-    if (ParserData::instance().isImported(token, ParserDataImpl::File))
-    {
-        return new FileNode(); // Return "empty file".
-    }
-
-    ParserData::instance().addImport(token, ParserDataImpl::File);
-
-    // Build the file path:
-    std::string filePath = _fileInfo.dirPath + token;
-    Logger::debug("importing file: " + filePath);
-
-    auto ast = FileParser(filePath).buildAST(); // NB: don't use static method as this will clear loaded modules/files.
-    if (!ast)
-    {
-        ThrowException("failed to import file with path " + filePath);
-    }
-
-    return ast;
-}
-
-/// import <io> or import <math>
-///
-/// This is for importing functions from a stdlib as opposed to user-defined functions
-/// into this scope.
-
-ModuleNode *FileParser::parseLibraryImport()
-{
-    skip("<");
-
-    auto token = _tokens.dequeue();
-    assert(token.type() == Token::Variable);
-
-    skip(">");
-
-    if (ParserData::instance().isImported(token, ParserDataImpl::Module))
-    {
-        return new ModuleNode(); // Return "empty module".
-    }
-
-    ParserData::instance().addImport(token, ParserDataImpl::Module);
-
-    Logger::debug("importing library: " + token);
-
-    return EucleiaModuleLoader::getModuleInstance(token);
-}
-
 
 #pragma mark - *** Simple Types ***
 
@@ -510,7 +434,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
     else if (equals(Token::Keyword, "if"))
         return _controlFlowParser.parseIf();
     else if (equals(Token::Keyword, "import"))
-        return parseImport();
+        return _importParser.parseImport();
     else if (equals(Token::Keyword, "func")) // Functions should be defined as in C --> will need void type
         return _functionParser.parseFunctionDefinition();
     else if (equals(Token::Keyword, "struct"))
