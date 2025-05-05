@@ -17,6 +17,8 @@ class PrefixIncrementNode;
 class PrefixDecrementNode;
 
 // TODO: - have a ParseEnum Type that we use then just call "Parse" method with type or int
+// TODO: - Can have single type of UnaryNode and then just an enum with the type of that since
+// all do pretty-much the same operation
 
 class UnaryOperatorSubParser : public SubParser
 {

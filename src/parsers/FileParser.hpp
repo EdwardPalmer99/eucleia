@@ -9,6 +9,7 @@
 #include "BaseParser.hpp"
 #include "BlockSubParser.hpp"
 #include "ControlFlowSubParser.hpp"
+#include "DataTypeSubParser.hpp"
 #include "EucleiaModules.hpp"
 #include "FileInfoRec.hpp"
 #include "LoopSubParser.hpp"
@@ -16,6 +17,7 @@
 #include "Tokenizer.hpp"
 #include "UnaryOperatorSubParser.hpp"
 #include <unordered_set>
+
 
 /* Parser for a single file */
 class FileParser : public BaseParser
@@ -34,11 +36,6 @@ protected:
     /* TODO: - make these methods public */
 
     FileNode *buildAST();
-
-    AddBoolNode *parseBool();
-    AddStringNode *parseString();
-    AddIntNode *parseInt();
-    AddFloatNode *parseFloat();
 
     AddArrayNode *parseArray();
 
@@ -76,12 +73,14 @@ private:
     friend class ControlFlowSubParser;
     friend class BlockSubParser;
     friend class UnaryOperatorSubParser;
+    friend class DataTypeSubParser;
 
     /* Subparsers */
     LoopSubParser _loopParser;
     ControlFlowSubParser _controlFlowParser;
     BlockSubParser _blockParser;
     UnaryOperatorSubParser _unaryParser;
+    DataTypeSubParser _dataTypeParser;
 
     BaseNode *parseExpression();
     BaseNode *parseExpressionHelper();

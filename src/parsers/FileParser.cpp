@@ -22,10 +22,11 @@
 
 FileParser::FileParser(const std::string &fpath)
     : BaseParser(Tokenizer::build(fpath)),
-      _loopParser(*this),
+      _loopParser(*this), /* TODO: - initialize in a method */
       _controlFlowParser(*this),
       _blockParser(*this),
       _unaryParser(*this),
+      _dataTypeParser(*this),
       _fileInfo(fpath)
 {
 }
@@ -129,44 +130,6 @@ ModuleNode *FileParser::parseLibraryImport()
 
 
 #pragma mark - *** Simple Types ***
-
-
-AddIntNode *FileParser::parseInt()
-{
-    Token token = _tokens.dequeue();
-
-    long intValue = strtold(token.c_str(), NULL);
-
-    return new AddIntNode(intValue);
-}
-
-
-AddFloatNode *FileParser::parseFloat()
-{
-    Token token = _tokens.dequeue();
-
-    double floatValue = strtof(token.c_str(), NULL);
-
-    return new AddFloatNode(floatValue);
-}
-
-
-AddBoolNode *FileParser::parseBool()
-{
-    Token token = _tokens.dequeue();
-
-    bool state = (token == "true");
-
-    return new AddBoolNode(state);
-}
-
-
-AddStringNode *FileParser::parseString()
-{
-    Token token = _tokens.dequeue();
-
-    return new AddStringNode(token);
-}
 
 
 /// Variable definition:
@@ -579,7 +542,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
     else if (equals(Token::Punctuation, "{"))
         return _blockParser.parseBlock();
     else if (equals(Token::Keyword, "true") || equals(Token::Keyword, "false"))
-        return parseBool();
+        return _dataTypeParser.parseBool();
     else if (equals(Token::Keyword, "while"))
         return _loopParser.parseWhile();
     else if (equals(Token::Keyword, "do"))
@@ -622,11 +585,11 @@ BaseNode *FileParser::parseAtomicallyExpression()
         case Token::Variable:
             return parseVariableName();
         case Token::String:
-            return parseString();
+            return _dataTypeParser.parseString();
         case Token::Int:
-            return parseInt();
+            return _dataTypeParser.parseInt();
         case Token::Float:
-            return parseFloat();
+            return _dataTypeParser.parseFloat();
         default:
             unexpectedToken();
             exit(EXIT_FAILURE);
