@@ -21,10 +21,10 @@ public:
     explicit SubParser(FileParser &parser) : _parser(parser) {}
 
     /* Returns true if subparser can parse token */
-    virtual bool canParse() = 0;
+    // virtual bool canParse() = 0;
 
     /* Parse expression */
-    virtual BaseNode *parse() = 0;
+    // virtual BaseNode *parse() = 0;
 
 protected:
     /* Store a reference to the complete-parser */

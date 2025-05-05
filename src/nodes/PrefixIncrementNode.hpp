@@ -7,6 +7,7 @@
  *
  */
 
+#pragma once
 #include "BaseObject.hpp"
 #include "BaseUnaryOperatorNode.hpp"
 

@@ -10,7 +10,9 @@
 #pragma once
 #include "SubParser.hpp"
 
+class FileParser;
 class ProgramNode;
+class BaseNode;
 
 /*
  * This subparser is used for parsing a "block" of code:
@@ -26,8 +28,9 @@ class BlockSubParser : public SubParser
 public:
     explicit BlockSubParser(FileParser &parser) : SubParser(parser) {}
 
-    /* Option: return single expression OR always wrap-up in block */
-    ProgramNode *parseBlock();
-
-
-}; // TODO: - finish implementing
+    /*
+     * Parse a block. If extractSingleExpr is set to true then if we have a single expression within the block,
+     * we will return that
+     */
+    BaseNode *parseBlock(bool extractSingleExpr = true);
+};

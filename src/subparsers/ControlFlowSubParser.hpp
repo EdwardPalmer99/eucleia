@@ -21,10 +21,6 @@ class ControlFlowSubParser : public SubParser
 public:
     explicit ControlFlowSubParser(FileParser &parser) : SubParser(parser) {}
 
-    bool canParse() override;
-
-    BaseNode *parse() override;
-
     IfNode *parseIf();
 
     BreakNode *parseBreak();

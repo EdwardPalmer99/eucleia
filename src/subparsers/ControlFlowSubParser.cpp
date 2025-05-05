@@ -16,32 +16,32 @@
 #include "ReturnNode.hpp"
 
 
-bool ControlFlowSubParser::canParse()
-{
-    if (_parser.equals("if") ||
-        _parser.equals("break") ||
-        _parser.equals("return"))
-    {
-        return true;
-    }
+// bool ControlFlowSubParser::canParse()
+// {
+//     if (_parser.equals("if") ||
+//         _parser.equals("break") ||
+//         _parser.equals("return"))
+//     {
+//         return true;
+//     }
 
-    return true;
-}
+//     return true;
+// }
 
 
-BaseNode *ControlFlowSubParser::parse()
-{
-    /* TODO: - inefficient because we're already called canParse() */
-    /* Should store matching condition somewhere from canParse */
-    if (_parser.equals("if"))
-        return parseIf();
-    else if (_parser.equals("break"))
-        return parseBreak();
-    else if (_parser.equals("return"))
-        return parseReturn();
+// BaseNode *ControlFlowSubParser::parse()
+// {
+//     /* TODO: - inefficient because we're already called canParse() */
+//     /* Should store matching condition somewhere from canParse */
+//     if (_parser.equals("if"))
+//         return parseIf();
+//     else if (_parser.equals("break"))
+//         return parseBreak();
+//     else if (_parser.equals("return"))
+//         return parseReturn();
 
-    ThrowException("failed to match parse conditions");
-}
+//     ThrowException("failed to match parse conditions");
+// }
 
 
 IfNode *ControlFlowSubParser::parseIf()
@@ -50,7 +50,7 @@ IfNode *ControlFlowSubParser::parseIf()
     _parser.skip("if");
 
     auto condition = _parser.parseBrackets();
-    auto thenDo = _parser.parseProgram();
+    auto thenDo = _parser._blockParser.parseBlock();
 
 
     BaseNode *elseDo{nullptr}; // Optional.
@@ -63,7 +63,7 @@ IfNode *ControlFlowSubParser::parseIf()
             elseDo = parseIf();
         // Option 2: else { [statement]; }
         else
-            elseDo = _parser.parseProgram();
+            elseDo = _parser._blockParser.parseBlock();
     }
 
     return new IfNode(condition, thenDo, elseDo);

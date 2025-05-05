@@ -24,6 +24,8 @@ FileParser::FileParser(const std::string &fpath)
     : BaseParser(Tokenizer::build(fpath)),
       _loopParser(*this),
       _controlFlowParser(*this),
+      _blockParser(*this),
+      _unaryParser(*this),
       _fileInfo(fpath)
 {
 }
@@ -127,26 +129,6 @@ ModuleNode *FileParser::parseLibraryImport()
 
 
 #pragma mark - *** Simple Types ***
-
-/// parseProgram
-///
-/// Parses a sequence of expression. If there is only one expression within the
-/// brackets then we just return that.
-/// TODO: - add handling for no expressions within the brackets.
-BaseNode *FileParser::parseProgram()
-{
-    ProgramNode *program = parseProgramLines();
-
-    if (program->programNodes.size() == 1) // Return single node (more efficient).
-    {
-        BaseNode *first = program->releaseNodes()[0];
-        delete program;
-
-        return first;
-    }
-
-    return program;
-}
 
 
 AddIntNode *FileParser::parseInt()
@@ -254,7 +236,7 @@ FunctionNode *FileParser::parseFunctionDefinition()
 
     auto funcName = parseVariableName();
     auto funcArgs = parseDelimited("(", ")", ",", std::bind(&FileParser::parseVariableDefinition, this)); // Func variables.
-    auto funcBody = parseProgram();
+    auto funcBody = _blockParser.parseBlock();
 
     return new FunctionNode(funcName, funcArgs, funcBody);
 }
@@ -377,9 +359,8 @@ BaseNode *FileParser::parseClass()
             classParentTypeName = _tokens.dequeue();
         }
 
-        // NB: have to be a bit careful with parseProgram. If there is only
-        // one node, it will return that!
-        ProgramNode *classBody = parseProgramLines();
+        // NB: have to be a bit careful with parseBlock. If there is only one node, it will return that!
+        ProgramNode *classBody = static_cast<ProgramNode *>(_blockParser.parseBlock(false));
 
         std::vector<BaseNode *> nodes = classBody->releaseNodes();
 
@@ -596,7 +577,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
     else if (equals(Token::Punctuation, "["))
         return parseArray();
     else if (equals(Token::Punctuation, "{"))
-        return parseProgram();
+        return _blockParser.parseBlock();
     else if (equals(Token::Keyword, "true") || equals(Token::Keyword, "false"))
         return parseBool();
     else if (equals(Token::Keyword, "while"))
@@ -625,14 +606,14 @@ BaseNode *FileParser::parseAtomicallyExpression()
     // TODO: - split-up into separate method for unary operators.
     // Parse unary operators.
     else if (equals(Token::Operator, "!"))
-        return parseNot();
+        return _unaryParser.parseNot();
     // Parse prefix increment operator i.e.
     else if (equals(Token::Operator, "++"))
-        return parsePrefixIncrement();
+        return _unaryParser.parsePrefixIncrement();
     else if (equals(Token::Operator, "--"))
-        return parsePrefixDecrement();
+        return _unaryParser.parsePrefixDecrement();
     else if (equals(Token::Operator, "-"))
-        return parseNegation();
+        return _unaryParser.parseNegation();
 
     const Token &token = _tokens.front();
 
@@ -653,38 +634,6 @@ BaseNode *FileParser::parseAtomicallyExpression()
 }
 
 
-NotNode *FileParser::parseNot()
-{
-    skip("!");
-
-    return new NotNode(parseAtomically());
-}
-
-
-PrefixIncrementNode *FileParser::parsePrefixIncrement()
-{
-    skip("++");
-
-    return new PrefixIncrementNode(parseAtomically());
-}
-
-
-PrefixDecrementNode *FileParser::parsePrefixDecrement()
-{
-    skip("--");
-
-    return new PrefixDecrementNode(parseAtomically());
-}
-
-
-NegationNode *FileParser::parseNegation()
-{
-    skip("-");
-
-    return new NegationNode(parseAtomically());
-}
-
-
 void FileParser::skipSemicolonLineEndingIfRequired(const BaseNode &node)
 {
     bool doSkipPunctuation = (node.isNodeType<ModuleNode>() || // Bit ugly.
@@ -702,27 +651,6 @@ void FileParser::skipSemicolonLineEndingIfRequired(const BaseNode &node)
 
     if (!doSkipPunctuation)
         skip(";");
-}
-
-
-ProgramNode *FileParser::parseProgramLines()
-{
-    skip("{");
-
-    std::vector<BaseNode *> parsedNodes;
-
-    while (!_tokens.empty() && !equals(Token::Punctuation, "}"))
-    {
-        auto expression = parseExpression();
-
-        parsedNodes.push_back(expression);
-
-        skipSemicolonLineEndingIfRequired(*expression);
-    }
-
-    skip("}");
-
-    return new ProgramNode(std::move(parsedNodes));
 }
 
 

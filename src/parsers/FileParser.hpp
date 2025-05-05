@@ -7,12 +7,14 @@
 
 #pragma once
 #include "BaseParser.hpp"
+#include "BlockSubParser.hpp"
 #include "ControlFlowSubParser.hpp"
 #include "EucleiaModules.hpp"
 #include "FileInfoRec.hpp"
 #include "LoopSubParser.hpp"
 #include "Nodes.hpp"
 #include "Tokenizer.hpp"
+#include "UnaryOperatorSubParser.hpp"
 #include <unordered_set>
 
 /* Parser for a single file */
@@ -38,16 +40,6 @@ protected:
     AddIntNode *parseInt();
     AddFloatNode *parseFloat();
 
-    /*
-     * Parse a code block:
-     * {
-     *  [line1];
-     *  [line2];
-     * }
-     *
-     */
-    BaseNode *parseProgram();
-
     AddArrayNode *parseArray();
 
     BaseNode *parseVariableDefinition();
@@ -64,11 +56,6 @@ protected:
     BaseNode *parseStructAccessor(BaseNode *lastExpression);
 
     BaseNode *parseClass();
-
-    NotNode *parseNot();
-    PrefixIncrementNode *parsePrefixIncrement();
-    PrefixDecrementNode *parsePrefixDecrement();
-    NegationNode *parseNegation();
 
     ModuleNode *parseLibraryImport();
     FileNode *parseFileImport();
@@ -87,10 +74,14 @@ protected:
 private:
     friend class LoopSubParser;
     friend class ControlFlowSubParser;
+    friend class BlockSubParser;
+    friend class UnaryOperatorSubParser;
 
     /* Subparsers */
     LoopSubParser _loopParser;
     ControlFlowSubParser _controlFlowParser;
+    BlockSubParser _blockParser;
+    UnaryOperatorSubParser _unaryParser;
 
     BaseNode *parseExpression();
     BaseNode *parseExpressionHelper();
@@ -104,8 +95,6 @@ private:
     BaseNode *maybeFunctionCall(ParseMethod expression);
 
     BaseNode *maybeFunctionCallOrArrayAccess(ParseMethod expression);
-
-    ProgramNode *parseProgramLines();
 
     BaseNode *maybeBinary(BaseNode *leftExpression,
                           int leftPrecedence);
