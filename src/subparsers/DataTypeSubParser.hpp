@@ -15,6 +15,7 @@ class AddIntNode;
 class AddFloatNode;
 class AddBoolNode;
 class AddStringNode;
+class AddArrayNode;
 
 
 class DataTypeSubParser : public SubParser
@@ -26,7 +27,12 @@ public:
 
     AddFloatNode *parseFloat();
 
+    /* Parse: true/false */
     AddBoolNode *parseBool();
 
+    /* Parse: "..." */
     AddStringNode *parseString();
+
+    /* Parse: [1, 2, 3, 4] OR [true, false, true] OR [1.2, 2.4] OR ["hello, ", "world!"] */
+    AddArrayNode *parseArray();
 };

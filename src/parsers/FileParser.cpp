@@ -385,19 +385,6 @@ ArrayAccessNode *FileParser::parseArrayAccessor(BaseNode *lastExpression)
 }
 
 
-/// [1, 2, 3, 4] OR [true, false, true] OR [1.2, 2.4] OR ["hello, ", "world!"].
-AddArrayNode *FileParser::parseArray()
-{
-    auto programNodes = parseDelimited("[", "]", ",", std::bind(&FileParser::parseExpression, this));
-
-    auto nodesVector = programNodes->releaseNodes();
-
-    delete programNodes;
-
-    return new AddArrayNode(nodesVector);
-}
-
-
 #pragma mark - *** Assignment/Binary ***
 
 BaseNode *FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
@@ -509,7 +496,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
     if (equals(Token::Punctuation, "("))
         return parseBrackets();
     else if (equals(Token::Punctuation, "["))
-        return parseArray();
+        return _dataTypeParser.parseArray();
     else if (equals(Token::Punctuation, "{"))
         return _blockParser.parseBlock();
     else if (equals(Token::Keyword, "true") || equals(Token::Keyword, "false"))

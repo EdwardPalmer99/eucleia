@@ -8,6 +8,7 @@
  */
 
 #include "DataTypeSubParser.hpp"
+#include "AddArrayNode.hpp"
 #include "AddBoolNode.hpp"
 #include "AddFloatNode.hpp"
 #include "AddIntNode.hpp"
@@ -51,4 +52,16 @@ AddStringNode *DataTypeSubParser::parseString()
     Token token = _parser._tokens.dequeue();
 
     return new AddStringNode(token);
+}
+
+
+AddArrayNode *DataTypeSubParser::parseArray()
+{
+    auto programNodes = _parser.parseDelimited("[", "]", ",", std::bind(&FileParser::parseExpression, &_parser));
+
+    auto nodesVector = programNodes->releaseNodes();
+
+    delete programNodes;
+
+    return new AddArrayNode(nodesVector);
 }

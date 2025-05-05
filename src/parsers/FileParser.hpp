@@ -38,8 +38,6 @@ protected:
 
     FileNode *buildAST();
 
-    AddArrayNode *parseArray();
-
     BaseNode *parseVariableDefinition();
     BaseNode *parseVariableName();
 
@@ -62,8 +60,6 @@ protected:
     bool isDataTypeKeyword();
 
     void unexpectedToken();
-
-    FunctionCallNode *parseFunctionCall(BaseNode *lastExpression);
 
     void skipSemicolonLineEndingIfRequired(const BaseNode &node);
 
