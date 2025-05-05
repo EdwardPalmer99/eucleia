@@ -11,6 +11,7 @@
 #include "FileParser.hpp"
 #include "FunctionCallNode.hpp"
 #include "FunctionNode.hpp"
+#include "VariableSubParser.hpp"
 
 
 FunctionCallNode *FunctionSubParser::parseFunctionCall(BaseNode *lastExpression)
@@ -26,8 +27,8 @@ FunctionNode *FunctionSubParser::parseFunctionDefinition()
 {
     skip("func");
 
-    auto funcName = parent().parseVariableName();
-    auto funcArgs = parent().parseDelimited("(", ")", ",", std::bind(&FileParser::parseVariableDefinition, &parent())); // Func variables.
+    auto funcName = parent().subParsers().variable.parseVariableName();
+    auto funcArgs = parent().parseDelimited("(", ")", ",", std::bind(&VariableSubParser::parseVariableDefinition, &parent().subParsers().variable)); // Func variables.
     auto funcBody = parent().subParsers().block.parseBlock();
 
     return new FunctionNode(funcName, funcArgs, funcBody);

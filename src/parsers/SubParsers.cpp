@@ -16,6 +16,7 @@ SubParsers::SubParsers(FileParser &parser_)
       unary(parser_),
       dataType(parser_),
       function(parser_),
-      import(parser_)
+      import(parser_),
+      variable(parser_)
 {
 }

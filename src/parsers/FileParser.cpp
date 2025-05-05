@@ -49,63 +49,6 @@ FileNode *FileParser::buildAST()
     return new FileNode(nodes);
 }
 
-#pragma mark - *** Simple Types ***
-
-
-/// Variable definition:
-/// int/float/string/bool/array [VARIABLE_NAME]
-BaseNode *FileParser::parseVariableDefinition()
-{
-    Token typeToken = tokens().dequeue();
-    assert(typeToken.type() == Token::Keyword);
-
-    ObjectType typeOfObject = objectTypeForName(typeToken);
-
-    if (tokens().front() == "&") // Is reference.
-    {
-        return parseReference(typeOfObject);
-    }
-
-    Token nameToken = tokens().dequeue();
-    assert(nameToken.type() == Token::Variable);
-
-    return new AddVariableNode(nameToken, typeOfObject);
-}
-
-/**
- * Bind a reference to an already declared variable in this scope or a parent
- * scope. We do not allow any unbound references and once bound, references
- * cannot be unbound. By default, we pass by value to functions, but the use
- * of a reference as in other languages such as C++ avoids copying.
- *
- * Reference definition:
- * VARIABLE_TO_BIND_TO_TYPE & REFERENCE_NAME = VARIABLE_TO_BIND_TO;
- */
-BaseNode *FileParser::parseReference(ObjectType boundVariableType)
-{
-    skip("&");
-
-    Token referenceNameToken = tokens().dequeue();
-    assert(referenceNameToken.type() == Token::Variable);
-
-    skip("=");
-
-    Token boundVariableNameToken = tokens().dequeue();
-    assert(boundVariableNameToken.type() == Token::Variable);
-
-    return new AddReferenceVariableNode(referenceNameToken, boundVariableNameToken, boundVariableType);
-}
-
-
-/// [VARIABLE_NAME]
-BaseNode *FileParser::parseVariableName()
-{
-    Token token = tokens().dequeue();
-    assert(token.type() == Token::Variable);
-
-    return new LookupVariableNode(token);
-}
-
 
 #pragma mark - *** Struct ***
 
@@ -141,7 +84,7 @@ BaseNode *FileParser::parseStruct()
             structParentTypeName = tokens().dequeue();
         }
 
-        auto structMemberVars = parseDelimited("{", "}", ";", std::bind(&FileParser::parseVariableDefinition, this));
+        auto structMemberVars = parseDelimited("{", "}", ";", std::bind(&VariableSubParser::parseVariableDefinition, _subParsers.variable));
 
         std::vector<BaseNode *> nodes = structMemberVars->releaseNodes();
 
@@ -162,7 +105,7 @@ BaseNode *FileParser::parseStruct()
         // Case: "struct STRUCT_TYPE_NAME & STRUCT_REF_INSTANCE_NAME = STRUCT_VARIABLE_NAME_TO_BIND"
         if (equals(Token::Operator, "&"))
         {
-            return parseReference(ObjectType::Struct);
+            return _subParsers.variable.parseReference(ObjectType::Struct);
         }
 
         auto structInstanceName = tokens().dequeue();
@@ -240,7 +183,7 @@ BaseNode *FileParser::parseClass()
         // Case: "class CLASS_INSTANCE_NAME & CLASS_REF_NAME = CLASS_VARIABLE_NAME_TO_BIND"
         if (equals(Token::Operator, "&"))
         {
-            return parseReference(ObjectType::Class);
+            return _subParsers.variable.parseReference(ObjectType::Class);
         }
 
         auto classInstanceName = tokens().dequeue();
@@ -264,7 +207,7 @@ BaseNode *FileParser::parseStructAccessor(BaseNode *lastExpression)
 
     skip(".");
 
-    BaseNode *expression = maybeFunctionCall(std::bind(&FileParser::parseVariableName, this));
+    BaseNode *expression = maybeFunctionCall(std::bind(&VariableSubParser::parseVariableName, &_subParsers.variable));
 
     if (expression->isNodeType<FunctionCallNode>()) // Method.
     {
@@ -437,7 +380,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
     else if (equals(Token::Keyword, "class"))
         return parseClass();
     else if (isDataTypeKeyword())
-        return parseVariableDefinition();
+        return _subParsers.variable.parseVariableDefinition();
     else if (equals(Token::Keyword, "break"))
         return _subParsers.controlFlow.parseBreak();
     else if (equals(Token::Keyword, "return"))
@@ -460,7 +403,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
     switch (token.type())
     {
         case Token::Variable:
-            return parseVariableName();
+            return _subParsers.variable.parseVariableName();
         case Token::String:
             return _subParsers.dataType.parseString();
         case Token::Int:

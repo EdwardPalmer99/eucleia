@@ -42,11 +42,6 @@ protected:
 
     FileNode *buildAST();
 
-    BaseNode *parseVariableDefinition();
-    BaseNode *parseVariableName();
-
-    BaseNode *parseReference(ObjectType boundObjectType);
-
     /* Parse an expression in brackets, e.g. (a) */
     BaseNode *parseBrackets();
 
@@ -64,7 +59,7 @@ protected:
     [[nodiscard]] Tokens &tokens() final { return _tokens; }
 
 private:
-    friend class SubParser;
+    friend class SubParser; /* TODO: - remove once we've finished extracting stuff from class */
     friend class LoopSubParser;
     friend class ControlFlowSubParser;
     friend class BlockSubParser;

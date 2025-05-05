@@ -16,6 +16,7 @@
 #include "LoopSubParser.hpp"
 #include "SubParser.hpp"
 #include "UnaryOperatorSubParser.hpp"
+#include "VariableSubParser.hpp"
 
 
 struct SubParsers
@@ -30,4 +31,5 @@ struct SubParsers
     DataTypeSubParser dataType;
     FunctionSubParser function;
     ImportSubParser import;
+    VariableSubParser variable;
 };
