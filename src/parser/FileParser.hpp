@@ -79,8 +79,6 @@ protected:
     void skipSemicolonLineEndingIfRequired(const BaseNode &node);
 
 private:
-    using ParseMethod = std::function<BaseNode *(void)>;
-
     BaseNode *parseExpression();
     BaseNode *parseExpressionHelper();
     BaseNode *parseAtomically();
