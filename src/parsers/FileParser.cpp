@@ -49,185 +49,6 @@ FileNode *FileParser::buildAST()
     return new FileNode(nodes);
 }
 
-
-#pragma mark - *** Struct ***
-
-/**
- * Case 1: definition of a new structure:
- *
- * struct SomeStruct
- * {
- *      int i;
- *      float f;
- *      string s;
- * };
- *
- * Case 2: instance of structure.
- *
- * struct SomeStruct aStruct;
- */
-BaseNode *FileParser::parseStruct()
-{
-    skip("struct");
-
-    auto structTypeName = tokens().dequeue();
-
-    // Do we have a '{' token next? If we do then it is definition of new struct.
-    if (equals(Token::Punctuation, "{") || equals(Token::Keyword, "extends"))
-    {
-        std::string structParentTypeName = "";
-
-        if (equals(Token::Keyword, "extends"))
-        {
-            skip("extends");
-
-            structParentTypeName = tokens().dequeue();
-        }
-
-        auto structMemberVars = parseDelimited("{", "}", ";", std::bind(&VariableSubParser::parseVariableDefinition, _subParsers.variable));
-
-        std::vector<BaseNode *> nodes = structMemberVars->releaseNodes();
-
-        delete structMemberVars;
-
-        std::vector<AddVariableNode *> variableDefs;
-        variableDefs.reserve(nodes.size());
-
-        for (BaseNode *node : nodes)
-        {
-            variableDefs.push_back(reinterpret_cast<AddVariableNode *>(node));
-        }
-
-        return new StructDefinitionObject(structTypeName, structParentTypeName, variableDefs);
-    }
-    else
-    {
-        // Case: "struct STRUCT_TYPE_NAME & STRUCT_REF_INSTANCE_NAME = STRUCT_VARIABLE_NAME_TO_BIND"
-        if (equals(Token::Operator, "&"))
-        {
-            return _subParsers.variable.parseReference(ObjectType::Struct);
-        }
-
-        auto structInstanceName = tokens().dequeue();
-
-        return new StructObject(structTypeName, structInstanceName);
-    }
-}
-
-#pragma mark - *** Class ***
-
-/**
- * Case 1: definition of a new class:
- *
- * class SomeClass
- * {
- *      int i;
- *
- *      func someFunc(int a)
-        {
-            i = i + 1;
-            print("Hello");
-            return i;
-        }
- * };
- *
- *
- * Case 2: instance of the class:
- *
- * class SomeClass aClass;
- */
-BaseNode *FileParser::parseClass()
-{
-    skip("class");
-
-    auto classTypeName = tokens().dequeue();
-
-    // Do we have a '{' token next? If we do then it is definition of new struct.
-    if (equals(Token::Punctuation, "{") || equals(Token::Keyword, "extends"))
-    {
-        // *** Inheritance: class SomeClass(ParentClass) ***
-        std::string classParentTypeName = "";
-
-        if (equals(Token::Keyword, "extends"))
-        {
-            skip("extends");
-
-            classParentTypeName = tokens().dequeue();
-        }
-
-        // NB: have to be a bit careful with parseBlock. If there is only one node, it will return that!
-        ProgramNode *classBody = static_cast<ProgramNode *>(_subParsers.block.parseBlock(false));
-
-        std::vector<BaseNode *> nodes = classBody->releaseNodes();
-
-        delete classBody;
-
-        // Split-up into class variables and class methods:
-        std::vector<AddVariableNode *> classVariables;
-        std::vector<FunctionNode *> classMethods;
-
-        for (BaseNode *node : nodes)
-        {
-            if (node->isNodeType<AddVariableNode>())
-                classVariables.push_back(reinterpret_cast<AddVariableNode *>(node));
-            else if (node->isNodeType<FunctionNode>())
-                classMethods.push_back(reinterpret_cast<FunctionNode *>(node));
-            else
-                ThrowException("unexpected node type for class definition " + classTypeName);
-        }
-
-        return new ClassDefinitionObject(classTypeName, classParentTypeName, classVariables, classMethods);
-    }
-    else
-    {
-        // Case: "class CLASS_INSTANCE_NAME & CLASS_REF_NAME = CLASS_VARIABLE_NAME_TO_BIND"
-        if (equals(Token::Operator, "&"))
-        {
-            return _subParsers.variable.parseReference(ObjectType::Class);
-        }
-
-        auto classInstanceName = tokens().dequeue();
-
-        return new ClassObject(classTypeName, classInstanceName);
-    }
-
-    return nullptr;
-}
-
-
-/**
- * Example:
- *
- * aStruct.i --> returns int object stored in struct instance.
- */
-BaseNode *FileParser::parseStructAccessor(BaseNode *lastExpression)
-{
-    auto instanceName = lastExpression->castNode<LookupVariableNode>().name;
-    delete lastExpression; // NB: ugly.
-
-    skip(".");
-
-    BaseNode *expression = maybeFunctionCall(std::bind(&VariableSubParser::parseVariableName, &_subParsers.variable));
-
-    if (expression->isNodeType<FunctionCallNode>()) // Method.
-    {
-        // NB: do NOT delete expression as owned by ClassMethodCallNode.
-        return new ClassMethodCallNode(instanceName, reinterpret_cast<FunctionNode *>(expression));
-    }
-    else if (expression->isNodeType<LookupVariableNode>()) // Member variable.
-    {
-        std::string memberVariableName = expression->castNode<LookupVariableNode>().name;
-        delete expression; // No longer required. Ugly.
-
-        return new StructAccessNode(instanceName, memberVariableName);
-    }
-    else
-    {
-        ThrowException("unexpected node type while accessing struct/class member");
-    }
-}
-
-
 #pragma mark - *** Arrays ***
 
 ///
@@ -323,7 +144,7 @@ BaseNode *FileParser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
         else if (equals(Token::Punctuation, "["))
             return parseArrayAccessor(expr);
         else if (equals(Token::Punctuation, "."))
-            return parseStructAccessor(expr);
+            return _subParsers.classParser.parseStructAccessor(expr);
     }
 
     return expr;
@@ -376,9 +197,9 @@ BaseNode *FileParser::parseAtomicallyExpression()
     else if (equals(Token::Keyword, "func")) // Functions should be defined as in C --> will need void type
         return _subParsers.function.parseFunctionDefinition();
     else if (equals(Token::Keyword, "struct"))
-        return parseStruct();
+        return _subParsers.classParser.parseStruct();
     else if (equals(Token::Keyword, "class"))
-        return parseClass();
+        return _subParsers.classParser.parseClass();
     else if (isDataTypeKeyword())
         return _subParsers.variable.parseVariableDefinition();
     else if (equals(Token::Keyword, "break"))

@@ -45,11 +45,6 @@ protected:
     /* Parse an expression in brackets, e.g. (a) */
     BaseNode *parseBrackets();
 
-    BaseNode *parseStruct();
-    BaseNode *parseStructAccessor(BaseNode *lastExpression);
-
-    BaseNode *parseClass();
-
     ArrayAccessNode *parseArrayAccessor(BaseNode *lastExpression);
 
     bool isDataTypeKeyword();
@@ -67,6 +62,7 @@ private:
     friend class DataTypeSubParser;
     friend class FunctionSubParser;
     friend class ImportSubParser;
+    friend class ClassSubParser;
 
     /* Subparsers */
     SubParsers _subParsers;

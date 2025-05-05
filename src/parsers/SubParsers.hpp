@@ -9,6 +9,7 @@
 
 #pragma once
 #include "BlockSubParser.hpp"
+#include "ClassSubParser.hpp"
 #include "ControlFlowSubParser.hpp"
 #include "DataTypeSubParser.hpp"
 #include "FunctionSubParser.hpp"
@@ -17,7 +18,6 @@
 #include "SubParser.hpp"
 #include "UnaryOperatorSubParser.hpp"
 #include "VariableSubParser.hpp"
-
 
 struct SubParsers
 {
@@ -32,4 +32,5 @@ struct SubParsers
     FunctionSubParser function;
     ImportSubParser import;
     VariableSubParser variable;
+    ClassSubParser classParser;
 };

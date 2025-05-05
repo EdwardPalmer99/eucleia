@@ -17,6 +17,7 @@ SubParsers::SubParsers(FileParser &parser_)
       dataType(parser_),
       function(parser_),
       import(parser_),
-      variable(parser_)
+      variable(parser_),
+      classParser(parser_)
 {
 }
