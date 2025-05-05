@@ -13,6 +13,7 @@
 #include "AddFloatNode.hpp"
 #include "AddIntNode.hpp"
 #include "AddStringNode.hpp"
+#include "ArrayAccessNode.hpp"
 #include "FileParser.hpp"
 #include "Token.hpp"
 
@@ -64,4 +65,18 @@ AddArrayNode *DataTypeSubParser::parseArray()
     delete programNodes;
 
     return new AddArrayNode(nodesVector);
+}
+
+
+ArrayAccessNode *DataTypeSubParser::parseArrayAccessor(BaseNode *lastExpression)
+{
+    auto arrayName = static_cast<LookupVariableNode *>(lastExpression);
+
+    skip("[");
+
+    auto arrayIndex = static_cast<AddIntNode *>(parent().parseExpression());
+
+    skip("]");
+
+    return new ArrayAccessNode(arrayName, arrayIndex);
 }

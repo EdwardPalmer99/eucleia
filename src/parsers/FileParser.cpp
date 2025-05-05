@@ -49,24 +49,6 @@ FileNode *FileParser::buildAST()
     return new FileNode(nodes);
 }
 
-#pragma mark - *** Arrays ***
-
-///
-/// Expression: array_variable[0].
-///
-ArrayAccessNode *FileParser::parseArrayAccessor(BaseNode *lastExpression)
-{
-    auto arrayName = static_cast<LookupVariableNode *>(lastExpression);
-
-    skip("[");
-
-    auto arrayIndex = static_cast<AddIntNode *>(parseExpression());
-
-    skip("]");
-
-    return new ArrayAccessNode(arrayName, arrayIndex);
-}
-
 
 #pragma mark - *** Assignment/Binary ***
 
@@ -128,7 +110,7 @@ BaseNode *FileParser::maybeArrayAccess(ParseMethod expression)
 {
     auto expr = expression(); // Possible array variable name.
 
-    return equals(Token::Punctuation, "[") ? parseArrayAccessor(expr) : expr;
+    return equals(Token::Punctuation, "[") ? _subParsers.dataType.parseArrayAccessor(expr) : expr;
 }
 
 
@@ -142,7 +124,7 @@ BaseNode *FileParser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
         if (equals(Token::Punctuation, "("))
             return _subParsers.function.parseFunctionCall(expr);
         else if (equals(Token::Punctuation, "["))
-            return parseArrayAccessor(expr);
+            return _subParsers.dataType.parseArrayAccessor(expr);
         else if (equals(Token::Punctuation, "."))
             return _subParsers.classParser.parseStructAccessor(expr);
     }

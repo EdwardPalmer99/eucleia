@@ -16,6 +16,7 @@ class AddFloatNode;
 class AddBoolNode;
 class AddStringNode;
 class AddArrayNode;
+class ArrayAccessNode;
 
 
 class DataTypeSubParser : public SubParser
@@ -35,4 +36,7 @@ public:
 
     /* Parse: [1, 2, 3, 4] OR [true, false, true] OR [1.2, 2.4] OR ["hello, ", "world!"] */
     AddArrayNode *parseArray();
+
+    /* Parse: array_variable_name[index] */
+    ArrayAccessNode *parseArrayAccessor(BaseNode *lastExpression);
 };
