@@ -7,9 +7,10 @@
 
 #pragma once
 #include "BaseParser.hpp"
+#include "ControlFlowSubParser.hpp"
 #include "EucleiaModules.hpp"
 #include "FileInfoRec.hpp"
-#include "LoopParser.hpp"
+#include "LoopSubParser.hpp"
 #include "Nodes.hpp"
 #include "Tokenizer.hpp"
 #include <unordered_set>
@@ -54,7 +55,6 @@ protected:
 
     BaseNode *parseReference(ObjectType boundObjectType);
 
-    IfNode *parseIf();
     FunctionNode *parseFunctionDefinition();
 
     /* Parse an expression in brackets, e.g. (a) */
@@ -64,9 +64,6 @@ protected:
     BaseNode *parseStructAccessor(BaseNode *lastExpression);
 
     BaseNode *parseClass();
-
-    BreakNode *parseBreak();
-    ReturnNode *parseReturn();
 
     NotNode *parseNot();
     PrefixIncrementNode *parsePrefixIncrement();
@@ -89,9 +86,11 @@ protected:
 
 private:
     friend class LoopSubParser;
+    friend class ControlFlowSubParser;
 
     /* Subparsers */
     LoopSubParser _loopParser;
+    ControlFlowSubParser _controlFlowParser;
 
     BaseNode *parseExpression();
     BaseNode *parseExpressionHelper();

@@ -23,6 +23,7 @@
 FileParser::FileParser(const std::string &fpath)
     : BaseParser(Tokenizer::build(fpath)),
       _loopParser(*this),
+      _controlFlowParser(*this),
       _fileInfo(fpath)
 {
 }
@@ -238,57 +239,6 @@ BaseNode *FileParser::parseVariableName()
     assert(token.type() == Token::Variable);
 
     return new LookupVariableNode(token);
-}
-
-
-#pragma mark - *** Control Flow ***
-
-IfNode *FileParser::parseIf()
-{
-    // For now, only permit a single if statement.
-    skip("if");
-
-    auto condition = parseBrackets();
-    auto thenDo = parseProgram();
-
-
-    BaseNode *elseDo{nullptr}; // Optional.
-    if (_tokens.front() == "else")
-    {
-        skip("else");
-
-        // Option 1: else if (condition) { [statement]; }
-        if (_tokens.front() == "if")
-            elseDo = parseIf();
-        // Option 2: else { [statement]; }
-        else
-            elseDo = parseProgram();
-    }
-
-    return new IfNode(condition, thenDo, elseDo);
-}
-
-
-BreakNode *FileParser::parseBreak()
-{
-    skip("break");
-
-    return new BreakNode();
-}
-
-
-ReturnNode *FileParser::parseReturn()
-{
-    skip("return");
-
-    BaseNode *returnedExpression{nullptr};
-
-    if (!equals(Token::Punctuation, ";"))
-    {
-        returnedExpression = parseExpression();
-    }
-
-    return new ReturnNode(returnedExpression);
 }
 
 
@@ -656,7 +606,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
     else if (equals(Token::Keyword, "for"))
         return _loopParser.parseFor();
     else if (equals(Token::Keyword, "if"))
-        return parseIf();
+        return _controlFlowParser.parseIf();
     else if (equals(Token::Keyword, "import"))
         return parseImport();
     else if (equals(Token::Keyword, "func")) // Functions should be defined as in C --> will need void type
@@ -668,9 +618,9 @@ BaseNode *FileParser::parseAtomicallyExpression()
     else if (isDataTypeKeyword())
         return parseVariableDefinition();
     else if (equals(Token::Keyword, "break"))
-        return parseBreak();
+        return _controlFlowParser.parseBreak();
     else if (equals(Token::Keyword, "return"))
-        return parseReturn();
+        return _controlFlowParser.parseReturn();
 
     // TODO: - split-up into separate method for unary operators.
     // Parse unary operators.

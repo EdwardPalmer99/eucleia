@@ -20,6 +20,11 @@ class LoopSubParser : public SubParser
 public:
     explicit LoopSubParser(FileParser &parser) : SubParser(parser) {}
 
+    /* TODO: - */
+    bool canParse() override { ThrowException("not implemented"); }
+
+    BaseNode *parse() override { ThrowException("not implemented"); }
+
     DoWhileNode *parseDoWhile();
 
     WhileNode *parseWhile();
