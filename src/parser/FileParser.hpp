@@ -9,6 +9,7 @@
 #include "BaseParser.hpp"
 #include "EucleiaModules.hpp"
 #include "FileInfoRec.hpp"
+#include "LoopParser.hpp"
 #include "Nodes.hpp"
 #include "Tokenizer.hpp"
 #include <unordered_set>
@@ -27,6 +28,8 @@ protected:
     FileParser() = delete;
     FileParser(const std::string &fpath);
 
+    /* TODO: - make these methods public */
+
     FileNode *buildAST();
 
     AddBoolNode *parseBool();
@@ -34,9 +37,16 @@ protected:
     AddIntNode *parseInt();
     AddFloatNode *parseFloat();
 
-    BaseNode *parseBrackets();
-
+    /*
+     * Parse a code block:
+     * {
+     *  [line1];
+     *  [line2];
+     * }
+     *
+     */
     BaseNode *parseProgram();
+
     AddArrayNode *parseArray();
 
     BaseNode *parseVariableDefinition();
@@ -44,12 +54,11 @@ protected:
 
     BaseNode *parseReference(ObjectType boundObjectType);
 
-    DoWhileNode *parseDoWhile();
-    WhileNode *parseWhile();
-    ForLoopNode *parseFor();
-
     IfNode *parseIf();
     FunctionNode *parseFunctionDefinition();
+
+    /* Parse an expression in brackets, e.g. (a) */
+    BaseNode *parseBrackets();
 
     BaseNode *parseStruct();
     BaseNode *parseStructAccessor(BaseNode *lastExpression);
@@ -79,6 +88,11 @@ protected:
     void skipSemicolonLineEndingIfRequired(const BaseNode &node);
 
 private:
+    friend class LoopParser;
+
+    /* Subparsers */
+    LoopParser _loopParser;
+
     BaseNode *parseExpression();
     BaseNode *parseExpressionHelper();
     BaseNode *parseAtomically();

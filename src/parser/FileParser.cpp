@@ -22,6 +22,7 @@
 
 FileParser::FileParser(const std::string &fpath)
     : BaseParser(Tokenizer::build(fpath)),
+      _loopParser(*this),
       _fileInfo(fpath)
 {
 }
@@ -185,18 +186,6 @@ AddStringNode *FileParser::parseString()
 }
 
 
-BaseNode *FileParser::parseBrackets()
-{
-    skip("(");
-
-    BaseNode *expression = parseExpression();
-
-    skip(")");
-
-    return expression;
-}
-
-
 /// Variable definition:
 /// int/float/string/bool/array [VARIABLE_NAME]
 BaseNode *FileParser::parseVariableDefinition()
@@ -249,67 +238,6 @@ BaseNode *FileParser::parseVariableName()
     assert(token.type() == Token::Variable);
 
     return new LookupVariableNode(token);
-}
-
-
-#pragma mark - *** Loops ***
-
-/// do
-/// {
-/// 	[code]
-/// }
-/// while ([condition is true]);
-DoWhileNode *FileParser::parseDoWhile()
-{
-    skip("do");
-    BaseNode *body = parseProgram();
-    skip("while");
-    BaseNode *condition = parseBrackets();
-
-    return new DoWhileNode(condition, body);
-}
-
-
-/// while ([condition is true])
-/// {
-/// 	[code]
-/// }
-WhileNode *FileParser::parseWhile()
-{
-    skip("while");
-
-    BaseNode *condition = parseBrackets();
-    BaseNode *body = parseProgram();
-
-    return new WhileNode(condition, body);
-}
-
-
-/// for ([start]; [condition]; [update])
-/// {
-/// 	[code]
-/// }
-ForLoopNode *FileParser::parseFor()
-{
-    skip("for");
-
-    ProgramNode *brackets = parseDelimited("(", ")", ";", std::bind(&FileParser::parseExpression, this));
-
-    std::vector<BaseNode *> forLoopArgs = brackets->releaseNodes();
-
-    delete brackets;
-
-    if (forLoopArgs.size() != 3)
-    {
-        ThrowException("expected 3 arguments for for-loop but got " + std::to_string(brackets->programNodes.size()));
-    }
-
-    auto start = forLoopArgs[0];
-    auto condition = forLoopArgs[1];
-    auto update = forLoopArgs[2];
-    auto body = parseProgram();
-
-    return new ForLoopNode(start, condition, update, body);
 }
 
 
@@ -722,11 +650,11 @@ BaseNode *FileParser::parseAtomicallyExpression()
     else if (equals(Token::Keyword, "true") || equals(Token::Keyword, "false"))
         return parseBool();
     else if (equals(Token::Keyword, "while"))
-        return parseWhile();
+        return _loopParser.parseWhile();
     else if (equals(Token::Keyword, "do"))
-        return parseDoWhile();
+        return _loopParser.parseDoWhile();
     else if (equals(Token::Keyword, "for"))
-        return parseFor();
+        return _loopParser.parseFor();
     else if (equals(Token::Keyword, "if"))
         return parseIf();
     else if (equals(Token::Keyword, "import"))
@@ -893,4 +821,16 @@ void FileParser::unexpectedToken()
     const Token &token = _tokens.front();
 
     ThrowException("unexpected token: " + token);
+}
+
+
+BaseNode *FileParser::parseBrackets()
+{
+    skip("(");
+
+    BaseNode *expression = parseExpression();
+
+    skip(")");
+
+    return expression;
 }
