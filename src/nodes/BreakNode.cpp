@@ -14,4 +14,3 @@ BaseObject *BreakNode::evaluate(Scope &scope)
 {
     jumpToBreakJumpPoint();
     return nullptr;
-}

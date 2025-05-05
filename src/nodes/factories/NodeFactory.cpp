@@ -10,6 +10,7 @@
 #include "NodeFactory.hpp"
 #include "BaseObject.hpp"
 #include "ExpressionScope.hpp"
+#include "IntObject.hpp"
 #include "JumpPoints.hpp"
 #include "Objects.hpp"
 
@@ -99,5 +100,72 @@ AnyNode createForLoopNode(AnyNode start, AnyNode condition, AnyNode update, AnyN
     });
 }
 } // namespace Loops
+
+
+namespace Instances
+{
+AnyNode createBoolNode(bool state)
+{
+    return AnyNode([state](Scope &scope) -> BaseObject *
+    {
+        return scope.createManagedObject<BoolObject>(state);
+    });
+}
+
+AnyNode createIntNode(long value)
+{
+    return AnyNode([value](Scope &scope) -> BaseObject *
+    {
+        return scope.createManagedObject<IntObject>(value);
+    });
+}
+
+AnyNode createFloatNode(double value)
+{
+    return AnyNode([value](Scope &scope) -> BaseObject *
+    {
+        return scope.createManagedObject<FloatObject>(value);
+    });
+}
+
+AnyNode createStringNode(std::string value)
+{
+    return AnyNode([value = std::move(value)](Scope &scope) -> BaseObject *
+    {
+        return scope.createManagedObject<StringObject>(value);
+    });
+}
+
+} // namespace Instances
+
+namespace Utilities
+{
+AnyNode createBreakNode()
+{
+    return AnyNode([](Scope &scope) -> BaseObject *
+    {
+        jumpToBreakJumpPoint();
+        return nullptr;
+    });
+}
+
+} // namespace Utilities
+
+
+namespace Operators
+{
+
+AnyNode createNotNode(AnyNode body)
+{
+    return AnyNode([body = std::move(body)](Scope &scope) -> BaseObject *
+    {
+        BoolObject *result = body.operator()<BoolObject>(scope);
+
+        return scope.createManagedObject<BoolObject>(!(*result));
+    });
+}
+
+
+} // namespace Operators
 
 } // namespace NodeFactory

@@ -24,13 +24,13 @@ public:
 
     inline void setEvaluate(Evaluate &&evaluate_);
 
-    [[nodiscard]] BaseObject *operator()(Scope &scope_) const
+    BaseObject *operator()(Scope &scope_) const
     {
         return doEvaluate(scope_);
     }
 
-    template <typename TObject>
-    [[nodiscard]] TObject *operator()(Scope &scope_) const
+    template <class TObject>
+    TObject *operator()(Scope &scope_) const
     {
         return static_cast<TObject *>(doEvaluate(scope_));
     }
