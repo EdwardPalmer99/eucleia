@@ -473,8 +473,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
         case Token::Float:
             return _dataTypeParser.parseFloat();
         default:
-            unexpectedToken();
-            exit(EXIT_FAILURE);
+            ThrowException("unexpected token: " + token);
     }
 }
 
@@ -536,14 +535,6 @@ int FileParser::getPrecedence()
 bool FileParser::isDataTypeKeyword()
 {
     return (Grammar::instance().isDataType(_tokens.front()));
-}
-
-
-void FileParser::unexpectedToken()
-{
-    const Token &token = _tokens.front();
-
-    ThrowException("unexpected token: " + token);
 }
 
 

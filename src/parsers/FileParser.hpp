@@ -56,8 +56,6 @@ protected:
 
     bool isDataTypeKeyword();
 
-    void unexpectedToken();
-
     void skipSemicolonLineEndingIfRequired(const BaseNode &node);
 
 private:
