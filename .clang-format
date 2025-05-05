@@ -45,4 +45,5 @@ SpacesInContainerLiterals: true
 SpacesInCStyleCastParentheses: false
 SpacesInParentheses: false
 TabWidth: 8
+LambdaBodyIndentation: OuterScope
 UseTab: Never
