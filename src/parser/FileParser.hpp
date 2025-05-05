@@ -6,6 +6,7 @@
 //
 
 #pragma once
+#include "BaseParser.hpp"
 #include "EucleiaModules.hpp"
 #include "FileInfoRec.hpp"
 #include "Nodes.hpp"
@@ -13,7 +14,7 @@
 #include <unordered_set>
 
 /* Parser for a single file */
-class FileParser
+class FileParser : public BaseParser
 {
 public:
     [[nodiscard]] static inline FileNode *parse(std::string filePath)
@@ -69,15 +70,7 @@ protected:
 
     ArrayAccessNode *parseArrayAccessor(BaseNode *lastExpression);
 
-    bool isKeyword(const std::string &keyword);
-    bool isPunctuation(const std::string &punctuation);
-    bool isOperator(const std::string &operatorName);
-
     bool isDataTypeKeyword();
-
-    void skipKeyword(const std::string &keyword);
-    void skipPunctuation(const std::string &punctuation);
-    void skipOperator(const std::string &operatorName);
 
     void unexpectedToken();
 
@@ -101,16 +94,10 @@ private:
 
     BaseNode *maybeFunctionCallOrArrayAccess(ParseMethod expression);
 
-    ProgramNode *parseDelimited(std::string start,
-                                std::string stop,
-                                std::string separator,
-                                ParseMethod expression);
-
     ProgramNode *parseProgramLines();
 
     BaseNode *maybeBinary(BaseNode *leftExpression,
                           int leftPrecedence);
 
-    Tokens _tokens;
     FileComponentsRec _fileInfo;
 };

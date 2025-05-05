@@ -21,7 +21,7 @@
 
 
 FileParser::FileParser(const std::string &fpath)
-    : _tokens(Tokenizer::build(fpath)),
+    : BaseParser(Tokenizer::build(fpath)),
       _fileInfo(fpath)
 {
 }
@@ -50,13 +50,13 @@ FileNode *FileParser::buildAST()
 
 BaseNode *FileParser::parseImport()
 {
-    skipKeyword("import");
+    skip("import");
 
     auto token = _tokens.front();
 
     if (token.type() == Token::String)
         return parseFileImport();
-    else if (isOperator("<"))
+    else if (equals(Token::Operator, "<"))
         return parseLibraryImport();
     else
     {
@@ -104,12 +104,12 @@ FileNode *FileParser::parseFileImport()
 
 ModuleNode *FileParser::parseLibraryImport()
 {
-    skipOperator("<");
+    skip("<");
 
     auto token = _tokens.dequeue();
     assert(token.type() == Token::Variable);
 
-    skipOperator(">");
+    skip(">");
 
     if (ParserData::instance().isImported(token, ParserDataImpl::Module))
     {
@@ -187,11 +187,11 @@ AddStringNode *FileParser::parseString()
 
 BaseNode *FileParser::parseBrackets()
 {
-    skipPunctuation("(");
+    skip("(");
 
     BaseNode *expression = parseExpression();
 
-    skipPunctuation(")");
+    skip(")");
 
     return expression;
 }
@@ -228,12 +228,12 @@ BaseNode *FileParser::parseVariableDefinition()
  */
 BaseNode *FileParser::parseReference(ObjectType boundVariableType)
 {
-    skipOperator("&");
+    skip("&");
 
     Token referenceNameToken = _tokens.dequeue();
     assert(referenceNameToken.type() == Token::Variable);
 
-    skipOperator("=");
+    skip("=");
 
     Token boundVariableNameToken = _tokens.dequeue();
     assert(boundVariableNameToken.type() == Token::Variable);
@@ -261,9 +261,9 @@ BaseNode *FileParser::parseVariableName()
 /// while ([condition is true]);
 DoWhileNode *FileParser::parseDoWhile()
 {
-    skipKeyword("do");
+    skip("do");
     BaseNode *body = parseProgram();
-    skipKeyword("while");
+    skip("while");
     BaseNode *condition = parseBrackets();
 
     return new DoWhileNode(condition, body);
@@ -276,7 +276,7 @@ DoWhileNode *FileParser::parseDoWhile()
 /// }
 WhileNode *FileParser::parseWhile()
 {
-    skipKeyword("while");
+    skip("while");
 
     BaseNode *condition = parseBrackets();
     BaseNode *body = parseProgram();
@@ -291,7 +291,7 @@ WhileNode *FileParser::parseWhile()
 /// }
 ForLoopNode *FileParser::parseFor()
 {
-    skipKeyword("for");
+    skip("for");
 
     ProgramNode *brackets = parseDelimited("(", ")", ";", std::bind(&FileParser::parseExpression, this));
 
@@ -318,7 +318,7 @@ ForLoopNode *FileParser::parseFor()
 IfNode *FileParser::parseIf()
 {
     // For now, only permit a single if statement.
-    skipKeyword("if");
+    skip("if");
 
     auto condition = parseBrackets();
     auto thenDo = parseProgram();
@@ -327,7 +327,7 @@ IfNode *FileParser::parseIf()
     BaseNode *elseDo{nullptr}; // Optional.
     if (_tokens.front() == "else")
     {
-        skipKeyword("else");
+        skip("else");
 
         // Option 1: else if (condition) { [statement]; }
         if (_tokens.front() == "if")
@@ -343,7 +343,7 @@ IfNode *FileParser::parseIf()
 
 BreakNode *FileParser::parseBreak()
 {
-    skipKeyword("break");
+    skip("break");
 
     return new BreakNode();
 }
@@ -351,11 +351,11 @@ BreakNode *FileParser::parseBreak()
 
 ReturnNode *FileParser::parseReturn()
 {
-    skipKeyword("return");
+    skip("return");
 
     BaseNode *returnedExpression{nullptr};
 
-    if (!isPunctuation(";"))
+    if (!equals(Token::Punctuation, ";"))
     {
         returnedExpression = parseExpression();
     }
@@ -372,7 +372,7 @@ ReturnNode *FileParser::parseReturn()
 /// }
 FunctionNode *FileParser::parseFunctionDefinition()
 {
-    skipKeyword("func");
+    skip("func");
 
     auto funcName = parseVariableName();
     auto funcArgs = parseDelimited("(", ")", ",", std::bind(&FileParser::parseVariableDefinition, this)); // Func variables.
@@ -412,18 +412,18 @@ FunctionCallNode *FileParser::parseFunctionCall(BaseNode *lastExpression)
  */
 BaseNode *FileParser::parseStruct()
 {
-    skipKeyword("struct");
+    skip("struct");
 
     auto structTypeName = _tokens.dequeue();
 
     // Do we have a '{' token next? If we do then it is definition of new struct.
-    if (isPunctuation("{") || isKeyword("extends"))
+    if (equals(Token::Punctuation, "{") || equals(Token::Keyword, "extends"))
     {
         std::string structParentTypeName = "";
 
-        if (isKeyword("extends"))
+        if (equals(Token::Keyword, "extends"))
         {
-            skipKeyword("extends");
+            skip("extends");
 
             structParentTypeName = _tokens.dequeue();
         }
@@ -447,7 +447,7 @@ BaseNode *FileParser::parseStruct()
     else
     {
         // Case: "struct STRUCT_TYPE_NAME & STRUCT_REF_INSTANCE_NAME = STRUCT_VARIABLE_NAME_TO_BIND"
-        if (isOperator("&"))
+        if (equals(Token::Operator, "&"))
         {
             return parseReference(ObjectType::Struct);
         }
@@ -482,19 +482,19 @@ BaseNode *FileParser::parseStruct()
  */
 BaseNode *FileParser::parseClass()
 {
-    skipKeyword("class");
+    skip("class");
 
     auto classTypeName = _tokens.dequeue();
 
     // Do we have a '{' token next? If we do then it is definition of new struct.
-    if (isPunctuation("{") || isKeyword("extends"))
+    if (equals(Token::Punctuation, "{") || equals(Token::Keyword, "extends"))
     {
         // *** Inheritance: class SomeClass(ParentClass) ***
         std::string classParentTypeName = "";
 
-        if (isKeyword("extends"))
+        if (equals(Token::Keyword, "extends"))
         {
-            skipKeyword("extends");
+            skip("extends");
 
             classParentTypeName = _tokens.dequeue();
         }
@@ -526,7 +526,7 @@ BaseNode *FileParser::parseClass()
     else
     {
         // Case: "class CLASS_INSTANCE_NAME & CLASS_REF_NAME = CLASS_VARIABLE_NAME_TO_BIND"
-        if (isOperator("&"))
+        if (equals(Token::Operator, "&"))
         {
             return parseReference(ObjectType::Class);
         }
@@ -550,7 +550,7 @@ BaseNode *FileParser::parseStructAccessor(BaseNode *lastExpression)
     auto instanceName = lastExpression->castNode<LookupVariableNode>().name;
     delete lastExpression; // NB: ugly.
 
-    skipPunctuation(".");
+    skip(".");
 
     BaseNode *expression = maybeFunctionCall(std::bind(&FileParser::parseVariableName, this));
 
@@ -582,11 +582,11 @@ ArrayAccessNode *FileParser::parseArrayAccessor(BaseNode *lastExpression)
 {
     auto arrayName = static_cast<LookupVariableNode *>(lastExpression);
 
-    skipPunctuation("[");
+    skip("[");
 
     auto arrayIndex = static_cast<AddIntNode *>(parseExpression());
 
-    skipPunctuation("]");
+    skip("]");
 
     return new ArrayAccessNode(arrayName, arrayIndex);
 }
@@ -657,7 +657,7 @@ BaseNode *FileParser::maybeFunctionCall(ParseMethod expression)
 {
     auto expr = expression(); // Possible function name.
 
-    return isPunctuation("(") ? parseFunctionCall(expr) : expr;
+    return equals(Token::Punctuation, "(") ? parseFunctionCall(expr) : expr;
 }
 
 
@@ -665,7 +665,7 @@ BaseNode *FileParser::maybeArrayAccess(ParseMethod expression)
 {
     auto expr = expression(); // Possible array variable name.
 
-    return isPunctuation("[") ? parseArrayAccessor(expr) : expr;
+    return equals(Token::Punctuation, "[") ? parseArrayAccessor(expr) : expr;
 }
 
 
@@ -676,11 +676,11 @@ BaseNode *FileParser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
 
     if (!_tokens.empty())
     {
-        if (isPunctuation("("))
+        if (equals(Token::Punctuation, "("))
             return parseFunctionCall(expr);
-        else if (isPunctuation("["))
+        else if (equals(Token::Punctuation, "["))
             return parseArrayAccessor(expr);
-        else if (isPunctuation("."))
+        else if (equals(Token::Punctuation, "."))
             return parseStructAccessor(expr);
     }
 
@@ -713,47 +713,47 @@ BaseNode *FileParser::parseAtomically()
 BaseNode *FileParser::parseAtomicallyExpression()
 {
     // TODO: - breakup
-    if (isPunctuation("("))
+    if (equals(Token::Punctuation, "("))
         return parseBrackets();
-    else if (isPunctuation("["))
+    else if (equals(Token::Punctuation, "["))
         return parseArray();
-    else if (isPunctuation("{"))
+    else if (equals(Token::Punctuation, "{"))
         return parseProgram();
-    else if (isKeyword("true") || isKeyword("false"))
+    else if (equals(Token::Keyword, "true") || equals(Token::Keyword, "false"))
         return parseBool();
-    else if (isKeyword("while"))
+    else if (equals(Token::Keyword, "while"))
         return parseWhile();
-    else if (isKeyword("do"))
+    else if (equals(Token::Keyword, "do"))
         return parseDoWhile();
-    else if (isKeyword("for"))
+    else if (equals(Token::Keyword, "for"))
         return parseFor();
-    else if (isKeyword("if"))
+    else if (equals(Token::Keyword, "if"))
         return parseIf();
-    else if (isKeyword("import"))
+    else if (equals(Token::Keyword, "import"))
         return parseImport();
-    else if (isKeyword("func")) // Functions should be defined as in C --> will need void type
+    else if (equals(Token::Keyword, "func")) // Functions should be defined as in C --> will need void type
         return parseFunctionDefinition();
-    else if (isKeyword("struct"))
+    else if (equals(Token::Keyword, "struct"))
         return parseStruct();
-    else if (isKeyword("class"))
+    else if (equals(Token::Keyword, "class"))
         return parseClass();
     else if (isDataTypeKeyword())
         return parseVariableDefinition();
-    else if (isKeyword("break"))
+    else if (equals(Token::Keyword, "break"))
         return parseBreak();
-    else if (isKeyword("return"))
+    else if (equals(Token::Keyword, "return"))
         return parseReturn();
 
     // TODO: - split-up into separate method for unary operators.
     // Parse unary operators.
-    else if (isOperator("!"))
+    else if (equals(Token::Operator, "!"))
         return parseNot();
     // Parse prefix increment operator i.e.
-    else if (isOperator("++"))
+    else if (equals(Token::Operator, "++"))
         return parsePrefixIncrement();
-    else if (isOperator("--"))
+    else if (equals(Token::Operator, "--"))
         return parsePrefixDecrement();
-    else if (isOperator("-"))
+    else if (equals(Token::Operator, "-"))
         return parseNegation();
 
     const Token &token = _tokens.front();
@@ -777,7 +777,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
 
 NotNode *FileParser::parseNot()
 {
-    skipOperator("!");
+    skip("!");
 
     return new NotNode(parseAtomically());
 }
@@ -785,7 +785,7 @@ NotNode *FileParser::parseNot()
 
 PrefixIncrementNode *FileParser::parsePrefixIncrement()
 {
-    skipOperator("++");
+    skip("++");
 
     return new PrefixIncrementNode(parseAtomically());
 }
@@ -793,7 +793,7 @@ PrefixIncrementNode *FileParser::parsePrefixIncrement()
 
 PrefixDecrementNode *FileParser::parsePrefixDecrement()
 {
-    skipOperator("--");
+    skip("--");
 
     return new PrefixDecrementNode(parseAtomically());
 }
@@ -801,59 +801,9 @@ PrefixDecrementNode *FileParser::parsePrefixDecrement()
 
 NegationNode *FileParser::parseNegation()
 {
-    skipOperator("-");
+    skip("-");
 
     return new NegationNode(parseAtomically());
-}
-
-
-/// parseDelimited
-///
-/// Parse everything between start using the provided parser and ignoring the separators.
-///
-/// **Example:**
-///
-/// function aFunction(a, b, c) --> start = (, stop = ), separator = ,
-///
-ProgramNode *FileParser::parseDelimited(std::string start,
-                                        std::string stop,
-                                        std::string separator,
-                                        ParseMethod parseMethod)
-{
-    skipPunctuation(start); // Skip the punctuation at the start.
-
-    std::vector<BaseNode *> parsedNodes;
-
-    // Iterate while we still have tokens and haven't reached stop token.
-    bool firstCall = true;
-
-    while (!_tokens.empty() && !isPunctuation(stop))
-    {
-        // Skip separator on each subsequent call (i.e. a, b)
-        if (firstCall)
-        {
-            firstCall = false;
-        }
-        else
-        {
-            skipPunctuation(separator);
-        }
-
-        if (isPunctuation(stop))
-        {
-            break;
-        }
-
-        // Parse the token.
-        parsedNodes.push_back(parseMethod());
-    }
-
-    skipPunctuation(stop); // Skip the punctuation at the end.
-
-    // Resize to fit.
-    parsedNodes.shrink_to_fit();
-
-    return new ProgramNode(parsedNodes);
 }
 
 
@@ -873,17 +823,17 @@ void FileParser::skipSemicolonLineEndingIfRequired(const BaseNode &node)
                               node.isNodeType<FunctionNode>());
 
     if (!doSkipPunctuation)
-        skipPunctuation(";");
+        skip(";");
 }
 
 
 ProgramNode *FileParser::parseProgramLines()
 {
-    skipPunctuation("{");
+    skip("{");
 
     std::vector<BaseNode *> parsedNodes;
 
-    while (!_tokens.empty() && !isPunctuation("}"))
+    while (!_tokens.empty() && !equals(Token::Punctuation, "}"))
     {
         auto expression = parseExpression();
 
@@ -892,7 +842,7 @@ ProgramNode *FileParser::parseProgramLines()
         skipSemicolonLineEndingIfRequired(*expression);
     }
 
-    skipPunctuation("}");
+    skip("}");
 
     return new ProgramNode(std::move(parsedNodes));
 }
@@ -932,74 +882,11 @@ int FileParser::getPrecedence()
 }
 
 
-#pragma mark - *** is... ***
-
-bool FileParser::isKeyword(const std::string &keyword)
-{
-    const Token &token = _tokens.front();
-
-    return (token.type() == Token::Keyword && token == keyword);
-}
-
-
 bool FileParser::isDataTypeKeyword()
 {
     return (Grammar::instance().isDataType(_tokens.front()));
 }
 
-
-bool FileParser::isPunctuation(const std::string &punctuation)
-{
-    const Token &token = _tokens.front();
-
-    return (token.type() == Token::Punctuation && token == punctuation);
-}
-
-
-bool FileParser::isOperator(const std::string &operatorName)
-{
-    const Token &token = _tokens.front();
-
-    return (token.type() == Token::Operator && token == operatorName);
-}
-
-
-#pragma mark - *** skip... ***
-
-void FileParser::skipKeyword(const std::string &name)
-{
-    if (!isKeyword(name))
-    {
-        ThrowException("expected keyword " + name + " while parsing " + _fileInfo.nameWithExt);
-    }
-
-    _tokens.pop();
-}
-
-
-void FileParser::skipPunctuation(const std::string &name)
-{
-    if (!isPunctuation(name))
-    {
-        ThrowException("expected punctuation " + name + " while parsing " + _fileInfo.nameWithExt);
-    }
-
-    _tokens.pop();
-}
-
-
-void FileParser::skipOperator(const std::string &name)
-{
-    if (!isOperator(name))
-    {
-        ThrowException("expected operator " + name + " while parsing " + _fileInfo.nameWithExt);
-    }
-
-    _tokens.pop();
-}
-
-
-#pragma mark -
 
 void FileParser::unexpectedToken()
 {
