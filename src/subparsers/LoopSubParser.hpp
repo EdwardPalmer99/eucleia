@@ -15,14 +15,55 @@
 #include "Tokenizer.hpp"
 #include "WhileNode.hpp"
 
+
 class LoopSubParser : public SubParser
 {
 public:
     explicit LoopSubParser(FileParser &parser) : SubParser(parser) {}
 
-    DoWhileNode *parseDoWhile();
+    enum Type
+    {
+        DoWhile,
+        While,
+        For
+    };
 
-    WhileNode *parseWhile();
+    /**
+     * @brief Parses a loop construct based on the specified type.
+     *
+     * @param type The type of loop to parse (DoWhile, While, or For).
+     * @return AnyNode The parsed representation of the loop.
+     */
+    AnyNode parse(int type, AnyNodeOptional lastExpr) override;
 
-    ForLoopNode *parseFor();
+protected:
+    /**
+     * @brief Parses a do-while loop.
+     *
+     * Example:
+     * do {
+     *     [code]
+     * } while ([condition]);
+     */
+    AnyNode parseDoWhile();
+
+    /**
+     * @brief Parses a while loop.
+     *
+     * Example:
+     * while ([condition]) {
+     *     [code]
+     * }
+     */
+    AnyNode parseWhile();
+
+    /**
+     * @brief Parses a for loop.
+     *
+     * Example:
+     * for ([initialization]; [condition]; [increment]) {
+     *     [code]
+     * }
+     */
+    AnyNode parseFor();
 };

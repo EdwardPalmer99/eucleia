@@ -10,6 +10,7 @@
 #include "Exceptions.hpp"
 #include "Grammar.hpp"
 #include "Logger.hpp"
+#include "NodeFactory.hpp"
 #include "ObjectTypes.hpp"
 #include "ParserData.hpp"
 #include "TestModule.hpp"
@@ -20,7 +21,7 @@
 #include <stdlib.h>
 
 
-FileNode *FileParser::parseMainFile(const std::string entryPointPath_)
+AnyNode FileParser::parseMainFile(const std::string entryPointPath_)
 {
     /* Clear data for all imports */
     ParserData::instance().clearImports();
@@ -38,7 +39,7 @@ FileParser::FileParser(const std::string &fpath)
 }
 
 
-FileNode *FileParser::buildAST()
+AnyNode FileParser::buildAST()
 {
     std::vector<BaseNode *> nodes;
 
@@ -57,7 +58,7 @@ FileNode *FileParser::buildAST()
 }
 
 
-BaseNode *FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
+AnyNode FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
 {
     // Special case: tokens empty. Cannot be binary expression.
     if (tokens().empty())
@@ -81,7 +82,7 @@ BaseNode *FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
             auto rightExpression = maybeBinary(parseAtomically(), nextPrecedence);
 
             // Create binary or assign node.
-            BaseNode *node{nullptr};
+            BaseNode *node{nullptr}; // TODO: - remove
 
             bool isAssignNode = (next == "=");
 
@@ -101,7 +102,7 @@ BaseNode *FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
 }
 
 
-BaseNode *FileParser::maybeFunctionCall(ParseMethod expression)
+AnyNode FileParser::maybeFunctionCall(ParseMethod expression)
 {
     auto expr = expression(); // Possible function name.
 
@@ -109,7 +110,7 @@ BaseNode *FileParser::maybeFunctionCall(ParseMethod expression)
 }
 
 
-BaseNode *FileParser::maybeArrayAccess(ParseMethod expression)
+AnyNode FileParser::maybeArrayAccess(ParseMethod expression)
 {
     auto expr = expression(); // Possible array variable name.
 
@@ -117,15 +118,14 @@ BaseNode *FileParser::maybeArrayAccess(ParseMethod expression)
 }
 
 
-BaseNode *FileParser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
+AnyNode FileParser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
 {
     auto expr = expression();
-    assert(expr != nullptr);
 
     if (!tokens().empty())
     {
         if (equals(Token::Punctuation, "("))
-            return _subParsers.function.parseFunctionCall(expr);
+            return _subParsers.function.parse(FunctionSubParser::FunctionCall, expr);
         else if (equals(Token::Punctuation, "["))
             return _subParsers.dataType.parseArrayAccessor(expr);
         else if (equals(Token::Punctuation, "."))
@@ -136,19 +136,19 @@ BaseNode *FileParser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
 }
 
 
-BaseNode *FileParser::parseExpression()
+AnyNode FileParser::parseExpression()
 {
     return maybeFunctionCallOrArrayAccess(std::bind(&FileParser::parseExpressionHelper, this));
 }
 
 
-BaseNode *FileParser::parseExpressionHelper()
+AnyNode FileParser::parseExpressionHelper()
 {
     return maybeBinary(parseAtomically(), 0);
 }
 
 
-BaseNode *FileParser::parseAtomically()
+AnyNode FileParser::parseAtomically()
 {
     // 1. Call parseAtomicallyExpression() -> This may be the function name.
     // 2. Do we have a next token which is "("? --> YES --> FUNCTION CALL!
@@ -156,29 +156,29 @@ BaseNode *FileParser::parseAtomically()
 }
 
 
-BaseNode *FileParser::parseAtomicallyExpression()
+AnyNode FileParser::parseAtomicallyExpression()
 {
     // TODO: - breakup
     if (equals(Token::Punctuation, "("))
         return parseBrackets();
     else if (equals(Token::Punctuation, "["))
-        return _subParsers.dataType.parseArray();
+        return _subParsers.dataType.parse(DataTypeSubParser::Array);
     else if (equals(Token::Punctuation, "{"))
         return _subParsers.block.parseBlock();
     else if (equals(Token::Keyword, "true") || equals(Token::Keyword, "false"))
-        return _subParsers.dataType.parseBool();
+        return _subParsers.dataType.parse(DataTypeSubParser::Bool);
     else if (equals(Token::Keyword, "while"))
-        return _subParsers.loop.parseWhile();
+        return _subParsers.loop.parse(LoopSubParser::While);
     else if (equals(Token::Keyword, "do"))
-        return _subParsers.loop.parseDoWhile();
+        return _subParsers.loop.parse(LoopSubParser::DoWhile);
     else if (equals(Token::Keyword, "for"))
-        return _subParsers.loop.parseFor();
+        return _subParsers.loop.parse(LoopSubParser::For);
     else if (equals(Token::Keyword, "if"))
         return _subParsers.controlFlow.parseIf();
     else if (equals(Token::Keyword, "import"))
         return _subParsers.import.parseImport();
     else if (equals(Token::Keyword, "func")) // Functions should be defined as in C --> will need void type
-        return _subParsers.function.parseFunctionDefinition();
+        return _subParsers.function.parse(FunctionSubParser::Function);
     else if (equals(Token::Keyword, "struct"))
         return _subParsers.classParser.parseStruct();
     else if (equals(Token::Keyword, "class"))
@@ -209,11 +209,11 @@ BaseNode *FileParser::parseAtomicallyExpression()
         case Token::Variable:
             return _subParsers.variable.parseVariableName();
         case Token::String:
-            return _subParsers.dataType.parseString();
+            return _subParsers.dataType.parse(DataTypeSubParser::String);
         case Token::Int:
-            return _subParsers.dataType.parseInt();
+            return _subParsers.dataType.parse(DataTypeSubParser::Int);
         case Token::Float:
-            return _subParsers.dataType.parseFloat();
+            return _subParsers.dataType.parse(DataTypeSubParser::Float);
         default:
             ThrowException("unexpected token: " + token);
     }
@@ -274,11 +274,11 @@ int FileParser::getPrecedence()
 }
 
 
-BaseNode *FileParser::parseBrackets()
+AnyNode FileParser::parseBrackets()
 {
     skip("(");
 
-    BaseNode *expression = parseExpression();
+    AnyNode expression = parseExpression();
 
     skip(")");
 

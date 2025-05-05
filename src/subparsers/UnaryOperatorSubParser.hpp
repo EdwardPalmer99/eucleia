@@ -25,15 +25,26 @@ class UnaryOperatorSubParser : public SubParser
 public:
     explicit UnaryOperatorSubParser(FileParser &parser) : SubParser(parser) {}
 
+    enum Type
+    {
+        Not,
+        Negation,
+        PrefixIncrement,
+        PrefixDecrement
+    };
+
+    AnyNode parse(int type, AnyNodeOptional lastExpr) override;
+
+protected:
     /* Parse ![value] */
-    NotNode *parseNot();
+    AnyNode parseNot();
 
     /* Parse -[value] */
-    NegationNode *parseNegation();
+    AnyNode parseNegation();
 
     /* Parse ++[value] */
-    PrefixIncrementNode *parsePrefixIncrement();
+    AnyNode parsePrefixIncrement();
 
     /* Parse --[value] */
-    PrefixDecrementNode *parsePrefixDecrement();
+    AnyNode parsePrefixDecrement();
 };

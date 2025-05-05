@@ -11,14 +11,14 @@
 #include "Exceptions.hpp"
 
 
-ProgramNode *BaseParser::parseDelimited(std::string start,
-                                        std::string stop,
-                                        std::string separator,
-                                        ParseMethod parseMethod)
+AnyNodeVector BaseParser::parseDelimited(std::string start,
+                                         std::string stop,
+                                         std::string separator,
+                                         ParseMethod parseMethod)
 {
     skip(start); // Skip the punctuation at the start.
 
-    std::vector<BaseNode *> parsedNodes;
+    AnyNodeVector parsedNodes;
 
     // Iterate while we still have tokens and haven't reached stop token.
     bool firstCall = true;
@@ -49,7 +49,7 @@ ProgramNode *BaseParser::parseDelimited(std::string start,
     // Resize to fit.
     parsedNodes.shrink_to_fit();
 
-    return new ProgramNode(parsedNodes);
+    return parsedNodes;
 }
 
 

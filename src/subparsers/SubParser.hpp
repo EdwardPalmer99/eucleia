@@ -8,7 +8,9 @@
  */
 
 #pragma once
+#include "AnyNode.hpp"
 #include "BaseParser.hpp"
+#include <optional>
 
 class BaseNode;
 class FileParser;
@@ -20,6 +22,8 @@ class SubParser : public BaseParser
 {
 public:
     explicit SubParser(FileParser &parser_);
+
+    virtual AnyNode parse(int type, std::optional<AnyNode> lastExpr = std::nullopt) = 0;
 
     /* Returns reference to parent parser for file */
     [[nodiscard]] FileParser &parent() { return _parser; }

@@ -8,17 +8,20 @@
  */
 
 #pragma once
+#include "AnyNode.hpp"
 #include "BaseNode.hpp"
 #include "ProgramNode.hpp"
 #include "Tokenizer.hpp"
 #include <functional>
 #include <string>
+#include <vector>
 
 class BaseParser
 {
 protected:
     /* Aliases */
-    using ParseMethod = std::function<BaseNode *(void)>;
+    using ParseMethod = std::function<AnyNode(void)>;
+    using AnyNodeVector = std::vector<AnyNode>;
 
     /* Protect to avoid direct initializaiton */
     BaseParser() = default;
@@ -27,10 +30,10 @@ protected:
     [[nodiscard]] virtual Tokens &tokens() = 0;
 
     /* Parse a delimited expression, e.g. (a, b, c) where start='(', stop=')', separator=',' */
-    ProgramNode *parseDelimited(std::string start,
-                                std::string stop,
-                                std::string separator,
-                                ParseMethod expression);
+    AnyNodeVector parseDelimited(std::string start,
+                                 std::string stop,
+                                 std::string separator,
+                                 ParseMethod expression);
 
     /* Returns true if front token matches expected value */
     bool equals(const std::string &value);

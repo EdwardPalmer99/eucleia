@@ -8,66 +8,57 @@
  */
 
 #include "LoopSubParser.hpp"
+#include "Exceptions.hpp"
 #include "FileParser.hpp"
+#include "NodeFactory.hpp"
 
 
-/*
- * Parse:
- * do
- * {
- * 	[code]
- * }
- * while ([condition is true]);
- */
-DoWhileNode *LoopSubParser::parseDoWhile()
+AnyNode LoopSubParser::parse(int type, AnyNodeOptional lastExpr)
+{
+    switch (type)
+    {
+        case DoWhile:
+            return parseDoWhile();
+        case While:
+            return parseWhile();
+        case For:
+            return parseFor();
+        default:
+            ThrowException("Invalid parse type: " + std::to_string(type));
+    }
+}
+
+
+AnyNode LoopSubParser::parseDoWhile()
 {
     skip("do");
-    BaseNode *body = parent().subParsers().block.parseBlock();
+    AnyNode body = parent().subParsers().block.parseBlock();
     skip("while");
-    BaseNode *condition = parent().parseBrackets();
+    AnyNode condition = parent().parseBrackets();
 
-    return new DoWhileNode(condition, body);
+    return NodeFactory::Loops::createDoWhileNode(std::move(body), std::move(condition));
 }
 
 
-/*
- * Parse:
- * while ([condition is true])
- * {
- * 	[code]
- * }
- */
-WhileNode *LoopSubParser::parseWhile()
+AnyNode LoopSubParser::parseWhile()
 {
     skip("while");
 
-    BaseNode *condition = parent().parseBrackets();
-    BaseNode *body = parent().subParsers().block.parseBlock();
+    AnyNode condition = parent().parseBrackets();
+    AnyNode body = parent().subParsers().block.parseBlock();
 
-    return new WhileNode(condition, body);
+    return NodeFactory::Loops::createWhileNode(std::move(body), std::move(condition));
 }
 
 
-/*
- * Parse:
- * for ([start]; [condition]; [update])
- * {
- * 	[code]
- * }
- */
-ForLoopNode *LoopSubParser::parseFor()
+AnyNode LoopSubParser::parseFor()
 {
     skip("for");
 
-    ProgramNode *brackets = parseDelimited("(", ")", ";", std::bind(&FileParser::parseExpression, &parent()));
-
-    std::vector<BaseNode *> forLoopArgs = brackets->releaseNodes();
-
-    delete brackets;
-
+    AnyNodeVector forLoopArgs = parseDelimited("(", ")", ";", std::bind(&FileParser::parseExpression, &parent()));
     if (forLoopArgs.size() != 3)
     {
-        ThrowException("expected 3 arguments for for-loop but got " + std::to_string(brackets->programNodes.size()));
+        ThrowException("expected 3 arguments for for-loop but got " + std::to_string(forLoopArgs.size()));
     }
 
     auto start = forLoopArgs[0];
@@ -75,5 +66,5 @@ ForLoopNode *LoopSubParser::parseFor()
     auto update = forLoopArgs[2];
     auto body = parent().subParsers().block.parseBlock();
 
-    return new ForLoopNode(start, condition, update, body);
+    return NodeFactory::Loops::createForLoopNode(std::move(start), std::move(condition), std::move(update), std::move(body));
 }

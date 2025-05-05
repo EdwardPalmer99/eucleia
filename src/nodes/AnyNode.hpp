@@ -11,6 +11,8 @@
 #include "BaseObject.hpp"
 #include "Scope.hpp"
 #include <functional>
+#include <optional>
+#include <vector>
 
 class AnyNode
 {
@@ -41,6 +43,10 @@ protected:
 private:
     Evaluate _evaluate{nullptr};
 };
+
+/* Helpful */
+using AnyNodeVector = std::vector<AnyNode>;
+using AnyNodeOptional = std::optional<AnyNode>;
 
 
 void AnyNode::setEvaluate(Evaluate &&evaluate_)

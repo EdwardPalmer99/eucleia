@@ -6,6 +6,7 @@
 //
 
 #pragma once
+#include "AnyNode.hpp"
 #include "BaseParser.hpp"
 #include "BlockSubParser.hpp"
 #include "ControlFlowSubParser.hpp"
@@ -45,30 +46,31 @@ public:
     FileNode *buildAST();
 
     /* Parse generic expression */
-    BaseNode *parseExpression();
+    AnyNode parseExpression();
 
     /* Parse non-binary expression */
-    BaseNode *parseAtomically();
+    AnyNode parseAtomically();
 
     /* Parse an expression in brackets, e.g. (a) */
-    BaseNode *parseBrackets();
+    AnyNode parseBrackets();
 
-    BaseNode *maybeFunctionCall(ParseMethod expression);
+    AnyNode maybeFunctionCall(ParseMethod expression);
 
     void skipSemicolonLineEndingIfRequired(const BaseNode &node);
 
 protected:
-    BaseNode *parseExpressionHelper();
+    AnyNode parseExpressionHelper();
 
-    BaseNode *parseAtomicallyExpression();
+    AnyNode parseAtomicallyExpression();
 
     int getPrecedence(void);
 
-    BaseNode *maybeArrayAccess(ParseMethod expression);
+    AnyNode maybeArrayAccess(ParseMethod expression);
 
-    BaseNode *maybeFunctionCallOrArrayAccess(ParseMethod expression);
+    AnyNode maybeFunctionCallOrArrayAccess(ParseMethod expression);
 
-    BaseNode *maybeBinary(BaseNode *leftExpression, int leftPrecedence);
+    // TODO: - add handling for null left expression (can use optional for this)
+    AnyNode maybeBinary(BaseNode *leftExpression, int leftPrecedence);
 
     /* Convert a path 'a/b/c/fileName.ek' --> 'a/b/c/' */
     std::string buildParentDirPath(const std::string &filePath_) const;

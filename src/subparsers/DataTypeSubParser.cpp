@@ -15,56 +15,75 @@
 #include "AddStringNode.hpp"
 #include "ArrayAccessNode.hpp"
 #include "FileParser.hpp"
+#include "NodeFactory.hpp"
 #include "Token.hpp"
 
 
-AddIntNode *DataTypeSubParser::parseInt()
+AnyNode DataTypeSubParser::parse(int type)
+{
+    switch (type)
+    {
+        case Bool:
+            return parseBool();
+        case Int:
+            return parseInt();
+        case Float:
+            return parseFloat();
+        case String:
+            return parseString();
+        case Array:
+            return parseArray();
+        case ArrayAccessor:
+            ThrowException("not handled yet");
+        default:
+            ThrowException("invalid parse type");
+    }
+}
+
+
+AnyNode DataTypeSubParser::parseInt()
 {
     Token token = tokens().dequeue();
 
     long intValue = strtold(token.c_str(), NULL);
 
-    return new AddIntNode(intValue);
+    return NodeFactory::Instances::createIntNode(intValue);
 }
 
 
-AddFloatNode *DataTypeSubParser::parseFloat()
+AnyNode DataTypeSubParser::parseFloat()
 {
     Token token = tokens().dequeue();
 
     double floatValue = strtof(token.c_str(), NULL);
 
-    return new AddFloatNode(floatValue);
+    return NodeFactory::Instances::createFloatNode(floatValue);
 }
 
 
-AddBoolNode *DataTypeSubParser::parseBool()
+AnyNode DataTypeSubParser::parseBool()
 {
     Token token = tokens().dequeue();
 
     bool state = (token == "true");
 
-    return new AddBoolNode(state);
+    return NodeFactory::Instances::createBoolNode(state);
 }
 
 
-AddStringNode *DataTypeSubParser::parseString()
+AnyNode DataTypeSubParser::parseString()
 {
     Token token = tokens().dequeue();
 
-    return new AddStringNode(token);
+    return NodeFactory::Instances::createStringNode(token);
 }
 
 
-AddArrayNode *DataTypeSubParser::parseArray()
+AnyNode DataTypeSubParser::parseArray()
 {
     auto programNodes = parseDelimited("[", "]", ",", std::bind(&FileParser::parseExpression, &parent()));
 
-    auto nodesVector = programNodes->releaseNodes();
-
-    delete programNodes;
-
-    return new AddArrayNode(nodesVector);
+    return NodeFactory::Instances::createArrayNode(std::move(programNodes));
 }
 
 

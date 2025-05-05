@@ -35,6 +35,9 @@ AnyNode createIntNode(long value);
 AnyNode createFloatNode(double value);
 
 AnyNode createStringNode(std::string value);
+
+AnyNode createArrayNode(std::vector<AnyNode> elementNodes);
+
 } // namespace Instances
 
 
@@ -52,7 +55,18 @@ namespace Operators
 /* Unary not operator (e.g. !true --> false) */
 AnyNode createNotNode(AnyNode body);
 
+/* Unary - operator (.e.g. -1) */
+AnyNode createNegationNode(AnyNode body);
+
 
 } // namespace Operators
+
+namespace Functions
+{
+AnyNode createFunctionCallNode(AnyNode funcName, AnyNode funcArgs);
+
+AnyNode createFunctionNode(AnyNode funcName, AnyNode funcArgs, AnyNode funcBody);
+
+} // namespace Functions
 
 } // namespace NodeFactory

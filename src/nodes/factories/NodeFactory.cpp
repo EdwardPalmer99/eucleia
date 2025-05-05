@@ -20,6 +20,7 @@ namespace NodeFactory
 
 namespace Loops
 {
+
 AnyNode createWhileNode(AnyNode condition, AnyNode body)
 {
     return AnyNode([condition = std::move(condition), body = std::move(body)](Scope &scope) -> BaseObject *
@@ -136,6 +137,26 @@ AnyNode createStringNode(std::string value)
     });
 }
 
+AnyNode createArrayNode(std::vector<AnyNode> elementNodes)
+{
+    return AnyNode([elementNodes = std::move(elementNodes)](Scope &scope) -> BaseObject *
+    {
+        /* Evaluate each element node */
+        std::vector<BaseObject *> elementObjects;
+        elementObjects.reserve(elementNodes.size());
+
+        Scope tmpScope(scope); /* TODO - evaluate in local scope because will be copied in ArrayObject */
+
+        for (const auto &elementNode : elementNodes)
+        {
+            elementObjects.push_back(elementNode(tmpScope));
+        }
+
+        /* TODO: - really inefficient! Redesign */
+        return scope.createManagedObject<ArrayObject>(std::move(elementObjects));
+    });
+}
+
 } // namespace Instances
 
 namespace Utilities
@@ -165,6 +186,20 @@ AnyNode createNotNode(AnyNode body)
     });
 }
 
+AnyNode createNegationNode(AnyNode body)
+{
+    return AnyNode([body = std::move(body)](Scope &scope) -> BaseObject *
+    {
+        BaseObject *result = body(scope);
+
+        if (result->isObjectType<IntObject>())
+            return scope.createManagedObject<IntObject>(-result->castObject<IntObject>());
+        else if (result->isObjectType<FloatObject>())
+            return scope.createManagedObject<FloatObject>(-result->castObject<FloatObject>());
+
+        ThrowException("invalid object type");
+    });
+}
 
 } // namespace Operators
 
