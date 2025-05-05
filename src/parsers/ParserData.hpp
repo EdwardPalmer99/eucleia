@@ -27,6 +27,9 @@ public:
         File = 1    /* import "some-user-file" */
     };
 
+    /* Clear all imports */
+    void clearImports();
+
     /* Records file as being imported (thread-safe) */
     void addImport(std::string importName, Type importType);
 
@@ -35,10 +38,6 @@ public:
 
 protected:
     friend class SingletonT<ParserDataImpl>;
-    friend class RootParser; /* Allow access to clearImports() */
-
-    /* Clear all imports (protect to restrict access) */
-    void clearImports();
 
     /* Prevent direct initialization */
     ParserDataImpl() = default;

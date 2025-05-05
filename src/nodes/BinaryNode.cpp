@@ -24,7 +24,6 @@ BaseObject *BinaryNode::evaluate(Scope &scope)
     return applyOperator(scope, *leftEvaluated, *rightEvaluated);
 }
 
-#pragma mark - *** Helper ***
 
 BaseObject *BinaryNode::applyOperator(Scope &scope, const IntObject &left, const IntObject &right) const
 {

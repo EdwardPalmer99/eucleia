@@ -20,22 +20,23 @@
 #include <stdlib.h>
 
 
-FileNode *FileParser::parse(std::string filePath_)
+FileNode *FileParser::parseMainFile(const std::string entryPointPath_)
 {
-    return FileParser(filePath_).buildAST();
+    /* Clear data for all imports */
+    ParserData::instance().clearImports();
+
+    /* Create parser for entry-point file. If required, it will create additional parsers for other imported files */
+    return FileParser(entryPointPath_).buildAST();
 }
 
 
 FileParser::FileParser(const std::string &fpath)
-    : _tokens(Tokenizer::build(fpath)),
-      _subParsers(*this),
-      _parentDirPath(buildParentDirPath(fpath))
+    : _parentDirPath(buildParentDirPath(fpath)),
+      _tokens(Tokenizer::build(fpath)),
+      _subParsers(*this)
 {
-    // TODO: - any subparsers need to be initialized here after registration
 }
 
-
-#pragma mark -
 
 FileNode *FileParser::buildAST()
 {
@@ -55,8 +56,6 @@ FileNode *FileParser::buildAST()
     return new FileNode(nodes);
 }
 
-
-#pragma mark - *** Assignment/Binary ***
 
 BaseNode *FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
 {
@@ -102,8 +101,6 @@ BaseNode *FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
 }
 
 
-#pragma mark - *** Maybe ***
-
 BaseNode *FileParser::maybeFunctionCall(ParseMethod expression)
 {
     auto expr = expression(); // Possible function name.
@@ -138,8 +135,6 @@ BaseNode *FileParser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
     return expr;
 }
 
-
-#pragma mark - *** Utility ***
 
 BaseNode *FileParser::parseExpression()
 {

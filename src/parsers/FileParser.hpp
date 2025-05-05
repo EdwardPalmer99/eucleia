@@ -29,7 +29,8 @@ public:
     FileParser() = delete;
     FileParser(const std::string &fpath);
 
-    static FileNode *parse(std::string filePath_);
+    /* Top-level parse */
+    static FileNode *parseMainFile(const std::string entryPointPath_);
 
     /* Returns reference to subparsers for file */
     [[nodiscard]] SubParsers &subParsers() { return _subParsers; }
