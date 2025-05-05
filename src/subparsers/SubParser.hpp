@@ -24,6 +24,9 @@ public:
     /* Returns reference to parent parser for file */
     [[nodiscard]] FileParser &parent() { return _parser; }
 
+    /* Returns reference to file tokens */
+    [[nodiscard]] Tokens &tokens() final;
+
 private:
     /* Store a reference to the parent parser for the file */
     FileParser &_parser;

@@ -11,6 +11,12 @@
 #include "FileParser.hpp"
 
 
-SubParser::SubParser(FileParser &parser_) : BaseParser(parser_._tokens), _parser(parser_)
+SubParser::SubParser(FileParser &parser_) : _parser(parser_)
 {
+}
+
+
+Tokens &SubParser::tokens()
+{
+    return _parser.tokens();
 }

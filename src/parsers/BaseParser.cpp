@@ -23,7 +23,7 @@ ProgramNode *BaseParser::parseDelimited(std::string start,
     // Iterate while we still have tokens and haven't reached stop token.
     bool firstCall = true;
 
-    while (!_tokens.empty() && !equals(stop))
+    while (!tokens().empty() && !equals(stop))
     {
         // Skip separator on each subsequent call (i.e. a, b)
         if (firstCall)
@@ -55,13 +55,13 @@ ProgramNode *BaseParser::parseDelimited(std::string start,
 
 bool BaseParser::equals(const std::string &value)
 {
-    return (_tokens.empty() ? false : (_tokens.front() == value));
+    return (tokens().empty() ? false : (tokens().front() == value));
 }
 
 
 bool BaseParser::equals(Token::Type type)
 {
-    return (_tokens.empty() ? false : (_tokens.front().type() == type));
+    return (tokens().empty() ? false : (tokens().front().type() == type));
 }
 
 
@@ -76,8 +76,8 @@ void BaseParser::skip(const std::string &expected)
     if (!equals(expected))
     {
         /* TODO: - add method wrapper so we never have exception if calling front() on empty queue */
-        ThrowException("unexpected token: " + _tokens.front() + "!=" + expected);
+        ThrowException("unexpected token: " + tokens().front() + "!=" + expected);
     }
 
-    _tokens.pop();
+    tokens().pop();
 }

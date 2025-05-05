@@ -23,8 +23,7 @@
 
 FileParser::FileParser(const std::string &fpath)
     : _tokens(Tokenizer::build(fpath)),
-      BaseParser(_tokens), // TODO: - remove this
-      _loopParser(*this),  /* TODO: - initialize in a method */
+      _loopParser(*this), /* TODO: - initialize in a method */
       _controlFlowParser(*this),
       _blockParser(*this),
       _unaryParser(*this),
@@ -46,7 +45,7 @@ FileNode *FileParser::buildAST()
 {
     std::vector<BaseNode *> nodes;
 
-    while (!_tokens.empty())
+    while (!tokens().empty())
     {
         auto node = parseExpression();
 
@@ -67,17 +66,17 @@ FileNode *FileParser::buildAST()
 /// int/float/string/bool/array [VARIABLE_NAME]
 BaseNode *FileParser::parseVariableDefinition()
 {
-    Token typeToken = _tokens.dequeue();
+    Token typeToken = tokens().dequeue();
     assert(typeToken.type() == Token::Keyword);
 
     ObjectType typeOfObject = objectTypeForName(typeToken);
 
-    if (_tokens.front() == "&") // Is reference.
+    if (tokens().front() == "&") // Is reference.
     {
         return parseReference(typeOfObject);
     }
 
-    Token nameToken = _tokens.dequeue();
+    Token nameToken = tokens().dequeue();
     assert(nameToken.type() == Token::Variable);
 
     return new AddVariableNode(nameToken, typeOfObject);
@@ -96,12 +95,12 @@ BaseNode *FileParser::parseReference(ObjectType boundVariableType)
 {
     skip("&");
 
-    Token referenceNameToken = _tokens.dequeue();
+    Token referenceNameToken = tokens().dequeue();
     assert(referenceNameToken.type() == Token::Variable);
 
     skip("=");
 
-    Token boundVariableNameToken = _tokens.dequeue();
+    Token boundVariableNameToken = tokens().dequeue();
     assert(boundVariableNameToken.type() == Token::Variable);
 
     return new AddReferenceVariableNode(referenceNameToken, boundVariableNameToken, boundVariableType);
@@ -111,7 +110,7 @@ BaseNode *FileParser::parseReference(ObjectType boundVariableType)
 /// [VARIABLE_NAME]
 BaseNode *FileParser::parseVariableName()
 {
-    Token token = _tokens.dequeue();
+    Token token = tokens().dequeue();
     assert(token.type() == Token::Variable);
 
     return new LookupVariableNode(token);
@@ -138,7 +137,7 @@ BaseNode *FileParser::parseStruct()
 {
     skip("struct");
 
-    auto structTypeName = _tokens.dequeue();
+    auto structTypeName = tokens().dequeue();
 
     // Do we have a '{' token next? If we do then it is definition of new struct.
     if (equals(Token::Punctuation, "{") || equals(Token::Keyword, "extends"))
@@ -149,7 +148,7 @@ BaseNode *FileParser::parseStruct()
         {
             skip("extends");
 
-            structParentTypeName = _tokens.dequeue();
+            structParentTypeName = tokens().dequeue();
         }
 
         auto structMemberVars = parseDelimited("{", "}", ";", std::bind(&FileParser::parseVariableDefinition, this));
@@ -176,7 +175,7 @@ BaseNode *FileParser::parseStruct()
             return parseReference(ObjectType::Struct);
         }
 
-        auto structInstanceName = _tokens.dequeue();
+        auto structInstanceName = tokens().dequeue();
 
         return new StructObject(structTypeName, structInstanceName);
     }
@@ -208,7 +207,7 @@ BaseNode *FileParser::parseClass()
 {
     skip("class");
 
-    auto classTypeName = _tokens.dequeue();
+    auto classTypeName = tokens().dequeue();
 
     // Do we have a '{' token next? If we do then it is definition of new struct.
     if (equals(Token::Punctuation, "{") || equals(Token::Keyword, "extends"))
@@ -220,7 +219,7 @@ BaseNode *FileParser::parseClass()
         {
             skip("extends");
 
-            classParentTypeName = _tokens.dequeue();
+            classParentTypeName = tokens().dequeue();
         }
 
         // NB: have to be a bit careful with parseBlock. If there is only one node, it will return that!
@@ -254,7 +253,7 @@ BaseNode *FileParser::parseClass()
             return parseReference(ObjectType::Class);
         }
 
-        auto classInstanceName = _tokens.dequeue();
+        auto classInstanceName = tokens().dequeue();
 
         return new ClassObject(classTypeName, classInstanceName);
     }
@@ -320,14 +319,14 @@ ArrayAccessNode *FileParser::parseArrayAccessor(BaseNode *lastExpression)
 BaseNode *FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
 {
     // Special case: tokens empty. Cannot be binary expression.
-    if (_tokens.empty())
+    if (tokens().empty())
     {
         return leftExpression;
     }
 
     // Take a peek look at the next token. Is it an operator token. If it is then
     // we need to create a binary node.
-    const Token &next = _tokens.front();
+    const Token &next = tokens().front();
 
     if (next.type() == Token::Operator)
     {
@@ -336,7 +335,7 @@ BaseNode *FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
         const int nextPrecedence = getPrecedence();
         if (nextPrecedence > leftPrecedence)
         {
-            _tokens.pop(); // Move along one.
+            tokens().pop(); // Move along one.
 
             auto rightExpression = maybeBinary(parseAtomically(), nextPrecedence);
 
@@ -384,7 +383,7 @@ BaseNode *FileParser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
     auto expr = expression();
     assert(expr != nullptr);
 
-    if (!_tokens.empty())
+    if (!tokens().empty())
     {
         if (equals(Token::Punctuation, "("))
             return _functionParser.parseFunctionCall(expr);
@@ -466,7 +465,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
     else if (equals(Token::Operator, "-"))
         return _unaryParser.parseNegation();
 
-    const Token &token = _tokens.front();
+    const Token &token = tokens().front();
 
     switch (token.type())
     {
@@ -506,7 +505,7 @@ void FileParser::skipSemicolonLineEndingIfRequired(const BaseNode &node)
 
 int FileParser::getPrecedence()
 {
-    const Token &token = _tokens.front();
+    const Token &token = tokens().front();
 
     if (token.type() != Token::Operator)
     {
@@ -540,7 +539,7 @@ int FileParser::getPrecedence()
 
 bool FileParser::isDataTypeKeyword()
 {
-    return (Grammar::instance().isDataType(_tokens.front()));
+    return (Grammar::instance().isDataType(tokens().front()));
 }
 
 

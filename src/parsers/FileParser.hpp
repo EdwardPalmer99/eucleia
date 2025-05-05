@@ -58,6 +58,8 @@ protected:
 
     void skipSemicolonLineEndingIfRequired(const BaseNode &node);
 
+    [[nodiscard]] Tokens &tokens() final { return _tokens; }
+
 private:
     friend class SubParser;
     friend class LoopSubParser;
@@ -93,8 +95,9 @@ private:
     BaseNode *maybeBinary(BaseNode *leftExpression,
                           int leftPrecedence);
 
+    /* TODO: - extract-out */
     FileComponentsRec _fileInfo;
 
-    /* Stores tokens for file */
+    /* File tokens */
     Tokens _tokens;
 };

@@ -20,10 +20,11 @@ protected:
     /* Aliases */
     using ParseMethod = std::function<BaseNode *(void)>;
 
-    BaseParser() = delete;
+    /* Protect to avoid direct initializaiton */
+    BaseParser() = default;
 
-    /* Prevent direct initialization */
-    explicit BaseParser(Tokens &tokens_) : _tokens(tokens_) {}
+    /* Returns a reference to the tokens */
+    [[nodiscard]] virtual Tokens &tokens() = 0;
 
     /* Parse a delimited expression, e.g. (a, b, c) where start='(', stop=')', separator=',' */
     ProgramNode *parseDelimited(std::string start,
@@ -42,11 +43,4 @@ protected:
 
     /* Skips token and throws exception if token to be skipped does not match expected */
     void skip(const std::string &expected);
-
-    /* Returns a reference to the tokens */
-    [[nodiscard]] Tokens &tokens() { return _tokens; }
-
-private:
-    /* Stores a reference to the parsed file tokens */
-    Tokens &_tokens;
 };
