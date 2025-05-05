@@ -1,5 +1,5 @@
 /**
- * @file LoopParser.cpp
+ * @file LoopSubParser.cpp
  * @author Edward Palmer
  * @date 2025-04-21
  *
@@ -19,7 +19,7 @@
  * }
  * while ([condition is true]);
  */
-DoWhileNode *LoopParser::parseDoWhile()
+DoWhileNode *LoopSubParser::parseDoWhile()
 {
     _parser.skip("do");
     BaseNode *body = _parser.parseProgram();
@@ -37,7 +37,7 @@ DoWhileNode *LoopParser::parseDoWhile()
  * 	[code]
  * }
  */
-WhileNode *LoopParser::parseWhile()
+WhileNode *LoopSubParser::parseWhile()
 {
     _parser.skip("while");
 
@@ -55,7 +55,7 @@ WhileNode *LoopParser::parseWhile()
  * 	[code]
  * }
  */
-ForLoopNode *LoopParser::parseFor()
+ForLoopNode *LoopSubParser::parseFor()
 {
     _parser.skip("for");
 

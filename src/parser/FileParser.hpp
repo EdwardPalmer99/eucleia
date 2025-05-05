@@ -88,10 +88,10 @@ protected:
     void skipSemicolonLineEndingIfRequired(const BaseNode &node);
 
 private:
-    friend class LoopParser;
+    friend class LoopSubParser;
 
     /* Subparsers */
-    LoopParser _loopParser;
+    LoopSubParser _loopParser;
 
     BaseNode *parseExpression();
     BaseNode *parseExpressionHelper();

@@ -1,5 +1,5 @@
 /**
- * @file LoopParser.hpp
+ * @file LoopSubParser.hpp
  * @author Edward Palmer
  * @date 2025-04-21
  *
@@ -15,10 +15,10 @@
 #include "Tokenizer.hpp"
 #include "WhileNode.hpp"
 
-class LoopParser : public SubParser
+class LoopSubParser : public SubParser
 {
 public:
-    explicit LoopParser(FileParser &parser) : SubParser(parser) {}
+    explicit LoopSubParser(FileParser &parser) : SubParser(parser) {}
 
     DoWhileNode *parseDoWhile();
 
