@@ -50,7 +50,7 @@ FileNode *ImportSubParser::parseFileImport()
 
     // Build the file path:
     std::string filePath = parent().parentDirPath() + token;
-    Logger::debug("importing file: " + filePath);
+    log().debug("importing file: " + filePath);
 
     auto ast = FileParser(filePath).buildAST(); // NB: don't use static method as this will clear loaded modules/files.
     if (!ast)
@@ -78,7 +78,7 @@ ModuleNode *ImportSubParser::parseLibraryImport()
 
     ParserData::instance().addImport(token, ParserDataImpl::Module);
 
-    Logger::debug("importing library: " + token);
+    log().debug("importing library: " + token);
 
     return EucleiaModuleLoader::getModuleInstance(token);
 }

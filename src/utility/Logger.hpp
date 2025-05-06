@@ -8,50 +8,90 @@
  */
 
 #pragma once
+#include "SingletonT.hpp"
+#include <fstream>
+#include <functional>
 #include <iostream>
+#include <mutex>
+#include <queue>
 #include <string>
+#include <thread>
 
-class Logger
+
+enum class LogLevel
+{
+    Trace = 0,
+    Debug = 1,
+    Info = 2,
+    Warning = 3,
+    Error = 4,
+    Critical = 5
+};
+
+
+class LoggerImpl
 {
 public:
-    enum class Level
-    {
-        debug,
-        info,
-        warning,
-        error
-    };
+    inline void trace(std::string message) { asyncLog(LogLevel::Trace, std::move(message)); }
+    inline void debug(std::string message) { asyncLog(LogLevel::Debug, std::move(message)); }
+    inline void info(std::string message) { asyncLog(LogLevel::Info, std::move(message)); }
+    inline void warning(std::string message) { asyncLog(LogLevel::Warning, std::move(message)); }
+    inline void error(std::string message) { asyncLog(LogLevel::Error, std::move(message)); }
+    inline void critical(std::string message) { asyncLog(LogLevel::Critical, std::move(message)); }
 
-    static void debug(std::string message) { instance().log(Level::debug, std::move(message)); };
-    static void info(std::string message) { instance().log(Level::info, std::move(message)); };
-    static void warning(std::string message) { instance().log(Level::warning, std::move(message)); };
-    static void error(std::string message) { instance().log(Level::error, std::move(message)); };
-
-    // Returns non-const reference to singleton's thresholdLevel variable which enables it to be set.
-    static Level &threshold() { return instance().thresholdLevel; }
+    inline void setThreshold(LogLevel threshold) { _threshold = threshold; }
 
 protected:
-    // Returns a singleton instance.
-    static Logger &instance();
+    friend class SingletonT<LoggerImpl>;
 
-    Logger(Level thresholdLevel = Level::info, std::ostream &logStream = std::cout);
+    /* Prevent direct initialization */
+    LoggerImpl();
 
-    // Logs a message at a given level.
-    void log(Level level, std::string message) const;
+    ~LoggerImpl();
 
-    // Returns true if message should be printed to the log.
-    inline bool isLoggable(Level level) const { return (level >= thresholdLevel); }
+    void asyncLog(LogLevel level, std::string message);
 
-    // Returns a timestamp string using the timestamp format.
+    void log(LogLevel level, std::string message) const;
+
+    inline bool isLoggable(LogLevel level) const { return (level >= _threshold); }
+
     std::string timestamp() const;
 
-    // Returns a string for the level of the message.
-    constexpr std::string levelName(Level level) const;
+    std::string levelName(LogLevel level) const;
 
 private:
-    Level thresholdLevel;
-    std::ostream &logStream;
+    friend void signalHandler(int signal);
 
-    // ISO 8601 date time format
-    inline static const std::string timestampFormat{"yyyy-mm-ddThh:mm:ssZ"};
+    /* Thread loop */
+    void loop();
+
+    void shutdown();
+
+    using Task = std::function<void()>;
+    using Tasks = std::queue<Task>;
+
+    LogLevel _threshold{LogLevel::Info};
+    std::ostream &_os{std::cout};
+
+    std::thread _thread;
+
+    Tasks _tasks;
+
+    bool _shutdown{false};
+
+    /* ISO 8601 date time format */
+    const std::string _timestampFormat{"yyyy-mm-ddThh:mm:ssZ"};
+
+    using Lock = std::lock_guard<std::mutex>;
+
+    mutable std::mutex _mutex;
 };
+
+
+using Logger = SingletonT<LoggerImpl>;
+
+
+inline LoggerImpl &log()
+{
+    return Logger::instance();
+}
