@@ -31,7 +31,7 @@ public:
     FileParser(const std::string &fpath);
 
     /* Top-level parse */
-    static FileNode *parseMainFile(const std::string entryPointPath_);
+    static AnyNode parseMainFile(const std::string entryPointPath_);
 
     /* Returns reference to subparsers for file */
     [[nodiscard]] SubParsers &subParsers() { return _subParsers; }
@@ -43,7 +43,7 @@ public:
     [[nodiscard]] const std::string &parentDirPath() const { return _parentDirPath; }
 
     /* Construct AST for file */
-    FileNode *buildAST();
+    AnyNode buildAST();
 
     /* Parse generic expression */
     AnyNode parseExpression();
@@ -69,8 +69,7 @@ protected:
 
     AnyNode maybeFunctionCallOrArrayAccess(ParseMethod expression);
 
-    // TODO: - add handling for null left expression (can use optional for this)
-    AnyNode maybeBinary(BaseNode *leftExpression, int leftPrecedence);
+    AnyNode maybeBinary(AnyNode leftExpression, int leftPrecedence);
 
     /* Convert a path 'a/b/c/fileName.ek' --> 'a/b/c/' */
     std::string buildParentDirPath(const std::string &filePath_) const;

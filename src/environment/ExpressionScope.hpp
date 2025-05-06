@@ -9,28 +9,14 @@
 
 #pragma once
 #include "AnyNode.hpp"
-#include "BaseNode.hpp"
-#include "IntObject.hpp"
 #include "Scope.hpp"
-
 
 /**
  * The goal of this is to be a lightweight wrapper around a node which evaluates
  * to a bool value. This ensures that the objects created in this scope are
  * destroyed once we have a value.
  */
-template <typename TValue>
-TValue evaluateExpression(BaseNode *node, const Scope &parent)
-{
-    Scope evalScope(parent);
-    TValue output = node->evaluateObject<TValue>(evalScope);
-
-    /* Returns copy */
-    return output;
-}
-
-
-template <typename TValue>
+template <class TValue>
 TValue evaluateExpression(const AnyNode &node, const Scope &parent)
 {
     Scope evalScope(parent);

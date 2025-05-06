@@ -18,16 +18,19 @@ namespace NodeFactory
 
 namespace Loops
 {
+
 AnyNode createWhileNode(AnyNode condition, AnyNode body);
 
 AnyNode createDoWhileNode(AnyNode condition, AnyNode body);
 
 AnyNode createForLoopNode(AnyNode start, AnyNode condition, AnyNode update, AnyNode body);
+
 } // namespace Loops
 
 
 namespace Instances
 {
+
 AnyNode createBoolNode(bool state);
 
 AnyNode createIntNode(long value);
@@ -43,6 +46,9 @@ AnyNode createArrayNode(std::vector<AnyNode> elementNodes);
 
 namespace Utilities
 {
+
+AnyNode createBlockNode(AnyNodeVector nodes);
+
 /* Jump to last set-point and return nullptr */
 AnyNode createBreakNode();
 
@@ -63,10 +69,18 @@ AnyNode createNegationNode(AnyNode body);
 
 namespace Functions
 {
+
 AnyNode createFunctionCallNode(AnyNode funcName, AnyNode funcArgs);
 
 AnyNode createFunctionNode(AnyNode funcName, AnyNode funcArgs, AnyNode funcBody);
 
 } // namespace Functions
+
+namespace Files
+{
+
+AnyNode createFileNode(AnyNodeVector fileNodes);
+
+} // namespace Files
 
 } // namespace NodeFactory

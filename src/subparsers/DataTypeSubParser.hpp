@@ -34,7 +34,7 @@ public:
         ArrayAccessor
     };
 
-    AnyNode parse(int type) override;
+    AnyNode parse(int type, AnyNodeOptional lastExpr = std::nullopt) override;
 
 protected:
     AnyNode parseInt();

@@ -31,10 +31,16 @@ public:
         return doEvaluate(scope_);
     }
 
+    // template <class TObject>
+    // TObject *operator()(Scope &scope_) const
+    // {
+    //     return static_cast<TObject *>(doEvaluate(scope_));
+    // }
+
     template <class TObject>
-    TObject *operator()(Scope &scope_) const
+    TObject &operator()(Scope &scope) const
     {
-        return static_cast<TObject *>(doEvaluate(scope_));
+        return static_cast<TObject &>(*operator()(scope));
     }
 
 protected:

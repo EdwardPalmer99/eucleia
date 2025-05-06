@@ -8,6 +8,7 @@
  */
 
 #pragma once
+#include "AnyNode.hpp"
 #include "SubParser.hpp"
 
 class FileParser;
@@ -28,9 +29,11 @@ class BlockSubParser : public SubParser
 public:
     explicit BlockSubParser(FileParser &parser) : SubParser(parser) {}
 
-    /*
-     * Parse a block. If extractSingleExpr is set to true then if we have a single expression within the block,
-     * we will return that
-     */
-    BaseNode *parseBlock(bool extractSingleExpr = true);
+    enum Type
+    {
+        Block,
+        BlockOrSingleExpr /* If we have a single expression within a block, return that */
+    };
+
+    AnyNode parse(int type, AnyNodeOptional lastExpr = std::nullopt) override;
 };

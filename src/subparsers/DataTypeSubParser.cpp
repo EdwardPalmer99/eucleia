@@ -19,7 +19,7 @@
 #include "Token.hpp"
 
 
-AnyNode DataTypeSubParser::parse(int type)
+AnyNode DataTypeSubParser::parse(int type, AnyNodeOptional lastExpr)
 {
     switch (type)
     {

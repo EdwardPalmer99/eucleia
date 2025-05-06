@@ -8,15 +8,15 @@
  */
 
 #include "BlockSubParser.hpp"
-#include "BaseNode.hpp"
 #include "FileParser.hpp"
-#include "ProgramNode.hpp"
+#include "NodeFactory.hpp"
 
-BaseNode *BlockSubParser::parseBlock(bool extractSingleExpr)
+
+AnyNode BlockSubParser::parse(int type, AnyNodeOptional lastExpr = std::nullopt)
 {
     skip("{");
 
-    std::vector<BaseNode *> parsedNodes;
+    AnyNodeVector parsedNodes;
 
     while (!tokens().empty() && !equals(Token::Punctuation, "}"))
     {
@@ -24,15 +24,15 @@ BaseNode *BlockSubParser::parseBlock(bool extractSingleExpr)
 
         parsedNodes.push_back(expression);
 
-        parent().skipSemicolonLineEndingIfRequired(*expression);
+        parent().skipSemicolonLineEndingIfRequired(*expression); // TODO: - figure-out
     }
 
     skip("}");
 
-    if (extractSingleExpr && parsedNodes.size() == 1)
+    if (parsedNodes.size() == 1 && type == BlockOrSingleExpr)
     {
         return parsedNodes.front();
     }
 
-    return new ProgramNode(std::move(parsedNodes));
+    return NodeFactory::Instances::createArrayNode(std::move(parsedNodes));
 }

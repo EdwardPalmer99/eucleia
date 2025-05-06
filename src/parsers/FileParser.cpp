@@ -41,7 +41,7 @@ FileParser::FileParser(const std::string &fpath)
 
 AnyNode FileParser::buildAST()
 {
-    std::vector<BaseNode *> nodes;
+    AnyNodeVector nodes;
 
     while (!tokens().empty())
     {
@@ -54,11 +54,11 @@ AnyNode FileParser::buildAST()
 
     nodes.shrink_to_fit();
 
-    return new FileNode(nodes);
+    return NodeFactory::Files::createFileNode(std::move(nodes));
 }
 
 
-AnyNode FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
+AnyNode FileParser::maybeBinary(AnyNode leftExpression, int leftPrecedence)
 {
     // Special case: tokens empty. Cannot be binary expression.
     if (tokens().empty())
@@ -82,14 +82,14 @@ AnyNode FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
             auto rightExpression = maybeBinary(parseAtomically(), nextPrecedence);
 
             // Create binary or assign node.
-            BaseNode *node{nullptr}; // TODO: - remove
+            AnyNode node;
 
             bool isAssignNode = (next == "=");
 
             if (isAssignNode)
-                node = new AssignNode(leftExpression, rightExpression);
+                node = AssignNode(leftExpression, rightExpression);
             else
-                node = new BinaryNode(leftExpression, rightExpression, next);
+                node = BinaryNode(leftExpression, rightExpression, next);
 
             // Wrap binary node by calling ourselves should the next operator
             // be of a greater precedence.
@@ -120,7 +120,7 @@ AnyNode FileParser::maybeArrayAccess(ParseMethod expression)
 
 AnyNode FileParser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
 {
-    auto expr = expression();
+    AnyNode expr = expression();
 
     if (!tokens().empty())
     {

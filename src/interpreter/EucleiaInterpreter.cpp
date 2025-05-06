@@ -6,25 +6,23 @@
 //
 
 #include "EucleiaInterpreter.hpp"
-#include "BaseObject.hpp"
-#include "EucleiaModules.hpp"
+#include "AnyNode.hpp"
 #include "FileParser.hpp"
-#include "Objects.hpp"
 #include "Scope.hpp"
-#include <iostream>
 
-// TODO: - Parser() should have empty constructor. Should call parseFile method with string to run parser.
-void Interpreter::evaluateFile(const std::string &fpath)
+namespace Interpreter
+{
+
+void evaluateFile(const std::string &fpath)
 {
     // 1. Generate abstract symbol tree.
-    FileNode *ast = FileParser::parseMainFile(fpath);
+    AnyNode ast = FileParser::parseMainFile(fpath);
 
     // 2. Create global scope.
     Scope globalScope;
 
     // 3. Evaluate AST.
-    (void)ast->evaluate(globalScope);
-
-    // 4. Memory cleanup.
-    delete ast;
+    (void)ast(globalScope);
 }
+
+} // namespace Interpreter
