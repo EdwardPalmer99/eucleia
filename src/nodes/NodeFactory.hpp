@@ -26,5 +26,7 @@ AnyNode *createFloatNode(double value);
 
 AnyNode *createIfNode(BaseNode::Ptr condition, BaseNode::Ptr thenBranch, BaseNode::Ptr elseBranch = nullptr);
 
+AnyNode *createForLoopNode(BaseNode::Ptr init, BaseNode::Ptr condition, BaseNode::Ptr update, BaseNode::Ptr body);
+
 
 } // namespace NodeFactory

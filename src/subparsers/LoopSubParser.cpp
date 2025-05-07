@@ -8,8 +8,9 @@
  */
 
 #include "LoopSubParser.hpp"
+#include "AnyNode.hpp"
 #include "FileParser.hpp"
-
+#include "NodeFactory.hpp"
 
 /*
  * Parse:
@@ -55,7 +56,7 @@ WhileNode *LoopSubParser::parseWhile()
  * 	[code]
  * }
  */
-ForLoopNode *LoopSubParser::parseFor()
+AnyNode *LoopSubParser::parseFor()
 {
     skip("for");
 
@@ -70,10 +71,13 @@ ForLoopNode *LoopSubParser::parseFor()
         ThrowException("expected 3 arguments for for-loop but got " + std::to_string(brackets->programNodes.size()));
     }
 
-    auto start = forLoopArgs[0];
+    auto init = forLoopArgs[0];
     auto condition = forLoopArgs[1];
     auto update = forLoopArgs[2];
     auto body = parent().subParsers().block.parseBlock();
 
-    return new ForLoopNode(start, condition, update, body);
+    return NodeFactory::createForLoopNode(BaseNode::Ptr(init),
+                                          BaseNode::Ptr(condition),
+                                          BaseNode::Ptr(update),
+                                          BaseNode::Ptr(body));
 }

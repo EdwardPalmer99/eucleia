@@ -13,6 +13,7 @@
 #include "ExpressionScope.hpp"
 #include "FloatObject.hpp"
 #include "IntObject.hpp"
+#include "JumpPoints.hpp"
 #include "NodeType.hpp"
 #include "Scope.hpp"
 #include "StringObject.hpp"
@@ -64,6 +65,34 @@ AnyNode *createIfNode(BaseNode::Ptr condition, BaseNode::Ptr thenBranch, BaseNod
           return elseBranch->evaluate(scope);
       else
           return static_cast<BaseObject *>(nullptr);
+    });
+}
+
+AnyNode *createForLoopNode(BaseNode::Ptr init, BaseNode::Ptr condition, BaseNode::Ptr update, BaseNode::Ptr body)
+{
+    return new AnyNode(NodeType::ForLoop, [init, condition, update, body](Scope &scope)
+    {
+        // Initialization.
+        Scope loopScope(scope); // Extend scope.
+
+        (void)init->evaluate(loopScope);
+
+        jmp_buf local;
+        pushBreakJumpPoint(&local);
+
+        // Add evaluation to forScope:
+        if (setjmp(local) != 1)
+        {
+            for (;
+                 evaluateExpression<BoolObject::Type>(condition.get(), loopScope); // TODO: - not very efficient repeatedly recalculating...
+                 update->evaluate(loopScope))
+            {
+                (void)body->evaluate(loopScope);
+            }
+        }
+
+        popBreakJumpPoint();
+        return nullptr;
     });
 }
 

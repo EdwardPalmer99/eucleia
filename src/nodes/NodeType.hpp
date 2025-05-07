@@ -18,4 +18,5 @@ enum class NodeType
     String,
     Float,
     If,
+    ForLoop
 };

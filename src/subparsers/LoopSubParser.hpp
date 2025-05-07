@@ -10,10 +10,12 @@
 #pragma once
 #include "BaseParser.hpp"
 #include "DoWhileNode.hpp"
-#include "ForLoopNode.hpp"
 #include "SubParser.hpp"
 #include "Tokenizer.hpp"
 #include "WhileNode.hpp"
+
+class AnyNode;
+
 
 class LoopSubParser : public SubParser
 {
@@ -24,5 +26,5 @@ public:
 
     WhileNode *parseWhile();
 
-    ForLoopNode *parseFor();
+    AnyNode *parseFor();
 };
