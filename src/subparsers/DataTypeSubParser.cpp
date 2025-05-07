@@ -9,12 +9,13 @@
 
 #include "DataTypeSubParser.hpp"
 #include "AddArrayNode.hpp"
-#include "AddBoolNode.hpp"
 #include "AddFloatNode.hpp"
 #include "AddIntNode.hpp"
 #include "AddStringNode.hpp"
+#include "AnyNode.hpp"
 #include "ArrayAccessNode.hpp"
 #include "FileParser.hpp"
+#include "NodeFactory.hpp"
 #include "Token.hpp"
 
 
@@ -38,13 +39,13 @@ AddFloatNode *DataTypeSubParser::parseFloat()
 }
 
 
-AddBoolNode *DataTypeSubParser::parseBool()
+AnyNode *DataTypeSubParser::parseBool()
 {
     Token token = tokens().dequeue();
 
     bool state = (token == "true");
 
-    return new AddBoolNode(state);
+    return NodeFactory::createBoolNode(state);
 }
 
 

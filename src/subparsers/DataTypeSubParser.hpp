@@ -17,6 +17,7 @@ class AddBoolNode;
 class AddStringNode;
 class AddArrayNode;
 class ArrayAccessNode;
+class AnyNode;
 
 
 class DataTypeSubParser : public SubParser
@@ -29,7 +30,7 @@ public:
     AddFloatNode *parseFloat();
 
     /* Parse: true/false */
-    AddBoolNode *parseBool();
+    AnyNode *parseBool();
 
     /* Parse: "..." */
     AddStringNode *parseString();
