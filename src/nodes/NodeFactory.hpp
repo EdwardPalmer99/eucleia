@@ -9,13 +9,13 @@
 
 #pragma once
 #include "AnyNode.hpp"
-#include "BaseNode.hpp"
-#include "IntObject.hpp"
-
 
 namespace NodeFactory
 {
 
 AnyNode *createBoolNode(bool state);
+
+AnyNode *createIntNode(long value);
+
 
 } // namespace NodeFactory

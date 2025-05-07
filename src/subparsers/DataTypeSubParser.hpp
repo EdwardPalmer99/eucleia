@@ -11,9 +11,7 @@
 #include "SubParser.hpp"
 
 class FileParser;
-class AddIntNode;
 class AddFloatNode;
-class AddBoolNode;
 class AddStringNode;
 class AddArrayNode;
 class ArrayAccessNode;
@@ -25,7 +23,7 @@ class DataTypeSubParser : public SubParser
 public:
     explicit DataTypeSubParser(FileParser &parser) : SubParser(parser) {}
 
-    AddIntNode *parseInt();
+    AnyNode *parseInt();
 
     AddFloatNode *parseFloat();
 

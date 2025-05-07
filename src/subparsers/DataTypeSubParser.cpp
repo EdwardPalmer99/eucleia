@@ -10,7 +10,6 @@
 #include "DataTypeSubParser.hpp"
 #include "AddArrayNode.hpp"
 #include "AddFloatNode.hpp"
-#include "AddIntNode.hpp"
 #include "AddStringNode.hpp"
 #include "AnyNode.hpp"
 #include "ArrayAccessNode.hpp"
@@ -19,13 +18,13 @@
 #include "Token.hpp"
 
 
-AddIntNode *DataTypeSubParser::parseInt()
+AnyNode *DataTypeSubParser::parseInt()
 {
     Token token = tokens().dequeue();
 
     long intValue = strtold(token.c_str(), NULL);
 
-    return new AddIntNode(intValue);
+    return NodeFactory::createIntNode(intValue);
 }
 
 
@@ -75,7 +74,7 @@ ArrayAccessNode *DataTypeSubParser::parseArrayAccessor(BaseNode *lastExpression)
 
     skip("[");
 
-    auto arrayIndex = static_cast<AddIntNode *>(parent().parseExpression());
+    auto arrayIndex = parent().parseExpression();
 
     skip("]");
 
