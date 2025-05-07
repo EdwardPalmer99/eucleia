@@ -9,7 +9,6 @@
 
 #include "DataTypeSubParser.hpp"
 #include "AddArrayNode.hpp"
-#include "AddFloatNode.hpp"
 #include "AnyNode.hpp"
 #include "ArrayAccessNode.hpp"
 #include "FileParser.hpp"
@@ -27,13 +26,13 @@ AnyNode *DataTypeSubParser::parseInt()
 }
 
 
-AddFloatNode *DataTypeSubParser::parseFloat()
+AnyNode *DataTypeSubParser::parseFloat()
 {
     Token token = tokens().dequeue();
 
     double floatValue = strtof(token.c_str(), NULL);
 
-    return new AddFloatNode(floatValue);
+    return NodeFactory::createFloatNode(floatValue);
 }
 
 

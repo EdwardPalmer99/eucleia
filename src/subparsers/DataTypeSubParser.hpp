@@ -11,7 +11,6 @@
 #include "SubParser.hpp"
 
 class FileParser;
-class AddFloatNode;
 class AddArrayNode;
 class ArrayAccessNode;
 class AnyNode;
@@ -24,7 +23,7 @@ public:
 
     AnyNode *parseInt();
 
-    AddFloatNode *parseFloat();
+    AnyNode *parseFloat();
 
     /* Parse: true/false */
     AnyNode *parseBool();

@@ -8,6 +8,7 @@
  */
 
 #include "NodeFactory.hpp"
+#include "FloatObject.hpp"
 #include "IntObject.hpp"
 #include "StringObject.hpp"
 
@@ -36,6 +37,14 @@ AnyNode *createStringNode(std::string value)
     return new AnyNode([value = std::move(value)](Scope &scope)
     {
         return scope.createManagedObject<StringObject>(value);
+    });
+}
+
+AnyNode *createFloatNode(double value)
+{
+    return new AnyNode([value](Scope &scope)
+    {
+        return scope.createManagedObject<FloatObject>(value);
     });
 }
 

@@ -21,4 +21,7 @@ AnyNode *createIntNode(long value);
 
 AnyNode *createStringNode(std::string value);
 
+AnyNode *createFloatNode(double value);
+
+
 } // namespace NodeFactory
