@@ -23,7 +23,6 @@
 #include "ForLoopNode.hpp"
 #include "FunctionCallNode.hpp"
 #include "FunctionNode.hpp"
-#include "IfNode.hpp"
 #include "LookupVariableNode.hpp"
 #include "NegationNode.hpp"
 #include "NotNode.hpp"

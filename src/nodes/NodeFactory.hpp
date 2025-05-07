@@ -8,9 +8,10 @@
  */
 
 #pragma once
-#include "AnyNode.hpp"
+#include "BaseNode.hpp"
 #include <string>
 
+class AnyNode;
 
 namespace NodeFactory
 {
@@ -22,6 +23,8 @@ AnyNode *createIntNode(long value);
 AnyNode *createStringNode(std::string value);
 
 AnyNode *createFloatNode(double value);
+
+AnyNode *createIfNode(BaseNode::Ptr condition, BaseNode::Ptr thenBranch, BaseNode::Ptr elseBranch = nullptr);
 
 
 } // namespace NodeFactory

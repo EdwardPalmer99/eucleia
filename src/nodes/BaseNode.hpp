@@ -11,11 +11,15 @@
 #include "BaseObject.hpp"
 #include "BaseObjectT.hpp"
 #include "Scope.hpp"
+#include <memory>
 
 
 class BaseNode
 {
 public:
+    using Ptr = std::shared_ptr<BaseNode>;
+
+
     BaseNode() = default; // TODO: - should be protected! Should not create BaseNode directly.
     virtual ~BaseNode() = default;
 

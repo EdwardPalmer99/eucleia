@@ -10,7 +10,7 @@
 #pragma once
 #include "SubParser.hpp"
 
-class IfNode;
+class AnyNode;
 class BreakNode;
 class ReturnNode;
 class BaseNode;
@@ -21,7 +21,7 @@ class ControlFlowSubParser : public SubParser
 public:
     explicit ControlFlowSubParser(FileParser &parser) : SubParser(parser) {}
 
-    IfNode *parseIf();
+    AnyNode *parseIf();
 
     BreakNode *parseBreak();
 

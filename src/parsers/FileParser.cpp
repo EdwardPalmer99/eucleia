@@ -229,11 +229,17 @@ void FileParser::skipSemicolonLineEndingIfRequired(const BaseNode &node)
                               node.isNodeType<TestModule>() ||
                               node.isNodeType<FileNode>() ||
                               node.isNodeType<ProgramNode>() ||
-                              node.isNodeType<IfNode>() ||
+                              // node.isNodeType<IfNode>() ||
                               node.isNodeType<WhileNode>() ||
                               node.isNodeType<DoWhileNode>() ||
                               node.isNodeType<ForLoopNode>() ||
                               node.isNodeType<FunctionNode>());
+
+    const auto *anyNode = dynamic_cast<const AnyNode *>(&node); // TODO: - temporary code before we rewrite BaseNode
+    if (anyNode)
+    {
+        doSkipPunctuation |= (anyNode->type() == NodeType::If);
+    }
 
     if (!doSkipPunctuation)
         skip(";");
