@@ -1,5 +1,5 @@
 //
-//  main.cpp
+//  eucleia.cpp
 //  Eucleia
 //
 //  Created by Edward on 12/11/2023.
@@ -32,7 +32,7 @@ int main(int argc, const char *argv[])
 
         if (parser.isSet("--verbose"))
         {
-            Logger::threshold() = Logger::Level::debug;
+            log().setThreshold(LogLevel::Debug);
         }
 
         Interpreter::evaluateFile(parser["fileName"]);

@@ -22,7 +22,7 @@
 
 
 /* Parser for a single file */
-class FileParser : public BaseParser
+class FileParser : public BaseParser // TODO: - build a thread-pool for FileParsing
 {
 public:
     /* Constructors */
