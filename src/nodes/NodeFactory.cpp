@@ -96,5 +96,16 @@ AnyNode *createForLoopNode(BaseNode::Ptr init, BaseNode::Ptr condition, BaseNode
     });
 }
 
+AnyNode *createBreakNode()
+{
+    return new AnyNode(NodeType::Break, [](Scope &scope)
+    {
+        (void)scope;
+        jumpToBreakJumpPoint(); /* Jump to last set point */
+
+        return nullptr;
+    });
+}
+
 
 } // namespace NodeFactory

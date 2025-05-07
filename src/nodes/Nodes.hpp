@@ -14,7 +14,6 @@
 #include "ArrayAccessNode.hpp"
 #include "AssignNode.hpp"
 #include "BinaryNode.hpp"
-#include "BreakNode.hpp"
 #include "ClassAccessNode.hpp"
 #include "ClassDefinitionObject.hpp"
 #include "ClassObject.hpp"

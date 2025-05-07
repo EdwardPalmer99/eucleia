@@ -10,7 +10,6 @@
 #include "ControlFlowSubParser.hpp"
 #include "AnyNode.hpp"
 #include "BaseNode.hpp"
-#include "BreakNode.hpp"
 #include "Exceptions.hpp"
 #include "FileParser.hpp"
 #include "NodeFactory.hpp"
@@ -69,11 +68,11 @@ AnyNode *ControlFlowSubParser::parseIf()
 }
 
 
-BreakNode *ControlFlowSubParser::parseBreak()
+AnyNode *ControlFlowSubParser::parseBreak()
 {
     skip("break");
 
-    return new BreakNode();
+    return NodeFactory::createBreakNode();
 }
 
 

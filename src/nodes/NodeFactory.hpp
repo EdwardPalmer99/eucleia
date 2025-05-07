@@ -28,5 +28,6 @@ AnyNode *createIfNode(BaseNode::Ptr condition, BaseNode::Ptr thenBranch, BaseNod
 
 AnyNode *createForLoopNode(BaseNode::Ptr init, BaseNode::Ptr condition, BaseNode::Ptr update, BaseNode::Ptr body);
 
+AnyNode *createBreakNode();
 
 } // namespace NodeFactory
