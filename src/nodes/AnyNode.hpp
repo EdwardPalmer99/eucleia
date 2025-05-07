@@ -18,7 +18,7 @@ class AnyNode : public BaseNode
 public:
     using EvaluateFunction = std::function<BaseObject *(Scope &)>;
 
-    explicit AnyNode(EvaluateFunction evaluateFunc) : _evaluateFunc(std::move(evaluateFunc)) {}
+    explicit AnyNode(EvaluateFunction &&evaluateFunc) : _evaluateFunc(std::move(evaluateFunc)) {}
 
     BaseObject *evaluate(Scope &scope) override
     {
