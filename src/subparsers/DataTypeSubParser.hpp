@@ -12,7 +12,6 @@
 
 class FileParser;
 class AddFloatNode;
-class AddStringNode;
 class AddArrayNode;
 class ArrayAccessNode;
 class AnyNode;
@@ -31,7 +30,7 @@ public:
     AnyNode *parseBool();
 
     /* Parse: "..." */
-    AddStringNode *parseString();
+    AnyNode *parseString();
 
     /* Parse: [1, 2, 3, 4] OR [true, false, true] OR [1.2, 2.4] OR ["hello, ", "world!"] */
     AddArrayNode *parseArray();

@@ -10,7 +10,6 @@
 #include "DataTypeSubParser.hpp"
 #include "AddArrayNode.hpp"
 #include "AddFloatNode.hpp"
-#include "AddStringNode.hpp"
 #include "AnyNode.hpp"
 #include "ArrayAccessNode.hpp"
 #include "FileParser.hpp"
@@ -48,11 +47,11 @@ AnyNode *DataTypeSubParser::parseBool()
 }
 
 
-AddStringNode *DataTypeSubParser::parseString()
+AnyNode *DataTypeSubParser::parseString()
 {
     Token token = tokens().dequeue();
 
-    return new AddStringNode(token);
+    return NodeFactory::createStringNode(std::move(token));
 }
 
 

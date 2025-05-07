@@ -9,6 +9,7 @@
 
 #include "NodeFactory.hpp"
 #include "IntObject.hpp"
+#include "StringObject.hpp"
 
 
 namespace NodeFactory
@@ -27,6 +28,14 @@ AnyNode *createIntNode(long value)
     return new AnyNode([value](Scope &scope)
     {
         return scope.createManagedObject<IntObject>(value);
+    });
+}
+
+AnyNode *createStringNode(std::string value)
+{
+    return new AnyNode([value = std::move(value)](Scope &scope)
+    {
+        return scope.createManagedObject<StringObject>(value);
     });
 }
 

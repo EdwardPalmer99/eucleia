@@ -9,6 +9,8 @@
 
 #pragma once
 #include "AnyNode.hpp"
+#include <string>
+
 
 namespace NodeFactory
 {
@@ -17,5 +19,6 @@ AnyNode *createBoolNode(bool state);
 
 AnyNode *createIntNode(long value);
 
+AnyNode *createStringNode(std::string value);
 
 } // namespace NodeFactory
