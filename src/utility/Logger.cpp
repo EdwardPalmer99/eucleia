@@ -68,6 +68,7 @@ void LoggerImpl::asyncLog(LogLevel level, std::string message)
 
     auto f = std::bind(&LoggerImpl::log, this, level, std::move(message));
     _tasks.push(std::move(f));
+    _cv.notify_one();
 }
 
 
@@ -86,12 +87,13 @@ void LoggerImpl::loop()
     {
         Task task;
         {
-            Lock guard(_mutex);
+            std::unique_lock<std::mutex> lock(_mutex);
+
+            _cv.wait(lock, [this]()
+                     { return (!_tasks.empty() || _shutdown); });
 
             if (_shutdown && _tasks.empty()) /* Flush remaining and exit */
                 return;
-            else if (_tasks.empty())
-                continue;
 
             task = std::move(_tasks.front());
             _tasks.pop();
@@ -111,6 +113,7 @@ void LoggerImpl::shutdown()
         _shutdown = true;
     }
 
+    _cv.notify_all(); /* Wakeup thread */
     if (_thread.joinable())
     {
         _thread.join(); /* Only return once thread finishes */

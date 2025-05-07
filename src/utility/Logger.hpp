@@ -9,6 +9,7 @@
 
 #pragma once
 #include "SingletonT.hpp"
+#include <condition_variable>
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -70,21 +71,22 @@ private:
     using Task = std::function<void()>;
     using Tasks = std::queue<Task>;
 
+    using Lock = std::lock_guard<std::mutex>;
+
     LogLevel _threshold{LogLevel::Info};
     std::ostream &_os{std::cout};
 
     std::thread _thread;
-
     Tasks _tasks;
 
     bool _shutdown{false};
 
+    mutable std::mutex _mutex;
+
+    std::condition_variable _cv;
+
     /* ISO 8601 date time format */
     const std::string _timestampFormat{"yyyy-mm-ddThh:mm:ssZ"};
-
-    using Lock = std::lock_guard<std::mutex>;
-
-    mutable std::mutex _mutex;
 };
 
 
