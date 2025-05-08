@@ -11,10 +11,10 @@
 #include "SubParser.hpp"
 
 class FileParser;
-class NotNode;
 class NegationNode;
 class PrefixIncrementNode;
 class PrefixDecrementNode;
+class AnyNode;
 
 // TODO: - have a ParseEnum Type that we use then just call "Parse" method with type or int
 // TODO: - Can have single type of UnaryNode and then just an enum with the type of that since
@@ -26,7 +26,7 @@ public:
     explicit UnaryOperatorSubParser(FileParser &parser) : SubParser(parser) {}
 
     /* Parse ![value] */
-    NotNode *parseNot();
+    AnyNode *parseNot();
 
     /* Parse -[value] */
     NegationNode *parseNegation();

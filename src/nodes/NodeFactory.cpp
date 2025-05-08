@@ -136,4 +136,15 @@ AnyNode *createReturnNode(BaseNode::Ptr returnNode)
     });
 }
 
+
+AnyNode *createNotNode(BaseNode::Ptr expression)
+{
+    return new AnyNode(NodeType::Not, [expression](Scope &scope)
+    {
+        auto result = expression->evaluate<BoolObject>(scope);
+
+        return scope.createManagedObject<BoolObject>(!*result); // TODO: - seems really inefficient
+    });
+}
+
 } // namespace NodeFactory

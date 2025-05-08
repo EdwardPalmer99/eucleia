@@ -20,5 +20,6 @@ enum class NodeType
     If,
     ForLoop,
     Break,
-    Return
+    Return,
+    Not
 };

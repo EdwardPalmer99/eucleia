@@ -32,4 +32,6 @@ AnyNode *createBreakNode();
 
 AnyNode *createReturnNode(BaseNode::Ptr returnNode = nullptr);
 
+AnyNode *createNotNode(BaseNode::Ptr expression);
+
 } // namespace NodeFactory

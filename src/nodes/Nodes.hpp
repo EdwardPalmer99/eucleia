@@ -23,7 +23,6 @@
 #include "FunctionNode.hpp"
 #include "LookupVariableNode.hpp"
 #include "NegationNode.hpp"
-#include "NotNode.hpp"
 #include "PrefixDecrementNode.hpp"
 #include "PrefixIncrementNode.hpp"
 #include "ProgramNode.hpp"
