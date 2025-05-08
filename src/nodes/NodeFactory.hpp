@@ -30,6 +30,8 @@ AnyNode *createForLoopNode(BaseNode::Ptr init, BaseNode::Ptr condition, BaseNode
 
 AnyNode *createWhileLoopNode(BaseNode::Ptr condition, BaseNode::Ptr body);
 
+AnyNode *createDoWhileLoopNode(BaseNode::Ptr condition, BaseNode::Ptr body);
+
 AnyNode *createBreakNode();
 
 AnyNode *createReturnNode(BaseNode::Ptr returnNode = nullptr);

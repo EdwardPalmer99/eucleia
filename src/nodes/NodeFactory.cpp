@@ -122,6 +122,32 @@ AnyNode *createWhileLoopNode(BaseNode::Ptr condition, BaseNode::Ptr body)
     });
 }
 
+
+AnyNode *createDoWhileLoopNode(BaseNode::Ptr condition, BaseNode::Ptr body)
+{
+    return new AnyNode(NodeType::DoWhile, [condition, body](Scope &scope)
+    {
+        jmp_buf local;
+        pushBreakJumpPoint(&local);
+
+        if (setjmp(local) != 1)
+        {
+            Scope loopScope(scope); // Extend scope.
+
+            do
+            {
+                (void)body->evaluate(loopScope);
+            } while (evaluateExpression<BoolObject::Type>(condition.get(), scope));
+        }
+
+        // Restore original context.
+        popBreakJumpPoint();
+
+        return nullptr; // Return nothing.
+    });
+}
+
+
 AnyNode *createBreakNode()
 {
     return new AnyNode(NodeType::Break, [](Scope &scope)

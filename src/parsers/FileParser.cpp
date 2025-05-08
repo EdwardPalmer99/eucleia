@@ -231,7 +231,7 @@ void FileParser::skipSemicolonLineEndingIfRequired(const BaseNode &node)
                               node.isNodeType<ProgramNode>() ||
                               // node.isNodeType<IfNode>() ||
                               // node.isNodeType<WhileNode>() ||
-                              node.isNodeType<DoWhileNode>() ||
+                              // node.isNodeType<DoWhileNode>() ||
                               // node.isNodeType<ForLoopNode>() ||
                               node.isNodeType<FunctionNode>());
 
@@ -241,6 +241,7 @@ void FileParser::skipSemicolonLineEndingIfRequired(const BaseNode &node)
         doSkipPunctuation |= (anyNode->type() == NodeType::If);
         doSkipPunctuation |= (anyNode->type() == NodeType::ForLoop);
         doSkipPunctuation |= (anyNode->type() == NodeType::While);
+        doSkipPunctuation |= (anyNode->type() == NodeType::DoWhile);
     }
 
     if (!doSkipPunctuation)

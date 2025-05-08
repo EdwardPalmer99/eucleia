@@ -20,14 +20,14 @@
  * }
  * while ([condition is true]);
  */
-DoWhileNode *LoopSubParser::parseDoWhile()
+AnyNode *LoopSubParser::parseDoWhile()
 {
     skip("do");
     BaseNode *body = parent().subParsers().block.parseBlock();
     skip("while");
     BaseNode *condition = parent().parseBrackets();
 
-    return new DoWhileNode(condition, body);
+    return NodeFactory::createDoWhileLoopNode(BaseNode::Ptr(condition), BaseNode::Ptr(body));
 }
 
 

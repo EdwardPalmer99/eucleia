@@ -22,5 +22,6 @@ enum class NodeType
     Break,
     Return,
     Not,
-    While
+    While,
+    DoWhile
 };
