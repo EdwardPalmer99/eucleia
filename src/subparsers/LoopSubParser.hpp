@@ -12,7 +12,6 @@
 #include "DoWhileNode.hpp"
 #include "SubParser.hpp"
 #include "Tokenizer.hpp"
-#include "WhileNode.hpp"
 
 class AnyNode;
 
@@ -24,7 +23,7 @@ public:
 
     DoWhileNode *parseDoWhile();
 
-    WhileNode *parseWhile();
+    AnyNode *parseWhile();
 
     AnyNode *parseFor();
 };

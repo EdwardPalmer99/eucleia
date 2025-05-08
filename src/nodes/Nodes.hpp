@@ -29,4 +29,3 @@
 #include "StructAccessNode.hpp"
 #include "StructDefinitionObject.hpp"
 #include "StructObject.hpp"
-#include "WhileNode.hpp"

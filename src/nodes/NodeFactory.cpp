@@ -96,6 +96,32 @@ AnyNode *createForLoopNode(BaseNode::Ptr init, BaseNode::Ptr condition, BaseNode
     });
 }
 
+
+AnyNode *createWhileLoopNode(BaseNode::Ptr condition, BaseNode::Ptr body)
+{
+    return new AnyNode(NodeType::While, [condition, body](Scope &scope)
+    {
+        // Set jump point for break statements.
+        jmp_buf local;
+        pushBreakJumpPoint(&local);
+
+        if (setjmp(local) != 1)
+        {
+            Scope loopScope(scope); // Extend scope.
+
+            while (evaluateExpression<BoolObject::Type>(condition.get(), scope))
+            {
+                (void)body->evaluate(loopScope);
+            }
+        }
+
+        // Restore original context.
+        popBreakJumpPoint();
+
+        return nullptr;
+    });
+}
+
 AnyNode *createBreakNode()
 {
     return new AnyNode(NodeType::Break, [](Scope &scope)

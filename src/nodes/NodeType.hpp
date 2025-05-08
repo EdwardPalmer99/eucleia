@@ -21,5 +21,6 @@ enum class NodeType
     ForLoop,
     Break,
     Return,
-    Not
+    Not,
+    While
 };

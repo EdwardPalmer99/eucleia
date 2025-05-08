@@ -28,6 +28,8 @@ AnyNode *createIfNode(BaseNode::Ptr condition, BaseNode::Ptr thenBranch, BaseNod
 
 AnyNode *createForLoopNode(BaseNode::Ptr init, BaseNode::Ptr condition, BaseNode::Ptr update, BaseNode::Ptr body);
 
+AnyNode *createWhileLoopNode(BaseNode::Ptr condition, BaseNode::Ptr body);
+
 AnyNode *createBreakNode();
 
 AnyNode *createReturnNode(BaseNode::Ptr returnNode = nullptr);
