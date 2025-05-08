@@ -30,4 +30,6 @@ AnyNode *createForLoopNode(BaseNode::Ptr init, BaseNode::Ptr condition, BaseNode
 
 AnyNode *createBreakNode();
 
+AnyNode *createReturnNode(BaseNode::Ptr returnNode = nullptr);
+
 } // namespace NodeFactory

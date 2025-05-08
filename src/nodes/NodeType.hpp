@@ -19,5 +19,6 @@ enum class NodeType
     Float,
     If,
     ForLoop,
-    Break
+    Break,
+    Return
 };

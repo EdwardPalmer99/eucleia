@@ -11,7 +11,6 @@
 #include "SubParser.hpp"
 
 class AnyNode;
-class ReturnNode;
 
 class ControlFlowSubParser : public SubParser
 {
@@ -22,5 +21,5 @@ public:
 
     AnyNode *parseBreak();
 
-    ReturnNode *parseReturn();
+    AnyNode *parseReturn();
 };

@@ -13,7 +13,6 @@
 #include "Exceptions.hpp"
 #include "FileParser.hpp"
 #include "NodeFactory.hpp"
-#include "ReturnNode.hpp"
 
 // bool ControlFlowSubParser::canParse()
 // {
@@ -76,7 +75,7 @@ AnyNode *ControlFlowSubParser::parseBreak()
 }
 
 
-ReturnNode *ControlFlowSubParser::parseReturn()
+AnyNode *ControlFlowSubParser::parseReturn()
 {
     skip("return");
 
@@ -87,5 +86,5 @@ ReturnNode *ControlFlowSubParser::parseReturn()
         returnedExpression = parent().parseExpression();
     }
 
-    return new ReturnNode(returnedExpression);
+    return NodeFactory::createReturnNode(BaseNode::Ptr(returnedExpression));
 }
