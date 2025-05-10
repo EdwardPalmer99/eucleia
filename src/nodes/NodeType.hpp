@@ -23,5 +23,6 @@ enum class NodeType
     Return,
     Not,
     While,
-    DoWhile
+    DoWhile,
+    Block
 };
