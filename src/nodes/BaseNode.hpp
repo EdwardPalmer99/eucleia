@@ -12,6 +12,7 @@
 #include "BaseObjectT.hpp"
 #include "Scope.hpp"
 #include <memory>
+#include <vector>
 
 
 class BaseNode
@@ -72,3 +73,5 @@ public:
         return (*upcastedObj);
     }
 };
+
+using BaseNodePtrVector = std::vector<BaseNode::Ptr>;

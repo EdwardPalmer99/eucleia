@@ -13,11 +13,14 @@
 #include "NodeType.hpp"
 #include "Scope.hpp"
 #include <functional>
+#include <memory>
 
 /* Generic node */
 class AnyNode : public BaseNode
 {
 public:
+    using Ptr = std::shared_ptr<AnyNode>;
+
     using EvaluateFunction = std::function<BaseObject *(Scope &)>;
 
     explicit AnyNode(NodeType type, EvaluateFunction &&evaluateFunc)
