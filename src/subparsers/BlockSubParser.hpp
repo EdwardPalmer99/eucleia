@@ -8,11 +8,14 @@
  */
 
 #pragma once
+#include "BaseNode.hpp"
 #include "SubParser.hpp"
+#include <vector>
 
 class FileParser;
 class ProgramNode;
 class BaseNode;
+class AnyNode;
 
 /*
  * This subparser is used for parsing a "block" of code:
@@ -28,9 +31,12 @@ class BlockSubParser : public SubParser
 public:
     explicit BlockSubParser(FileParser &parser) : SubParser(parser) {}
 
-    /*
-     * Parse a block. If extractSingleExpr is set to true then if we have a single expression within the block,
-     * we will return that
-     */
-    BaseNode *parseBlock(bool extractSingleExpr = true);
+    /* Parse expressions inside { } and wrap-inside AnyNode */
+    AnyNode *parseBlock();
+
+    /* Old code to avoid problems temporarily. TODO: - remove */
+    BaseNode *parseBlockLegacy();
+
+    /* Parse expressions inside {} and return vector of shared pointers */
+    std::vector<BaseNode *> parseBraces();
 };
