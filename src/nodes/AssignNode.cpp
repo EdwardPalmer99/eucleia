@@ -10,7 +10,9 @@
 #include "AssignNode.hpp"
 #include "ArrayAccessNode.hpp"
 #include "StructAccessNode.hpp"
+#include <cassert>
 #include <iostream>
+
 
 BaseObject *AssignNode::evaluate(Scope &scope)
 {

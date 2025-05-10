@@ -8,8 +8,9 @@
  */
 
 #include "LoopSubParser.hpp"
+#include "AnyNode.hpp"
 #include "FileParser.hpp"
-
+#include "NodeFactory.hpp"
 
 /*
  * Parse:
@@ -19,14 +20,14 @@
  * }
  * while ([condition is true]);
  */
-DoWhileNode *LoopSubParser::parseDoWhile()
+AnyNode *LoopSubParser::parseDoWhile()
 {
     skip("do");
     BaseNode *body = parent().subParsers().block.parseBlock();
     skip("while");
     BaseNode *condition = parent().parseBrackets();
 
-    return new DoWhileNode(condition, body);
+    return NodeFactory::createDoWhileLoopNode(BaseNode::Ptr(condition), BaseNode::Ptr(body));
 }
 
 
@@ -37,14 +38,14 @@ DoWhileNode *LoopSubParser::parseDoWhile()
  * 	[code]
  * }
  */
-WhileNode *LoopSubParser::parseWhile()
+AnyNode *LoopSubParser::parseWhile()
 {
     skip("while");
 
     BaseNode *condition = parent().parseBrackets();
     BaseNode *body = parent().subParsers().block.parseBlock();
 
-    return new WhileNode(condition, body);
+    return NodeFactory::createWhileLoopNode(BaseNode::Ptr(condition), BaseNode::Ptr(body));
 }
 
 
@@ -55,7 +56,7 @@ WhileNode *LoopSubParser::parseWhile()
  * 	[code]
  * }
  */
-ForLoopNode *LoopSubParser::parseFor()
+AnyNode *LoopSubParser::parseFor()
 {
     skip("for");
 
@@ -70,10 +71,13 @@ ForLoopNode *LoopSubParser::parseFor()
         ThrowException("expected 3 arguments for for-loop but got " + std::to_string(brackets->programNodes.size()));
     }
 
-    auto start = forLoopArgs[0];
+    auto init = forLoopArgs[0];
     auto condition = forLoopArgs[1];
     auto update = forLoopArgs[2];
     auto body = parent().subParsers().block.parseBlock();
 
-    return new ForLoopNode(start, condition, update, body);
+    return NodeFactory::createForLoopNode(BaseNode::Ptr(init),
+                                          BaseNode::Ptr(condition),
+                                          BaseNode::Ptr(update),
+                                          BaseNode::Ptr(body));
 }

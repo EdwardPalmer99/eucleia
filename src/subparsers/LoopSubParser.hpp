@@ -9,20 +9,19 @@
 
 #pragma once
 #include "BaseParser.hpp"
-#include "DoWhileNode.hpp"
-#include "ForLoopNode.hpp"
 #include "SubParser.hpp"
 #include "Tokenizer.hpp"
-#include "WhileNode.hpp"
+
+class AnyNode;
 
 class LoopSubParser : public SubParser
 {
 public:
     explicit LoopSubParser(FileParser &parser) : SubParser(parser) {}
 
-    DoWhileNode *parseDoWhile();
+    AnyNode *parseDoWhile();
 
-    WhileNode *parseWhile();
+    AnyNode *parseWhile();
 
-    ForLoopNode *parseFor();
+    AnyNode *parseFor();
 };

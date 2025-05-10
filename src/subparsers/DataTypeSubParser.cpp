@@ -9,50 +9,48 @@
 
 #include "DataTypeSubParser.hpp"
 #include "AddArrayNode.hpp"
-#include "AddBoolNode.hpp"
-#include "AddFloatNode.hpp"
-#include "AddIntNode.hpp"
-#include "AddStringNode.hpp"
+#include "AnyNode.hpp"
 #include "ArrayAccessNode.hpp"
 #include "FileParser.hpp"
+#include "NodeFactory.hpp"
 #include "Token.hpp"
 
 
-AddIntNode *DataTypeSubParser::parseInt()
+AnyNode *DataTypeSubParser::parseInt()
 {
     Token token = tokens().dequeue();
 
     long intValue = strtold(token.c_str(), NULL);
 
-    return new AddIntNode(intValue);
+    return NodeFactory::createIntNode(intValue);
 }
 
 
-AddFloatNode *DataTypeSubParser::parseFloat()
+AnyNode *DataTypeSubParser::parseFloat()
 {
     Token token = tokens().dequeue();
 
     double floatValue = strtof(token.c_str(), NULL);
 
-    return new AddFloatNode(floatValue);
+    return NodeFactory::createFloatNode(floatValue);
 }
 
 
-AddBoolNode *DataTypeSubParser::parseBool()
+AnyNode *DataTypeSubParser::parseBool()
 {
     Token token = tokens().dequeue();
 
     bool state = (token == "true");
 
-    return new AddBoolNode(state);
+    return NodeFactory::createBoolNode(state);
 }
 
 
-AddStringNode *DataTypeSubParser::parseString()
+AnyNode *DataTypeSubParser::parseString()
 {
     Token token = tokens().dequeue();
 
-    return new AddStringNode(token);
+    return NodeFactory::createStringNode(std::move(token));
 }
 
 
@@ -74,7 +72,7 @@ ArrayAccessNode *DataTypeSubParser::parseArrayAccessor(BaseNode *lastExpression)
 
     skip("[");
 
-    auto arrayIndex = static_cast<AddIntNode *>(parent().parseExpression());
+    auto arrayIndex = parent().parseExpression();
 
     skip("]");
 

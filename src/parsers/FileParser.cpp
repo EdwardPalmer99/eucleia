@@ -164,7 +164,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
     else if (equals(Token::Punctuation, "["))
         return _subParsers.dataType.parseArray();
     else if (equals(Token::Punctuation, "{"))
-        return _subParsers.block.parseBlock();
+        return _subParsers.block.parseBlockLegacy();
     else if (equals(Token::Keyword, "true") || equals(Token::Keyword, "false"))
         return _subParsers.dataType.parseBool();
     else if (equals(Token::Keyword, "while"))
@@ -229,11 +229,21 @@ void FileParser::skipSemicolonLineEndingIfRequired(const BaseNode &node)
                               node.isNodeType<TestModule>() ||
                               node.isNodeType<FileNode>() ||
                               node.isNodeType<ProgramNode>() ||
-                              node.isNodeType<IfNode>() ||
-                              node.isNodeType<WhileNode>() ||
-                              node.isNodeType<DoWhileNode>() ||
-                              node.isNodeType<ForLoopNode>() ||
+                              // node.isNodeType<IfNode>() ||
+                              // node.isNodeType<WhileNode>() ||
+                              // node.isNodeType<DoWhileNode>() ||
+                              // node.isNodeType<ForLoopNode>() ||
                               node.isNodeType<FunctionNode>());
+
+    const auto *anyNode = dynamic_cast<const AnyNode *>(&node); // TODO: - temporary code before we rewrite BaseNode
+    if (anyNode)
+    {
+        doSkipPunctuation |= (anyNode->type() == NodeType::If);
+        doSkipPunctuation |= (anyNode->type() == NodeType::ForLoop);
+        doSkipPunctuation |= (anyNode->type() == NodeType::While);
+        doSkipPunctuation |= (anyNode->type() == NodeType::DoWhile);
+        doSkipPunctuation |= (anyNode->type() == NodeType::Block);
+    }
 
     if (!doSkipPunctuation)
         skip(";");

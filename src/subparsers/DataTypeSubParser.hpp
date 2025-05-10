@@ -11,12 +11,9 @@
 #include "SubParser.hpp"
 
 class FileParser;
-class AddIntNode;
-class AddFloatNode;
-class AddBoolNode;
-class AddStringNode;
 class AddArrayNode;
 class ArrayAccessNode;
+class AnyNode;
 
 
 class DataTypeSubParser : public SubParser
@@ -24,15 +21,15 @@ class DataTypeSubParser : public SubParser
 public:
     explicit DataTypeSubParser(FileParser &parser) : SubParser(parser) {}
 
-    AddIntNode *parseInt();
+    AnyNode *parseInt();
 
-    AddFloatNode *parseFloat();
+    AnyNode *parseFloat();
 
     /* Parse: true/false */
-    AddBoolNode *parseBool();
+    AnyNode *parseBool();
 
     /* Parse: "..." */
-    AddStringNode *parseString();
+    AnyNode *parseString();
 
     /* Parse: [1, 2, 3, 4] OR [true, false, true] OR [1.2, 2.4] OR ["hello, ", "world!"] */
     AddArrayNode *parseArray();

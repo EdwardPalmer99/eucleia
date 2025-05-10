@@ -8,18 +8,19 @@
  */
 
 #include "UnaryOperatorSubParser.hpp"
+#include "AnyNode.hpp"
 #include "FileParser.hpp"
 #include "NegationNode.hpp"
-#include "NotNode.hpp"
+#include "NodeFactory.hpp"
 #include "PrefixDecrementNode.hpp"
 #include "PrefixIncrementNode.hpp"
 
 
-NotNode *UnaryOperatorSubParser::parseNot()
+AnyNode *UnaryOperatorSubParser::parseNot()
 {
     skip("!");
 
-    return new NotNode(parent().parseAtomically());
+    return NodeFactory::createNotNode(BaseNode::Ptr(parent().parseAtomically()));
 }
 
 

@@ -10,29 +10,55 @@
 #include "BlockSubParser.hpp"
 #include "BaseNode.hpp"
 #include "FileParser.hpp"
+#include "NodeFactory.hpp"
 #include "ProgramNode.hpp"
 
-BaseNode *BlockSubParser::parseBlock(bool extractSingleExpr)
+
+AnyNode *BlockSubParser::parseBlock()
+{
+    // TODO: - if there is only a single expression inside then return that
+
+    BaseNodePtrVector capturedNodes;
+
+    for (auto *node : parseBraces()) /* TODO: - not ideal, wrapper to convert raw -> shared-ptr */
+    {
+        capturedNodes.emplace_back(node);
+    }
+
+    return NodeFactory::createBlockNode(capturedNodes);
+}
+
+
+BaseNode *BlockSubParser::parseBlockLegacy()
+{
+    // TODO: - remove
+    auto capturedNodes = parseBraces();
+
+    if (capturedNodes.size() == 1)
+    {
+        return capturedNodes.front();
+    }
+
+    return new ProgramNode(std::move(capturedNodes));
+}
+
+
+std::vector<BaseNode *> BlockSubParser::parseBraces()
 {
     skip("{");
 
-    std::vector<BaseNode *> parsedNodes;
+    std::vector<BaseNode *> capturedNodes; /* Nodes inside the block */
 
     while (!tokens().empty() && !equals(Token::Punctuation, "}"))
     {
         auto expression = parent().parseExpression();
 
-        parsedNodes.push_back(expression);
+        capturedNodes.push_back(expression); /* TODO: - switch to shared pointer here */
 
         parent().skipSemicolonLineEndingIfRequired(*expression);
     }
 
     skip("}");
 
-    if (extractSingleExpr && parsedNodes.size() == 1)
-    {
-        return parsedNodes.front();
-    }
-
-    return new ProgramNode(std::move(parsedNodes));
+    return capturedNodes;
 }

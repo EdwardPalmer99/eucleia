@@ -84,23 +84,18 @@ BaseNode *ClassSubParser::parseClass()
             classParentTypeName = tokens().dequeue();
         }
 
-        // NB: have to be a bit careful with parseBlock. If there is only one node, it will return that!
-        ProgramNode *classBody = static_cast<ProgramNode *>(parent().subParsers().block.parseBlock(false));
-
-        std::vector<BaseNode *> nodes = classBody->releaseNodes();
-
-        delete classBody;
+        std::vector<BaseNode *> classBody = parent().subParsers().block.parseBraces();
 
         // Split-up into class variables and class methods:
         std::vector<AddVariableNode *> classVariables;
         std::vector<FunctionNode *> classMethods;
 
-        for (BaseNode *node : nodes)
+        for (BaseNode *node : classBody)
         {
             if (node->isNodeType<AddVariableNode>())
-                classVariables.push_back(reinterpret_cast<AddVariableNode *>(node));
+                classVariables.push_back(static_cast<AddVariableNode *>(node));
             else if (node->isNodeType<FunctionNode>())
-                classMethods.push_back(reinterpret_cast<FunctionNode *>(node));
+                classMethods.push_back(static_cast<FunctionNode *>(node));
             else
                 ThrowException("unexpected node type for class definition " + classTypeName);
         }

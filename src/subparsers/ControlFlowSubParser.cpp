@@ -8,13 +8,11 @@
  */
 
 #include "ControlFlowSubParser.hpp"
+#include "AnyNode.hpp"
 #include "BaseNode.hpp"
-#include "BreakNode.hpp"
 #include "Exceptions.hpp"
 #include "FileParser.hpp"
-#include "IfNode.hpp"
-#include "ReturnNode.hpp"
-
+#include "NodeFactory.hpp"
 
 // bool ControlFlowSubParser::canParse()
 // {
@@ -44,14 +42,13 @@
 // }
 
 
-IfNode *ControlFlowSubParser::parseIf()
+AnyNode *ControlFlowSubParser::parseIf()
 {
     // For now, only permit a single if statement.
     skip("if");
 
     auto condition = parent().parseBrackets();
     auto thenDo = parent().subParsers().block.parseBlock();
-
 
     BaseNode *elseDo{nullptr}; // Optional.
     if (tokens().front() == "else")
@@ -66,19 +63,19 @@ IfNode *ControlFlowSubParser::parseIf()
             elseDo = parent().subParsers().block.parseBlock();
     }
 
-    return new IfNode(condition, thenDo, elseDo);
+    return NodeFactory::createIfNode(BaseNode::Ptr(condition), BaseNode::Ptr(thenDo), BaseNode::Ptr(elseDo));
 }
 
 
-BreakNode *ControlFlowSubParser::parseBreak()
+AnyNode *ControlFlowSubParser::parseBreak()
 {
     skip("break");
 
-    return new BreakNode();
+    return NodeFactory::createBreakNode();
 }
 
 
-ReturnNode *ControlFlowSubParser::parseReturn()
+AnyNode *ControlFlowSubParser::parseReturn()
 {
     skip("return");
 
@@ -89,5 +86,5 @@ ReturnNode *ControlFlowSubParser::parseReturn()
         returnedExpression = parent().parseExpression();
     }
 
-    return new ReturnNode(returnedExpression);
+    return NodeFactory::createReturnNode(BaseNode::Ptr(returnedExpression));
 }
