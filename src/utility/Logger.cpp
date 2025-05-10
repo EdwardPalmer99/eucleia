@@ -42,13 +42,14 @@ LoggerImpl::LoggerImpl()
     std::signal(SIGINT, signalHandler);  /* Handle Ctrl+C */
     std::signal(SIGTERM, signalHandler); /* Handle termination signals */
 
-    _fstream = std::ofstream("/var/log/eucleia.log", std::fstream::out | std::fstream::app);
+    _fstream = std::ofstream(_logPath, std::fstream::out | std::fstream::app);
     if (!_fstream.is_open())
     {
         std::cerr << "Logger failed to initialize with path: " << _logPath << std::endl;
     }
     else
     {
+        std::cout << "Logger initialized with path: " << _logPath << std::endl;
         _thread = std::thread(&LoggerImpl::loop, this); /* Startup logging loop */
     }
 }
