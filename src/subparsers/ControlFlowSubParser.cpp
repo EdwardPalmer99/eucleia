@@ -48,7 +48,7 @@ AnyNode *ControlFlowSubParser::parseIf()
     skip("if");
 
     auto condition = parent().parseBrackets();
-    auto thenDo = parent().subParsers().block.parseBlockLegacy();
+    auto thenDo = parent().subParsers().block.parseBlock();
 
     BaseNode *elseDo{nullptr}; // Optional.
     if (tokens().front() == "else")
@@ -60,7 +60,7 @@ AnyNode *ControlFlowSubParser::parseIf()
             elseDo = parseIf();
         // Option 2: else { [statement]; }
         else
-            elseDo = parent().subParsers().block.parseBlockLegacy();
+            elseDo = parent().subParsers().block.parseBlock();
     }
 
     return NodeFactory::createIfNode(BaseNode::Ptr(condition), BaseNode::Ptr(thenDo), BaseNode::Ptr(elseDo));
