@@ -40,7 +40,7 @@ public:
     inline void error(std::string message) { asyncLog(LogLevel::Error, std::move(message)); }
     inline void critical(std::string message) { asyncLog(LogLevel::Critical, std::move(message)); }
 
-    inline void setThreshold(LogLevel threshold) { _threshold = threshold; }
+    void setThreshold(LogLevel threshold);
 
 protected:
     friend class SingletonT<LoggerImpl>;
@@ -52,9 +52,9 @@ protected:
 
     void asyncLog(LogLevel level, std::string message);
 
-    void log(LogLevel level, std::string message) const;
+    void log(LogLevel level, std::string message);
 
-    inline bool isLoggable(LogLevel level) const { return (level >= _threshold); }
+    bool isLoggable(LogLevel level) const;
 
     std::string timestamp() const;
 
@@ -74,7 +74,7 @@ private:
     using Lock = std::lock_guard<std::mutex>;
 
     LogLevel _threshold{LogLevel::Info};
-    std::ostream &_os{std::cout};
+    std::ofstream _fstream;
 
     std::thread _thread;
     Tasks _tasks;
@@ -82,11 +82,14 @@ private:
     bool _shutdown{false};
 
     mutable std::mutex _mutex;
+    mutable std::mutex _thresholdMutex;
 
     std::condition_variable _cv;
 
     /* ISO 8601 date time format */
     const std::string _timestampFormat{"yyyy-mm-ddThh:mm:ssZ"};
+
+    const std::string _logPath{"/var/tmp/eucleia.log"};
 };
 
 

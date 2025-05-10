@@ -18,16 +18,39 @@
 void signalHandler(int signal);
 
 
-LoggerImpl::LoggerImpl() : _thread(&LoggerImpl::loop, this)
+void LoggerImpl::setThreshold(LogLevel threshold)
+{
+    Lock lock(_thresholdMutex);
+    _threshold = threshold;
+}
 
+
+bool LoggerImpl::isLoggable(LogLevel level) const
+{
+    Lock lock(_thresholdMutex); /* TODO: - this will be inefficient. Implement ReaderWriterLock */
+    return (level >= _threshold);
+}
+
+
+LoggerImpl::LoggerImpl()
 {
     /* Register shutdown to be called automatically when program exits */
     std::atexit([]()
-                { Logger::instance().shutdown(); });
+    { Logger::instance().shutdown(); });
 
     /* Register signal handlers */
     std::signal(SIGINT, signalHandler);  /* Handle Ctrl+C */
     std::signal(SIGTERM, signalHandler); /* Handle termination signals */
+
+    _fstream = std::ofstream("/var/log/eucleia.log", std::fstream::out | std::fstream::app);
+    if (!_fstream.is_open())
+    {
+        std::cerr << "Logger failed to initialize with path: " << _logPath << std::endl;
+    }
+    else
+    {
+        _thread = std::thread(&LoggerImpl::loop, this); /* Startup logging loop */
+    }
 }
 
 
@@ -63,7 +86,7 @@ void LoggerImpl::asyncLog(LogLevel level, std::string message)
 {
     Lock guard(_mutex);
 
-    if (_shutdown)
+    if (_shutdown || !_fstream.is_open())
         return; /* Stop adding tasks (some lost log messages) */
 
     auto f = std::bind(&LoggerImpl::log, this, level, std::move(message));
@@ -72,12 +95,12 @@ void LoggerImpl::asyncLog(LogLevel level, std::string message)
 }
 
 
-void LoggerImpl::log(LogLevel level, std::string message) const
+void LoggerImpl::log(LogLevel level, std::string message)
 {
     if (!isLoggable(level))
         return;
 
-    _os << timestamp() << " " << levelName(level) << " " << message << std::endl;
+    _fstream << timestamp() << " " << levelName(level) << " " << message << std::endl;
 }
 
 
@@ -90,7 +113,7 @@ void LoggerImpl::loop()
             std::unique_lock<std::mutex> lock(_mutex);
 
             _cv.wait(lock, [this]()
-                     { return (!_tasks.empty() || _shutdown); });
+            { return (!_tasks.empty() || _shutdown); });
 
             if (_shutdown && _tasks.empty()) /* Flush remaining and exit */
                 return;
@@ -106,8 +129,6 @@ void LoggerImpl::loop()
 
 void LoggerImpl::shutdown()
 {
-    std::cout << "shutdown initiated..." << std::endl;
-
     {
         Lock guard(_mutex);
         _shutdown = true;
