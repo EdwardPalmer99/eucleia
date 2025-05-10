@@ -9,11 +9,13 @@
 
 #include "Logger.hpp"
 #include "Exceptions.hpp"
+#include <chrono>
 #include <csignal>
 #include <cstdio>
 #include <ctime>
+#include <iomanip>
 #include <iostream>
-
+#include <sstream>
 
 void signalHandler(int signal);
 
@@ -145,15 +147,17 @@ void LoggerImpl::shutdown()
 
 std::string LoggerImpl::timestamp() const
 {
-    std::time_t now = std::time(nullptr);
+    auto now = std::chrono::system_clock::now();
 
-    const std::size_t timestampFormatSize = std::size(_timestampFormat);
+    time_t now_t = std::chrono::system_clock::to_time_t(now); /* Convert */
 
-    char timestamp[timestampFormatSize];
-    std::strftime(timestamp, timestampFormatSize, "%FT%TZ", std::localtime(&now));
+    /* Extract microseconds */
+    auto now_micro = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()) % 1000000;
 
-    // NB: will copy bytes in buffer.
-    return std::string(timestamp);
+    std::ostringstream oss;
+    oss << std::put_time(std::localtime(&now_t), _timestampFormat.c_str()) << "." << std::setfill('0') << std::setw(6) << now_micro.count();
+
+    return oss.str();
 }
 
 
