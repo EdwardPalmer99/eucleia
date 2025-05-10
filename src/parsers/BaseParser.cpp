@@ -76,7 +76,7 @@ void BaseParser::skip(const std::string &expected)
     if (!equals(expected))
     {
         /* TODO: - add method wrapper so we never have exception if calling front() on empty queue */
-        ThrowException("unexpected token: " + tokens().front() + "!=" + expected);
+        ThrowException("unexpected token: '" + tokens().front() + "' != '" + expected + "'");
     }
 
     tokens().pop();
