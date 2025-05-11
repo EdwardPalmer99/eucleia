@@ -7,7 +7,6 @@
 
 #include "EucleiaModules.hpp"
 #include "Logger.hpp"
-#include "ProgramNode.hpp"
 #include "TestModule.hpp"
 #include <cmath>
 #include <iostream>

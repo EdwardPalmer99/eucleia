@@ -14,7 +14,6 @@
 #include <vector>
 
 class FileParser;
-class ProgramNode;
 class BaseNode;
 class AnyNode;
 
