@@ -29,7 +29,7 @@ FunctionNode *FunctionSubParser::parseFunctionDefinition()
 
     auto funcName = subparsers().variable.parseVariableName();
     auto funcArgs = subparsers().block.parseDelimited("(", ")", ",", std::bind(&VariableSubParser::parseVariableDefinition, &subparsers().variable)); // Func variables.
-    auto funcBody = parent().subParsers().block.parseBlockLegacy();                                                                                   // TODO: - investigate why this causes a segfault when we switch to parseBlock()
+    auto funcBody = parent().subparsers().block.parseBlockLegacy();                                                                                   // TODO: - investigate why this causes a segfault when we switch to parseBlock()
 
     return new FunctionNode(funcName, funcArgs, funcBody);
 }

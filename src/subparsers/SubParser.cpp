@@ -25,5 +25,5 @@ Tokens &SubParser::tokens()
 
 SubParsers &SubParser::subparsers()
 {
-    return _parser.subParsers();
+    return _parser.subparsers();
 }

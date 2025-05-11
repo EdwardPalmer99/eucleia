@@ -51,7 +51,7 @@ BaseNode *ClassSubParser::parseStruct()
         // Case: "struct STRUCT_TYPE_NAME & STRUCT_REF_INSTANCE_NAME = STRUCT_VARIABLE_NAME_TO_BIND"
         if (equals(Token::Operator, "&"))
         {
-            return parent().subParsers().variable.parseReference(ObjectType::Struct);
+            return parent().subparsers().variable.parseReference(ObjectType::Struct);
         }
 
         auto structInstanceName = tokens().dequeue();
@@ -80,7 +80,7 @@ BaseNode *ClassSubParser::parseClass()
             classParentTypeName = tokens().dequeue();
         }
 
-        std::vector<BaseNode *> classBody = parent().subParsers().block.parseBraces();
+        std::vector<BaseNode *> classBody = parent().subparsers().block.parseBraces();
 
         // Split-up into class variables and class methods:
         std::vector<AddVariableNode *> classVariables;
@@ -103,7 +103,7 @@ BaseNode *ClassSubParser::parseClass()
         // Case: "class CLASS_INSTANCE_NAME & CLASS_REF_NAME = CLASS_VARIABLE_NAME_TO_BIND"
         if (equals(Token::Operator, "&"))
         {
-            return parent().subParsers().variable.parseReference(ObjectType::Class);
+            return parent().subparsers().variable.parseReference(ObjectType::Class);
         }
 
         auto classInstanceName = tokens().dequeue();
@@ -122,7 +122,7 @@ BaseNode *ClassSubParser::parseStructAccessor(BaseNode *lastExpression)
 
     skip(".");
 
-    BaseNode *expression = parent().maybeFunctionCall(std::bind(&VariableSubParser::parseVariableName, &parent().subParsers().variable));
+    BaseNode *expression = parent().maybeFunctionCall(std::bind(&VariableSubParser::parseVariableName, &parent().subparsers().variable));
 
     if (expression->isNodeType<FunctionCallNode>()) // Method.
     {

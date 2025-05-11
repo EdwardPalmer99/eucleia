@@ -23,7 +23,7 @@
 AnyNode *LoopSubParser::parseDoWhile()
 {
     skip("do");
-    BaseNode *body = parent().subParsers().block.parseBlock();
+    BaseNode *body = parent().subparsers().block.parseBlock();
     skip("while");
     BaseNode *condition = parent().parseBrackets();
 
@@ -43,7 +43,7 @@ AnyNode *LoopSubParser::parseWhile()
     skip("while");
 
     BaseNode *condition = parent().parseBrackets();
-    BaseNode *body = parent().subParsers().block.parseBlock();
+    BaseNode *body = parent().subparsers().block.parseBlock();
 
     return NodeFactory::createWhileLoopNode(BaseNode::Ptr(condition), BaseNode::Ptr(body));
 }
