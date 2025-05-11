@@ -19,9 +19,7 @@ BaseObject *FunctionCallNode::evaluate(Scope &scope)
     BaseObject *libraryFunc = scope.getOptionalNamedObject<BaseObject>(funcName->name);
     if (libraryFunc && libraryFunc->isObjectType<LibraryFunctionObject>())
     {
-        ProgramNode &programNode = (*funcArgs);
-
-        return libraryFunc->castObject<LibraryFunctionObject>()(programNode, scope);
+        return libraryFunc->castObject<LibraryFunctionObject>()(funcArgs, scope);
     }
 
     // TODO: - finish implementing here. Should not be a shared pointer.
@@ -30,12 +28,12 @@ BaseObject *FunctionCallNode::evaluate(Scope &scope)
 
     // 2. Verify that the number of arguments matches those required for the
     // function we are calling.
-    if (funcArgs->programNodes.size() != funcNode->funcArgs->programNodes.size())
+    if (funcArgs.size() != funcNode->funcArgs.size())
     {
         char buffer[150];
         snprintf(buffer, 150, "expected %ld arguments but got %ld arguments for function '%s'.",
-                 funcNode->funcArgs->programNodes.size(),
-                 funcArgs->programNodes.size(),
+                 funcNode->funcArgs.size(),
+                 funcArgs.size(),
                  funcName->name.c_str());
 
         ThrowException(buffer);
@@ -50,14 +48,14 @@ BaseObject *FunctionCallNode::evaluate(Scope &scope)
     // that the object types are compatible.
 
     int iarg = 0;
-    for (const auto &argNode : funcArgs->programNodes)
+    for (const auto &argNode : funcArgs)
     {
         // Evaluate all function arguments in external scope (outside function).
         auto evaluatedArg = argNode->evaluate(scope);
 
         // Check that the evaluatedArg type (RHS) is compatible with the corresponding
         // (LHS) variable.
-        auto &argVariable = funcNode->funcArgs->programNodes[iarg++]->castNode<AddVariableNode>();
+        auto &argVariable = funcNode->funcArgs[iarg++]->castNode<AddVariableNode>();
 
         if (!argVariable.passesAssignmentTypeCheck(*evaluatedArg))
         {

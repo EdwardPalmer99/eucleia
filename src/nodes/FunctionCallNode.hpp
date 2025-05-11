@@ -13,20 +13,25 @@
 #include "BaseObject.hpp"
 #include "ProgramNode.hpp"
 #include "Scope.hpp"
+#include <algorithm>
+#include <vector>
+
 
 class FunctionCallNode : public BaseNode
 {
 public:
-    FunctionCallNode(BaseNode *funcName_, BaseNode *funcArgs_)
+    FunctionCallNode(BaseNode *funcName_, BaseNodePtrVector funcArgs_)
         : funcName(static_cast<AddVariableNode *>(funcName_)),
-          funcArgs(static_cast<ProgramNode *>(funcArgs_))
+          funcArgs(std::move(funcArgs_))
     {
     }
 
     ~FunctionCallNode() override
     {
         delete funcName;
-        delete funcArgs;
+
+        std::for_each(funcArgs.begin(), funcArgs.end(), [](BaseNode *node)
+        { delete node; });
     }
 
     // TODO: - don't forget to do performance profiling for Fib sequence and see memory requirements for old and new version
@@ -35,7 +40,6 @@ public:
 
     BaseObject *evaluateFunctionBody(BaseNode &funcBody, Scope &funcScope);
 
-
     AddVariableNode *funcName{nullptr};
-    ProgramNode *funcArgs{nullptr};
+    BaseNodePtrVector funcArgs{nullptr};
 };

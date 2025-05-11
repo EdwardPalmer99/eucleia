@@ -17,7 +17,7 @@
 FunctionCallNode *FunctionSubParser::parseFunctionCall(BaseNode *lastExpression)
 {
     auto functionName = std::move(lastExpression);
-    auto functionArgs = parseDelimited("(", ")", ",", std::bind(&FileParser::parseExpression, &parent()));
+    auto functionArgs = subparsers().block.parseDelimited("(", ")", ",", std::bind(&FileParser::parseExpression, &parent()));
 
     return new FunctionCallNode(functionName, functionArgs);
 }
@@ -27,9 +27,9 @@ FunctionNode *FunctionSubParser::parseFunctionDefinition()
 {
     skip("func");
 
-    auto funcName = parent().subParsers().variable.parseVariableName();
-    auto funcArgs = parseDelimited("(", ")", ",", std::bind(&VariableSubParser::parseVariableDefinition, &parent().subParsers().variable)); // Func variables.
-    auto funcBody = parent().subParsers().block.parseBlockLegacy();                                                                         // TODO: - investigate why this causes a segfault when we switch to parseBlock()
+    auto funcName = subparsers().variable.parseVariableName();
+    auto funcArgs = subparsers().block.parseDelimited("(", ")", ",", std::bind(&VariableSubParser::parseVariableDefinition, &subparsers().variable)); // Func variables.
+    auto funcBody = parent().subParsers().block.parseBlockLegacy();                                                                                   // TODO: - investigate why this causes a segfault when we switch to parseBlock()
 
     return new FunctionNode(funcName, funcArgs, funcBody);
 }

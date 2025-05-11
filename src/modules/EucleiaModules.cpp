@@ -38,12 +38,12 @@ void ModuleNode::defineFunction(const std::string &name, Function function)
 }
 
 
-std::vector<BaseObject *> ModuleNode::evaluateArgs(ProgramNode &args, Scope &scope) const
+BaseObjectPtrVector ModuleNode::evaluateArgs(BaseNodePtrVector &args, Scope &scope) const
 {
-    std::vector<BaseObject *> out(args.programNodes.size());
+    BaseObjectPtrVector out(args.size());
 
     int i = 0;
-    for (const auto &node : args.programNodes)
+    for (const auto &node : args)
     {
         out[i++] = node->evaluate(scope);
     }
@@ -54,16 +54,16 @@ std::vector<BaseObject *> ModuleNode::evaluateArgs(ProgramNode &args, Scope &sco
 
 void MathModuleNode::defineFunctions()
 {
-    defineFunction("sqrt", [*this](ProgramNode &callArgs, Scope &scope) -> BaseObject *
-                   {
+    defineFunction("sqrt", [*this](BaseNodePtrVector &callArgs, Scope &scope) -> BaseObject *
+    {
     	auto argValues = evaluateArgs(callArgs, scope);
     	assert(argValues.size() == 1);
 
     	auto & first = argValues.front()->castObject<FloatObject>();
     	return scope.createManagedObject<FloatObject>(sqrt(first.value())); });
 
-    defineFunction("pow", [*this](ProgramNode &callArgs, Scope &scope) -> BaseObject *
-                   {
+    defineFunction("pow", [*this](BaseNodePtrVector &callArgs, Scope &scope) -> BaseObject *
+    {
     	auto argValues = evaluateArgs(callArgs, scope);
     	assert(argValues.size() == 2);
 
@@ -76,15 +76,15 @@ void MathModuleNode::defineFunctions()
 
 void IOModuleNode::defineFunctions()
 {
-    auto closure = [](ProgramNode &callArgs, Scope &scope) -> BaseObject *
+    auto closure = [](BaseNodePtrVector &callArgs, Scope &scope) -> BaseObject *
     {
-        for (const auto &node : callArgs.programNodes)
+        for (const auto &node : callArgs)
         {
             auto evaluatedNode = node->evaluate(scope);
 
             std::cout << *evaluatedNode;
 
-            if (node != callArgs.programNodes.back())
+            if (node != callArgs.back())
             {
                 std::cout << " ";
             }
@@ -101,7 +101,7 @@ void ArrayModuleNode::defineFunctions()
 {
     // TODO: - would be good to add these as available methods.
     // TODO: - enable these core functions for other object types.
-    auto closure = [this](ProgramNode &callArgs, Scope &scope) -> BaseObject *
+    auto closure = [this](BaseNodePtrVector &callArgs, Scope &scope) -> BaseObject *
     {
         auto argValues = evaluateArgs(callArgs, scope);
         assert(argValues.size() == 1);
@@ -113,7 +113,7 @@ void ArrayModuleNode::defineFunctions()
 
     defineFunction("clear", closure);
 
-    auto closure2 = [this](ProgramNode &callArgs, Scope &scope) -> BaseObject *
+    auto closure2 = [this](BaseNodePtrVector &callArgs, Scope &scope) -> BaseObject *
     {
         auto argValues = evaluateArgs(callArgs, scope);
         assert(argValues.size() == 1);
@@ -125,7 +125,7 @@ void ArrayModuleNode::defineFunctions()
 
     defineFunction("length", closure2);
 
-    auto closure3 = [this](ProgramNode &callArgs, Scope &scope) -> BaseObject *
+    auto closure3 = [this](BaseNodePtrVector &callArgs, Scope &scope) -> BaseObject *
     {
         auto argValues = evaluateArgs(callArgs, scope);
         assert(argValues.size() == 2);

@@ -10,6 +10,7 @@
 #pragma once
 #include "BaseNode.hpp"
 #include "SubParser.hpp"
+#include <string>
 #include <vector>
 
 class FileParser;
@@ -38,5 +39,11 @@ public:
     BaseNode *parseBlockLegacy();
 
     /* Parse expressions inside {} and return vector of shared pointers */
-    std::vector<BaseNode *> parseBraces();
+    BaseNodePtrVector parseBraces();
+
+    /* Parse a delimited expression, e.g. (a, b, c) where start='(', stop=')', separator=',' */
+    BaseNodePtrVector parseDelimited(std::string start,
+                                     std::string stop,
+                                     std::string separator,
+                                     ParseMethod parseMethod);
 };

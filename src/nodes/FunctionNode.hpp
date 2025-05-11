@@ -15,8 +15,8 @@
 class FunctionNode : public FunctionCallNode
 {
 public:
-    FunctionNode(BaseNode *funcName_, BaseNode *funcArgs_, BaseNode *funcBody_)
-        : FunctionCallNode(funcName_, funcArgs_),
+    FunctionNode(BaseNode *funcName_, BaseNodePtrVector funcArgs_, BaseNode *funcBody_)
+        : FunctionCallNode(funcName_, std::move(funcArgs_)),
           funcBody(static_cast<ProgramNode *>(funcBody_))
     {
     }

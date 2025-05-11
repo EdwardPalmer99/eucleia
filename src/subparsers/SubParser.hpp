@@ -11,6 +11,7 @@
 #include "BaseParser.hpp"
 
 class BaseNode;
+class SubParsers;
 class FileParser;
 
 // TODO: - inherit from BaseParser with initialization method so don't need to call parent parser methods
@@ -23,6 +24,9 @@ public:
 
     /* Returns reference to parent parser for file */
     [[nodiscard]] FileParser &parent() { return _parser; }
+
+    /* Returns a reference to the subparsers for file */
+    [[nodiscard]] SubParsers &subparsers();
 
     /* Returns reference to file tokens */
     [[nodiscard]] Tokens &tokens() final;

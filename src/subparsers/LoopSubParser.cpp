@@ -60,21 +60,17 @@ AnyNode *LoopSubParser::parseFor()
 {
     skip("for");
 
-    ProgramNode *brackets = parseDelimited("(", ")", ";", std::bind(&FileParser::parseExpression, &parent()));
-
-    std::vector<BaseNode *> forLoopArgs = brackets->releaseNodes();
-
-    delete brackets;
+    auto forLoopArgs = subparsers().block.parseDelimited("(", ")", ";", std::bind(&FileParser::parseExpression, &parent()));
 
     if (forLoopArgs.size() != 3)
     {
-        ThrowException("expected 3 arguments for for-loop but got " + std::to_string(brackets->programNodes.size()));
+        ThrowException("expected 3 arguments for for-loop but got " + std::to_string(forLoopArgs.size()));
     }
 
     auto init = forLoopArgs[0];
     auto condition = forLoopArgs[1];
     auto update = forLoopArgs[2];
-    auto body = parent().subParsers().block.parseBlock();
+    auto body = subparsers().block.parseBlock();
 
     return NodeFactory::createForLoopNode(BaseNode::Ptr(init),
                                           BaseNode::Ptr(condition),

@@ -18,7 +18,7 @@ AnyNode *BlockSubParser::parseBlock()
 {
     // TODO: - if there is only a single expression inside then return that
 
-    BaseNodePtrVector capturedNodes;
+    BaseNodeSharedPtrVector capturedNodes;
 
     for (auto *node : parseBraces()) /* TODO: - not ideal, wrapper to convert raw -> shared-ptr */
     {
@@ -43,11 +43,11 @@ BaseNode *BlockSubParser::parseBlockLegacy()
 }
 
 
-std::vector<BaseNode *> BlockSubParser::parseBraces()
+BaseNodePtrVector BlockSubParser::parseBraces()
 {
     skip("{");
 
-    std::vector<BaseNode *> capturedNodes; /* Nodes inside the block */
+    BaseNodePtrVector capturedNodes; /* Nodes inside the block */
 
     while (!tokens().empty() && !equals(Token::Punctuation, "}"))
     {
@@ -60,5 +60,45 @@ std::vector<BaseNode *> BlockSubParser::parseBraces()
 
     skip("}");
 
+    return capturedNodes;
+}
+
+
+BaseNodePtrVector BlockSubParser::parseDelimited(std::string start,
+                                                 std::string stop,
+                                                 std::string separator,
+                                                 ParseMethod parseMethod)
+{
+    skip(start);
+
+    BaseNodePtrVector capturedNodes;
+
+    // Iterate while we still have tokens and haven't reached stop token.
+    bool firstCall = true;
+
+    while (!tokens().empty() && !equals(stop))
+    {
+        /* Skip separator on each subsequent call (i.e. a, b) */
+        if (firstCall)
+        {
+            firstCall = false;
+        }
+        else
+        {
+            skip(separator);
+        }
+
+        if (equals(stop))
+        {
+            break;
+        }
+
+        // Parse the token.
+        capturedNodes.push_back(parseMethod());
+    }
+
+    skip(stop);
+
+    capturedNodes.shrink_to_fit();
     return capturedNodes;
 }

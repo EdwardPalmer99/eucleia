@@ -34,11 +34,7 @@ BaseNode *ClassSubParser::parseStruct()
             structParentTypeName = tokens().dequeue();
         }
 
-        auto structMemberVars = parseDelimited("{", "}", ";", std::bind(&VariableSubParser::parseVariableDefinition, parent().subParsers().variable));
-
-        std::vector<BaseNode *> nodes = structMemberVars->releaseNodes();
-
-        delete structMemberVars;
+        auto nodes = subparsers().block.parseDelimited("{", "}", ";", std::bind(&VariableSubParser::parseVariableDefinition, subparsers().variable));
 
         std::vector<AddVariableNode *> variableDefs;
         variableDefs.reserve(nodes.size());

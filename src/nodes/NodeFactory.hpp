@@ -39,6 +39,6 @@ AnyNode *createReturnNode(BaseNode::Ptr returnNode = nullptr);
 AnyNode *createNotNode(BaseNode::Ptr expression);
 
 /* Evaluates a sequence of nodes */
-AnyNode *createBlockNode(BaseNodePtrVector nodes);
+AnyNode *createBlockNode(BaseNodeSharedPtrVector nodes);
 
 } // namespace NodeFactory

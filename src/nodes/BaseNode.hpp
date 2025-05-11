@@ -74,4 +74,5 @@ public:
     }
 };
 
-using BaseNodePtrVector = std::vector<BaseNode::Ptr>;
+using BaseNodeSharedPtrVector = std::vector<BaseNode::Ptr>;
+using BaseNodePtrVector = std::vector<BaseNode *>;

@@ -11,6 +11,7 @@
 #include "Exceptions.hpp"
 #include <string>
 #include <typeinfo>
+#include <vector>
 
 /**
  * BaseObject. All objects are derived from this class.
@@ -64,3 +65,5 @@ public:
 protected:
     BaseObject() = default;
 };
+
+using BaseObjectPtrVector = std::vector<BaseObject *>;

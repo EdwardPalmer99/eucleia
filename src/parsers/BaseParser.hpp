@@ -26,12 +26,6 @@ protected:
     /* Returns a reference to the tokens */
     [[nodiscard]] virtual Tokens &tokens() = 0;
 
-    /* Parse a delimited expression, e.g. (a, b, c) where start='(', stop=')', separator=',' */
-    ProgramNode *parseDelimited(std::string start,
-                                std::string stop,
-                                std::string separator,
-                                ParseMethod expression);
-
     /* Returns true if front token matches expected value */
     bool equals(const std::string &value);
 

@@ -199,7 +199,7 @@ AnyNode *createNotNode(BaseNode::Ptr expression)
     });
 }
 
-AnyNode *createBlockNode(BaseNodePtrVector nodes)
+AnyNode *createBlockNode(BaseNodeSharedPtrVector nodes)
 {
     return new AnyNode(NodeType::Block, [nodes = std::move(nodes)](Scope &scope)
     {
