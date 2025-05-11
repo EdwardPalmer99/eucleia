@@ -11,9 +11,6 @@
 #include "SubParser.hpp"
 
 class FileParser;
-class NegationNode;
-class PrefixIncrementNode;
-class PrefixDecrementNode;
 class AnyNode;
 
 // TODO: - have a ParseEnum Type that we use then just call "Parse" method with type or int
@@ -29,11 +26,11 @@ public:
     AnyNode *parseNot();
 
     /* Parse -[value] */
-    NegationNode *parseNegation();
+    AnyNode *parseNegation();
 
     /* Parse ++[value] */
-    PrefixIncrementNode *parsePrefixIncrement();
+    AnyNode *parsePrefixIncrement();
 
     /* Parse --[value] */
-    PrefixDecrementNode *parsePrefixDecrement();
+    AnyNode *parsePrefixDecrement();
 };

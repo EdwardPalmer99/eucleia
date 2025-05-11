@@ -27,5 +27,8 @@ enum class NodeType
     Block,
     Assign,
     Array,
-    File
+    File,
+    PrefixIncrement,
+    PrefixDecrement,
+    Negation
 };

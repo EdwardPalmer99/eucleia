@@ -294,4 +294,74 @@ AnyNode *createFileNode(BaseNodeSharedPtrVector nodes)
 }
 
 
+AnyNode *createPrefixIncrementNode(BaseNode *expression)
+{
+    return new AnyNode(NodeType::PrefixIncrement, [expression = BaseNode::Ptr(expression)](Scope &scope)
+    {
+        // 1. Body should be an already-declared variable.
+        assert(expression->isNodeType<LookupVariableNode>());
+
+        // 2. Object associated with variable name in scope must be integer or float.
+        auto bodyEvaluated = expression->evaluate(scope);
+        if (bodyEvaluated->isObjectType<IntObject>())
+        {
+            ++(bodyEvaluated->castObject<IntObject>());
+            return bodyEvaluated;
+        }
+        else if (bodyEvaluated->isObjectType<FloatObject>())
+        {
+            ++(bodyEvaluated->castObject<FloatObject>());
+            return bodyEvaluated;
+        }
+
+        ThrowException("cannot use prefix operator on object of type");
+    });
+}
+
+
+AnyNode *createPrefixDecrementNode(BaseNode *expression)
+{
+    return new AnyNode(NodeType::PrefixDecrement, [expression = BaseNode::Ptr(expression)](Scope &scope)
+    {
+        // 1. Body should be an already-declared variable.
+        assert(expression->isNodeType<LookupVariableNode>());
+
+        // 2. Object associated with variable name in scope must be integer or float.
+        auto bodyEvaluated = expression->evaluate(scope);
+        if (bodyEvaluated->isObjectType<IntObject>())
+        {
+            --(bodyEvaluated->castObject<IntObject>());
+            return bodyEvaluated;
+        }
+        else if (bodyEvaluated->isObjectType<FloatObject>())
+        {
+            --(bodyEvaluated->castObject<FloatObject>());
+            return bodyEvaluated;
+        }
+
+        ThrowException("cannot use prefix operator on object of type.");
+    });
+}
+
+
+AnyNode *createNegationNode(BaseNode *expression)
+{
+    return new AnyNode(NodeType::Negation, [expression = BaseNode::Ptr(expression)](Scope &scope)
+    {
+        auto bodyEvaluated = expression->evaluate(scope);
+
+        BaseObject *result{nullptr};
+
+        if (bodyEvaluated->isObjectType<IntObject>())
+            result = scope.createManagedObject<IntObject>(-bodyEvaluated->castObject<IntObject>());
+        else if (bodyEvaluated->isObjectType<FloatObject>())
+            result = scope.createManagedObject<FloatObject>(-bodyEvaluated->castObject<FloatObject>());
+        else
+            ThrowException("invalid object type");
+
+        return result;
+    });
+}
+
+
 } // namespace NodeFactory

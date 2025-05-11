@@ -10,11 +10,7 @@
 #include "UnaryOperatorSubParser.hpp"
 #include "AnyNode.hpp"
 #include "FileParser.hpp"
-#include "NegationNode.hpp"
 #include "NodeFactory.hpp"
-#include "PrefixDecrementNode.hpp"
-#include "PrefixIncrementNode.hpp"
-
 
 AnyNode *UnaryOperatorSubParser::parseNot()
 {
@@ -24,25 +20,25 @@ AnyNode *UnaryOperatorSubParser::parseNot()
 }
 
 
-NegationNode *UnaryOperatorSubParser::parseNegation()
+AnyNode *UnaryOperatorSubParser::parseNegation()
 {
     skip("-");
 
-    return new NegationNode(parent().parseAtomically());
+    return NodeFactory::createNegationNode(parent().parseAtomically());
 }
 
 
-PrefixIncrementNode *UnaryOperatorSubParser::parsePrefixIncrement()
+AnyNode *UnaryOperatorSubParser::parsePrefixIncrement()
 {
     skip("++");
 
-    return new PrefixIncrementNode(parent().parseAtomically());
+    return NodeFactory::createPrefixIncrementNode(parent().parseAtomically());
 }
 
 
-PrefixDecrementNode *UnaryOperatorSubParser::parsePrefixDecrement()
+AnyNode *UnaryOperatorSubParser::parsePrefixDecrement()
 {
     skip("--");
 
-    return new PrefixDecrementNode(parent().parseAtomically());
+    return NodeFactory::createPrefixDecrementNode(parent().parseAtomically());
 }

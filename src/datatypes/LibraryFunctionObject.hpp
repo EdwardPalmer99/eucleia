@@ -12,7 +12,6 @@
 #include "BaseObjectT.hpp"
 #include <functional>
 
-class ProgramNode;
 class Scope;
 
 using LibraryFunction = std::function<BaseObject *(BaseNodePtrVector &, Scope &)>;

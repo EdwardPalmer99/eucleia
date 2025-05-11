@@ -52,5 +52,10 @@ AnyNode *createArrayNode(BaseNodeSharedPtrVector nodes);
  */
 AnyNode *createFileNode(BaseNodeSharedPtrVector nodes = {});
 
+AnyNode *createPrefixIncrementNode(BaseNode *expression);
+
+AnyNode *createPrefixDecrementNode(BaseNode *expression);
+
+AnyNode *createNegationNode(BaseNode *expression);
 
 } // namespace NodeFactory
