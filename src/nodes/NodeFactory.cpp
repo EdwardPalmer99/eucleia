@@ -280,5 +280,18 @@ AnyNode *createArrayNode(BaseNodeSharedPtrVector nodes)
     });
 }
 
+AnyNode *createFileNode(BaseNodeSharedPtrVector nodes)
+{
+    return new AnyNode(NodeType::File, [nodes](Scope &scope)
+    {
+        for (const auto &node : nodes)
+        {
+            (void)node->evaluate(scope);
+        }
+
+        return nullptr;
+    });
+}
+
 
 } // namespace NodeFactory

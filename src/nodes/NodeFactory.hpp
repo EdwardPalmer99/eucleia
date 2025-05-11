@@ -46,5 +46,11 @@ AnyNode *createAssignNode(BaseNode *left, BaseNode *right);
 
 AnyNode *createArrayNode(BaseNodeSharedPtrVector nodes);
 
+/*
+ * Evaluates a file treating it as one large program. Does NOT create an inner scope node in order to ensure that any
+ * functions declared in this file will be added to the master file by using the same global scope - TODO: - think about this logic.
+ */
+AnyNode *createFileNode(BaseNodeSharedPtrVector nodes = {});
+
 
 } // namespace NodeFactory

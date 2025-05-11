@@ -10,9 +10,9 @@
 #include "ImportSubParser.hpp"
 #include "BaseNode.hpp"
 #include "EucleiaModules.hpp"
-#include "FileNode.hpp"
 #include "FileParser.hpp"
 #include "Logger.hpp"
+#include "NodeFactory.hpp"
 #include "ParserData.hpp"
 #include "Token.hpp"
 
@@ -32,7 +32,7 @@ BaseNode *ImportSubParser::parseImport()
 }
 
 
-FileNode *ImportSubParser::parseFileImport()
+AnyNode *ImportSubParser::parseFileImport()
 {
     // File name token:
     auto token = tokens().dequeue();
@@ -43,7 +43,7 @@ FileNode *ImportSubParser::parseFileImport()
     // this case, PARSE A set[A]--> PARSE B set[A,B]--> PARSE C set[A,B,C].
     if (ParserData::instance().isImported(token, ParserDataImpl::File))
     {
-        return new FileNode(); // Return "empty file".
+        return NodeFactory::createFileNode(); // Return "empty file".
     }
 
     ParserData::instance().addImport(token, ParserDataImpl::File);

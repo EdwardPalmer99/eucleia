@@ -21,7 +21,7 @@
 #include <stdlib.h>
 
 
-FileNode *FileParser::parseMainFile(const std::string entryPointPath_)
+AnyNode *FileParser::parseMainFile(const std::string entryPointPath_)
 {
     /* Clear data for all imports */
     ParserData::instance().clearImports();
@@ -39,22 +39,22 @@ FileParser::FileParser(const std::string &fpath)
 }
 
 
-FileNode *FileParser::buildAST()
+AnyNode *FileParser::buildAST()
 {
-    std::vector<BaseNode *> nodes;
+    BaseNodeSharedPtrVector nodes;
 
     while (!tokens().empty())
     {
         auto node = parseExpression();
 
-        nodes.push_back(node);
+        nodes.emplace_back(node);
 
         skipSemicolonLineEndingIfRequired(*node);
     }
 
     nodes.shrink_to_fit();
 
-    return new FileNode(nodes);
+    return NodeFactory::createFileNode(std::move(nodes));
 }
 
 
@@ -228,7 +228,7 @@ void FileParser::skipSemicolonLineEndingIfRequired(const BaseNode &node)
                               node.isNodeType<IOModuleNode>() ||
                               node.isNodeType<ArrayModuleNode>() ||
                               node.isNodeType<TestModule>() ||
-                              node.isNodeType<FileNode>() ||
+                              // node.isNodeType<FileNode>() ||
                               node.isNodeType<ProgramNode>() ||
                               // node.isNodeType<IfNode>() ||
                               // node.isNodeType<WhileNode>() ||
@@ -239,6 +239,7 @@ void FileParser::skipSemicolonLineEndingIfRequired(const BaseNode &node)
     const auto *anyNode = dynamic_cast<const AnyNode *>(&node); // TODO: - temporary code before we rewrite BaseNode
     if (anyNode)
     {
+        doSkipPunctuation |= (anyNode->type() == NodeType::File);
         doSkipPunctuation |= (anyNode->type() == NodeType::If);
         doSkipPunctuation |= (anyNode->type() == NodeType::ForLoop);
         doSkipPunctuation |= (anyNode->type() == NodeType::While);

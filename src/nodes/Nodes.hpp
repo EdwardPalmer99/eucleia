@@ -15,7 +15,6 @@
 #include "ClassAccessNode.hpp"
 #include "ClassDefinitionObject.hpp"
 #include "ClassObject.hpp"
-#include "FileNode.hpp"
 #include "FunctionCallNode.hpp"
 #include "FunctionNode.hpp"
 #include "LookupVariableNode.hpp"

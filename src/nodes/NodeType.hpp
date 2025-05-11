@@ -26,5 +26,6 @@ enum class NodeType
     DoWhile,
     Block,
     Assign,
-    Array
+    Array,
+    File
 };
