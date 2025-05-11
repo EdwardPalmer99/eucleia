@@ -41,4 +41,7 @@ AnyNode *createNotNode(BaseNode::Ptr expression);
 /* Evaluates a sequence of nodes */
 AnyNode *createBlockNode(BaseNodeSharedPtrVector nodes);
 
+/* Assign RHS to LHS */
+AnyNode *createAssignNode(BaseNode::Ptr left, BaseNode::Ptr right);
+
 } // namespace NodeFactory

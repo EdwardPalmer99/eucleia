@@ -24,5 +24,6 @@ enum class NodeType
     Not,
     While,
     DoWhile,
-    Block
+    Block,
+    Assign
 };

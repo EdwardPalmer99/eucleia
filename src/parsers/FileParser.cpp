@@ -10,6 +10,7 @@
 #include "Exceptions.hpp"
 #include "Grammar.hpp"
 #include "Logger.hpp"
+#include "NodeFactory.hpp"
 #include "ObjectTypes.hpp"
 #include "ParserData.hpp"
 #include "TestModule.hpp"
@@ -86,7 +87,7 @@ BaseNode *FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
             bool isAssignNode = (next == "=");
 
             if (isAssignNode)
-                node = new AssignNode(leftExpression, rightExpression);
+                node = NodeFactory::createAssignNode(BaseNode::Ptr(leftExpression), BaseNode::Ptr(rightExpression));
             else
                 node = new BinaryNode(leftExpression, rightExpression, next);
 
