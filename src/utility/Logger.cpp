@@ -9,25 +9,51 @@
 
 #include "Logger.hpp"
 #include "Exceptions.hpp"
+#include <chrono>
 #include <csignal>
 #include <cstdio>
 #include <ctime>
+#include <iomanip>
 #include <iostream>
-
+#include <sstream>
 
 void signalHandler(int signal);
 
 
-LoggerImpl::LoggerImpl() : _thread(&LoggerImpl::loop, this)
+void LoggerImpl::setThreshold(LogLevel threshold)
+{
+    Lock lock(_thresholdMutex);
+    _threshold = threshold;
+}
 
+
+bool LoggerImpl::isLoggable(LogLevel level) const
+{
+    Lock lock(_thresholdMutex); /* TODO: - this will be inefficient. Implement ReaderWriterLock */
+    return (level >= _threshold);
+}
+
+
+LoggerImpl::LoggerImpl()
 {
     /* Register shutdown to be called automatically when program exits */
     std::atexit([]()
-                { Logger::instance().shutdown(); });
+    { Logger::instance().shutdown(); });
 
     /* Register signal handlers */
     std::signal(SIGINT, signalHandler);  /* Handle Ctrl+C */
     std::signal(SIGTERM, signalHandler); /* Handle termination signals */
+
+    _fstream = std::ofstream(_logPath, std::fstream::out);
+    if (!_fstream.is_open())
+    {
+        std::cerr << "Logger failed to initialize with path: " << _logPath << std::endl;
+    }
+    else
+    {
+        std::cout << "Logger initialized with path: " << _logPath << std::endl;
+        _thread = std::thread(&LoggerImpl::loop, this); /* Startup logging loop */
+    }
 }
 
 
@@ -63,7 +89,7 @@ void LoggerImpl::asyncLog(LogLevel level, std::string message)
 {
     Lock guard(_mutex);
 
-    if (_shutdown)
+    if (_shutdown || !_fstream.is_open())
         return; /* Stop adding tasks (some lost log messages) */
 
     auto f = std::bind(&LoggerImpl::log, this, level, std::move(message));
@@ -72,12 +98,12 @@ void LoggerImpl::asyncLog(LogLevel level, std::string message)
 }
 
 
-void LoggerImpl::log(LogLevel level, std::string message) const
+void LoggerImpl::log(LogLevel level, std::string message)
 {
     if (!isLoggable(level))
         return;
 
-    _os << timestamp() << " " << levelName(level) << " " << message << std::endl;
+    _fstream << timestamp() << " " << levelName(level) << " " << message << std::endl;
 }
 
 
@@ -90,7 +116,7 @@ void LoggerImpl::loop()
             std::unique_lock<std::mutex> lock(_mutex);
 
             _cv.wait(lock, [this]()
-                     { return (!_tasks.empty() || _shutdown); });
+            { return (!_tasks.empty() || _shutdown); });
 
             if (_shutdown && _tasks.empty()) /* Flush remaining and exit */
                 return;
@@ -106,8 +132,6 @@ void LoggerImpl::loop()
 
 void LoggerImpl::shutdown()
 {
-    std::cout << "shutdown initiated..." << std::endl;
-
     {
         Lock guard(_mutex);
         _shutdown = true;
@@ -123,15 +147,17 @@ void LoggerImpl::shutdown()
 
 std::string LoggerImpl::timestamp() const
 {
-    std::time_t now = std::time(nullptr);
+    auto now = std::chrono::system_clock::now();
 
-    const std::size_t timestampFormatSize = std::size(_timestampFormat);
+    time_t now_t = std::chrono::system_clock::to_time_t(now); /* Convert */
 
-    char timestamp[timestampFormatSize];
-    std::strftime(timestamp, timestampFormatSize, "%FT%TZ", std::localtime(&now));
+    /* Extract microseconds */
+    auto now_micro = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()) % 1000000;
 
-    // NB: will copy bytes in buffer.
-    return std::string(timestamp);
+    std::ostringstream oss;
+    oss << std::put_time(std::localtime(&now_t), _timestampFormat.c_str()) << "." << std::setfill('0') << std::setw(6) << now_micro.count();
+
+    return oss.str();
 }
 
 
