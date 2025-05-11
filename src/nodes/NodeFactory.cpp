@@ -223,9 +223,9 @@ AnyNode *createBlockNode(BaseNodeSharedPtrVector nodes)
     });
 }
 
-AnyNode *createAssignNode(BaseNode::Ptr left, BaseNode::Ptr right)
+AnyNode *createAssignNode(BaseNode *left, BaseNode *right)
 {
-    return new AnyNode(NodeType::Assign, [left, right](Scope &scope)
+    return new AnyNode(NodeType::Assign, [left = BaseNode::Ptr(left), right = BaseNode::Ptr(right)](Scope &scope)
     {
         // Setting array or struct values.
         if (left->isNodeType<ArrayAccessNode>())
