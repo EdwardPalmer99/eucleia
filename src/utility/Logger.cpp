@@ -44,7 +44,7 @@ LoggerImpl::LoggerImpl()
     std::signal(SIGINT, signalHandler);  /* Handle Ctrl+C */
     std::signal(SIGTERM, signalHandler); /* Handle termination signals */
 
-    _fstream = std::ofstream(_logPath, std::fstream::out | std::fstream::app);
+    _fstream = std::ofstream(_logPath, std::fstream::out);
     if (!_fstream.is_open())
     {
         std::cerr << "Logger failed to initialize with path: " << _logPath << std::endl;
