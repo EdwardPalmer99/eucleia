@@ -11,6 +11,7 @@
 #include "AddVariableNode.hpp"
 #include "AnyNode.hpp"
 #include "ArrayAccessNode.hpp"
+#include "ArrayObject.hpp"
 #include "BaseObject.hpp"
 #include "ExpressionScope.hpp"
 #include "FloatObject.hpp"
@@ -257,6 +258,25 @@ AnyNode *createAssignNode(BaseNode *left, BaseNode *right)
         // Update directly. TODO: - We will need to implement this for some object types still.
         *objectLHS = *objectRHS;
         return nullptr;
+    });
+}
+
+
+AnyNode *createArrayNode(BaseNodeSharedPtrVector nodes)
+{
+    return new AnyNode(NodeType::Array, [nodes](Scope &scope)
+    {
+        BaseObjectPtrVector evaluatedObjects;
+
+        evaluatedObjects.reserve(nodes.size());
+
+        /* Scope owns all objects in array we are passing in. The array object will copy these! */
+        for (auto &node : nodes)
+        {
+            evaluatedObjects.push_back(node->evaluate(scope));
+        }
+
+        return scope.createManagedObject<ArrayObject>(std::move(evaluatedObjects));
     });
 }
 

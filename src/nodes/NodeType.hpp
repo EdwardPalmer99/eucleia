@@ -25,5 +25,6 @@ enum class NodeType
     While,
     DoWhile,
     Block,
-    Assign
+    Assign,
+    Array
 };

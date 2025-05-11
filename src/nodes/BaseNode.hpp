@@ -76,3 +76,6 @@ public:
 
 using BaseNodeSharedPtrVector = std::vector<BaseNode::Ptr>;
 using BaseNodePtrVector = std::vector<BaseNode *>;
+
+/* Utility convert method */
+BaseNodeSharedPtrVector toSharedNodePtrVector(BaseNodePtrVector &nodes);

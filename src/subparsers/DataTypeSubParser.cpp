@@ -12,6 +12,7 @@
 #include "AnyNode.hpp"
 #include "ArrayAccessNode.hpp"
 #include "FileParser.hpp"
+#include "Logger.hpp"
 #include "NodeFactory.hpp"
 #include "Token.hpp"
 
@@ -54,11 +55,12 @@ AnyNode *DataTypeSubParser::parseString()
 }
 
 
-AddArrayNode *DataTypeSubParser::parseArray()
+AnyNode *DataTypeSubParser::parseArray()
 {
-    auto nodes = subparsers().block.parseDelimited("[", "]", ",", std::bind(&FileParser::parseExpression, &parent()));
-
-    return new AddArrayNode(nodes);
+    log().debug("parsing array...");
+    BaseNodePtrVector nodes = subparsers().block.parseDelimited("[", "]", ",", std::bind(&FileParser::parseExpression, &parent()));
+    log().debug("nodes.size() = " + std::to_string(nodes.size()));
+    return NodeFactory::createArrayNode(toSharedNodePtrVector(nodes));
 }
 
 

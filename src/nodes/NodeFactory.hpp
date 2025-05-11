@@ -44,4 +44,7 @@ AnyNode *createBlockNode(BaseNodeSharedPtrVector nodes);
 /* Assign RHS to LHS */
 AnyNode *createAssignNode(BaseNode *left, BaseNode *right);
 
+AnyNode *createArrayNode(BaseNodeSharedPtrVector nodes);
+
+
 } // namespace NodeFactory
