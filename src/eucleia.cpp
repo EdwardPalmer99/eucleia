@@ -14,7 +14,7 @@
 
 int main(int argc, const char *argv[])
 {
-    // try
+    try
     {
         CLIParser parser("eucleia");
 
@@ -30,18 +30,18 @@ int main(int argc, const char *argv[])
             return EXIT_SUCCESS;
         }
 
-        // if (parser.isSet("--trace"))
-        //     log().setThreshold(LogLevel::Trace);
-        // else
-        //     log().setThreshold(LogLevel::Debug);
+        if (parser.isSet("--trace"))
+            log().setThreshold(LogLevel::Trace);
+        else
+            log().setThreshold(LogLevel::Debug);
 
         Interpreter::evaluateFile(parser["fileName"]);
     }
-    // catch (std::exception &exception)
-    // {
-    //     std::cout << exception.what() << std::endl;
-    //     return EXIT_FAILURE;
-    // }
+    catch (std::exception &exception)
+    {
+        std::cout << exception.what() << std::endl;
+        return EXIT_FAILURE;
+    }
 
     return EXIT_SUCCESS;
 }
