@@ -9,6 +9,7 @@
 
 #include "BinaryNode.hpp"
 #include "ArrayObject.hpp"
+#include <iostream>
 
 BaseObject *BinaryNode::evaluate(Scope &scope)
 {

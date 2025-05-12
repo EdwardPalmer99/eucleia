@@ -68,7 +68,7 @@ BaseNode *FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
 
     // Take a peek look at the next token. Is it an operator token. If it is then
     // we need to create a binary node.
-    const Token &next = tokens().front();
+    Token next = tokens().front(); /* TODO: - should wrap so alerts if no more tokens */
 
     if (next.type() == Token::Operator)
     {
@@ -84,7 +84,7 @@ BaseNode *FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
             // Create binary or assign node.
             BaseNode *node{nullptr};
 
-            bool isAssignNode = (next == "=");
+            bool isAssignNode = (next == std::string("="));
 
             if (isAssignNode)
                 node = NodeFactory::createAssignNode(leftExpression, rightExpression);
