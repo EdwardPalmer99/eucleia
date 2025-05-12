@@ -31,7 +31,7 @@ void CLIParser::addFlagArg(std::string name, std::optional<std::string> descript
     if (isFlag(name))
         ThrowException("argument " + name + " is already defined");
 
-    cliFlags[name] = {.state = false, .description = std::move(description)};
+    cliFlags[name] = FlagRec(false, std::move(description));
 }
 
 const std::string &CLIParser::operator[](const std::string &name) const
@@ -49,7 +49,7 @@ const std::string &CLIParser::operator[](const std::string &name) const
 bool CLIParser::isSet(const std::string &name) const
 {
     if (isFlag(name))
-        return (cliFlags.at(name).state);
+        return (cliFlags.at(name)._state);
     else if (isPositionalArg(name))
         return (cliPositionalArgs.at(name) != std::nullopt);
     else
@@ -61,7 +61,7 @@ void CLIParser::setFlag(const std::string &name, bool state)
     if (!isFlag(name))
         ThrowException("unrecognized flag: " + name);
 
-    cliFlags.at(name).state = state;
+    cliFlags.at(name)._state = state;
 }
 
 void CLIParser::setNextPositionalArg(const std::string &value)
@@ -109,8 +109,8 @@ void CLIParser::printOptions(std::ostream &out) const
     out << "OPTIONS:" << std::endl;
     for (auto &[name, flagInfo] : cliFlags)
     {
-        if (flagInfo.description)
-            snprintf(lineBuffer, kBufferSize, "\t%-20s %s", name.c_str(), (*flagInfo.description).c_str());
+        if (flagInfo._description)
+            snprintf(lineBuffer, kBufferSize, "\t%-20s %s", name.c_str(), (*flagInfo._description).c_str());
         else
             snprintf(lineBuffer, kBufferSize, "\t%-20s", name.c_str());
 
