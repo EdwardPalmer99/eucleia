@@ -8,7 +8,6 @@
  */
 
 #include "ClassSubParser.hpp"
-#include "ArrayAccessNode.hpp"
 #include "BaseNode.hpp"
 #include "Exceptions.hpp"
 #include "FileParser.hpp"

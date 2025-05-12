@@ -9,7 +9,6 @@
 
 #include "DataTypeSubParser.hpp"
 #include "AnyNode.hpp"
-#include "ArrayAccessNode.hpp"
 #include "FileParser.hpp"
 #include "Logger.hpp"
 #include "NodeFactory.hpp"
@@ -63,15 +62,13 @@ AnyNode *DataTypeSubParser::parseArray()
 }
 
 
-ArrayAccessNode *DataTypeSubParser::parseArrayAccessor(BaseNode *lastExpression)
+AnyPropertyNode *DataTypeSubParser::parseArrayAccessor(BaseNode *lastExpression)
 {
-    auto arrayName = static_cast<LookupVariableNode *>(lastExpression);
-
     skip("[");
 
-    auto arrayIndex = parent().parseExpression();
+    auto *arrayIndexNode = parent().parseExpression();
 
     skip("]");
 
-    return new ArrayAccessNode(arrayName, arrayIndex);
+    return NodeFactory::createArrayAccessNode(lastExpression, arrayIndexNode);
 }

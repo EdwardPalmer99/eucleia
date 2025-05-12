@@ -62,4 +62,6 @@ AnyNode *createNegationNode(BaseNode *expression);
 
 AnyPropertyNode *createStructAccessNode(std::string structVariableName, std::string structMemberName);
 
+AnyPropertyNode *createArrayAccessNode(BaseNode *arrayLookupNode, BaseNode *arrayIndexNode);
+
 } // namespace NodeFactory

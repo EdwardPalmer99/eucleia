@@ -10,7 +10,6 @@
 #include "NodeFactory.hpp"
 #include "AddVariableNode.hpp"
 #include "AnyNode.hpp"
-#include "ArrayAccessNode.hpp"
 #include "ArrayObject.hpp"
 #include "BaseObject.hpp"
 #include "ExpressionScope.hpp"
@@ -23,6 +22,7 @@
 #include "StructObject.hpp"
 #include <cassert>
 #include <memory>
+
 
 namespace NodeFactory
 {
@@ -228,16 +228,9 @@ AnyNode *createAssignNode(BaseNode *left, BaseNode *right)
     return new AnyNode(NodeType::Assign, [left = BaseNode::Ptr(left), right = BaseNode::Ptr(right)](Scope &scope)
     {
         // Setting array or struct values.
-        if (left->isNodeType(NodeType::ArrayAccess))
+        if (left->isNodeType(NodeType::ArrayAccess) || left->isNodeType(NodeType::StructAccess))
         {
-            ArrayAccessNode &accessor = left->castNode<ArrayAccessNode>();
-
-            *(accessor.evaluateNoClone(scope)) = *(right->evaluate(scope));
-            return nullptr;
-        }
-        else if (left->isNodeType(NodeType::StructAccess))
-        {
-            AnyPropertyNode &accessor = left->castNode<AnyPropertyNode>();
+            auto &accessor = left->castNode<AnyPropertyNode>();
 
             *(accessor.evaluateNoClone(scope)) = *(right->evaluate(scope));
             return nullptr;
@@ -380,6 +373,29 @@ AnyPropertyNode *createStructAccessNode(std::string structVarName, std::string m
 
 
     return new AnyPropertyNode(NodeType::StructAccess, std::move(evaluate), std::move(evaluateNoClone));
+}
+
+
+AnyPropertyNode *createArrayAccessNode(BaseNode *arrayLookupNode, BaseNode *arrayIndexNode)
+{
+    assert(arrayLookupNode->isNodeType(NodeType::LookupVariable));
+
+    auto evaluateNoClone = [arrayLookupNode = BaseNode::Ptr(arrayLookupNode),
+                            arrayIndexNode = BaseNode::Ptr(arrayIndexNode)](Scope &scope)
+    {
+        // Lookup in array.
+        auto &arrayObj = arrayLookupNode->evaluate(scope)->castObject<ArrayObject>();
+
+        return arrayObj[arrayIndexNode->evaluateObject<IntObject::Type>(scope)];
+    };
+
+    auto evaluate = [evaluateNoClone](Scope &scope)
+    {
+        BaseObject *currentObject = evaluateNoClone(scope);
+        return scope.cloneObject(currentObject);
+    };
+
+    return new AnyPropertyNode(NodeType::ArrayAccess, std::move(evaluate), std::move(evaluateNoClone));
 }
 
 

@@ -10,7 +10,6 @@
 #pragma once
 #include "AddVariableNode.hpp"
 #include "AnyNode.hpp"
-#include "ArrayAccessNode.hpp"
 #include "BinaryNode.hpp"
 #include "ClassAccessNode.hpp"
 #include "ClassDefinitionObject.hpp"

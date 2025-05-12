@@ -13,6 +13,7 @@
 class FileParser;
 class ArrayAccessNode;
 class AnyNode;
+class AnyPropertyNode;
 
 
 class DataTypeSubParser : public SubParser
@@ -34,5 +35,5 @@ public:
     AnyNode *parseArray();
 
     /* Parse: array_variable_name[index] */
-    ArrayAccessNode *parseArrayAccessor(BaseNode *lastExpression);
+    AnyPropertyNode *parseArrayAccessor(BaseNode *lastExpression);
 };
