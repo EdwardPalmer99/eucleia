@@ -9,6 +9,7 @@
 
 #pragma once
 #include "ClassDefinitionObject.hpp"
+#include "Exceptions.hpp"
 #include "StructObject.hpp"
 #include <string>
 
@@ -19,6 +20,11 @@ class ClassObject : public StructObject
 {
 public:
     ClassObject(std::string typeName_, std::string name_);
+
+    ClassObject &operator=(const BaseObject &) override
+    {
+        ThrowException("Not implemented");
+    }
 
     /**
      * Finishes initializing the class object and links to the scope.
