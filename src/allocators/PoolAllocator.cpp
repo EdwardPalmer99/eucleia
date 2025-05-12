@@ -8,9 +8,9 @@
  */
 
 #include "PoolAllocator.hpp"
+#include <cstdint>
 #include <cstdlib>
 #include <iostream>
-#include <cstdint>
 
 // TODO: - need some way to cleanup and destroy old blocks if memory goes way down.
 
@@ -24,7 +24,7 @@ Chunk *PoolAllocator::allocateBlock(size_t chunkSize)
     Chunk *blockBegin = reinterpret_cast<Chunk *>(malloc(blockSize));
     Chunk *chunk = blockBegin;
 
-    for (int i = 0; i < (chunksPerBlock - 1); ++i)
+    for (size_t i = 0; i < (chunksPerBlock - 1); ++i)
     {
         chunk->next = reinterpret_cast<Chunk *>((uint8_t *)chunk + chunkSize);
         chunk = chunk->next;
