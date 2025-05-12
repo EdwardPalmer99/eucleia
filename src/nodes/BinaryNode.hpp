@@ -25,6 +25,12 @@ public:
     {
     }
 
+    ~BinaryNode() override
+    {
+        delete _left;
+        delete _right;
+    }
+
     BaseObject *evaluate(Scope &scope) override;
 
 protected:
