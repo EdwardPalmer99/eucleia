@@ -72,13 +72,6 @@ protected:
     StructDefinitionObject *lookupParent(const Scope &scope) const;
 
     /**
-     * Store AddVariableNode so class can create all defined variables. We take
-     * ownership of all nodes. There may be additional nodes that are not in this
-     * vector and will be stored in a parent class.
-     */
-    std::vector<AddVariableNode *> variableDefs;
-
-    /**
      * Stores our owned variables and those of any parent variables we inherit.
      * To construct the object, we will call evaluate() method on each node.
      */
@@ -93,6 +86,13 @@ protected:
      * Type name for parent.
      */
     std::string parentTypeName;
+
+        /**
+     * Store AddVariableNode so class can create all defined variables. We take
+     * ownership of all nodes. There may be additional nodes that are not in this
+     * vector and will be stored in a parent class.
+     */
+    std::vector<AddVariableNode *> variableDefs;
 
     /**
      * We activate the definition once evaluate is called. This is when we can

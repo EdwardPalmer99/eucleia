@@ -64,8 +64,13 @@ private:
 
     struct FlagRec
     {
-        bool state;
-        std::optional<std::string> description;
+        bool _state{false};
+        std::optional<std::string> _description{std::nullopt};
+
+        FlagRec() = default;
+
+        FlagRec(bool state, std::optional<std::string> description = std::nullopt)
+            : _state(state), _description(std::move(description)) {}
     };
 
     // Map of cli flags. Default to off (false).

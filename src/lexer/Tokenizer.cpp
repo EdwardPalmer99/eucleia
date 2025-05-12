@@ -101,15 +101,12 @@ Token Tokenizer::buildStringToken(CharStream &stream)
         ThrowException(stream.location() + ": failed to malloc array");
     }
 
-    bool foundEndQuote = false;
-
     while (!stream.isLast())
     {
         (void)stream.increment();
 
         if (stream.isQuote())
         {
-            foundEndQuote = true;
             break;
         }
 

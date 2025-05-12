@@ -75,8 +75,8 @@ protected:
     /**
      * Stores name of instance and the type.
      */
-    std::string name;
     std::string typeName;
+    std::string name;
 
     /**
      * Store the struct definition once active.
