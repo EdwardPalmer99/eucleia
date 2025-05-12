@@ -14,12 +14,12 @@
 
 int main(int argc, const char *argv[])
 {
-    try
+    // try
     {
         CLIParser parser("eucleia");
 
         parser.addFlagArg("--help", "display available options");
-        parser.addFlagArg("--verbose", "logs all debug messages");
+        parser.addFlagArg("--trace", "logs everything!");
 
         parser.addPositionalArg("fileName");
         parser.parseArgs(argc, argv);
@@ -30,18 +30,18 @@ int main(int argc, const char *argv[])
             return EXIT_SUCCESS;
         }
 
-        if (parser.isSet("--verbose"))
-        {
-            log().setThreshold(LogLevel::Debug);
-        }
+        // if (parser.isSet("--trace"))
+        //     log().setThreshold(LogLevel::Trace);
+        // else
+        //     log().setThreshold(LogLevel::Debug);
 
         Interpreter::evaluateFile(parser["fileName"]);
     }
-    catch (std::exception &exception)
-    {
-        std::cout << exception.what() << std::endl;
-        return EXIT_FAILURE;
-    }
+    // catch (std::exception &exception)
+    // {
+    //     std::cout << exception.what() << std::endl;
+    //     return EXIT_FAILURE;
+    // }
 
     return EXIT_SUCCESS;
 }

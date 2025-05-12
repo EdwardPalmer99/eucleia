@@ -11,9 +11,10 @@
 
 #include "SubParser.hpp"
 
+
+class AnyNode;
 class FileParser;
 class ModuleNode;
-class FileNode;
 class BaseNode;
 
 
@@ -28,7 +29,7 @@ public:
      * Imports a file and its functions into this scope
      * Parse: import "path to file"
      */
-    FileNode *parseFileImport();
+    AnyNode *parseFileImport();
 
     /**
      * Imports functions from a stdlib as opposed to user-defined functions

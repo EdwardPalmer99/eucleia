@@ -8,8 +8,9 @@
  */
 
 #include "LoopSubParser.hpp"
+#include "AnyNode.hpp"
 #include "FileParser.hpp"
-
+#include "NodeFactory.hpp"
 
 /*
  * Parse:
@@ -19,14 +20,14 @@
  * }
  * while ([condition is true]);
  */
-DoWhileNode *LoopSubParser::parseDoWhile()
+AnyNode *LoopSubParser::parseDoWhile()
 {
     skip("do");
-    BaseNode *body = parent().subParsers().block.parseBlock();
+    BaseNode *body = parent().subparsers().block.parseBlock();
     skip("while");
     BaseNode *condition = parent().parseBrackets();
 
-    return new DoWhileNode(condition, body);
+    return NodeFactory::createDoWhileLoopNode(BaseNode::Ptr(condition), BaseNode::Ptr(body));
 }
 
 
@@ -37,14 +38,14 @@ DoWhileNode *LoopSubParser::parseDoWhile()
  * 	[code]
  * }
  */
-WhileNode *LoopSubParser::parseWhile()
+AnyNode *LoopSubParser::parseWhile()
 {
     skip("while");
 
     BaseNode *condition = parent().parseBrackets();
-    BaseNode *body = parent().subParsers().block.parseBlock();
+    BaseNode *body = parent().subparsers().block.parseBlock();
 
-    return new WhileNode(condition, body);
+    return NodeFactory::createWhileLoopNode(BaseNode::Ptr(condition), BaseNode::Ptr(body));
 }
 
 
@@ -55,25 +56,24 @@ WhileNode *LoopSubParser::parseWhile()
  * 	[code]
  * }
  */
-ForLoopNode *LoopSubParser::parseFor()
+AnyNode *LoopSubParser::parseFor()
 {
     skip("for");
 
-    ProgramNode *brackets = parseDelimited("(", ")", ";", std::bind(&FileParser::parseExpression, &parent()));
-
-    std::vector<BaseNode *> forLoopArgs = brackets->releaseNodes();
-
-    delete brackets;
+    auto forLoopArgs = subparsers().block.parseDelimited("(", ")", ";", std::bind(&FileParser::parseExpression, &parent()));
 
     if (forLoopArgs.size() != 3)
     {
-        ThrowException("expected 3 arguments for for-loop but got " + std::to_string(brackets->programNodes.size()));
+        ThrowException("expected 3 arguments for for-loop but got " + std::to_string(forLoopArgs.size()));
     }
 
-    auto start = forLoopArgs[0];
+    auto init = forLoopArgs[0];
     auto condition = forLoopArgs[1];
     auto update = forLoopArgs[2];
-    auto body = parent().subParsers().block.parseBlock();
+    auto body = subparsers().block.parseBlock();
 
-    return new ForLoopNode(start, condition, update, body);
+    return NodeFactory::createForLoopNode(BaseNode::Ptr(init),
+                                          BaseNode::Ptr(condition),
+                                          BaseNode::Ptr(update),
+                                          BaseNode::Ptr(body));
 }

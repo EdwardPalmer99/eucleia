@@ -9,6 +9,7 @@
 
 #pragma once
 #include "SingletonT.hpp"
+#include "Stringify.hpp"
 #include <condition_variable>
 #include <fstream>
 #include <functional>
@@ -18,6 +19,8 @@
 #include <string>
 #include <thread>
 
+/* Add to top of functions for tracing */
+#define _trace (Logger::instance().trace(eucleia::stringify("Entering: %s()", __func__)))
 
 enum class LogLevel
 {

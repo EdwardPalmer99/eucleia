@@ -8,16 +8,17 @@
  */
 
 #pragma once
+#include "BaseNode.hpp"
 #include "BaseObject.hpp"
 #include "FunctionCallNode.hpp"
-#include "ProgramNode.hpp"
+
 
 class FunctionNode : public FunctionCallNode
 {
 public:
-    FunctionNode(BaseNode *funcName_, BaseNode *funcArgs_, BaseNode *funcBody_)
-        : FunctionCallNode(funcName_, funcArgs_),
-          funcBody(static_cast<ProgramNode *>(funcBody_))
+    FunctionNode(BaseNode *funcName_, BaseNodePtrVector funcArgs_, BaseNode *funcBody_)
+        : FunctionCallNode(funcName_, std::move(funcArgs_)),
+          funcBody(funcBody_)
     {
     }
 
@@ -28,5 +29,5 @@ public:
 
     BaseObject *evaluate(Scope &scope) override;
 
-    ProgramNode *funcBody{nullptr};
+    BaseNode *funcBody{nullptr};
 };

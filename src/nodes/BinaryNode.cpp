@@ -9,6 +9,7 @@
 
 #include "BinaryNode.hpp"
 #include "ArrayObject.hpp"
+#include <iostream>
 
 BaseObject *BinaryNode::evaluate(Scope &scope)
 {
@@ -17,8 +18,8 @@ BaseObject *BinaryNode::evaluate(Scope &scope)
     // Evaluate left/right in inner scope so destroyed after evaluated.
     Scope binaryScope(scope);
 
-    auto leftEvaluated = left->evaluate(binaryScope);
-    auto rightEvaluated = right->evaluate(binaryScope);
+    auto leftEvaluated = _left->evaluate(binaryScope);
+    auto rightEvaluated = _right->evaluate(binaryScope);
 
     // Persist result by storing in outer scope.
     return applyOperator(scope, *leftEvaluated, *rightEvaluated);
@@ -27,74 +28,74 @@ BaseObject *BinaryNode::evaluate(Scope &scope)
 
 BaseObject *BinaryNode::applyOperator(Scope &scope, const IntObject &left, const IntObject &right) const
 {
-    if (binaryOperator == "+")
+    if (_binaryOperator == "+")
         return scope.createManagedObject<IntObject>(left + right);
-    else if (binaryOperator == "-")
+    else if (_binaryOperator == "-")
         return scope.createManagedObject<IntObject>(left - right);
-    else if (binaryOperator == "*")
+    else if (_binaryOperator == "*")
         return scope.createManagedObject<IntObject>(left * right);
-    else if (binaryOperator == "/")
+    else if (_binaryOperator == "/")
         return scope.createManagedObject<IntObject>(left / right);
-    else if (binaryOperator == "==")
+    else if (_binaryOperator == "==")
         return scope.createManagedObject<BoolObject>(left == right);
-    else if (binaryOperator == "!=")
+    else if (_binaryOperator == "!=")
         return scope.createManagedObject<BoolObject>(left != right);
-    else if (binaryOperator == ">=")
+    else if (_binaryOperator == ">=")
         return scope.createManagedObject<BoolObject>(left >= right);
-    else if (binaryOperator == ">")
+    else if (_binaryOperator == ">")
         return scope.createManagedObject<BoolObject>(left > right);
-    else if (binaryOperator == "<=")
+    else if (_binaryOperator == "<=")
         return scope.createManagedObject<BoolObject>(left <= right);
-    else if (binaryOperator == "<")
+    else if (_binaryOperator == "<")
         return scope.createManagedObject<BoolObject>(left < right);
-    else if (binaryOperator == "%")
+    else if (_binaryOperator == "%")
         return scope.createManagedObject<IntObject>(left % right);
-    else if (binaryOperator == "&&")
+    else if (_binaryOperator == "&&")
         return scope.createManagedObject<BoolObject>(left && right);
-    else if (binaryOperator == "||")
+    else if (_binaryOperator == "||")
         return scope.createManagedObject<BoolObject>(left || right);
     else
-        ThrowException("cannot apply operator " + binaryOperator + " to types Int, Int");
+        ThrowException("cannot apply operator " + _binaryOperator + " to types Int, Int");
 }
 
 
 BaseObject *BinaryNode::applyOperator(Scope &scope, const FloatObject &left, const FloatObject &right) const
 {
-    if (binaryOperator == "+")
+    if (_binaryOperator == "+")
         return scope.createManagedObject<FloatObject>(left + right);
-    else if (binaryOperator == "-")
+    else if (_binaryOperator == "-")
         return scope.createManagedObject<FloatObject>(left - right);
-    else if (binaryOperator == "*")
+    else if (_binaryOperator == "*")
         return scope.createManagedObject<FloatObject>(left * right);
-    else if (binaryOperator == "/")
+    else if (_binaryOperator == "/")
         return scope.createManagedObject<FloatObject>(left / right);
-    else if (binaryOperator == "==")
+    else if (_binaryOperator == "==")
         return scope.createManagedObject<BoolObject>(left == right);
-    else if (binaryOperator == "!=")
+    else if (_binaryOperator == "!=")
         return scope.createManagedObject<BoolObject>(left != right);
-    else if (binaryOperator == ">=")
+    else if (_binaryOperator == ">=")
         return scope.createManagedObject<BoolObject>(left >= right);
-    else if (binaryOperator == ">")
+    else if (_binaryOperator == ">")
         return scope.createManagedObject<BoolObject>(left > right);
-    else if (binaryOperator == "<=")
+    else if (_binaryOperator == "<=")
         return scope.createManagedObject<BoolObject>(left <= right);
-    else if (binaryOperator == "<")
+    else if (_binaryOperator == "<")
         return scope.createManagedObject<BoolObject>(left < right);
     else
-        ThrowException("cannot apply operator " + binaryOperator + " to types Int, Int");
+        ThrowException("cannot apply operator " + _binaryOperator + " to types Int, Int");
 }
 
 
 BaseObject *BinaryNode::applyOperator(Scope &scope, const StringObject &left, const StringObject &right) const
 {
-    if (binaryOperator == "+")
+    if (_binaryOperator == "+")
         return scope.createManagedObject<StringObject>(left + right);
-    else if (binaryOperator == "==")
+    else if (_binaryOperator == "==")
         return scope.createManagedObject<BoolObject>(left == right);
-    else if (binaryOperator == "!=")
+    else if (_binaryOperator == "!=")
         return scope.createManagedObject<BoolObject>(left != right);
     else
-        ThrowException("cannot apply operator " + binaryOperator + " to types String, String");
+        ThrowException("cannot apply operator " + _binaryOperator + " to types String, String");
 }
 
 
@@ -128,6 +129,6 @@ BaseObject *BinaryNode::applyOperator(Scope &scope, const BaseObject &left, cons
     }
     else
     {
-        ThrowException("cannot apply operator " + binaryOperator + " to object types");
+        ThrowException("cannot apply operator " + _binaryOperator + " to object types");
     }
 }

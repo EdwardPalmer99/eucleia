@@ -34,11 +34,7 @@ BaseNode *ClassSubParser::parseStruct()
             structParentTypeName = tokens().dequeue();
         }
 
-        auto structMemberVars = parseDelimited("{", "}", ";", std::bind(&VariableSubParser::parseVariableDefinition, parent().subParsers().variable));
-
-        std::vector<BaseNode *> nodes = structMemberVars->releaseNodes();
-
-        delete structMemberVars;
+        auto nodes = subparsers().block.parseDelimited("{", "}", ";", std::bind(&VariableSubParser::parseVariableDefinition, subparsers().variable));
 
         std::vector<AddVariableNode *> variableDefs;
         variableDefs.reserve(nodes.size());
@@ -55,7 +51,7 @@ BaseNode *ClassSubParser::parseStruct()
         // Case: "struct STRUCT_TYPE_NAME & STRUCT_REF_INSTANCE_NAME = STRUCT_VARIABLE_NAME_TO_BIND"
         if (equals(Token::Operator, "&"))
         {
-            return parent().subParsers().variable.parseReference(ObjectType::Struct);
+            return parent().subparsers().variable.parseReference(ObjectType::Struct);
         }
 
         auto structInstanceName = tokens().dequeue();
@@ -84,23 +80,18 @@ BaseNode *ClassSubParser::parseClass()
             classParentTypeName = tokens().dequeue();
         }
 
-        // NB: have to be a bit careful with parseBlock. If there is only one node, it will return that!
-        ProgramNode *classBody = static_cast<ProgramNode *>(parent().subParsers().block.parseBlock(false));
-
-        std::vector<BaseNode *> nodes = classBody->releaseNodes();
-
-        delete classBody;
+        std::vector<BaseNode *> classBody = parent().subparsers().block.parseBraces();
 
         // Split-up into class variables and class methods:
         std::vector<AddVariableNode *> classVariables;
         std::vector<FunctionNode *> classMethods;
 
-        for (BaseNode *node : nodes)
+        for (BaseNode *node : classBody)
         {
             if (node->isNodeType<AddVariableNode>())
-                classVariables.push_back(reinterpret_cast<AddVariableNode *>(node));
+                classVariables.push_back(static_cast<AddVariableNode *>(node));
             else if (node->isNodeType<FunctionNode>())
-                classMethods.push_back(reinterpret_cast<FunctionNode *>(node));
+                classMethods.push_back(static_cast<FunctionNode *>(node));
             else
                 ThrowException("unexpected node type for class definition " + classTypeName);
         }
@@ -112,7 +103,7 @@ BaseNode *ClassSubParser::parseClass()
         // Case: "class CLASS_INSTANCE_NAME & CLASS_REF_NAME = CLASS_VARIABLE_NAME_TO_BIND"
         if (equals(Token::Operator, "&"))
         {
-            return parent().subParsers().variable.parseReference(ObjectType::Class);
+            return parent().subparsers().variable.parseReference(ObjectType::Class);
         }
 
         auto classInstanceName = tokens().dequeue();
@@ -131,7 +122,7 @@ BaseNode *ClassSubParser::parseStructAccessor(BaseNode *lastExpression)
 
     skip(".");
 
-    BaseNode *expression = parent().maybeFunctionCall(std::bind(&VariableSubParser::parseVariableName, &parent().subParsers().variable));
+    BaseNode *expression = parent().maybeFunctionCall(std::bind(&VariableSubParser::parseVariableName, &parent().subparsers().variable));
 
     if (expression->isNodeType<FunctionCallNode>()) // Method.
     {

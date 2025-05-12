@@ -16,8 +16,8 @@ static const char *kOkGreenColor = "\033[92m";
 
 void TestModule::defineFunctions()
 {
-    defineFunction("TEST", [*this](ProgramNode &callArgs, Scope &scope) -> BaseObject *
-                   {
+    defineFunction("TEST", [*this](BaseNodePtrVector &callArgs, Scope &scope) -> BaseObject *
+    {
         auto argValues = evaluateArgs(callArgs, scope);
         assert(argValues.size() == 2);
 
@@ -31,8 +31,8 @@ void TestModule::defineFunctions()
         fprintf(stdout, "%-50s %s%s%s\n", description.value().c_str(), statusColor, statusString,  kClearColor);
         return nullptr; });
 
-    defineFunction("ASSERT", [*this](ProgramNode &callArgs, Scope &scope) -> BaseObject *
-                   {
+    defineFunction("ASSERT", [*this](BaseNodePtrVector &callArgs, Scope &scope) -> BaseObject *
+    {
         auto argValues = evaluateArgs(callArgs, scope);
         assert(argValues.size() == 1);
 
@@ -40,16 +40,16 @@ void TestModule::defineFunctions()
         assert(result.value());
         return nullptr; });
 
-    defineFunction("abort", [*this](ProgramNode &callArgs, Scope &scope) -> BaseObject *
-                   {
+    defineFunction("abort", [*this](BaseNodePtrVector &callArgs, Scope &scope) -> BaseObject *
+    {
         auto argValues = evaluateArgs(callArgs, scope);
         assert(argValues.size() == 0);
 
         abort();
         return nullptr; });
 
-    defineFunction("exit", [*this](ProgramNode &callArgs, Scope &scope) -> BaseObject *
-                   {
+    defineFunction("exit", [*this](BaseNodePtrVector &callArgs, Scope &scope) -> BaseObject *
+    {
         auto argValues = evaluateArgs(callArgs, scope);
         assert(argValues.size() == 1);
 

@@ -8,7 +8,6 @@
  */
 
 #pragma once
-#include "AssignNode.hpp"
 #include "BaseNode.hpp"
 #include "BaseObject.hpp"
 #include "FloatObject.hpp"
@@ -17,23 +16,32 @@
 #include "StringObject.hpp"
 #include <string>
 
-class BinaryNode : public AssignNode
+class BinaryNode : public BaseNode
 {
 public:
     BinaryNode(BaseNode *left_, BaseNode *right_, std::string binaryOperator_)
-        : AssignNode(left_, right_),
-          binaryOperator(std::move(binaryOperator_))
+        : _left(left_), _right(right_),
+          _binaryOperator(std::move(binaryOperator_))
     {
+    }
+
+    ~BinaryNode() override
+    {
+        delete _left;
+        delete _right;
     }
 
     BaseObject *evaluate(Scope &scope) override;
 
-    std::string binaryOperator;
-
-
+protected:
     BaseObject *applyOperator(Scope &scope, const BaseObject &left, const BaseObject &right) const;
 
     BaseObject *applyOperator(Scope &scope, const IntObject &left, const IntObject &right) const;
     BaseObject *applyOperator(Scope &scope, const FloatObject &left, const FloatObject &right) const;
     BaseObject *applyOperator(Scope &scope, const StringObject &left, const StringObject &right) const;
+
+private:
+    BaseNode *_left{nullptr};
+    BaseNode *_right{nullptr};
+    std::string _binaryOperator;
 };

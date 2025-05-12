@@ -11,11 +11,16 @@
 #include "BaseObject.hpp"
 #include "BaseObjectT.hpp"
 #include "Scope.hpp"
+#include <memory>
+#include <vector>
 
 
 class BaseNode
 {
 public:
+    using Ptr = std::shared_ptr<BaseNode>;
+
+
     BaseNode() = default; // TODO: - should be protected! Should not create BaseNode directly.
     virtual ~BaseNode() = default;
 
@@ -68,3 +73,9 @@ public:
         return (*upcastedObj);
     }
 };
+
+using BaseNodeSharedPtrVector = std::vector<BaseNode::Ptr>;
+using BaseNodePtrVector = std::vector<BaseNode *>;
+
+/* Utility convert method */
+BaseNodeSharedPtrVector toSharedNodePtrVector(BaseNodePtrVector &nodes);

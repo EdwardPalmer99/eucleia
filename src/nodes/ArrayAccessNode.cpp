@@ -11,6 +11,8 @@
 #include "ArrayObject.hpp"
 #include "BaseNode.hpp"
 #include "BaseObjectT.hpp"
+#include "IntObject.hpp"
+
 
 ArrayAccessNode::~ArrayAccessNode()
 {

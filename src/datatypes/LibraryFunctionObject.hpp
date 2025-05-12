@@ -12,10 +12,9 @@
 #include "BaseObjectT.hpp"
 #include <functional>
 
-class ProgramNode;
 class Scope;
 
-using LibraryFunction = std::function<BaseObject *(ProgramNode &, Scope &)>;
+using LibraryFunction = std::function<BaseObject *(BaseNodePtrVector &, Scope &)>;
 
 /// Library function allows us to define lambdas which wrap around existing stdlib
 /// functions. These can then be added to a global scope after seeing "import <...>"
@@ -34,7 +33,7 @@ public:
     }
 
     /* Elegant operator overload allowing user to call function */
-    BaseObject *operator()(ProgramNode &args, Scope &scope) const
+    BaseObject *operator()(BaseNodePtrVector &args, Scope &scope) const
     {
         return _value(args, scope);
     }

@@ -18,7 +18,7 @@
 class ModuleNode : public BaseNode
 {
 public:
-    using Function = std::function<BaseObject *(ProgramNode &callArgs, Scope &scope)>;
+    using Function = std::function<BaseObject *(BaseNodePtrVector &callArgs, Scope &scope)>;
 
     ModuleNode() = default;
     ~ModuleNode() = default;
@@ -29,7 +29,7 @@ public:
 protected:
     void defineFunction(const std::string &name, Function function);
 
-    std::vector<BaseObject *> evaluateArgs(ProgramNode &args, Scope &scope) const;
+    BaseObjectPtrVector evaluateArgs(BaseNodePtrVector &args, Scope &scope) const;
 
     virtual void defineFunctions() {}
 

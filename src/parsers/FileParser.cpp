@@ -10,6 +10,7 @@
 #include "Exceptions.hpp"
 #include "Grammar.hpp"
 #include "Logger.hpp"
+#include "NodeFactory.hpp"
 #include "ObjectTypes.hpp"
 #include "ParserData.hpp"
 #include "TestModule.hpp"
@@ -20,7 +21,7 @@
 #include <stdlib.h>
 
 
-FileNode *FileParser::parseMainFile(const std::string entryPointPath_)
+AnyNode *FileParser::parseMainFile(const std::string entryPointPath_)
 {
     /* Clear data for all imports */
     ParserData::instance().clearImports();
@@ -38,22 +39,22 @@ FileParser::FileParser(const std::string &fpath)
 }
 
 
-FileNode *FileParser::buildAST()
+AnyNode *FileParser::buildAST()
 {
-    std::vector<BaseNode *> nodes;
+    BaseNodeSharedPtrVector nodes;
 
     while (!tokens().empty())
     {
         auto node = parseExpression();
 
-        nodes.push_back(node);
+        nodes.emplace_back(node);
 
         skipSemicolonLineEndingIfRequired(*node);
     }
 
     nodes.shrink_to_fit();
 
-    return new FileNode(nodes);
+    return NodeFactory::createFileNode(std::move(nodes));
 }
 
 
@@ -67,7 +68,7 @@ BaseNode *FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
 
     // Take a peek look at the next token. Is it an operator token. If it is then
     // we need to create a binary node.
-    const Token &next = tokens().front();
+    Token next = tokens().front(); /* TODO: - should wrap so alerts if no more tokens */
 
     if (next.type() == Token::Operator)
     {
@@ -83,10 +84,10 @@ BaseNode *FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
             // Create binary or assign node.
             BaseNode *node{nullptr};
 
-            bool isAssignNode = (next == "=");
+            bool isAssignNode = (next == std::string("="));
 
             if (isAssignNode)
-                node = new AssignNode(leftExpression, rightExpression);
+                node = NodeFactory::createAssignNode(leftExpression, rightExpression);
             else
                 node = new BinaryNode(leftExpression, rightExpression, next);
 
@@ -227,13 +228,24 @@ void FileParser::skipSemicolonLineEndingIfRequired(const BaseNode &node)
                               node.isNodeType<IOModuleNode>() ||
                               node.isNodeType<ArrayModuleNode>() ||
                               node.isNodeType<TestModule>() ||
-                              node.isNodeType<FileNode>() ||
+                              // node.isNodeType<FileNode>() ||
                               node.isNodeType<ProgramNode>() ||
-                              node.isNodeType<IfNode>() ||
-                              node.isNodeType<WhileNode>() ||
-                              node.isNodeType<DoWhileNode>() ||
-                              node.isNodeType<ForLoopNode>() ||
+                              // node.isNodeType<IfNode>() ||
+                              // node.isNodeType<WhileNode>() ||
+                              // node.isNodeType<DoWhileNode>() ||
+                              // node.isNodeType<ForLoopNode>() ||
                               node.isNodeType<FunctionNode>());
+
+    const auto *anyNode = dynamic_cast<const AnyNode *>(&node); // TODO: - temporary code before we rewrite BaseNode
+    if (anyNode)
+    {
+        doSkipPunctuation |= (anyNode->type() == NodeType::File);
+        doSkipPunctuation |= (anyNode->type() == NodeType::If);
+        doSkipPunctuation |= (anyNode->type() == NodeType::ForLoop);
+        doSkipPunctuation |= (anyNode->type() == NodeType::While);
+        doSkipPunctuation |= (anyNode->type() == NodeType::DoWhile);
+        doSkipPunctuation |= (anyNode->type() == NodeType::Block);
+    }
 
     if (!doSkipPunctuation)
         skip(";");

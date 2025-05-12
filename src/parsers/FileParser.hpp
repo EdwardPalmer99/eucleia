@@ -30,10 +30,10 @@ public:
     FileParser(const std::string &fpath);
 
     /* Top-level parse */
-    static FileNode *parseMainFile(const std::string entryPointPath_);
+    static AnyNode *parseMainFile(const std::string entryPointPath_);
 
     /* Returns reference to subparsers for file */
-    [[nodiscard]] SubParsers &subParsers() { return _subParsers; }
+    [[nodiscard]] SubParsers &subparsers() { return _subParsers; }
 
     /* Returns tokenized file */
     [[nodiscard]] Tokens &tokens() final { return _tokens; }
@@ -42,7 +42,7 @@ public:
     [[nodiscard]] const std::string &parentDirPath() const { return _parentDirPath; }
 
     /* Construct AST for file */
-    FileNode *buildAST();
+    AnyNode *buildAST();
 
     /* Parse generic expression */
     BaseNode *parseExpression();

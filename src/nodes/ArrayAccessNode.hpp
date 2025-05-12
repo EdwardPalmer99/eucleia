@@ -8,8 +8,8 @@
  */
 
 #pragma once
-#include "AddIntNode.hpp"
 #include "AddVariableNode.hpp"
+#include "AnyNode.hpp"
 #include "BaseObject.hpp"
 #include "BasePropertyNode.hpp"
 #include "Scope.hpp"
@@ -17,7 +17,7 @@
 class ArrayAccessNode : public BasePropertyNode
 {
 public:
-    ArrayAccessNode(LookupVariableNode *array_, AddIntNode *index_)
+    ArrayAccessNode(LookupVariableNode *array_, BaseNode *index_)
         : arrayLookup(array_),
           index(index_)
     {
@@ -32,5 +32,5 @@ public:
     BaseObject *evaluate(Scope &scope) override;
 
     LookupVariableNode *arrayLookup{nullptr};
-    AddIntNode *index{nullptr};
+    BaseNode *index{nullptr};
 };

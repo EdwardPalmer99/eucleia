@@ -17,7 +17,7 @@
 void Interpreter::evaluateFile(const std::string &fpath)
 {
     // 1. Generate abstract symbol tree.
-    FileNode *ast = FileParser::parseMainFile(fpath);
+    auto *ast = FileParser::parseMainFile(fpath);
 
     // 2. Create global scope.
     Scope globalScope;
