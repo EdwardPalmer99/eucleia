@@ -20,8 +20,8 @@ class ModuleNode : public BaseNode
 public:
     using Function = std::function<BaseObject *(BaseNodePtrVector &callArgs, Scope &scope)>;
 
-    ModuleNode() = default;
-    ~ModuleNode() = default;
+    ModuleNode() { setType(NodeType::Module); }
+    ~ModuleNode() override = default;
 
     /// Add all library functions to the scope this is evaluated in.
     BaseObject *evaluate(Scope &scope) final;

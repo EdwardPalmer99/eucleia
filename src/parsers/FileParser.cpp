@@ -223,32 +223,22 @@ BaseNode *FileParser::parseAtomicallyExpression()
 
 void FileParser::skipSemicolonLineEndingIfRequired(const BaseNode &node)
 {
-    bool doSkipPunctuation = (node.isNodeType<ModuleNode>() || // Bit ugly.
-                              node.isNodeType<MathModuleNode>() ||
-                              node.isNodeType<IOModuleNode>() ||
-                              node.isNodeType<ArrayModuleNode>() ||
-                              node.isNodeType<TestModule>() ||
-                              // node.isNodeType<FileNode>() ||
-                              node.isNodeType<ProgramNode>() ||
-                              // node.isNodeType<IfNode>() ||
-                              // node.isNodeType<WhileNode>() ||
-                              // node.isNodeType<DoWhileNode>() ||
-                              // node.isNodeType<ForLoopNode>() ||
-                              node.isNodeType<FunctionNode>());
-
-    const auto *anyNode = dynamic_cast<const AnyNode *>(&node); // TODO: - temporary code before we rewrite BaseNode
-    if (anyNode)
+    switch (node.type())
     {
-        doSkipPunctuation |= (anyNode->type() == NodeType::File);
-        doSkipPunctuation |= (anyNode->type() == NodeType::If);
-        doSkipPunctuation |= (anyNode->type() == NodeType::ForLoop);
-        doSkipPunctuation |= (anyNode->type() == NodeType::While);
-        doSkipPunctuation |= (anyNode->type() == NodeType::DoWhile);
-        doSkipPunctuation |= (anyNode->type() == NodeType::Block);
-    }
-
-    if (!doSkipPunctuation)
-        skip(";");
+        case NodeType::Module:
+        case NodeType::File:
+        case NodeType::If:
+        case NodeType::ForLoop:
+        case NodeType::While:
+        case NodeType::DoWhile:
+        case NodeType::Block:
+        case NodeType::Program:
+        case NodeType::Function:
+            break;
+        default:
+            skip(";");
+            break;
+    };
 }
 
 

@@ -228,14 +228,14 @@ AnyNode *createAssignNode(BaseNode *left, BaseNode *right)
     return new AnyNode(NodeType::Assign, [left = BaseNode::Ptr(left), right = BaseNode::Ptr(right)](Scope &scope)
     {
         // Setting array or struct values.
-        if (left->isNodeType<ArrayAccessNode>())
+        if (left->isNodeType(NodeType::ArrayAccess))
         {
             ArrayAccessNode &accessor = left->castNode<ArrayAccessNode>();
 
             *(accessor.evaluateNoClone(scope)) = *(right->evaluate(scope));
             return nullptr;
         }
-        else if (left->isNodeType<StructAccessNode>())
+        else if (left->isNodeType(NodeType::StructAccess))
         {
             StructAccessNode &accessor = left->castNode<StructAccessNode>();
 
@@ -243,7 +243,7 @@ AnyNode *createAssignNode(BaseNode *left, BaseNode *right)
             return nullptr;
         }
 
-        assert(left->isNodeType<AddVariableNode>() || left->isNodeType<LookupVariableNode>());
+        assert(left->isNodeType(NodeType::AddVariable) || left->isNodeType(NodeType::LookupVariable));
 
         // Case 1: AddVariableNode -> we create default init object, add to scope and return.
         // Case 2: LookupVariableNode -> we object defined in scope (not cloned!) - TODO: - think about whether we should clone it.
@@ -298,7 +298,7 @@ AnyNode *createPrefixIncrementNode(BaseNode *expression)
     return new AnyNode(NodeType::PrefixIncrement, [expression = BaseNode::Ptr(expression)](Scope &scope)
     {
         // 1. Body should be an already-declared variable.
-        assert(expression->isNodeType<LookupVariableNode>());
+        assert(expression->isNodeType(NodeType::LookupVariable));
 
         // 2. Object associated with variable name in scope must be integer or float.
         auto bodyEvaluated = expression->evaluate(scope);
@@ -323,7 +323,7 @@ AnyNode *createPrefixDecrementNode(BaseNode *expression)
     return new AnyNode(NodeType::PrefixDecrement, [expression = BaseNode::Ptr(expression)](Scope &scope)
     {
         // 1. Body should be an already-declared variable.
-        assert(expression->isNodeType<LookupVariableNode>());
+        assert(expression->isNodeType(NodeType::LookupVariable));
 
         // 2. Object associated with variable name in scope must be integer or float.
         auto bodyEvaluated = expression->evaluate(scope);

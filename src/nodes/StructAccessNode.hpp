@@ -27,6 +27,7 @@ public:
         : instanceName(std::move(instanceName_)),
           memberName(std::move(memberName_))
     {
+      setType(NodeType::StructAccess);
     }
 
     // Returns object directly (use to set value).

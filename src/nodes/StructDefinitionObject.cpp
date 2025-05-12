@@ -17,6 +17,7 @@ StructDefinitionObject::StructDefinitionObject(std::string typeName_,
       parentTypeName(std::move(parentTypeName_)),
       variableDefs(std::move(variableDefs_))
 {
+    setType(NodeType::StructDefinition);
 }
 
 

@@ -46,7 +46,8 @@ enum class NodeType
     ClassDefinition,
     ClassMethodCall,
     ArrayAccess,
-    AddVariable
+    AddVariable,
+    Module
 };
 
 
@@ -71,16 +72,15 @@ public:
     }
 
 
-    template <class TNode>
-    bool isNodeType() const
+    bool isNodeType(NodeType queryType) const
     {
-        return typeid(*this) == typeid(TNode);
+        return (type() == queryType);
     }
 
 
     bool typesMatch(const BaseNode &other) const
     {
-        return typeid(*this) == typeid(other);
+        return type() == other.type();
     }
 
     virtual BaseObject *evaluate(Scope &scope) = 0;

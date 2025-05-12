@@ -88,9 +88,9 @@ BaseNode *ClassSubParser::parseClass()
 
         for (BaseNode *node : classBody)
         {
-            if (node->isNodeType<AddVariableNode>())
+            if (node->isNodeType(NodeType::AddVariable))
                 classVariables.push_back(static_cast<AddVariableNode *>(node));
-            else if (node->isNodeType<FunctionNode>())
+            else if (node->isNodeType(NodeType::Function))
                 classMethods.push_back(static_cast<FunctionNode *>(node));
             else
                 ThrowException("unexpected node type for class definition " + classTypeName);
@@ -124,12 +124,12 @@ BaseNode *ClassSubParser::parseStructAccessor(BaseNode *lastExpression)
 
     BaseNode *expression = parent().maybeFunctionCall(std::bind(&VariableSubParser::parseVariableName, &parent().subparsers().variable));
 
-    if (expression->isNodeType<FunctionCallNode>()) // Method.
+    if (expression->isNodeType(NodeType::FunctionCall)) // Method.
     {
         // NB: do NOT delete expression as owned by ClassMethodCallNode.
         return new ClassMethodCallNode(instanceName, reinterpret_cast<FunctionNode *>(expression));
     }
-    else if (expression->isNodeType<LookupVariableNode>()) // Member variable.
+    else if (expression->isNodeType(NodeType::LookupVariable)) // Member variable.
     {
         std::string memberVariableName = expression->castNode<LookupVariableNode>().name;
         delete expression; // No longer required. Ugly.
