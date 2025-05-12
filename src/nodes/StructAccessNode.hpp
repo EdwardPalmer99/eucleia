@@ -10,7 +10,7 @@
 #pragma once
 #include "BaseNode.hpp"
 #include "BaseObject.hpp"
-#include "BasePropertyNode.hpp"
+#include "PropertyInterface.hpp"
 #include "Scope.hpp"
 #include <string>
 
@@ -19,7 +19,7 @@
  *
  * [structName].[memberVariableName]
  */
-class StructAccessNode : public BasePropertyNode
+class StructAccessNode : public BaseNode, public PropertyInterface
 {
 public:
     explicit StructAccessNode(std::string instanceName_,
@@ -27,7 +27,7 @@ public:
         : instanceName(std::move(instanceName_)),
           memberName(std::move(memberName_))
     {
-      setType(NodeType::StructAccess);
+        setType(NodeType::StructAccess);
     }
 
     // Returns object directly (use to set value).

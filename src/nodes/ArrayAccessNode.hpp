@@ -11,10 +11,10 @@
 #include "AddVariableNode.hpp"
 #include "AnyNode.hpp"
 #include "BaseObject.hpp"
-#include "BasePropertyNode.hpp"
+#include "PropertyInterface.hpp"
 #include "Scope.hpp"
 
-class ArrayAccessNode : public BasePropertyNode
+class ArrayAccessNode : public BaseNode, public PropertyInterface
 {
 public:
     ArrayAccessNode(LookupVariableNode *array_, BaseNode *index_)
