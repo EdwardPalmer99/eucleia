@@ -20,7 +20,7 @@
 #include "LookupVariableNode.hpp"
 #include "Scope.hpp"
 #include "StringObject.hpp"
-#include "StructAccessNode.hpp"
+#include "StructObject.hpp"
 #include <cassert>
 #include <memory>
 
@@ -237,7 +237,7 @@ AnyNode *createAssignNode(BaseNode *left, BaseNode *right)
         }
         else if (left->isNodeType(NodeType::StructAccess))
         {
-            StructAccessNode &accessor = left->castNode<StructAccessNode>();
+            AnyPropertyNode &accessor = left->castNode<AnyPropertyNode>();
 
             *(accessor.evaluateNoClone(scope)) = *(right->evaluate(scope));
             return nullptr;
@@ -360,6 +360,26 @@ AnyNode *createNegationNode(BaseNode *expression)
 
         return result;
     });
+}
+
+
+AnyPropertyNode *createStructAccessNode(std::string structVarName, std::string memberVarName)
+{
+    auto evaluateNoClone = [structVarName, memberVarName](Scope &scope)
+    {
+        StructObject *structObject = scope.getNamedObject<StructObject>(structVarName);
+
+        return structObject->instanceScope().getNamedObject(memberVarName);
+    };
+
+    auto evaluate = [evaluateNoClone](Scope &scope)
+    {
+        BaseObject *currentObject = evaluateNoClone(scope);
+        return scope.cloneObject(currentObject);
+    };
+
+
+    return new AnyPropertyNode(NodeType::StructAccess, std::move(evaluate), std::move(evaluateNoClone));
 }
 
 

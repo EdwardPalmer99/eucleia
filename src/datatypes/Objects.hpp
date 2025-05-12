@@ -47,7 +47,7 @@ inline std::ostream &operator<<(std::ostream &out, const BaseObject &object)
         out << "(";
         for (auto &name : structObject.variableNames)
         {
-            BaseObject *obj = structObject.instanceScope.getNamedObject(name);
+            BaseObject *obj = structObject._instanceScope.getNamedObject(name);
             out << name << ": " << (*obj) << ", ";
         }
         out << ")";
@@ -60,7 +60,7 @@ inline std::ostream &operator<<(std::ostream &out, const BaseObject &object)
         out << "(";
         for (auto &name : classObject.variableNames)
         {
-            BaseObject *obj = classObject.instanceScope.getNamedObject(name);
+            BaseObject *obj = classObject._instanceScope.getNamedObject(name);
             out << name << ": " << (*obj) << ", ";
         }
         out << ")";

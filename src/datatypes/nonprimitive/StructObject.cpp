@@ -31,7 +31,7 @@ BaseObject *StructObject::evaluate(Scope &scope)
 
     // Initialize our instance from the struct definition defined in the scope.
     structDefinition = scope.getNamedObject<StructDefinitionObject>(typeName);
-    structDefinition->installVariablesInScope(instanceScope, variableNames);
+    structDefinition->installVariablesInScope(_instanceScope, variableNames);
 
     // Add the active struct instance to the scope. TODO: - transfer ownership
     // to the scope. Will have to remove this class from AST to do this correctly.
@@ -59,8 +59,8 @@ StructObject &StructObject::operator=(const BaseObject &other)
     // 3. iterate over the objects stored in the scopes and assign.
     for (auto &variableName : variableNames)
     {
-        BaseObject *thisObject = instanceScope.getNamedObject(variableName);
-        BaseObject *otherObject = otherStruct.instanceScope.getNamedObject(variableName);
+        BaseObject *thisObject = _instanceScope.getNamedObject(variableName);
+        BaseObject *otherObject = otherStruct._instanceScope.getNamedObject(variableName);
 
         // Attempt an assignment. Will fail if different types.
         (*thisObject) = (*otherObject);

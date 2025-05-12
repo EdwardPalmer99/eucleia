@@ -12,6 +12,8 @@
 #include <string>
 
 class AnyNode;
+class AnyPropertyNode;
+
 
 namespace NodeFactory
 {
@@ -57,5 +59,7 @@ AnyNode *createPrefixIncrementNode(BaseNode *expression);
 AnyNode *createPrefixDecrementNode(BaseNode *expression);
 
 AnyNode *createNegationNode(BaseNode *expression);
+
+AnyPropertyNode *createStructAccessNode(std::string structVariableName, std::string structMemberName);
 
 } // namespace NodeFactory

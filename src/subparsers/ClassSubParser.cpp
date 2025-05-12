@@ -12,6 +12,7 @@
 #include "BaseNode.hpp"
 #include "Exceptions.hpp"
 #include "FileParser.hpp"
+#include "NodeFactory.hpp"
 #include "StructDefinitionObject.hpp"
 #include "StructObject.hpp"
 
@@ -134,7 +135,7 @@ BaseNode *ClassSubParser::parseStructAccessor(BaseNode *lastExpression)
         std::string memberVariableName = expression->castNode<LookupVariableNode>().name;
         delete expression; // No longer required. Ugly.
 
-        return new StructAccessNode(instanceName, memberVariableName);
+        return NodeFactory::createStructAccessNode(instanceName, memberVariableName);
     }
 
     ThrowException("unexpected node type while accessing struct/class member");

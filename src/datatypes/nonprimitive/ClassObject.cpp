@@ -28,10 +28,10 @@ BaseObject *ClassObject::evaluate(Scope &scope)
 
     // Initialize our instance from the struct definition defined in the scope.
     structDefinition = scope.getNamedObject<StructDefinitionObject>(typeName);
-    structDefinition->installVariablesInScope(instanceScope, variableNames);
+    structDefinition->installVariablesInScope(_instanceScope, variableNames);
 
     auto classDefinition = static_cast<ClassDefinitionObject *>(structDefinition);
-    classDefinition->installMethodsInScope(instanceScope);
+    classDefinition->installMethodsInScope(_instanceScope);
 
     // Add the active struct instance to the scope. TODO: - transfer ownership
     // to the scope. Will have to remove this class from AST to do this correctly.

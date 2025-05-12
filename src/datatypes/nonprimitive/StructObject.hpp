@@ -52,7 +52,7 @@ public:
      */
     friend std::ostream &operator<<(std::ostream &os, const BaseObject &);
 
-    friend class StructAccessNode;
+    [[nodiscard]] const Scope &instanceScope() const { return _instanceScope; }
 
 protected:
     /**
@@ -60,7 +60,7 @@ protected:
      * inherit from any parent scopes. Literally just used for storing stuff.
      * When this instance goes out of scope, all variables will be deleted.
      */
-    Scope instanceScope;
+    Scope _instanceScope;
 
     /**
      * Stores names of all variables stored in set.

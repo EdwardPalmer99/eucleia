@@ -33,12 +33,12 @@ BaseObject *ClassMethodCallNode::evaluate(Scope &scope)
     // Important: to correctly evaluate the method, we need to add a parent scope
     // for the class instance temporarily each time we evaluate so function has
     // access to stuff created outside class.
-    thisObject->instanceScope.setParentScope(&scope);
+    thisObject->_instanceScope.setParentScope(&scope);
 
-    BaseObject *result = methodCallNode->evaluate(thisObject->instanceScope);
+    BaseObject *result = methodCallNode->evaluate(thisObject->_instanceScope);
 
     // Set back to avoid problems if we forget to reset it in future.
-    thisObject->instanceScope.setParentScope(nullptr);
+    thisObject->_instanceScope.setParentScope(nullptr);
 
     return result;
 }

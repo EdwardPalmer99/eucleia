@@ -25,7 +25,7 @@ class Scope;
 struct PropertyInterface
 {
     /* Return copy of object (getter) */
-    virtual BaseObject *evaluate(Scope &scope) = 0;
+    // virtual BaseObject *evaluate(Scope &scope) = 0;
 
     /* Return object directly for modifying value (setter) */
     virtual BaseObject *evaluateNoClone(Scope &scope) = 0;

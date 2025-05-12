@@ -19,6 +19,5 @@
 #include "FunctionNode.hpp"
 #include "LookupVariableNode.hpp"
 #include "ProgramNode.hpp"
-#include "StructAccessNode.hpp"
 #include "StructDefinitionObject.hpp"
 #include "StructObject.hpp"
