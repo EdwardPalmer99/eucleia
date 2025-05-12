@@ -15,13 +15,46 @@
 #include <vector>
 
 
+enum class NodeType
+{
+    Unknown = (-1),
+    Bool,
+    Int,
+    String,
+    Float,
+    If,
+    ForLoop,
+    Break,
+    Return,
+    Not,
+    While,
+    DoWhile,
+    Block,
+    Assign,
+    Array,
+    File,
+    PrefixIncrement,
+    PrefixDecrement,
+    Negation,
+    Binary,
+    Program,
+    StructAccess,
+    StructDefinition,
+    FunctionCall,
+    LookupVariable,
+    Function,
+    ClassDefinition,
+    ClassMethodCall,
+    ArrayAccess,
+    AddVariable
+};
+
+
 class BaseNode
 {
 public:
     using Ptr = std::shared_ptr<BaseNode>;
 
-
-    BaseNode() = default; // TODO: - should be protected! Should not create BaseNode directly.
     virtual ~BaseNode() = default;
 
     template <class TNode>
@@ -72,6 +105,19 @@ public:
         /* Apply operator overload to get stored value */
         return (*upcastedObj);
     }
+
+    void setType(NodeType type)
+    {
+        _type = type;
+    }
+
+    NodeType type() const { return _type; } /* TODO: - move into base class */
+
+protected:
+    BaseNode() = default;
+    BaseNode(NodeType type) : _type(type) {}
+
+    NodeType _type{NodeType::Unknown};
 };
 
 using BaseNodeSharedPtrVector = std::vector<BaseNode::Ptr>;

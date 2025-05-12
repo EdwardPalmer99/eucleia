@@ -18,7 +18,6 @@
 #include "IntObject.hpp"
 #include "JumpPoints.hpp"
 #include "LookupVariableNode.hpp"
-#include "NodeType.hpp"
 #include "Scope.hpp"
 #include "StringObject.hpp"
 #include "StructAccessNode.hpp"

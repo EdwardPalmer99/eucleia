@@ -16,6 +16,7 @@ ClassMethodCallNode::ClassMethodCallNode(std::string instanceName_, FunctionCall
     : instanceName(instanceName_),
       methodCallNode(methodCallNode_)
 {
+    setType(NodeType::ClassMethodCall);
 }
 
 

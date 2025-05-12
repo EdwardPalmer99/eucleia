@@ -16,6 +16,7 @@ ClassDefinitionObject::ClassDefinitionObject(std::string typeName_,
     : StructDefinitionObject(std::move(typeName_), std::move(parentTypeName_), std::move(variableDefs_)),
       methodDefs(std::move(methodDefs_))
 {
+    setType(NodeType::ClassDefinition);
 }
 
 

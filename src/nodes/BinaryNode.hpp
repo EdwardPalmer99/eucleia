@@ -20,9 +20,10 @@ class BinaryNode : public BaseNode
 {
 public:
     BinaryNode(BaseNode *left_, BaseNode *right_, std::string binaryOperator_)
-        : _left(left_), _right(right_),
+        : BaseNode(NodeType::Binary), _left(left_), _right(right_),
           _binaryOperator(std::move(binaryOperator_))
     {
+        setType(NodeType::Binary);
     }
 
     ~BinaryNode() override

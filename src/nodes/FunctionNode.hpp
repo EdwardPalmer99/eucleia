@@ -20,6 +20,7 @@ public:
         : FunctionCallNode(funcName_, std::move(funcArgs_)),
           funcBody(funcBody_)
     {
+        setType(NodeType::Function);
     }
 
     ~FunctionNode() override

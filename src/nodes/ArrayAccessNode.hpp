@@ -21,6 +21,7 @@ public:
         : arrayLookup(array_),
           index(index_)
     {
+        setType(NodeType::ArrayAccess);
     }
 
     ~ArrayAccessNode() override;

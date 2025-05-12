@@ -18,7 +18,10 @@ class AddVariableNode : public LookupVariableNode
 public:
     AddVariableNode(std::string name_, ObjectType type_)
         : LookupVariableNode(std::move(name_)),
-          type(type_) {}
+          type(type_)
+    {
+        setType(NodeType::AddVariable);
+    }
 
     // Creates a new empty variable of a given type to the scope (i.e. int a;).
     BaseObject *evaluate(Scope &scope) override;

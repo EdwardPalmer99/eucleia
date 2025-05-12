@@ -14,7 +14,10 @@
 class LookupVariableNode : public BaseNode
 {
 public:
-    LookupVariableNode(std::string name_) : name(std::move(name_)) {}
+    LookupVariableNode(std::string name_) : name(std::move(name_))
+    {
+        setType(NodeType::LookupVariable);
+    }
 
     // Returns the object in the scope associated with a variable name.
     BaseObject *evaluate(Scope &scope) override;

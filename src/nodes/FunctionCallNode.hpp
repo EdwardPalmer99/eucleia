@@ -23,6 +23,7 @@ public:
         : funcName(static_cast<AddVariableNode *>(funcName_)),
           funcArgs(std::move(funcArgs_))
     {
+        setType(NodeType::FunctionCall);
     }
 
     ~FunctionCallNode() override

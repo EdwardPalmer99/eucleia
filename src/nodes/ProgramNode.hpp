@@ -17,7 +17,10 @@
 class ProgramNode : public BaseNode
 {
 public:
-    ProgramNode(std::vector<BaseNode *> nodes_) : programNodes(std::move(nodes_)) {}
+    ProgramNode(std::vector<BaseNode *> nodes_) : programNodes(std::move(nodes_))
+    {
+        setType(NodeType::Program);
+    }
 
     ~ProgramNode() override
     {
