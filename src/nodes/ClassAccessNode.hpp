@@ -27,6 +27,6 @@ public:
 
     BaseObject *evaluate(Scope &scope) override;
 
-    FunctionCallNode *methodCallNode;
     std::string instanceName;
+    FunctionCallNode *methodCallNode;
 };
