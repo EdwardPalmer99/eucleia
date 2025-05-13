@@ -102,7 +102,7 @@ BaseNode *FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
 }
 
 
-BaseNode *FileParser::maybeFunctionCall(ParseMethod expression)
+BaseNode *FileParser::maybeFunctionCall(ParseMethod expression) /* TODO: - remove */
 {
     auto expr = expression(); // Possible function name.
 
@@ -118,7 +118,7 @@ BaseNode *FileParser::maybeArrayAccess(ParseMethod expression)
 }
 
 
-BaseNode *FileParser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
+BaseNode *FileParser::maybeFunctionCallOrArrayAccess(ParseMethod expression) /* REMOVE */
 {
     auto expr = expression();
     assert(expr != nullptr);
@@ -126,7 +126,7 @@ BaseNode *FileParser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
     if (!tokens().empty())
     {
         if (equals(Token::Punctuation, "("))
-            return _subParsers.function.parseFunctionCall(expr);
+            return _subParsers.function.parseFunctionCall(expr); /* TODO: - remove */
         else if (equals(Token::Punctuation, "["))
             return _subParsers.dataType.parseArrayAccessor(expr);
         else if (equals(Token::Punctuation, "."))
@@ -208,7 +208,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
     switch (token.type())
     {
         case Token::Variable:
-            return _subParsers.variable.parseVariableName();
+            return _subParsers.variable.parseVariable();
         case Token::String:
             return _subParsers.dataType.parseString();
         case Token::Int:

@@ -13,11 +13,9 @@
 /// Create a new FunctionObject from a FunctionNode and register in current scope.
 BaseObject *FunctionNode::evaluate(Scope &scope)
 {
-    auto &funcNameNode = funcName->castNode<LookupVariableNode>();
-
     auto functionObject = scope.createManagedObject<FunctionObject>(this); // TODO: - uh-oh!! Think about pointer ownership here!!
 
-    scope.linkObject(funcNameNode.name, functionObject);
+    scope.linkObject(_funcName, functionObject);
 
     return functionObject;
 }

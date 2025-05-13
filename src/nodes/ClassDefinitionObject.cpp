@@ -91,6 +91,6 @@ void ClassDefinitionObject::buildMethodDefsHashMap(const Scope &scope)
     // the same name even with different numbers and types of arguments.
     for (FunctionNode *funcDef : methodDefs)
     {
-        allMethodDefsMap[funcDef->funcName->name] = funcDef;
+        allMethodDefsMap[funcDef->_funcName] = funcDef;
     }
 }

@@ -11,13 +11,14 @@
 #include "BaseNode.hpp"
 #include "BaseObject.hpp"
 #include "FunctionCallNode.hpp"
+#include <string>
 
 
 class FunctionNode : public FunctionCallNode
 {
 public:
-    FunctionNode(BaseNode *funcName_, BaseNodePtrVector funcArgs_, BaseNode *funcBody_)
-        : FunctionCallNode(funcName_, std::move(funcArgs_)),
+    FunctionNode(std::string funcName_, BaseNodePtrVector funcArgs_, BaseNode *funcBody_)
+        : FunctionCallNode(std::move(funcName_), std::move(funcArgs_)),
           funcBody(funcBody_)
     {
         setType(NodeType::Function);

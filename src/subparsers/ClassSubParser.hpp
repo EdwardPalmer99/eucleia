@@ -9,6 +9,7 @@
 
 #pragma once
 #include "SubParser.hpp"
+#include <string>
 
 class FileParser;
 class BaseNode;

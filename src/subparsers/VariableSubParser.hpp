@@ -33,5 +33,5 @@ public:
     BaseNode *parseReference(ObjectType boundVariableType_);
 
     /* Parse: [variable name] */
-    BaseNode *parseVariableName();
+    BaseNode *parseVariable();
 };

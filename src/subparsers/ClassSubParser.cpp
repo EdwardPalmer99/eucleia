@@ -122,19 +122,19 @@ BaseNode *ClassSubParser::parseStructAccessor(BaseNode *lastExpression)
 
     skip(".");
 
-    BaseNode *expression = parent().maybeFunctionCall(std::bind(&VariableSubParser::parseVariableName, &parent().subparsers().variable));
+    BaseNode *expression = parent().maybeFunctionCall(std::bind(&VariableSubParser::parseVariable, &parent().subparsers().variable));
 
     if (expression->isNodeType(NodeType::FunctionCall)) // Method.
     {
         // NB: do NOT delete expression as owned by ClassMethodCallNode.
-        return new ClassMethodCallNode(instanceName, reinterpret_cast<FunctionNode *>(expression));
+        return new ClassMethodCallNode(std::move(instanceName), reinterpret_cast<FunctionNode *>(expression));
     }
     else if (expression->isNodeType(NodeType::LookupVariable)) // Member variable.
     {
         std::string memberVariableName = expression->castNode<LookupVariableNode>().name;
         delete expression; // No longer required. Ugly.
 
-        return NodeFactory::createStructAccessNode(instanceName, memberVariableName);
+        return NodeFactory::createStructAccessNode(std::move(instanceName), memberVariableName);
     }
 
     ThrowException("unexpected node type while accessing struct/class member");

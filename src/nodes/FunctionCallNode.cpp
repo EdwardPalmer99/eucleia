@@ -16,25 +16,25 @@
 BaseObject *FunctionCallNode::evaluate(Scope &scope)
 {
     // 0. Any library functions that we wish to evaluate.
-    BaseObject *libraryFunc = scope.getOptionalNamedObject<BaseObject>(funcName->name);
+    BaseObject *libraryFunc = scope.getOptionalNamedObject<BaseObject>(_funcName);
     if (libraryFunc && libraryFunc->isObjectType<LibraryFunctionObject>())
     {
-        return libraryFunc->castObject<LibraryFunctionObject>()(funcArgs, scope);
+        return libraryFunc->castObject<LibraryFunctionObject>()(_funcArgs, scope);
     }
 
     // TODO: - finish implementing here. Should not be a shared pointer.
     // 1. Get a pointer to the function node stored in this scope.
-    auto funcNode = scope.getNamedObject<FunctionObject>(funcName->name)->value();
+    auto funcNode = scope.getNamedObject<FunctionObject>(_funcName)->value();
 
     // 2. Verify that the number of arguments matches those required for the
     // function we are calling.
-    if (funcArgs.size() != funcNode->funcArgs.size())
+    if (_funcArgs.size() != funcNode->_funcArgs.size())
     {
         char buffer[150];
         snprintf(buffer, 150, "expected %ld arguments but got %ld arguments for function '%s'.",
-                 funcNode->funcArgs.size(),
-                 funcArgs.size(),
-                 funcName->name.c_str());
+                 funcNode->_funcArgs.size(),
+                 _funcArgs.size(),
+                 _funcName.c_str());
 
         ThrowException(buffer);
     }
@@ -48,21 +48,21 @@ BaseObject *FunctionCallNode::evaluate(Scope &scope)
     // that the object types are compatible.
 
     int iarg = 0;
-    for (const auto &argNode : funcArgs)
+    for (const auto &argNode : _funcArgs)
     {
         // Evaluate all function arguments in external scope (outside function).
         auto evaluatedArg = argNode->evaluate(scope);
 
         // Check that the evaluatedArg type (RHS) is compatible with the corresponding
         // (LHS) variable.
-        auto &argVariable = funcNode->funcArgs[iarg++]->castNode<AddVariableNode>();
+        auto &argVariable = funcNode->_funcArgs[iarg++]->castNode<AddVariableNode>();
 
         if (!argVariable.passesAssignmentTypeCheck(*evaluatedArg))
         {
             char buffer[150];
             snprintf(buffer, 150, "incorrect type for argument '%s' of function '%s'. Expected type '%s'.",
                      argVariable.name.c_str(),
-                     funcName->name.c_str(),
+                     _funcName.c_str(),
                      argVariable.description().c_str());
 
             ThrowException(buffer);

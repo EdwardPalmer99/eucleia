@@ -48,7 +48,7 @@ BaseNode *VariableSubParser::parseReference(ObjectType boundVariableType)
 }
 
 
-BaseNode *VariableSubParser::parseVariableName()
+BaseNode *VariableSubParser::parseVariable()
 {
     Token token = tokens().dequeue();
     assert(token.type() == Token::Variable);

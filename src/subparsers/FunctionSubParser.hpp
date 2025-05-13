@@ -9,6 +9,8 @@
 
 #pragma once
 #include "SubParser.hpp"
+#include <string>
+
 
 class FileParser;
 class FunctionNode;
@@ -36,5 +38,7 @@ public:
      * Parse function call: [funcName]([funcArgs])
      * Example: test(a, b, c);
      */
-    FunctionCallNode *parseFunctionCall(BaseNode *lastExpression);
+    FunctionCallNode *parseFunctionCall(BaseNode *lastExpressionNode);
+
+    FunctionCallNode *parseFunctionCall(std::string funcName);
 };

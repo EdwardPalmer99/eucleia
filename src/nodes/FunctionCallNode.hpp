@@ -13,24 +13,23 @@
 #include "BaseObject.hpp"
 #include "Scope.hpp"
 #include <algorithm>
+#include <string>
 #include <vector>
 
 
 class FunctionCallNode : public BaseNode
 {
 public:
-    FunctionCallNode(BaseNode *funcName_, BaseNodePtrVector funcArgs_)
-        : funcName(static_cast<AddVariableNode *>(funcName_)),
-          funcArgs(std::move(funcArgs_))
+    FunctionCallNode(std::string funcName_, BaseNodePtrVector funcArgs_)
+        : _funcName(std::move(funcName_)),
+          _funcArgs(std::move(funcArgs_))
     {
         setType(NodeType::FunctionCall);
     }
 
     ~FunctionCallNode() override
     {
-        delete funcName;
-
-        std::for_each(funcArgs.begin(), funcArgs.end(), [](BaseNode *node)
+        std::for_each(_funcArgs.begin(), _funcArgs.end(), [](BaseNode *node)
         { delete node; });
     }
 
@@ -40,6 +39,6 @@ public:
 
     BaseObject *evaluateFunctionBody(BaseNode &funcBody, Scope &funcScope);
 
-    AddVariableNode *funcName{nullptr};
-    BaseNodePtrVector funcArgs{nullptr};
+    std::string _funcName;
+    BaseNodePtrVector _funcArgs{nullptr};
 };
