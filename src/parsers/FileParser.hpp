@@ -10,7 +10,6 @@
 #include "BlockSubParser.hpp"
 #include "ControlFlowSubParser.hpp"
 #include "DataTypeSubParser.hpp"
-#include "EucleiaModules.hpp"
 #include "FunctionSubParser.hpp"
 #include "ImportSubParser.hpp"
 #include "LoopSubParser.hpp"

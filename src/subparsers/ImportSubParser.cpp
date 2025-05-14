@@ -9,9 +9,9 @@
 
 #include "ImportSubParser.hpp"
 #include "BaseNode.hpp"
-#include "EucleiaModules.hpp"
 #include "FileParser.hpp"
 #include "Logger.hpp"
+#include "ModuleNodeFactory.hpp"
 #include "NodeFactory.hpp"
 #include "ParserData.hpp"
 #include "Token.hpp"
@@ -26,7 +26,7 @@ BaseNode *ImportSubParser::parseImport()
     if (token.type() == Token::String)
         return parseFileImport();
     else if (equals(Token::Operator, "<"))
-        return parseLibraryImport();
+        return parseModuleImport();
 
     ThrowException("unexpected token: " + token);
 }
@@ -62,7 +62,7 @@ AnyNode *ImportSubParser::parseFileImport()
 }
 
 
-ModuleNode *ImportSubParser::parseLibraryImport()
+AnyNode *ImportSubParser::parseModuleImport()
 {
     skip("<");
 
@@ -73,12 +73,12 @@ ModuleNode *ImportSubParser::parseLibraryImport()
 
     if (ParserData::instance().isImported(token, ParserDataImpl::Module))
     {
-        return new ModuleNode(); // Return "empty module".
+        return NodeFactory::createModuleNode(); /* Empty module node */
     }
 
     ParserData::instance().addImport(token, ParserDataImpl::Module);
 
     log().debug("importing library: " + token);
 
-    return EucleiaModuleLoader::getModuleInstance(token);
+    return NodeFactory::createDefinedModuleNode(std::move(token));
 }

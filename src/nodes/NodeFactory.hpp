@@ -9,7 +9,9 @@
 
 #pragma once
 #include "BaseNode.hpp"
+#include "LibraryFunctionObject.hpp"
 #include <string>
+#include <vector>
 
 class AnyNode;
 class AnyPropertyNode;
@@ -64,4 +66,18 @@ AnyPropertyNode *createStructAccessNode(std::string structVariableName, std::str
 
 AnyPropertyNode *createArrayAccessNode(BaseNode *arrayLookupNode, BaseNode *arrayIndexNode);
 
+AnyNode *createModuleNode(std::string moduleName = "", std::vector<ModuleFunctionPair> moduleFunctionPairs = {});
+
 } // namespace NodeFactory
+
+
+/********************
+TODO: - interesting performance enhancements
+
+1. Try to have as few Node types as possible (as I'm currently doing)
+2. Then overload new/delete operators
+3. Store Node types in a flat array
+4. Can use a ThreadPool to build nodes (don't need to wait for FileNode to create --> since it's not referenced. Just
+   know where we're putting the Node in the flat array and any of its children)
+
+**************************** */

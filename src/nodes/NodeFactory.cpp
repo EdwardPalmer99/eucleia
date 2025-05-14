@@ -399,4 +399,19 @@ AnyPropertyNode *createArrayAccessNode(BaseNode *arrayLookupNode, BaseNode *arra
 }
 
 
+AnyNode *createModuleNode(std::string moduleName, std::vector<ModuleFunctionPair> moduleFunctions)
+{
+    return new AnyNode(NodeType::Module, [moduleName = std::move(moduleName), moduleFunctions = std::move(moduleFunctions)](Scope &scope)
+    {
+        for (auto &it : moduleFunctions) /* Add to scope */
+        {
+            auto *object = scope.createManagedObject<ModuleFunctionObject>(it.second);
+            scope.linkObject(it.first, object);
+        }
+
+        return nullptr;
+    });
+}
+
+
 } // namespace NodeFactory

@@ -14,7 +14,6 @@
 
 class AnyNode;
 class FileParser;
-class ModuleNode;
 class BaseNode;
 
 
@@ -35,5 +34,5 @@ public:
      * Imports functions from a stdlib as opposed to user-defined functions
      * Parse: import <library name>
      */
-    ModuleNode *parseLibraryImport();
+    AnyNode *parseModuleImport();
 };

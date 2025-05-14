@@ -7,7 +7,6 @@
 
 #include "EucleiaInterpreter.hpp"
 #include "BaseObject.hpp"
-#include "EucleiaModules.hpp"
 #include "FileParser.hpp"
 #include "Objects.hpp"
 #include "Scope.hpp"

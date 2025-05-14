@@ -17,9 +17,9 @@ BaseObject *FunctionCallNode::evaluate(Scope &scope)
 {
     // 0. Any library functions that we wish to evaluate.
     BaseObject *libraryFunc = scope.getOptionalNamedObject<BaseObject>(_funcName);
-    if (libraryFunc && libraryFunc->isObjectType<LibraryFunctionObject>())
+    if (libraryFunc && libraryFunc->isObjectType<ModuleFunctionObject>())
     {
-        return libraryFunc->castObject<LibraryFunctionObject>()(_funcArgs, scope);
+        return libraryFunc->castObject<ModuleFunctionObject>()(_funcArgs, scope);
     }
 
     // TODO: - finish implementing here. Should not be a shared pointer.

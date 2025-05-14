@@ -6,14 +6,12 @@
 //
 
 #include "FileParser.hpp"
-#include "EucleiaModules.hpp"
 #include "Exceptions.hpp"
 #include "Grammar.hpp"
 #include "Logger.hpp"
 #include "NodeFactory.hpp"
 #include "ObjectTypes.hpp"
 #include "ParserData.hpp"
-#include "TestModule.hpp"
 #include <assert.h>
 #include <cassert>
 #include <cstring>
