@@ -11,7 +11,6 @@
 #include "AddVariableNode.hpp"
 #include "AnyNode.hpp"
 #include "BinaryNode.hpp"
-#include "ClassAccessNode.hpp"
 #include "ClassDefinitionObject.hpp"
 #include "ClassObject.hpp"
 #include "FunctionCallNode.hpp"

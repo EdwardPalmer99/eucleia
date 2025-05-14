@@ -13,6 +13,7 @@
 #include "BaseObject.hpp"
 #include "Scope.hpp"
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -20,6 +21,8 @@
 class FunctionCallNode : public BaseNode
 {
 public:
+    using Ptr = std::shared_ptr<FunctionCallNode>;
+
     FunctionCallNode(std::string funcName_, BaseNodePtrVector funcArgs_)
         : _funcName(std::move(funcName_)),
           _funcArgs(std::move(funcArgs_))

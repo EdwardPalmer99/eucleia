@@ -127,7 +127,7 @@ BaseNode *ClassSubParser::parseStructAccessor(BaseNode *lastExpression)
     if (expression->isNodeType(NodeType::FunctionCall)) // Method.
     {
         // NB: do NOT delete expression as owned by ClassMethodCallNode.
-        return new ClassMethodCallNode(std::move(instanceName), reinterpret_cast<FunctionNode *>(expression));
+        return NodeFactory::createClassMethodCallNode(std::move(instanceName), static_cast<FunctionCallNode *>(expression));
     }
     else if (expression->isNodeType(NodeType::LookupVariable)) // Member variable.
     {

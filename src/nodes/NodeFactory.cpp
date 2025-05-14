@@ -12,8 +12,10 @@
 #include "AnyNode.hpp"
 #include "ArrayObject.hpp"
 #include "BaseObject.hpp"
+#include "ClassObject.hpp"
 #include "ExpressionScope.hpp"
 #include "FloatObject.hpp"
+#include "FunctionCallNode.hpp"
 #include "IntObject.hpp"
 #include "JumpPoints.hpp"
 #include "LookupVariableNode.hpp"
@@ -22,7 +24,6 @@
 #include "StructObject.hpp"
 #include <cassert>
 #include <memory>
-
 
 namespace NodeFactory
 {
@@ -410,6 +411,28 @@ AnyNode *createModuleNode(std::string moduleName, std::vector<ModuleFunctionPair
         }
 
         return nullptr;
+    });
+}
+
+AnyNode *createClassMethodCallNode(std::string instanceName, FunctionCallNode *methodCallNode)
+{
+    return new AnyNode(NodeType::ClassMethodCall, [instanceName = std::move(instanceName),
+                                                   methodCallNode = FunctionCallNode::Ptr(methodCallNode)](Scope &scope)
+    {
+        ClassObject *thisObject = scope.getNamedObject<ClassObject>(instanceName);
+
+        // Important: to correctly evaluate the method, we need to add a parent scope
+        // for the class instance temporarily each time we evaluate so function has
+        // access to stuff created outside class.
+        thisObject->instanceScope().setParentScope(&scope);
+
+        /* But evaluate in class' instance scope */
+        BaseObject *result = methodCallNode->evaluate(thisObject->instanceScope());
+
+        // Set back to avoid problems if we forget to reset it in future.
+        thisObject->instanceScope().setParentScope(nullptr);
+
+        return result;
     });
 }
 

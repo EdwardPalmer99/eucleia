@@ -54,6 +54,8 @@ public:
 
     [[nodiscard]] const Scope &instanceScope() const { return _instanceScope; }
 
+    [[nodiscard]] Scope &instanceScope() { return _instanceScope; }
+
 protected:
     /**
      * The struct has its own scope for storing its own variables. It does not

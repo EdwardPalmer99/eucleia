@@ -15,7 +15,7 @@
 
 class AnyNode;
 class AnyPropertyNode;
-
+class FunctionCallNode;
 
 namespace NodeFactory
 {
@@ -67,6 +67,8 @@ AnyPropertyNode *createStructAccessNode(std::string structVariableName, std::str
 AnyPropertyNode *createArrayAccessNode(BaseNode *arrayLookupNode, BaseNode *arrayIndexNode);
 
 AnyNode *createModuleNode(std::string moduleName = "", std::vector<ModuleFunctionPair> moduleFunctionPairs = {});
+
+AnyNode *createClassMethodCallNode(std::string instanceName, FunctionCallNode *methodCallNode);
 
 } // namespace NodeFactory
 
