@@ -12,7 +12,7 @@
 #include <new>
 #include <string>
 #include <unordered_map>
-#include <unordered_set>
+#include <vector>
 
 class Scope
 {
@@ -56,25 +56,25 @@ public:
     /// Create and return a new object in the current scope. We store in the scope
     /// until the destructor is called and then we free memory.
     template <class TObject, class... Args>
-    TObject *createManagedObject(Args &&...args)
+    [[nodiscard]] inline TObject *createManagedObject(Args &&...args)
     {
         TObject *newObject = new TObject(std::forward<Args>(args)...);
 
         // Assume is derived from BaseObject.
-        objectsCreatedInScope.insert(newObject);
+        objectsCreatedInScope.push_back(newObject);
         return newObject;
     }
 
     /// Wrapper around allocated object. Add and store in the scope.
-    BaseObject *addManagedObject(BaseObject *object)
+    [[nodiscard]] BaseObject *addManagedObject(BaseObject *object)
     {
-        objectsCreatedInScope.insert(object);
+        objectsCreatedInScope.push_back(object);
         return object;
     }
 
     /// Clones and object and assumes ownership.
     // TODO: - move into cpp file.
-    BaseObject *cloneObject(const BaseObject *object)
+    [[nodiscard]] BaseObject *cloneObject(const BaseObject *object)
     {
         if (!object)
         {
@@ -82,7 +82,7 @@ public:
         }
 
         BaseObject *newObject = object->clone();
-        objectsCreatedInScope.insert(newObject);
+        objectsCreatedInScope.push_back(newObject);
 
         return newObject;
     }
@@ -104,7 +104,7 @@ private:
 
     /// Store all objects we have created. They will persist for the lifetime
     /// of the scope. We are responsible for deleting these in destructor.
-    std::unordered_set<BaseObject *> objectsCreatedInScope;
+    std::vector<BaseObject *> objectsCreatedInScope;
 
     Scope *parent{nullptr};
 };
