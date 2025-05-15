@@ -11,6 +11,40 @@
 #include "ArrayObject.hpp"
 #include <iostream>
 
+
+BinaryOperatorType binaryOperatorType(const std::string &operatorString)
+{
+    if (operatorString == "+")
+        return BinaryOperatorType::Add;
+    else if (operatorString == "-")
+        return BinaryOperatorType::Minus;
+    else if (operatorString == "*")
+        return BinaryOperatorType::Multiply;
+    else if (operatorString == "/")
+        return BinaryOperatorType::Divide;
+    else if (operatorString == "==")
+        return BinaryOperatorType::Equal;
+    else if (operatorString == "!=")
+        return BinaryOperatorType::NotEqual;
+    else if (operatorString == ">=")
+        return BinaryOperatorType::GreaterOrEqual;
+    else if (operatorString == ">")
+        return BinaryOperatorType::Greater;
+    else if (operatorString == "<=")
+        return BinaryOperatorType::LessOrEqual;
+    else if (operatorString == "<")
+        return BinaryOperatorType::Less;
+    else if (operatorString == "%")
+        return BinaryOperatorType::Modulo;
+    else if (operatorString == "&&")
+        return BinaryOperatorType::And;
+    else if (operatorString == "||")
+        return BinaryOperatorType::Or;
+
+    return BinaryOperatorType::Unknown;
+}
+
+
 BaseObject *BinaryNode::evaluate(Scope &scope)
 {
     // TODO: - lose a lot of performance. Scope class is too heavy!!!!
@@ -28,74 +62,83 @@ BaseObject *BinaryNode::evaluate(Scope &scope)
 
 BaseObject *BinaryNode::applyOperator(Scope &scope, const IntObject &left, const IntObject &right) const
 {
-    if (_binaryOperator == "+")
-        return scope.createManagedObject<IntObject>(left + right);
-    else if (_binaryOperator == "-")
-        return scope.createManagedObject<IntObject>(left - right);
-    else if (_binaryOperator == "*")
-        return scope.createManagedObject<IntObject>(left * right);
-    else if (_binaryOperator == "/")
-        return scope.createManagedObject<IntObject>(left / right);
-    else if (_binaryOperator == "==")
-        return scope.createManagedObject<BoolObject>(left == right);
-    else if (_binaryOperator == "!=")
-        return scope.createManagedObject<BoolObject>(left != right);
-    else if (_binaryOperator == ">=")
-        return scope.createManagedObject<BoolObject>(left >= right);
-    else if (_binaryOperator == ">")
-        return scope.createManagedObject<BoolObject>(left > right);
-    else if (_binaryOperator == "<=")
-        return scope.createManagedObject<BoolObject>(left <= right);
-    else if (_binaryOperator == "<")
-        return scope.createManagedObject<BoolObject>(left < right);
-    else if (_binaryOperator == "%")
-        return scope.createManagedObject<IntObject>(left % right);
-    else if (_binaryOperator == "&&")
-        return scope.createManagedObject<BoolObject>(left && right);
-    else if (_binaryOperator == "||")
-        return scope.createManagedObject<BoolObject>(left || right);
-    else
-        ThrowException("cannot apply operator " + _binaryOperator + " to types Int, Int");
+    switch (_binaryOperator)
+    {
+        case BinaryOperatorType::Add:
+            return scope.createManagedObject<IntObject>(left + right);
+        case BinaryOperatorType::Minus:
+            return scope.createManagedObject<IntObject>(left - right);
+        case BinaryOperatorType::Multiply:
+            return scope.createManagedObject<IntObject>(left * right);
+        case BinaryOperatorType::Divide:
+            return scope.createManagedObject<IntObject>(left / right);
+        case BinaryOperatorType::Equal:
+            return scope.createManagedObject<BoolObject>(left == right);
+        case BinaryOperatorType::NotEqual:
+            return scope.createManagedObject<BoolObject>(left != right);
+        case BinaryOperatorType::GreaterOrEqual:
+            return scope.createManagedObject<BoolObject>(left >= right);
+        case BinaryOperatorType::Greater:
+            return scope.createManagedObject<BoolObject>(left > right);
+        case BinaryOperatorType::LessOrEqual:
+            return scope.createManagedObject<BoolObject>(left <= right);
+        case BinaryOperatorType::Less:
+            return scope.createManagedObject<BoolObject>(left < right);
+        case BinaryOperatorType::Modulo:
+            return scope.createManagedObject<IntObject>(left % right);
+        case BinaryOperatorType::And:
+            return scope.createManagedObject<BoolObject>(left && right);
+        case BinaryOperatorType::Or:
+            return scope.createManagedObject<BoolObject>(left || right);
+        default:
+            ThrowException("cannot apply operator to types Int, Int");
+    }
 }
 
 
 BaseObject *BinaryNode::applyOperator(Scope &scope, const FloatObject &left, const FloatObject &right) const
 {
-    if (_binaryOperator == "+")
-        return scope.createManagedObject<FloatObject>(left + right);
-    else if (_binaryOperator == "-")
-        return scope.createManagedObject<FloatObject>(left - right);
-    else if (_binaryOperator == "*")
-        return scope.createManagedObject<FloatObject>(left * right);
-    else if (_binaryOperator == "/")
-        return scope.createManagedObject<FloatObject>(left / right);
-    else if (_binaryOperator == "==")
-        return scope.createManagedObject<BoolObject>(left == right);
-    else if (_binaryOperator == "!=")
-        return scope.createManagedObject<BoolObject>(left != right);
-    else if (_binaryOperator == ">=")
-        return scope.createManagedObject<BoolObject>(left >= right);
-    else if (_binaryOperator == ">")
-        return scope.createManagedObject<BoolObject>(left > right);
-    else if (_binaryOperator == "<=")
-        return scope.createManagedObject<BoolObject>(left <= right);
-    else if (_binaryOperator == "<")
-        return scope.createManagedObject<BoolObject>(left < right);
-    else
-        ThrowException("cannot apply operator " + _binaryOperator + " to types Int, Int");
+    switch (_binaryOperator)
+    {
+        case BinaryOperatorType::Add:
+            return scope.createManagedObject<FloatObject>(left + right);
+        case BinaryOperatorType::Minus:
+            return scope.createManagedObject<FloatObject>(left - right);
+        case BinaryOperatorType::Multiply:
+            return scope.createManagedObject<FloatObject>(left * right);
+        case BinaryOperatorType::Divide:
+            return scope.createManagedObject<FloatObject>(left / right);
+        case BinaryOperatorType::Equal:
+            return scope.createManagedObject<BoolObject>(left == right);
+        case BinaryOperatorType::NotEqual:
+            return scope.createManagedObject<BoolObject>(left != right);
+        case BinaryOperatorType::GreaterOrEqual:
+            return scope.createManagedObject<BoolObject>(left >= right);
+        case BinaryOperatorType::Greater:
+            return scope.createManagedObject<BoolObject>(left > right);
+        case BinaryOperatorType::LessOrEqual:
+            return scope.createManagedObject<BoolObject>(left <= right);
+        case BinaryOperatorType::Less:
+            return scope.createManagedObject<BoolObject>(left < right);
+        default:
+            ThrowException("cannot apply operator to types Float, Float");
+    }
 }
 
 
 BaseObject *BinaryNode::applyOperator(Scope &scope, const StringObject &left, const StringObject &right) const
 {
-    if (_binaryOperator == "+")
-        return scope.createManagedObject<StringObject>(left + right);
-    else if (_binaryOperator == "==")
-        return scope.createManagedObject<BoolObject>(left == right);
-    else if (_binaryOperator == "!=")
-        return scope.createManagedObject<BoolObject>(left != right);
-    else
-        ThrowException("cannot apply operator " + _binaryOperator + " to types String, String");
+    switch (_binaryOperator)
+    {
+        case BinaryOperatorType::Add:
+            return scope.createManagedObject<StringObject>(left + right);
+        case BinaryOperatorType::Equal:
+            return scope.createManagedObject<BoolObject>(left == right);
+        case BinaryOperatorType::NotEqual:
+            return scope.createManagedObject<BoolObject>(left != right);
+        default:
+            ThrowException("cannot apply operator to types String, String");
+    }
 }
 
 
@@ -127,8 +170,6 @@ BaseObject *BinaryNode::applyOperator(Scope &scope, const BaseObject &left, cons
     {
         return scope.addManagedObject(left + right);
     }
-    else
-    {
-        ThrowException("cannot apply operator " + _binaryOperator + " to object types");
-    }
+
+    ThrowException("cannot apply operator to object types");
 }

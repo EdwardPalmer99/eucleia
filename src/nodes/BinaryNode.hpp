@@ -16,12 +16,33 @@
 #include "StringObject.hpp"
 #include <string>
 
+enum class BinaryOperatorType
+{
+    Unknown = (-1),
+    Add,
+    Minus,
+    Multiply,
+    Divide,
+    Equal,
+    NotEqual,
+    GreaterOrEqual,
+    Greater,
+    LessOrEqual,
+    Less,
+    Modulo,
+    And,
+    Or
+};
+
+BinaryOperatorType binaryOperatorType(const std::string &operatorString);
+
+
 class BinaryNode : public BaseNode
 {
 public:
-    BinaryNode(BaseNode *left_, BaseNode *right_, std::string binaryOperator_)
+    BinaryNode(BaseNode *left_, BaseNode *right_, BinaryOperatorType binaryOperator)
         : BaseNode(NodeType::Binary), _left(left_), _right(right_),
-          _binaryOperator(std::move(binaryOperator_))
+          _binaryOperator(binaryOperator)
     {
         setType(NodeType::Binary);
     }
@@ -44,5 +65,5 @@ protected:
 private:
     BaseNode *_left{nullptr};
     BaseNode *_right{nullptr};
-    std::string _binaryOperator;
+    BinaryOperatorType _binaryOperator{BinaryOperatorType::Unknown};
 };

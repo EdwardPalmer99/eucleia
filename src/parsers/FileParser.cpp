@@ -87,7 +87,7 @@ BaseNode *FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
             if (isAssignNode)
                 node = NodeFactory::createAssignNode(leftExpression, rightExpression);
             else
-                node = new BinaryNode(leftExpression, rightExpression, next);
+                node = new BinaryNode(leftExpression, rightExpression, binaryOperatorType(next));
 
             // Wrap binary node by calling ourselves should the next operator
             // be of a greater precedence.
