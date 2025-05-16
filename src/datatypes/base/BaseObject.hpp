@@ -9,6 +9,7 @@
 
 #pragma once
 #include "Exceptions.hpp"
+#include <memory>
 #include <string>
 #include <typeinfo>
 #include <vector>
@@ -19,6 +20,8 @@
 class BaseObject
 {
 public:
+    using Ptr = std::shared_ptr<BaseObject>;
+
     virtual ~BaseObject() = default;
 
     // Implement copy assignment in derived classes.
