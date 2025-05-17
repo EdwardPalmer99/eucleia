@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "BaseObject.hpp"
+#include "ObjectTypes.hpp"
 #include <memory>
 #include <new>
 
@@ -20,5 +22,7 @@ template <class TObject, class... Args>
 {
     return std::make_shared<TObject>(std::forward<Args>(args)...);
 }
+
+BaseObject::Ptr allocate(ObjectType objectType);
 
 } // namespace ObjectFactory

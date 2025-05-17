@@ -91,12 +91,12 @@ void StructDefinitionObject::buildVariableDefHashMap(const Scope &scope)
     // Now we add our own variable definitions and check for any clashes.
     for (AddVariableNode::Ptr &variableDef : variableDefs)
     {
-        auto iter = allVariableDefsMap.find(variableDef->name);
+        auto iter = allVariableDefsMap.find(variableDef->name());
         if (iter != allVariableDefsMap.end())
         {
             ThrowException("duplicate class variable " + iter->first);
         }
 
-        allVariableDefsMap[variableDef->name] = variableDef;
+        allVariableDefsMap[variableDef->name()] = variableDef;
     }
 }

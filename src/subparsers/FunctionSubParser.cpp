@@ -17,7 +17,7 @@
 
 FunctionCallNode::Ptr FunctionSubParser::parseFunctionCall(BaseNode::Ptr lastExpressionNode)
 {
-    return parseFunctionCall(lastExpressionNode->castNode<LookupVariableNode>().name);
+    return parseFunctionCall(lastExpressionNode->castNode<LookupVariableNode>().name());
 }
 
 

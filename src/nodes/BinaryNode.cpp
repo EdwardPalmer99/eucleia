@@ -14,7 +14,7 @@
 #include <sstream>
 
 
-BinaryOperatorType binaryOperatorType(const std::string &operatorString)
+BinaryOperatorType BinaryNode::toBinaryOperator(const std::string &operatorString)
 {
     if (operatorString == "+")
         return BinaryOperatorType::Add;

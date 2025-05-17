@@ -61,7 +61,7 @@ BaseObject::Ptr FunctionCallNode::evaluate(Scope &scope)
         {
             char buffer[150];
             snprintf(buffer, 150, "incorrect type for argument '%s' of function '%s'. Expected type '%s'.",
-                     argVariable.name.c_str(),
+                     argVariable.name().c_str(),
                      _funcName.c_str(),
                      argVariable.description().c_str());
 
@@ -69,7 +69,7 @@ BaseObject::Ptr FunctionCallNode::evaluate(Scope &scope)
         }
 
         // Define variable in the function's scope.
-        funcScope.linkObject(argVariable.name, evaluatedArg);
+        funcScope.linkObject(argVariable.name(), evaluatedArg);
     }
 
     // Evaluate the function body in our function scope now that we've added the

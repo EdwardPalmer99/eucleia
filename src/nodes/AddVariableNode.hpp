@@ -18,9 +18,9 @@ class AddVariableNode : public LookupVariableNode
 public:
     using Ptr = std::shared_ptr<AddVariableNode>;
 
-    AddVariableNode(std::string name_, ObjectType type_)
-        : LookupVariableNode(std::move(name_)),
-          type(type_)
+    AddVariableNode(std::string name, ObjectType type)
+        : LookupVariableNode(std::move(name)),
+          _variableType(type)
     {
         setType(NodeType::AddVariable);
     }
@@ -33,7 +33,8 @@ public:
     //  Type checking for variable assignment.
     bool passesAssignmentTypeCheck(const BaseObject &assignObject) const;
 
-    const ObjectType type;
+protected:
+    const ObjectType _variableType;
 };
 
 

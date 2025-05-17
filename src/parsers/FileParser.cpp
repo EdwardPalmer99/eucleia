@@ -87,7 +87,7 @@ BaseNode::Ptr FileParser::maybeBinary(BaseNode::Ptr leftExpression, int leftPrec
             if (isAssignNode)
                 node = NodeFactory::createAssignNode(leftExpression, rightExpression);
             else
-                node = std::make_shared<BinaryNode>(leftExpression, rightExpression, binaryOperatorType(next));
+                node = std::make_shared<BinaryNode>(leftExpression, rightExpression, next);
 
             // Wrap binary node by calling ourselves should the next operator
             // be of a greater precedence.

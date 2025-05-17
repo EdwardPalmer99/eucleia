@@ -118,7 +118,7 @@ BaseNode::Ptr ClassSubParser::parseClass()
 
 BaseNode::Ptr ClassSubParser::parseStructAccessor(BaseNode::Ptr lastExpression)
 {
-    auto instanceName = lastExpression->castNode<LookupVariableNode>().name;
+    auto instanceName = lastExpression->castNode<LookupVariableNode>().name();
 
     skip(".");
 
@@ -130,7 +130,7 @@ BaseNode::Ptr ClassSubParser::parseStructAccessor(BaseNode::Ptr lastExpression)
     }
     else if (expression->isNodeType(NodeType::LookupVariable)) // Member variable.
     {
-        std::string memberVariableName = expression->castNode<LookupVariableNode>().name;
+        std::string memberVariableName = expression->castNode<LookupVariableNode>().name();
 
         return NodeFactory::createStructAccessNode(std::move(instanceName), memberVariableName);
     }

@@ -34,20 +34,17 @@ enum class BinaryOperatorType : int
     Or
 };
 
-BinaryOperatorType binaryOperatorType(const std::string &operatorString);
-
 
 class BinaryNode : public BaseNode
 {
 public:
-    BinaryNode(BaseNode::Ptr left_, BaseNode::Ptr right_, BinaryOperatorType binaryOperator)
-        : BaseNode(NodeType::Binary), _left(left_), _right(right_),
-          _binaryOperator(binaryOperator)
+    BinaryNode(BaseNode::Ptr left, BaseNode::Ptr right, const std::string &binaryOperator)
+        : _left(left),
+          _right(right),
+          _binaryOperator(toBinaryOperator(binaryOperator))
     {
         setType(NodeType::Binary);
     }
-
-    ~BinaryNode() override = default;
 
     BaseObject::Ptr evaluate(Scope &scope) override;
 
@@ -57,6 +54,9 @@ protected:
     BaseObject::Ptr applyOperator(const IntObject &left, const IntObject &right) const;
     BaseObject::Ptr applyOperator(const FloatObject &left, const FloatObject &right) const;
     BaseObject::Ptr applyOperator(const StringObject &left, const StringObject &right) const;
+
+    /* Convert string to enum (faster if doing lost of comparisons) */
+    static BinaryOperatorType toBinaryOperator(const std::string &operatorString);
 
 private:
     BaseNode::Ptr _left{nullptr};
