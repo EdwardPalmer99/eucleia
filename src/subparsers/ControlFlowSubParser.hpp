@@ -9,17 +9,16 @@
 
 #pragma once
 #include "SubParser.hpp"
-
-class AnyNode;
+#include "AnyNode.hpp"
 
 class ControlFlowSubParser : public SubParser
 {
 public:
     explicit ControlFlowSubParser(FileParser &parser) : SubParser(parser) {}
 
-    AnyNode *parseIf();
+    AnyNode::Ptr parseIf();
 
-    AnyNode *parseBreak();
+    AnyNode::Ptr parseBreak();
 
-    AnyNode *parseReturn();
+    AnyNode::Ptr parseReturn();
 };

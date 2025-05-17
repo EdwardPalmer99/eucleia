@@ -34,7 +34,7 @@ public:
      *
      * struct SomeStruct aStruct;
      */
-    BaseNode *parseStruct();
+    BaseNode::Ptr parseStruct();
 
     /**
      * Case 1: parse definition of a new class:
@@ -56,12 +56,12 @@ public:
      *
      * class SomeClass aClass;
      */
-    BaseNode *parseClass();
+    BaseNode::Ptr parseClass();
 
     /**
      * Example:
      *
      * aStruct.i --> returns int object stored in struct instance.
      */
-    BaseNode *parseStructAccessor(BaseNode *lastExpression);
+    BaseNode::Ptr parseStructAccessor(BaseNode::Ptr lastExpression);
 };

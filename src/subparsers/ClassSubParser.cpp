@@ -14,9 +14,10 @@
 #include "NodeFactory.hpp"
 #include "StructDefinitionObject.hpp"
 #include "StructObject.hpp"
+#include <memory>
 
 
-BaseNode *ClassSubParser::parseStruct()
+BaseNode::Ptr ClassSubParser::parseStruct()
 {
     skip("struct");
 
@@ -36,15 +37,15 @@ BaseNode *ClassSubParser::parseStruct()
 
         auto nodes = subparsers().block.parseDelimited("{", "}", ";", std::bind(&VariableSubParser::parseVariableDefinition, subparsers().variable));
 
-        std::vector<AddVariableNode *> variableDefs;
+        std::vector<AddVariableNode::Ptr> variableDefs;
         variableDefs.reserve(nodes.size());
 
-        for (BaseNode *node : nodes)
+        for (BaseNode::Ptr node : nodes)
         {
-            variableDefs.push_back(reinterpret_cast<AddVariableNode *>(node));
+            variableDefs.push_back(std::reinterpret_pointer_cast<AddVariableNode>(node));
         }
 
-        return new StructDefinitionObject(structTypeName, structParentTypeName, variableDefs);
+        return std::make_shared<StructDefinitionObject>(structTypeName, structParentTypeName, variableDefs);
     }
     else
     {
@@ -56,12 +57,12 @@ BaseNode *ClassSubParser::parseStruct()
 
         auto structInstanceName = tokens().dequeue();
 
-        return new StructObject(structTypeName, structInstanceName);
+        return std::make_shared<StructObject>(structTypeName, structInstanceName);
     }
 }
 
 
-BaseNode *ClassSubParser::parseClass()
+BaseNode::Ptr ClassSubParser::parseClass()
 {
     skip("class");
 
@@ -80,23 +81,23 @@ BaseNode *ClassSubParser::parseClass()
             classParentTypeName = tokens().dequeue();
         }
 
-        std::vector<BaseNode *> classBody = parent().subparsers().block.parseBraces();
+        std::vector<BaseNode::Ptr> classBody = parent().subparsers().block.parseBraces();
 
         // Split-up into class variables and class methods:
-        std::vector<AddVariableNode *> classVariables;
-        std::vector<FunctionNode *> classMethods;
+        std::vector<AddVariableNode::Ptr> classVariables;
+        std::vector<FunctionNode::Ptr> classMethods;
 
-        for (BaseNode *node : classBody)
+        for (BaseNode::Ptr node : classBody)
         {
             if (node->isNodeType(NodeType::AddVariable))
-                classVariables.push_back(static_cast<AddVariableNode *>(node));
+                classVariables.push_back(std::reinterpret_pointer_cast<AddVariableNode>(node));
             else if (node->isNodeType(NodeType::Function))
-                classMethods.push_back(static_cast<FunctionNode *>(node));
+                classMethods.push_back(std::reinterpret_pointer_cast<FunctionNode>(node));
             else
                 ThrowException("unexpected node type for class definition " + classTypeName);
         }
 
-        return new ClassDefinitionObject(classTypeName, classParentTypeName, classVariables, classMethods);
+        return std::make_shared<ClassDefinitionObject>(classTypeName, classParentTypeName, classVariables, classMethods);
     }
     else
     {
@@ -108,31 +109,28 @@ BaseNode *ClassSubParser::parseClass()
 
         auto classInstanceName = tokens().dequeue();
 
-        return new ClassObject(classTypeName, classInstanceName);
+        return std::make_shared<ClassObject>(classTypeName, classInstanceName);
     }
 
     return nullptr;
 }
 
 
-BaseNode *ClassSubParser::parseStructAccessor(BaseNode *lastExpression)
+BaseNode::Ptr ClassSubParser::parseStructAccessor(BaseNode::Ptr lastExpression)
 {
     auto instanceName = lastExpression->castNode<LookupVariableNode>().name;
-    delete lastExpression; // NB: ugly.
 
     skip(".");
 
-    BaseNode *expression = parent().maybeFunctionCall(std::bind(&VariableSubParser::parseVariable, &parent().subparsers().variable));
+    BaseNode::Ptr expression = parent().maybeFunctionCall(std::bind(&VariableSubParser::parseVariable, &parent().subparsers().variable));
 
     if (expression->isNodeType(NodeType::FunctionCall)) // Method.
     {
-        // NB: do NOT delete expression as owned by ClassMethodCallNode.
-        return NodeFactory::createClassMethodCallNode(std::move(instanceName), static_cast<FunctionCallNode *>(expression));
+        return NodeFactory::createClassMethodCallNode(std::move(instanceName), std::static_pointer_cast<FunctionCallNode>(expression));
     }
     else if (expression->isNodeType(NodeType::LookupVariable)) // Member variable.
     {
         std::string memberVariableName = expression->castNode<LookupVariableNode>().name;
-        delete expression; // No longer required. Ugly.
 
         return NodeFactory::createStructAccessNode(std::move(instanceName), memberVariableName);
     }

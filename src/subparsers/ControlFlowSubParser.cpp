@@ -27,7 +27,7 @@
 // }
 
 
-// BaseNode *ControlFlowSubParser::parse()
+// BaseNode::Ptr ControlFlowSubParser::parse()
 // {
 //     /* TODO: - inefficient because we're already called canParse() */
 //     /* Should store matching condition somewhere from canParse */
@@ -42,7 +42,7 @@
 // }
 
 
-AnyNode *ControlFlowSubParser::parseIf()
+AnyNode::Ptr ControlFlowSubParser::parseIf()
 {
     // For now, only permit a single if statement.
     skip("if");
@@ -50,7 +50,7 @@ AnyNode *ControlFlowSubParser::parseIf()
     auto condition = parent().parseBrackets();
     auto thenDo = parent().subparsers().block.parseBlock();
 
-    BaseNode *elseDo{nullptr}; // Optional.
+    BaseNode::Ptr elseDo{nullptr}; // Optional.
     if (tokens().front() == "else")
     {
         skip("else");
@@ -63,11 +63,11 @@ AnyNode *ControlFlowSubParser::parseIf()
             elseDo = parent().subparsers().block.parseBlock();
     }
 
-    return NodeFactory::createIfNode(BaseNode::Ptr(condition), BaseNode::Ptr(thenDo), BaseNode::Ptr(elseDo));
+    return NodeFactory::createIfNode(condition, thenDo, elseDo);
 }
 
 
-AnyNode *ControlFlowSubParser::parseBreak()
+AnyNode::Ptr ControlFlowSubParser::parseBreak()
 {
     skip("break");
 
@@ -75,18 +75,16 @@ AnyNode *ControlFlowSubParser::parseBreak()
 }
 
 
-AnyNode *ControlFlowSubParser::parseReturn()
+AnyNode::Ptr ControlFlowSubParser::parseReturn()
 {
     skip("return");
 
-    BaseNode *returnedExpression{nullptr};
+    BaseNode::Ptr returnedExpression{nullptr};
 
     if (!equals(Token::Punctuation, ";"))
     {
         returnedExpression = parent().parseExpression();
     }
 
-    return NodeFactory::createReturnNode(BaseNode::Ptr(returnedExpression));
+    return NodeFactory::createReturnNode(returnedExpression);
 }
-
-

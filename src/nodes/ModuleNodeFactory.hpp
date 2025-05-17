@@ -10,19 +10,17 @@
 #include "Scope.hpp"
 #include <string>
 
-class AnyNode;
-
 namespace NodeFactory
 {
 
-AnyNode *createDefinedModuleNode(std::string moduleName);
+AnyNode::Ptr createDefinedModuleNode(std::string moduleName);
 
-AnyNode *createIOModuleNode();
+AnyNode::Ptr createIOModuleNode();
 
-AnyNode *createMathModuleNode();
+AnyNode::Ptr createMathModuleNode();
 
-AnyNode *createArrayModuleNode();
+AnyNode::Ptr createArrayModuleNode();
 
-AnyNode *createTestModuleNode();
+AnyNode::Ptr createTestModuleNode();
 
 } // namespace NodeFactory

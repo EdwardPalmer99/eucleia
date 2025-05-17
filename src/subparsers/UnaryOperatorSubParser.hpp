@@ -8,10 +8,10 @@
  */
 
 #pragma once
+#include "AnyNode.hpp"
 #include "SubParser.hpp"
 
 class FileParser;
-class AnyNode;
 
 // TODO: - have a ParseEnum Type that we use then just call "Parse" method with type or int
 // TODO: - Can have single type of UnaryNode and then just an enum with the type of that since
@@ -23,14 +23,14 @@ public:
     explicit UnaryOperatorSubParser(FileParser &parser) : SubParser(parser) {}
 
     /* Parse ![value] */
-    AnyNode *parseNot();
+    AnyNode::Ptr parseNot();
 
     /* Parse -[value] */
-    AnyNode *parseNegation();
+    AnyNode::Ptr parseNegation();
 
     /* Parse ++[value] */
-    AnyNode *parsePrefixIncrement();
+    AnyNode::Ptr parsePrefixIncrement();
 
     /* Parse --[value] */
-    AnyNode *parsePrefixDecrement();
+    AnyNode::Ptr parsePrefixDecrement();
 };

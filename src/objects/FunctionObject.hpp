@@ -10,19 +10,18 @@
 #pragma once
 #include "BaseObjectT.hpp"
 #include "ObjectFactory.hpp"
+#include <memory>
 
 /* Forward declaration */
 class FunctionNode;
 
-using FunctionNodePtr = FunctionNode *;
-
 /// FunctionObject contains a pointer to the original function definition which
 /// allows us to call its evaluate() method and perform type-checking of the
 /// supplied function arguments with the expected arguments.
-class FunctionObject : public BaseObjectT<FunctionNodePtr>
+class FunctionObject : public BaseObjectT<std::shared_ptr<FunctionNode>>
 {
 public:
-    FunctionObject(FunctionNodePtr function) : BaseObjectT<FunctionNodePtr>(function) {}
+    FunctionObject(std::shared_ptr<FunctionNode> function) : BaseObjectT<std::shared_ptr<FunctionNode>>(function) {}
 
     FunctionObject::Ptr clone() const override
     {

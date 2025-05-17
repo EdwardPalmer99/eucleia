@@ -8,6 +8,7 @@
  */
 
 #pragma once
+#include "AnyNode.hpp"
 #include "BaseNode.hpp"
 #include "SubParser.hpp"
 #include <string>
@@ -15,7 +16,7 @@
 
 class FileParser;
 class BaseNode;
-class AnyNode;
+
 
 /*
  * This subparser is used for parsing a "block" of code:
@@ -31,11 +32,11 @@ class BlockSubParser : public SubParser
 public:
     explicit BlockSubParser(FileParser &parser) : SubParser(parser) {}
 
-    /* Parse expressions inside { } and wrap-inside AnyNode */
-    AnyNode *parseBlock();
+    /* Parse expressions inside { } and wrap-inside AnyNode::Ptr */
+    AnyNode::Ptr parseBlock();
 
     /* Old code to avoid problems temporarily. TODO: - remove */
-    BaseNode *parseBlockLegacy();
+    BaseNode::Ptr parseBlockLegacy();
 
     /* Parse expressions inside {} and return vector of shared pointers */
     BaseNodePtrVector parseBraces();

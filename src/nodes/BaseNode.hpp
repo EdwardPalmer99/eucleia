@@ -120,8 +120,4 @@ protected:
     NodeType _type{NodeType::Unknown};
 };
 
-using BaseNodeSharedPtrVector = std::vector<BaseNode::Ptr>;
-using BaseNodePtrVector = std::vector<BaseNode *>;
-
-/* Utility convert method */
-BaseNodeSharedPtrVector toSharedNodePtrVector(BaseNodePtrVector &nodes);
+using BaseNodePtrVector = std::vector<BaseNode::Ptr>;

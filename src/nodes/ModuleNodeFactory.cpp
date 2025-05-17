@@ -21,7 +21,7 @@
 namespace NodeFactory
 {
 
-AnyNode *createDefinedModuleNode(std::string moduleName)
+AnyNode::Ptr createDefinedModuleNode(std::string moduleName)
 {
     if (moduleName == "io")
         return createIOModuleNode();
@@ -36,7 +36,7 @@ AnyNode *createDefinedModuleNode(std::string moduleName)
 }
 
 
-AnyNode *createIOModuleNode()
+AnyNode::Ptr createIOModuleNode()
 {
     auto doPrint = std::pair("print", [](BaseNodePtrVector &callArgs, Scope &scope)
     {
@@ -60,7 +60,7 @@ AnyNode *createIOModuleNode()
 }
 
 
-AnyNode *createMathModuleNode()
+AnyNode::Ptr createMathModuleNode()
 {
     auto doSqrt = std::pair("sqrt", [](BaseNodePtrVector &callArgs, Scope &scope)
     {
@@ -84,7 +84,7 @@ AnyNode *createMathModuleNode()
 }
 
 
-AnyNode *createArrayModuleNode()
+AnyNode::Ptr createArrayModuleNode()
 {
     auto doClear = std::pair("clear", [](BaseNodePtrVector &callArgs, Scope &scope)
     {
@@ -119,7 +119,7 @@ AnyNode *createArrayModuleNode()
 }
 
 
-AnyNode *createTestModuleNode()
+AnyNode::Ptr createTestModuleNode()
 {
     auto doTest = std::pair("TEST", [](BaseNodePtrVector &callArgs, Scope &scope)
     {

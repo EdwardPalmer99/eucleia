@@ -16,6 +16,8 @@
 class AddVariableNode : public LookupVariableNode
 {
 public:
+    using Ptr = std::shared_ptr<AddVariableNode>;
+
     AddVariableNode(std::string name_, ObjectType type_)
         : LookupVariableNode(std::move(name_)),
           type(type_)

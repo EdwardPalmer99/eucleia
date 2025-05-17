@@ -17,7 +17,7 @@
 #include "Token.hpp"
 
 
-BaseNode *ImportSubParser::parseImport()
+BaseNode::Ptr ImportSubParser::parseImport()
 {
     skip("import");
 
@@ -32,7 +32,7 @@ BaseNode *ImportSubParser::parseImport()
 }
 
 
-AnyNode *ImportSubParser::parseFileImport()
+AnyNode::Ptr ImportSubParser::parseFileImport()
 {
     // File name token:
     auto token = tokens().dequeue();
@@ -62,7 +62,7 @@ AnyNode *ImportSubParser::parseFileImport()
 }
 
 
-AnyNode *ImportSubParser::parseModuleImport()
+AnyNode::Ptr ImportSubParser::parseModuleImport()
 {
     skip("<");
 

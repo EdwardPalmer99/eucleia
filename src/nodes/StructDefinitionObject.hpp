@@ -30,12 +30,12 @@ public:
      */
     StructDefinitionObject(std::string typeName_,
                            std::string parentTypeName_,
-                           std::vector<AddVariableNode *> variableDefs_);
+                           std::vector<AddVariableNode::Ptr> variableDefs_);
 
     /**
      * Destructor deletes all nodes in variable definitions.
      */
-    ~StructDefinitionObject() override;
+    ~StructDefinitionObject() override = default;
 
     /**
      * Registers this class in the current scope with name. Ownership will pass
@@ -76,7 +76,7 @@ protected:
      * Stores our owned variables and those of any parent variables we inherit.
      * To construct the object, we will call evaluate() method on each node.
      */
-    std::unordered_map<std::string, AddVariableNode *> allVariableDefsMap;
+    std::unordered_map<std::string, AddVariableNode::Ptr> allVariableDefsMap;
 
     /**
      * Type name for struct.
@@ -93,7 +93,7 @@ protected:
      * ownership of all nodes. There may be additional nodes that are not in this
      * vector and will be stored in a parent class.
      */
-    std::vector<AddVariableNode *> variableDefs;
+    std::vector<AddVariableNode::Ptr> variableDefs;
 
     /**
      * We activate the definition once evaluate is called. This is when we can

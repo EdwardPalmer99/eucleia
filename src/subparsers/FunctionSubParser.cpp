@@ -15,24 +15,21 @@
 #include <cassert>
 
 
-FunctionCallNode *FunctionSubParser::parseFunctionCall(BaseNode *lastExpressionNode)
+FunctionCallNode::Ptr FunctionSubParser::parseFunctionCall(BaseNode::Ptr lastExpressionNode)
 {
-    auto result = parseFunctionCall(lastExpressionNode->castNode<LookupVariableNode>().name);
-    delete lastExpressionNode; /* TODO: - Evil */
-
-    return result;
+    return parseFunctionCall(lastExpressionNode->castNode<LookupVariableNode>().name);
 }
 
 
-FunctionCallNode *FunctionSubParser::parseFunctionCall(std::string functionName)
+FunctionCallNode::Ptr FunctionSubParser::parseFunctionCall(std::string functionName)
 {
     auto functionArgs = subparsers().block.parseDelimited("(", ")", ",", std::bind(&FileParser::parseExpression, &parent()));
 
-    return new FunctionCallNode(functionName, functionArgs);
+    return std::make_shared<FunctionCallNode>(functionName, functionArgs);
 }
 
 
-FunctionNode *FunctionSubParser::parseFunctionDefinition()
+FunctionNode::Ptr FunctionSubParser::parseFunctionDefinition()
 {
     skip("func");
 
@@ -42,5 +39,5 @@ FunctionNode *FunctionSubParser::parseFunctionDefinition()
     auto funcArgs = subparsers().block.parseDelimited("(", ")", ",", std::bind(&VariableSubParser::parseVariableDefinition, &subparsers().variable)); // Func variables.
     auto funcBody = parent().subparsers().block.parseBlockLegacy();                                                                                   // TODO: - investigate why this causes a segfault when we switch to parseBlock()
 
-    return new FunctionNode(funcName, funcArgs, funcBody);
+    return std::make_shared<FunctionNode>(funcName, funcArgs, funcBody);
 }

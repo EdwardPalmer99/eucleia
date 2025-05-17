@@ -9,7 +9,6 @@
 
 #include "NodeFactory.hpp"
 #include "AddVariableNode.hpp"
-#include "AnyNode.hpp"
 #include "ArrayObject.hpp"
 #include "BaseObject.hpp"
 #include "ClassObject.hpp"
@@ -29,54 +28,54 @@
 namespace NodeFactory
 {
 
-AnyNode *createBoolNode(bool state)
+AnyNode::Ptr createBoolNode(bool state)
 {
-    return new AnyNode(NodeType::Bool, [state](Scope &)
+    return std::make_shared<AnyNode>(NodeType::Bool, [state](Scope &)
     {
         return ObjectFactory::allocate<BoolObject>(state);
     });
 }
 
-AnyNode *createIntNode(long value)
+AnyNode::Ptr createIntNode(long value)
 {
-    return new AnyNode(NodeType::Int, [value](Scope &)
+    return std::make_shared<AnyNode>(NodeType::Int, [value](Scope &)
     {
         return ObjectFactory::allocate<IntObject>(value);
     });
 }
 
-AnyNode *createStringNode(std::string value)
+AnyNode::Ptr createStringNode(std::string value)
 {
-    return new AnyNode(NodeType::String, [value = std::move(value)](Scope &)
+    return std::make_shared<AnyNode>(NodeType::String, [value = std::move(value)](Scope &)
     {
         return ObjectFactory::allocate<StringObject>(value);
     });
 }
 
-AnyNode *createFloatNode(double value)
+AnyNode::Ptr createFloatNode(double value)
 {
-    return new AnyNode(NodeType::Float, [value](Scope &)
+    return std::make_shared<AnyNode>(NodeType::Float, [value](Scope &)
     {
         return ObjectFactory::allocate<FloatObject>(value);
     });
 }
 
-AnyNode *createIfNode(BaseNode::Ptr condition, BaseNode::Ptr thenBranch, BaseNode::Ptr elseBranch)
+AnyNode::Ptr createIfNode(BaseNode::Ptr condition, BaseNode::Ptr thenBranch, BaseNode::Ptr elseBranch)
 {
-    return new AnyNode(NodeType::If, [condition, thenBranch, elseBranch](Scope &scope) /* Use shared pointer to manage ownership */
-    {                                                                                  /* Lifetime of owned nodes will end when AnyNode's destructor is called */
-      if (condition->evaluate<BoolObject>(scope)->value())
-          return thenBranch->evaluate(scope);
-      else if (elseBranch)
-          return elseBranch->evaluate(scope);
-      else
-          return BaseObject::Ptr();
+    return std::make_shared<AnyNode>(NodeType::If, [condition, thenBranch, elseBranch](Scope &scope) /* Use shared pointer to manage ownership */
+    {
+        if (condition->evaluate<BoolObject>(scope)->value())
+            return thenBranch->evaluate(scope);
+        else if (elseBranch)
+            return elseBranch->evaluate(scope);
+        else
+            return BaseObject::Ptr();
     });
 }
 
-AnyNode *createForLoopNode(BaseNode::Ptr init, BaseNode::Ptr condition, BaseNode::Ptr update, BaseNode::Ptr body)
+AnyNode::Ptr createForLoopNode(BaseNode::Ptr init, BaseNode::Ptr condition, BaseNode::Ptr update, BaseNode::Ptr body)
 {
-    return new AnyNode(NodeType::ForLoop, [init, condition, update, body](Scope &scope)
+    return std::make_shared<AnyNode>(NodeType::ForLoop, [init, condition, update, body](Scope &scope)
     {
         // Initialization.
         Scope loopScope(scope); // Extend scope.
@@ -103,9 +102,9 @@ AnyNode *createForLoopNode(BaseNode::Ptr init, BaseNode::Ptr condition, BaseNode
 }
 
 
-AnyNode *createWhileLoopNode(BaseNode::Ptr condition, BaseNode::Ptr body)
+AnyNode::Ptr createWhileLoopNode(BaseNode::Ptr condition, BaseNode::Ptr body)
 {
-    return new AnyNode(NodeType::While, [condition, body](Scope &scope)
+    return std::make_shared<AnyNode>(NodeType::While, [condition, body](Scope &scope)
     {
         // Set jump point for break statements.
         jmp_buf local;
@@ -129,9 +128,9 @@ AnyNode *createWhileLoopNode(BaseNode::Ptr condition, BaseNode::Ptr body)
 }
 
 
-AnyNode *createDoWhileLoopNode(BaseNode::Ptr condition, BaseNode::Ptr body)
+AnyNode::Ptr createDoWhileLoopNode(BaseNode::Ptr condition, BaseNode::Ptr body)
 {
-    return new AnyNode(NodeType::DoWhile, [condition, body](Scope &scope)
+    return std::make_shared<AnyNode>(NodeType::DoWhile, [condition, body](Scope &scope)
     {
         jmp_buf local;
         pushBreakJumpPoint(&local);
@@ -154,9 +153,9 @@ AnyNode *createDoWhileLoopNode(BaseNode::Ptr condition, BaseNode::Ptr body)
 }
 
 
-AnyNode *createBreakNode()
+AnyNode::Ptr createBreakNode()
 {
-    return new AnyNode(NodeType::Break, [](Scope &scope)
+    return std::make_shared<AnyNode>(NodeType::Break, [](Scope &scope)
     {
         (void)scope;
         jumpToBreakJumpPoint(); /* Jump to last set point */
@@ -165,9 +164,9 @@ AnyNode *createBreakNode()
     });
 }
 
-AnyNode *createReturnNode(BaseNode::Ptr returnNode)
+AnyNode::Ptr createReturnNode(BaseNode::Ptr returnNode)
 {
-    return new AnyNode(NodeType::Return, [returnNode](Scope &scope)
+    return std::make_shared<AnyNode>(NodeType::Return, [returnNode](Scope &scope)
     {
         gEnvironmentContext.returnValue = nullptr;
 
@@ -182,9 +181,9 @@ AnyNode *createReturnNode(BaseNode::Ptr returnNode)
 }
 
 
-AnyNode *createNotNode(BaseNode::Ptr expression)
+AnyNode::Ptr createNotNode(BaseNode::Ptr expression)
 {
-    return new AnyNode(NodeType::Not, [expression](Scope &scope)
+    return std::make_shared<AnyNode>(NodeType::Not, [expression](Scope &scope)
     {
         auto result = expression->evaluate<BoolObject>(scope);
 
@@ -192,9 +191,9 @@ AnyNode *createNotNode(BaseNode::Ptr expression)
     });
 }
 
-AnyNode *createBlockNode(BaseNodeSharedPtrVector nodes)
+AnyNode::Ptr createBlockNode(BaseNodePtrVector nodes)
 {
-    return new AnyNode(NodeType::Block, [nodes = std::move(nodes)](Scope &scope)
+    return std::make_shared<AnyNode>(NodeType::Block, [nodes = std::move(nodes)](Scope &scope)
     {
         /*
          * Create inner program scope for each block of statements. Good example is for a loop where the body of the
@@ -212,9 +211,9 @@ AnyNode *createBlockNode(BaseNodeSharedPtrVector nodes)
     });
 }
 
-AnyNode *createAssignNode(BaseNode *left, BaseNode *right)
+AnyNode::Ptr createAssignNode(BaseNode::Ptr left, BaseNode::Ptr right)
 {
-    return new AnyNode(NodeType::Assign, [left = BaseNode::Ptr(left), right = BaseNode::Ptr(right)](Scope &scope)
+    return std::make_shared<AnyNode>(NodeType::Assign, [left, right](Scope &scope)
     {
         // Setting array or struct values.
         if (left->isNodeType(NodeType::ArrayAccess) || left->isNodeType(NodeType::StructAccess))
@@ -241,10 +240,10 @@ AnyNode *createAssignNode(BaseNode *left, BaseNode *right)
 }
 
 
-AnyNode *createArrayNode(BaseNodeSharedPtrVector nodes)
+AnyNode::Ptr createArrayNode(BaseNodePtrVector nodes)
 {
     // TODO: - could treat as references in array?
-    return new AnyNode(NodeType::Array, [nodes](Scope &scope)
+    return std::make_shared<AnyNode>(NodeType::Array, [nodes = std::move(nodes)](Scope &scope)
     {
         BaseObjectPtrVector evaluatedObjects;
 
@@ -259,9 +258,10 @@ AnyNode *createArrayNode(BaseNodeSharedPtrVector nodes)
     });
 }
 
-AnyNode *createFileNode(BaseNodeSharedPtrVector nodes)
+
+AnyNode::Ptr createFileNode(BaseNodePtrVector nodes)
 {
-    return new AnyNode(NodeType::File, [nodes](Scope &scope)
+    return std::make_shared<AnyNode>(NodeType::File, [nodes](Scope &scope)
     {
         for (const auto &node : nodes)
         {
@@ -273,9 +273,9 @@ AnyNode *createFileNode(BaseNodeSharedPtrVector nodes)
 }
 
 
-AnyNode *createPrefixIncrementNode(BaseNode *expression)
+AnyNode::Ptr createPrefixIncrementNode(BaseNode::Ptr expression)
 {
-    return new AnyNode(NodeType::PrefixIncrement, [expression = BaseNode::Ptr(expression)](Scope &scope)
+    return std::make_shared<AnyNode>(NodeType::PrefixIncrement, [expression](Scope &scope)
     {
         // 1. Body should be an already-declared variable.
         assert(expression->isNodeType(NodeType::LookupVariable));
@@ -298,9 +298,9 @@ AnyNode *createPrefixIncrementNode(BaseNode *expression)
 }
 
 
-AnyNode *createPrefixDecrementNode(BaseNode *expression)
+AnyNode::Ptr createPrefixDecrementNode(BaseNode::Ptr expression)
 {
-    return new AnyNode(NodeType::PrefixDecrement, [expression = BaseNode::Ptr(expression)](Scope &scope)
+    return std::make_shared<AnyNode>(NodeType::PrefixDecrement, [expression](Scope &scope)
     {
         // 1. Body should be an already-declared variable.
         assert(expression->isNodeType(NodeType::LookupVariable));
@@ -323,9 +323,9 @@ AnyNode *createPrefixDecrementNode(BaseNode *expression)
 }
 
 
-AnyNode *createNegationNode(BaseNode *expression)
+AnyNode::Ptr createNegationNode(BaseNode::Ptr expression)
 {
-    return new AnyNode(NodeType::Negation, [expression = BaseNode::Ptr(expression)](Scope &scope)
+    return std::make_shared<AnyNode>(NodeType::Negation, [expression](Scope &scope)
     {
         auto bodyEvaluated = expression->evaluate(scope);
 
@@ -343,7 +343,7 @@ AnyNode *createNegationNode(BaseNode *expression)
 }
 
 
-AnyPropertyNode *createStructAccessNode(std::string structVarName, std::string memberVarName)
+AnyPropertyNode::Ptr createStructAccessNode(std::string structVarName, std::string memberVarName)
 {
     auto evaluateNoClone = [structVarName, memberVarName](Scope &scope)
     {
@@ -358,16 +358,15 @@ AnyPropertyNode *createStructAccessNode(std::string structVarName, std::string m
     };
 
 
-    return new AnyPropertyNode(NodeType::StructAccess, std::move(evaluate), std::move(evaluateNoClone));
+    return std::make_shared<AnyPropertyNode>(NodeType::StructAccess, std::move(evaluate), std::move(evaluateNoClone));
 }
 
 
-AnyPropertyNode *createArrayAccessNode(BaseNode *arrayLookupNode, BaseNode *arrayIndexNode)
+AnyPropertyNode::Ptr createArrayAccessNode(BaseNode::Ptr arrayLookupNode, BaseNode::Ptr arrayIndexNode)
 {
     assert(arrayLookupNode->isNodeType(NodeType::LookupVariable));
 
-    auto evaluateNoClone = [arrayLookupNode = BaseNode::Ptr(arrayLookupNode),
-                            arrayIndexNode = BaseNode::Ptr(arrayIndexNode)](Scope &scope)
+    auto evaluateNoClone = [arrayLookupNode, arrayIndexNode](Scope &scope)
     {
         // Lookup in array.
         auto arrayObj = arrayLookupNode->evaluate(scope)->castObject<ArrayObject>();
@@ -381,13 +380,13 @@ AnyPropertyNode *createArrayAccessNode(BaseNode *arrayLookupNode, BaseNode *arra
         return currentObject->clone();
     };
 
-    return new AnyPropertyNode(NodeType::ArrayAccess, std::move(evaluate), std::move(evaluateNoClone));
+    return std::make_shared<AnyPropertyNode>(NodeType::ArrayAccess, std::move(evaluate), std::move(evaluateNoClone));
 }
 
 
-AnyNode *createModuleNode(std::string moduleName, std::vector<ModuleFunctionPair> moduleFunctions)
+AnyNode::Ptr createModuleNode(std::string moduleName, std::vector<ModuleFunctionPair> moduleFunctions)
 {
-    return new AnyNode(NodeType::Module, [moduleName = std::move(moduleName), moduleFunctions = std::move(moduleFunctions)](Scope &scope)
+    return std::make_shared<AnyNode>(NodeType::Module, [moduleName = std::move(moduleName), moduleFunctions = std::move(moduleFunctions)](Scope &scope)
     {
         for (auto &it : moduleFunctions) /* Add to scope */
         {
@@ -399,10 +398,10 @@ AnyNode *createModuleNode(std::string moduleName, std::vector<ModuleFunctionPair
     });
 }
 
-AnyNode *createClassMethodCallNode(std::string instanceName, FunctionCallNode *methodCallNode)
+AnyNode::Ptr createClassMethodCallNode(std::string instanceName, FunctionCallNode::Ptr methodCallNode)
 {
-    return new AnyNode(NodeType::ClassMethodCall, [instanceName = std::move(instanceName),
-                                                   methodCallNode = FunctionCallNode::Ptr(methodCallNode)](Scope &scope)
+    return std::make_shared<AnyNode>(NodeType::ClassMethodCall, [instanceName = std::move(instanceName),
+                                                                 methodCallNode](Scope &scope)
     {
         auto thisObject = scope.getNamedObject<ClassObject>(instanceName);
 

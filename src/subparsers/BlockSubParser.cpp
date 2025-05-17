@@ -14,22 +14,22 @@
 #include "ProgramNode.hpp"
 
 
-AnyNode *BlockSubParser::parseBlock()
+AnyNode::Ptr BlockSubParser::parseBlock()
 {
     // TODO: - if there is only a single expression inside then return that
 
-    BaseNodeSharedPtrVector capturedNodes;
+    BaseNodePtrVector capturedNodes;
 
-    for (auto *node : parseBraces()) /* TODO: - not ideal, wrapper to convert raw -> shared-ptr */
+    for (auto &node : parseBraces()) /* TODO: - not ideal, wrapper to convert raw -> shared-ptr */
     {
-        capturedNodes.emplace_back(node);
+        capturedNodes.push_back(node);
     }
 
     return NodeFactory::createBlockNode(capturedNodes);
 }
 
 
-BaseNode *BlockSubParser::parseBlockLegacy()
+BaseNode::Ptr BlockSubParser::parseBlockLegacy()
 {
     // TODO: - remove
     auto capturedNodes = parseBraces();
@@ -39,7 +39,7 @@ BaseNode *BlockSubParser::parseBlockLegacy()
         return capturedNodes.front();
     }
 
-    return new ProgramNode(std::move(capturedNodes));
+    return std::make_shared<ProgramNode>(std::move(capturedNodes));
 }
 
 

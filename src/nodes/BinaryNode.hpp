@@ -40,18 +40,14 @@ BinaryOperatorType binaryOperatorType(const std::string &operatorString);
 class BinaryNode : public BaseNode
 {
 public:
-    BinaryNode(BaseNode *left_, BaseNode *right_, BinaryOperatorType binaryOperator)
+    BinaryNode(BaseNode::Ptr left_, BaseNode::Ptr right_, BinaryOperatorType binaryOperator)
         : BaseNode(NodeType::Binary), _left(left_), _right(right_),
           _binaryOperator(binaryOperator)
     {
         setType(NodeType::Binary);
     }
 
-    ~BinaryNode() override
-    {
-        delete _left;
-        delete _right;
-    }
+    ~BinaryNode() override = default;
 
     BaseObject::Ptr evaluate(Scope &scope) override;
 
@@ -63,7 +59,7 @@ protected:
     BaseObject::Ptr applyOperator(const StringObject &left, const StringObject &right) const;
 
 private:
-    BaseNode *_left{nullptr};
-    BaseNode *_right{nullptr};
+    BaseNode::Ptr _left{nullptr};
+    BaseNode::Ptr _right{nullptr};
     BinaryOperatorType _binaryOperator{BinaryOperatorType::Unknown};
 };

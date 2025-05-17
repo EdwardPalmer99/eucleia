@@ -30,11 +30,7 @@ public:
         setType(NodeType::FunctionCall);
     }
 
-    ~FunctionCallNode() override
-    {
-        std::for_each(_funcArgs.begin(), _funcArgs.end(), [](BaseNode *node)
-        { delete node; });
-    }
+    ~FunctionCallNode() override = default;
 
     // TODO: - don't forget to do performance profiling for Fib sequence and see memory requirements for old and new version
     // TODO: - create a new PR after this for parser to store all nodes in AST in flat array using pointers with method to delete by walking along array.

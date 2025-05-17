@@ -15,7 +15,7 @@
 #include "Token.hpp"
 
 
-AnyNode *DataTypeSubParser::parseInt()
+AnyNode::Ptr DataTypeSubParser::parseInt()
 {
     Token token = tokens().dequeue();
 
@@ -25,7 +25,7 @@ AnyNode *DataTypeSubParser::parseInt()
 }
 
 
-AnyNode *DataTypeSubParser::parseFloat()
+AnyNode::Ptr DataTypeSubParser::parseFloat()
 {
     Token token = tokens().dequeue();
 
@@ -35,7 +35,7 @@ AnyNode *DataTypeSubParser::parseFloat()
 }
 
 
-AnyNode *DataTypeSubParser::parseBool()
+AnyNode::Ptr DataTypeSubParser::parseBool()
 {
     Token token = tokens().dequeue();
 
@@ -45,7 +45,7 @@ AnyNode *DataTypeSubParser::parseBool()
 }
 
 
-AnyNode *DataTypeSubParser::parseString()
+AnyNode::Ptr DataTypeSubParser::parseString()
 {
     Token token = tokens().dequeue();
 
@@ -53,20 +53,18 @@ AnyNode *DataTypeSubParser::parseString()
 }
 
 
-AnyNode *DataTypeSubParser::parseArray()
+AnyNode::Ptr DataTypeSubParser::parseArray()
 {
-    log().debug("parsing array...");
     BaseNodePtrVector nodes = subparsers().block.parseDelimited("[", "]", ",", std::bind(&FileParser::parseExpression, &parent()));
-    log().debug("nodes.size() = " + std::to_string(nodes.size()));
-    return NodeFactory::createArrayNode(toSharedNodePtrVector(nodes));
+    return NodeFactory::createArrayNode(std::move(nodes));
 }
 
 
-AnyPropertyNode *DataTypeSubParser::parseArrayAccessor(BaseNode *lastExpression)
+AnyPropertyNode::Ptr DataTypeSubParser::parseArrayAccessor(BaseNode::Ptr lastExpression)
 {
     skip("[");
 
-    auto *arrayIndexNode = parent().parseExpression();
+    auto arrayIndexNode = parent().parseExpression();
 
     skip("]");
 

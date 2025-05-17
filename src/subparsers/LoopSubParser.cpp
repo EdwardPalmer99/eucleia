@@ -20,14 +20,14 @@
  * }
  * while ([condition is true]);
  */
-AnyNode *LoopSubParser::parseDoWhile()
+AnyNode::Ptr LoopSubParser::parseDoWhile()
 {
     skip("do");
-    BaseNode *body = parent().subparsers().block.parseBlock();
+    BaseNode::Ptr body = parent().subparsers().block.parseBlock();
     skip("while");
-    BaseNode *condition = parent().parseBrackets();
+    BaseNode::Ptr condition = parent().parseBrackets();
 
-    return NodeFactory::createDoWhileLoopNode(BaseNode::Ptr(condition), BaseNode::Ptr(body));
+    return NodeFactory::createDoWhileLoopNode(condition, body);
 }
 
 
@@ -38,14 +38,14 @@ AnyNode *LoopSubParser::parseDoWhile()
  * 	[code]
  * }
  */
-AnyNode *LoopSubParser::parseWhile()
+AnyNode::Ptr LoopSubParser::parseWhile()
 {
     skip("while");
 
-    BaseNode *condition = parent().parseBrackets();
-    BaseNode *body = parent().subparsers().block.parseBlock();
+    BaseNode::Ptr condition = parent().parseBrackets();
+    BaseNode::Ptr body = parent().subparsers().block.parseBlock();
 
-    return NodeFactory::createWhileLoopNode(BaseNode::Ptr(condition), BaseNode::Ptr(body));
+    return NodeFactory::createWhileLoopNode(condition, body);
 }
 
 
@@ -56,7 +56,7 @@ AnyNode *LoopSubParser::parseWhile()
  * 	[code]
  * }
  */
-AnyNode *LoopSubParser::parseFor()
+AnyNode::Ptr LoopSubParser::parseFor()
 {
     skip("for");
 
@@ -72,8 +72,8 @@ AnyNode *LoopSubParser::parseFor()
     auto update = forLoopArgs[2];
     auto body = subparsers().block.parseBlock();
 
-    return NodeFactory::createForLoopNode(BaseNode::Ptr(init),
-                                          BaseNode::Ptr(condition),
-                                          BaseNode::Ptr(update),
-                                          BaseNode::Ptr(body));
+    return NodeFactory::createForLoopNode(init,
+                                          condition,
+                                          update,
+                                          body);
 }

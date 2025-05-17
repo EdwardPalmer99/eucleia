@@ -17,21 +17,15 @@
 class ProgramNode : public BaseNode
 {
 public:
-    ProgramNode(std::vector<BaseNode *> nodes_) : programNodes(std::move(nodes_))
+    ProgramNode(std::vector<BaseNode::Ptr> nodes_) : programNodes(std::move(nodes_))
     {
         setType(NodeType::Program);
     }
 
-    ~ProgramNode() override
-    {
-        for (BaseNode *node : programNodes) // Call destructor on all nodes we own.
-        {
-            delete node;
-        }
-    }
+    ~ProgramNode() override = default;
 
     // Ownership of nodes passes to the caller.
-    std::vector<BaseNode *> releaseNodes()
+    std::vector<BaseNode::Ptr> releaseNodes()
     {
         auto returnedNodes = programNodes;
         programNodes.clear();
@@ -39,7 +33,7 @@ public:
         return returnedNodes;
     }
 
-    BaseNode *operator[](size_t index) const
+    BaseNode::Ptr operator[](size_t index) const
     {
         assert(index < programNodes.size());
         return programNodes[index];
@@ -48,5 +42,5 @@ public:
     // Evaluates a vector of nodes sequentially. Returns nullptr.
     BaseObject::Ptr evaluate(Scope &scope) override;
 
-    std::vector<BaseNode *> programNodes;
+    std::vector<BaseNode::Ptr> programNodes;
 };

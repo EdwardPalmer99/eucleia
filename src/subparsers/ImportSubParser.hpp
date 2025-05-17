@@ -9,30 +9,28 @@
 
 #pragma once
 
+#include "AnyNode.hpp"
+#include "BaseNode.hpp"
 #include "SubParser.hpp"
 
-
-class AnyNode;
 class FileParser;
-class BaseNode;
-
 
 class ImportSubParser : public SubParser
 {
 public:
     explicit ImportSubParser(FileParser &parser) : SubParser(parser) {}
 
-    BaseNode *parseImport();
+    BaseNode::Ptr parseImport();
 
     /*
      * Imports a file and its functions into this scope
      * Parse: import "path to file"
      */
-    AnyNode *parseFileImport();
+    AnyNode::Ptr parseFileImport();
 
     /**
      * Imports functions from a stdlib as opposed to user-defined functions
      * Parse: import <library name>
      */
-    AnyNode *parseModuleImport();
+    AnyNode::Ptr parseModuleImport();
 };

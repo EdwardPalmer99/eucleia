@@ -12,7 +12,7 @@
 
 StructDefinitionObject::StructDefinitionObject(std::string typeName_,
                                                std::string parentTypeName_,
-                                               std::vector<AddVariableNode *> variableDefs_)
+                                               std::vector<AddVariableNode::Ptr> variableDefs_)
     : typeName(std::move(typeName_)),
       parentTypeName(std::move(parentTypeName_)),
       variableDefs(std::move(variableDefs_))
@@ -20,17 +20,6 @@ StructDefinitionObject::StructDefinitionObject(std::string typeName_,
     setType(NodeType::StructDefinition);
 }
 
-
-StructDefinitionObject::~StructDefinitionObject()
-{
-    // We are responsible for deleting nodes.
-    for (auto *ptr : variableDefs)
-    {
-        delete ptr;
-    }
-
-    variableDefs.clear();
-}
 
 std::shared_ptr<StructDefinitionObject> StructDefinitionObject::lookupParent(const Scope &scope) const
 {
@@ -100,7 +89,7 @@ void StructDefinitionObject::buildVariableDefHashMap(const Scope &scope)
     }
 
     // Now we add our own variable definitions and check for any clashes.
-    for (AddVariableNode *variableDef : variableDefs)
+    for (AddVariableNode::Ptr &variableDef : variableDefs)
     {
         auto iter = allVariableDefsMap.find(variableDef->name);
         if (iter != allVariableDefsMap.end())

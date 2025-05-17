@@ -29,13 +29,13 @@ public:
      */
     ClassDefinitionObject(std::string typeName_,
                           std::string parentTypeName_,
-                          std::vector<AddVariableNode *> variableDefs_,
-                          std::vector<FunctionNode *> methodDefs_);
+                          std::vector<AddVariableNode::Ptr> variableDefs_,
+                          std::vector<FunctionNode::Ptr> methodDefs_);
 
     /**
      * Destructor deletes all method definition nodes.
      */
-    ~ClassDefinitionObject() override;
+    ~ClassDefinitionObject() override = default;
 
     /**
      * Install object in current scope.
@@ -57,12 +57,12 @@ protected:
      * Stores FunctionNodes. We will call evaluate() method to add them to class scope.
      * Note we are responsible for deleting these.
      */
-    std::vector<FunctionNode *> methodDefs;
+    std::vector<FunctionNode::Ptr> methodDefs;
 
     /**
      * Stores our owned methods and those of any parent methods we inherit. If
      * we have a method with the same name as one in a parent class, we will
      * "override" it by using our own.
      */
-    std::unordered_map<std::string, FunctionNode *> allMethodDefsMap;
+    std::unordered_map<std::string, FunctionNode::Ptr> allMethodDefsMap;
 };

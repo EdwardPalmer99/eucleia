@@ -14,7 +14,8 @@
 /// Create a new FunctionObject from a FunctionNode and register in current scope.
 BaseObject::Ptr FunctionNode::evaluate(Scope &scope)
 {
-    auto functionObject = ObjectFactory::allocate<FunctionObject>(this); /* TODO: - think about this */
+    // TODO: - I think this creates a strong-reference cycle! Need to break the chain here
+    auto functionObject = ObjectFactory::allocate<FunctionObject>(shared_from_this());
 
     scope.linkObject(_funcName, functionObject);
 

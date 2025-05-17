@@ -11,24 +11,12 @@
 
 ClassDefinitionObject::ClassDefinitionObject(std::string typeName_,
                                              std::string parentTypeName_,
-                                             std::vector<AddVariableNode *> variableDefs_,
-                                             std::vector<FunctionNode *> methodDefs_)
+                                             std::vector<AddVariableNode::Ptr> variableDefs_,
+                                             std::vector<FunctionNode::Ptr> methodDefs_)
     : StructDefinitionObject(std::move(typeName_), std::move(parentTypeName_), std::move(variableDefs_)),
       methodDefs(std::move(methodDefs_))
 {
     setType(NodeType::ClassDefinition);
-}
-
-
-ClassDefinitionObject::~ClassDefinitionObject()
-{
-    // We are responsible for deleting nodes.
-    for (auto *ptr : methodDefs)
-    {
-        delete ptr;
-    }
-
-    methodDefs.clear();
 }
 
 
@@ -87,7 +75,7 @@ void ClassDefinitionObject::buildMethodDefsHashMap(const Scope &scope)
     // Now we add our own methods and replace any existing methods with same name
     // We are not going to be too smart initially. We just replace methods with
     // the same name even with different numbers and types of arguments.
-    for (FunctionNode *funcDef : methodDefs)
+    for (FunctionNode::Ptr funcDef : methodDefs)
     {
         allMethodDefsMap[funcDef->_funcName] = funcDef;
     }

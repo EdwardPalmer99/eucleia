@@ -8,32 +8,30 @@
  */
 
 #pragma once
+#include "AnyNode.hpp"
 #include "SubParser.hpp"
 
 class FileParser;
 class ArrayAccessNode;
-class AnyNode;
-class AnyPropertyNode;
-
 
 class DataTypeSubParser : public SubParser
 {
 public:
     explicit DataTypeSubParser(FileParser &parser) : SubParser(parser) {}
 
-    AnyNode *parseInt();
+    AnyNode::Ptr parseInt();
 
-    AnyNode *parseFloat();
+    AnyNode::Ptr parseFloat();
 
     /* Parse: true/false */
-    AnyNode *parseBool();
+    AnyNode::Ptr parseBool();
 
     /* Parse: "..." */
-    AnyNode *parseString();
+    AnyNode::Ptr parseString();
 
     /* Parse: [1, 2, 3, 4] OR [true, false, true] OR [1.2, 2.4] OR ["hello, ", "world!"] */
-    AnyNode *parseArray();
+    AnyNode::Ptr parseArray();
 
     /* Parse: array_variable_name[index] */
-    AnyPropertyNode *parseArrayAccessor(BaseNode *lastExpression);
+    AnyPropertyNode::Ptr parseArrayAccessor(BaseNode::Ptr lastExpression);
 };
