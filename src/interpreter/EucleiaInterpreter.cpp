@@ -7,7 +7,6 @@
 
 #include "EucleiaInterpreter.hpp"
 #include "BaseObject.hpp"
-#include "EucleiaModules.hpp"
 #include "FileParser.hpp"
 #include "Objects.hpp"
 #include "Scope.hpp"
@@ -17,14 +16,11 @@
 void Interpreter::evaluateFile(const std::string &fpath)
 {
     // 1. Generate abstract symbol tree.
-    auto *ast = FileParser::parseMainFile(fpath);
+    BaseNode::Ptr ast = FileParser::parseMainFile(fpath);
 
     // 2. Create global scope.
     Scope globalScope;
 
     // 3. Evaluate AST.
     (void)ast->evaluate(globalScope);
-
-    // 4. Memory cleanup.
-    delete ast;
 }

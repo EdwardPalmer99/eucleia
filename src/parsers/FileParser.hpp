@@ -6,15 +6,23 @@
 //
 
 #pragma once
+#include "AddVariableNode.hpp"
+#include "AnyNode.hpp"
 #include "BaseParser.hpp"
+#include "BinaryNode.hpp"
 #include "BlockSubParser.hpp"
+#include "ClassDefinitionObject.hpp"
+#include "ClassObject.hpp"
 #include "ControlFlowSubParser.hpp"
 #include "DataTypeSubParser.hpp"
-#include "EucleiaModules.hpp"
+#include "FunctionCallNode.hpp"
+#include "FunctionNode.hpp"
 #include "FunctionSubParser.hpp"
 #include "ImportSubParser.hpp"
+#include "LookupVariableNode.hpp"
 #include "LoopSubParser.hpp"
-#include "Nodes.hpp"
+#include "StructDefinitionObject.hpp"
+#include "StructObject.hpp"
 #include "SubParsers.hpp"
 #include "Tokenizer.hpp"
 #include "UnaryOperatorSubParser.hpp"
@@ -30,7 +38,7 @@ public:
     FileParser(const std::string &fpath);
 
     /* Top-level parse */
-    static AnyNode *parseMainFile(const std::string entryPointPath_);
+    static AnyNode::Ptr parseMainFile(const std::string entryPointPath_);
 
     /* Returns reference to subparsers for file */
     [[nodiscard]] SubParsers &subparsers() { return _subParsers; }
@@ -42,33 +50,33 @@ public:
     [[nodiscard]] const std::string &parentDirPath() const { return _parentDirPath; }
 
     /* Construct AST for file */
-    AnyNode *buildAST();
+    AnyNode::Ptr buildAST();
 
     /* Parse generic expression */
-    BaseNode *parseExpression();
+    BaseNode::Ptr parseExpression();
 
     /* Parse non-binary expression */
-    BaseNode *parseAtomically();
+    BaseNode::Ptr parseAtomically();
 
     /* Parse an expression in brackets, e.g. (a) */
-    BaseNode *parseBrackets();
+    BaseNode::Ptr parseBrackets();
 
-    BaseNode *maybeFunctionCall(ParseMethod expression);
+    BaseNode::Ptr maybeFunctionCall(ParseMethod expression);
 
     void skipSemicolonLineEndingIfRequired(const BaseNode &node);
 
 protected:
-    BaseNode *parseExpressionHelper();
+    BaseNode::Ptr parseExpressionHelper();
 
-    BaseNode *parseAtomicallyExpression();
+    BaseNode::Ptr parseAtomicallyExpression();
 
     int getPrecedence(void);
 
-    BaseNode *maybeArrayAccess(ParseMethod expression);
+    BaseNode::Ptr maybeArrayAccess(ParseMethod expression);
 
-    BaseNode *maybeFunctionCallOrArrayAccess(ParseMethod expression);
+    BaseNode::Ptr maybeFunctionCallOrArrayAccess(ParseMethod expression);
 
-    BaseNode *maybeBinary(BaseNode *leftExpression, int leftPrecedence);
+    BaseNode::Ptr maybeBinary(BaseNode::Ptr leftExpression, int leftPrecedence);
 
     /* Convert a path 'a/b/c/fileName.ek' --> 'a/b/c/' */
     std::string buildParentDirPath(const std::string &filePath_) const;

@@ -13,7 +13,7 @@
 #include "LookupVariableNode.hpp"
 #include "Token.hpp"
 
-BaseNode *VariableSubParser::parseVariableDefinition()
+BaseNode::Ptr VariableSubParser::parseVariableDefinition()
 {
     Token typeToken = tokens().dequeue();
     assert(typeToken.type() == Token::Keyword);
@@ -28,11 +28,11 @@ BaseNode *VariableSubParser::parseVariableDefinition()
     Token nameToken = tokens().dequeue();
     assert(nameToken.type() == Token::Variable);
 
-    return new AddVariableNode(nameToken, typeOfObject);
+    return std::make_shared<AddVariableNode>(nameToken, typeOfObject);
 }
 
 
-BaseNode *VariableSubParser::parseReference(ObjectType boundVariableType)
+BaseNode::Ptr VariableSubParser::parseReference(ObjectType boundVariableType)
 {
     skip("&");
 
@@ -44,14 +44,14 @@ BaseNode *VariableSubParser::parseReference(ObjectType boundVariableType)
     Token boundVariableNameToken = tokens().dequeue();
     assert(boundVariableNameToken.type() == Token::Variable);
 
-    return new AddReferenceVariableNode(referenceNameToken, boundVariableNameToken, boundVariableType);
+    return std::make_shared<AddReferenceVariableNode>(referenceNameToken, boundVariableNameToken, boundVariableType);
 }
 
 
-BaseNode *VariableSubParser::parseVariableName()
+BaseNode::Ptr VariableSubParser::parseVariable()
 {
     Token token = tokens().dequeue();
     assert(token.type() == Token::Variable);
 
-    return new LookupVariableNode(token);
+    return std::make_shared<LookupVariableNode>(token);
 }

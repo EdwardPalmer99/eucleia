@@ -9,6 +9,7 @@
 
 #pragma once
 #include "Exceptions.hpp"
+#include <memory>
 #include <string>
 #include <typeinfo>
 #include <vector>
@@ -19,51 +20,43 @@
 class BaseObject
 {
 public:
+    using Ptr = std::shared_ptr<BaseObject>;
+
     virtual ~BaseObject() = default;
 
     // Implement copy assignment in derived classes.
-    virtual BaseObject &operator=(const BaseObject &other)
+    virtual BaseObject &operator=(const BaseObject &)
     {
         ThrowException("copy assignment not implemented");
     }
 
-    // Implement addition. Returns unmanaged pointer to result.
-    virtual BaseObject *operator+(const BaseObject &other) const
-    {
-        ThrowException("addition not implemented");
-    }
-
     /// Cast to object type.
     template <class TObject>
-    const TObject &castObject() const
+    [[nodiscard]] const TObject &castObject() const
     {
         return static_cast<const TObject &>(*this);
     }
 
     template <class TObject>
-    TObject &castObject()
+    [[nodiscard]] TObject &castObject()
     {
         return static_cast<TObject &>(*this);
     }
 
     /// Check object type.
     template <class TObject>
-    bool isObjectType() const
+    [[nodiscard]] bool isObjectType() const
     {
         return typeid(*this) == typeid(TObject);
     }
 
-    bool typesMatch(const BaseObject &other) const
+    [[nodiscard]] virtual BaseObject::Ptr clone() const
     {
-        return typeid(*this) == typeid(other);
+        ThrowException("clone is not implemented");
     }
-
-    // TODO: - clone should be called with a scope specified to handle memory.
-    /// Implement creating a copy for derived classes.
-    virtual BaseObject *clone() const = 0;
 
 protected:
     BaseObject() = default;
 };
 
-using BaseObjectPtrVector = std::vector<BaseObject *>;
+using BaseObjectPtrVector = std::vector<BaseObject::Ptr>;

@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "BaseNode.hpp"
 #include "ObjectTypes.hpp"
 #include "SubParser.hpp"
 
@@ -21,7 +22,7 @@ public:
 
 
     /* Parse: int/float/string/bool/array [variable name] */
-    BaseNode *parseVariableDefinition();
+    BaseNode::Ptr parseVariableDefinition();
 
     /**
      * Bind a reference to an already declared variable in this scope or a parent scope. We do not allow any unbound
@@ -30,8 +31,8 @@ public:
      *
      * Parse: VARIABLE_TO_BIND_TO_TYPE & REFERENCE_NAME = VARIABLE_TO_BIND_TO;
      */
-    BaseNode *parseReference(ObjectType boundVariableType_);
+    BaseNode::Ptr parseReference(ObjectType boundVariableType_);
 
     /* Parse: [variable name] */
-    BaseNode *parseVariableName();
+    BaseNode::Ptr parseVariable();
 };

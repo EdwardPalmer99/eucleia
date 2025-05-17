@@ -1,5 +1,5 @@
 /**
- * @file LibraryFunctionObject.hpp
+ * @file ModuleFunctionObject.hpp
  * @author Edward Palmer
  * @date 2024-11-17
  *
@@ -11,29 +11,26 @@
 #include "BaseObject.hpp"
 #include "BaseObjectT.hpp"
 #include <functional>
+#include <string>
 
 class Scope;
 
-using LibraryFunction = std::function<BaseObject *(BaseNodePtrVector &, Scope &)>;
+using ModuleFunction = std::function<BaseObject::Ptr(BaseNodePtrVector &, Scope &)>;
+using ModuleFunctionPair = std::pair<std::string, ModuleFunction>;
 
 /// Library function allows us to define lambdas which wrap around existing stdlib
 /// functions. These can then be added to a global scope after seeing "import <...>"
 /// with angled-brackets.
-class LibraryFunctionObject : public BaseObjectT<LibraryFunction>
+class ModuleFunctionObject : public BaseObjectT<ModuleFunction>
 {
 public:
     /* Set evaluate to be a reference to _value */
-    LibraryFunctionObject(LibraryFunction function) : BaseObjectT<LibraryFunction>(function)
+    ModuleFunctionObject(ModuleFunction function) : BaseObjectT<ModuleFunction>(function)
     {
-    }
-
-    LibraryFunctionObject *clone() const override
-    {
-        return new LibraryFunctionObject(_value);
     }
 
     /* Elegant operator overload allowing user to call function */
-    BaseObject *operator()(BaseNodePtrVector &args, Scope &scope) const
+    BaseObject::Ptr operator()(BaseNodePtrVector &args, Scope &scope) const
     {
         return _value(args, scope);
     }

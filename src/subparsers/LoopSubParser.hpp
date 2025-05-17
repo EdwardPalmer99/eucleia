@@ -8,20 +8,20 @@
  */
 
 #pragma once
+#include "AnyNode.hpp"
 #include "BaseParser.hpp"
 #include "SubParser.hpp"
 #include "Tokenizer.hpp"
 
-class AnyNode;
 
 class LoopSubParser : public SubParser
 {
 public:
     explicit LoopSubParser(FileParser &parser) : SubParser(parser) {}
 
-    AnyNode *parseDoWhile();
+    AnyNode::Ptr parseDoWhile();
 
-    AnyNode *parseWhile();
+    AnyNode::Ptr parseWhile();
 
-    AnyNode *parseFor();
+    AnyNode::Ptr parseFor();
 };

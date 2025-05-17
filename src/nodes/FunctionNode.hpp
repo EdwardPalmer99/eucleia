@@ -11,24 +11,24 @@
 #include "BaseNode.hpp"
 #include "BaseObject.hpp"
 #include "FunctionCallNode.hpp"
+#include <string>
 
 
-class FunctionNode : public FunctionCallNode
+class FunctionNode : public FunctionCallNode, public std::enable_shared_from_this<FunctionNode>
 {
 public:
-    FunctionNode(BaseNode *funcName_, BaseNodePtrVector funcArgs_, BaseNode *funcBody_)
-        : FunctionCallNode(funcName_, std::move(funcArgs_)),
+    using Ptr = std::shared_ptr<FunctionNode>;
+
+    FunctionNode(std::string funcName_, BaseNodePtrVector funcArgs_, BaseNode::Ptr funcBody_)
+        : FunctionCallNode(std::move(funcName_), std::move(funcArgs_)),
           funcBody(funcBody_)
     {
         setType(NodeType::Function);
     }
 
-    ~FunctionNode() override
-    {
-        delete funcBody;
-    }
+    ~FunctionNode() override = default;
 
-    BaseObject *evaluate(Scope &scope) override;
+    BaseObject::Ptr evaluate(Scope &scope) override;
 
-    BaseNode *funcBody{nullptr};
+    BaseNode::Ptr funcBody{nullptr};
 };

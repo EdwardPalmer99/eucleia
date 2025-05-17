@@ -10,6 +10,8 @@
 #pragma once
 #include "BaseObjectT.hpp"
 #include "IntObject.hpp"
+#include "ObjectFactory.hpp"
+#include <memory>
 
 /**
  * Class for double type.
@@ -17,6 +19,8 @@
 class FloatObject : public BaseObjectT<double>
 {
 public:
+    using Ptr = std::shared_ptr<FloatObject>;
+
     FloatObject(double value = 0.0) : BaseObjectT<double>(value) {}
 
     FloatObject &operator=(const BaseObject &other) override
@@ -29,9 +33,9 @@ public:
         return (*this);
     }
 
-    FloatObject *clone() const override
+    BaseObject::Ptr clone() const override
     {
-        return new FloatObject(_value);
+        return ObjectFactory::allocate<FloatObject>(_value);
     }
 
     FloatObject &operator++()

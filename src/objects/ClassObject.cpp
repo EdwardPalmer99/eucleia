@@ -16,7 +16,7 @@ ClassObject::ClassObject(std::string typeName_, std::string name_)
 {
 }
 
-BaseObject *ClassObject::evaluate(Scope &scope)
+BaseObject::Ptr ClassObject::evaluate(Scope &scope)
 {
     // TODO: - inefficient, should have another method we can call to do most of StructObject::evaluate.
     if (active)
@@ -28,13 +28,13 @@ BaseObject *ClassObject::evaluate(Scope &scope)
 
     // Initialize our instance from the struct definition defined in the scope.
     structDefinition = scope.getNamedObject<StructDefinitionObject>(typeName);
-    structDefinition->installVariablesInScope(instanceScope, variableNames);
+    structDefinition->installVariablesInScope(_instanceScope, variableNames);
 
-    auto classDefinition = static_cast<ClassDefinitionObject *>(structDefinition);
-    classDefinition->installMethodsInScope(instanceScope);
+    auto classDefinition = std::static_pointer_cast<ClassDefinitionObject>(structDefinition);
+    classDefinition->installMethodsInScope(_instanceScope);
 
     // Add the active struct instance to the scope. TODO: - transfer ownership
     // to the scope. Will have to remove this class from AST to do this correctly.
-    scope.linkObject(name, this);
-    return this;
+    scope.linkObject(name, shared_from_this());
+    return shared_from_this();
 }

@@ -12,24 +12,32 @@
 #include "FunctionCallNode.hpp"
 #include "FunctionNode.hpp"
 #include "VariableSubParser.hpp"
+#include <cassert>
 
 
-FunctionCallNode *FunctionSubParser::parseFunctionCall(BaseNode *lastExpression)
+FunctionCallNode::Ptr FunctionSubParser::parseFunctionCall(BaseNode::Ptr lastExpressionNode)
 {
-    auto functionName = std::move(lastExpression);
-    auto functionArgs = subparsers().block.parseDelimited("(", ")", ",", std::bind(&FileParser::parseExpression, &parent()));
-
-    return new FunctionCallNode(functionName, functionArgs);
+    return parseFunctionCall(lastExpressionNode->castNode<LookupVariableNode>().name());
 }
 
 
-FunctionNode *FunctionSubParser::parseFunctionDefinition()
+FunctionCallNode::Ptr FunctionSubParser::parseFunctionCall(std::string functionName)
+{
+    auto functionArgs = subparsers().block.parseDelimited("(", ")", ",", std::bind(&FileParser::parseExpression, &parent()));
+
+    return std::make_shared<FunctionCallNode>(functionName, functionArgs);
+}
+
+
+FunctionNode::Ptr FunctionSubParser::parseFunctionDefinition()
 {
     skip("func");
 
-    auto funcName = subparsers().variable.parseVariableName();
-    auto funcArgs = subparsers().block.parseDelimited("(", ")", ",", std::bind(&VariableSubParser::parseVariableDefinition, &subparsers().variable)); // Func variables.
-    auto funcBody = parent().subparsers().block.parseBlockLegacy();                                                                                   // TODO: - investigate why this causes a segfault when we switch to parseBlock()
+    auto funcName = tokens().dequeue();
+    assert(funcName.type() == Token::Variable);
 
-    return new FunctionNode(funcName, funcArgs, funcBody);
+    auto funcArgs = subparsers().block.parseDelimited("(", ")", ",", std::bind(&VariableSubParser::parseVariableDefinition, &subparsers().variable)); // Func variables.
+    auto funcBody = parent().subparsers().block.parseBlock();                                                                                         // TODO: - investigate why this causes a segfault when we switch to parseBlock()
+
+    return std::make_shared<FunctionNode>(funcName, funcArgs, funcBody);
 }

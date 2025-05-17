@@ -6,14 +6,12 @@
 //
 
 #include "FileParser.hpp"
-#include "EucleiaModules.hpp"
 #include "Exceptions.hpp"
 #include "Grammar.hpp"
 #include "Logger.hpp"
 #include "NodeFactory.hpp"
 #include "ObjectTypes.hpp"
 #include "ParserData.hpp"
-#include "TestModule.hpp"
 #include <assert.h>
 #include <cassert>
 #include <cstring>
@@ -21,7 +19,7 @@
 #include <stdlib.h>
 
 
-AnyNode *FileParser::parseMainFile(const std::string entryPointPath_)
+AnyNode::Ptr FileParser::parseMainFile(const std::string entryPointPath_)
 {
     /* Clear data for all imports */
     ParserData::instance().clearImports();
@@ -39,9 +37,9 @@ FileParser::FileParser(const std::string &fpath)
 }
 
 
-AnyNode *FileParser::buildAST()
+AnyNode::Ptr FileParser::buildAST()
 {
-    BaseNodeSharedPtrVector nodes;
+    BaseNodePtrVector nodes;
 
     while (!tokens().empty())
     {
@@ -58,7 +56,7 @@ AnyNode *FileParser::buildAST()
 }
 
 
-BaseNode *FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
+BaseNode::Ptr FileParser::maybeBinary(BaseNode::Ptr leftExpression, int leftPrecedence)
 {
     // Special case: tokens empty. Cannot be binary expression.
     if (tokens().empty())
@@ -82,14 +80,14 @@ BaseNode *FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
             auto rightExpression = maybeBinary(parseAtomically(), nextPrecedence);
 
             // Create binary or assign node.
-            BaseNode *node{nullptr};
+            BaseNode::Ptr node{nullptr};
 
             bool isAssignNode = (next == std::string("="));
 
             if (isAssignNode)
                 node = NodeFactory::createAssignNode(leftExpression, rightExpression);
             else
-                node = new BinaryNode(leftExpression, rightExpression, next);
+                node = std::make_shared<BinaryNode>(leftExpression, rightExpression, next);
 
             // Wrap binary node by calling ourselves should the next operator
             // be of a greater precedence.
@@ -102,7 +100,7 @@ BaseNode *FileParser::maybeBinary(BaseNode *leftExpression, int leftPrecedence)
 }
 
 
-BaseNode *FileParser::maybeFunctionCall(ParseMethod expression)
+BaseNode::Ptr FileParser::maybeFunctionCall(ParseMethod expression) /* TODO: - remove */
 {
     auto expr = expression(); // Possible function name.
 
@@ -110,7 +108,7 @@ BaseNode *FileParser::maybeFunctionCall(ParseMethod expression)
 }
 
 
-BaseNode *FileParser::maybeArrayAccess(ParseMethod expression)
+BaseNode::Ptr FileParser::maybeArrayAccess(ParseMethod expression)
 {
     auto expr = expression(); // Possible array variable name.
 
@@ -118,7 +116,7 @@ BaseNode *FileParser::maybeArrayAccess(ParseMethod expression)
 }
 
 
-BaseNode *FileParser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
+BaseNode::Ptr FileParser::maybeFunctionCallOrArrayAccess(ParseMethod expression) /* REMOVE */
 {
     auto expr = expression();
     assert(expr != nullptr);
@@ -126,7 +124,7 @@ BaseNode *FileParser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
     if (!tokens().empty())
     {
         if (equals(Token::Punctuation, "("))
-            return _subParsers.function.parseFunctionCall(expr);
+            return _subParsers.function.parseFunctionCall(expr); /* TODO: - remove */
         else if (equals(Token::Punctuation, "["))
             return _subParsers.dataType.parseArrayAccessor(expr);
         else if (equals(Token::Punctuation, "."))
@@ -137,19 +135,19 @@ BaseNode *FileParser::maybeFunctionCallOrArrayAccess(ParseMethod expression)
 }
 
 
-BaseNode *FileParser::parseExpression()
+BaseNode::Ptr FileParser::parseExpression()
 {
     return maybeFunctionCallOrArrayAccess(std::bind(&FileParser::parseExpressionHelper, this));
 }
 
 
-BaseNode *FileParser::parseExpressionHelper()
+BaseNode::Ptr FileParser::parseExpressionHelper()
 {
     return maybeBinary(parseAtomically(), 0);
 }
 
 
-BaseNode *FileParser::parseAtomically()
+BaseNode::Ptr FileParser::parseAtomically()
 {
     // 1. Call parseAtomicallyExpression() -> This may be the function name.
     // 2. Do we have a next token which is "("? --> YES --> FUNCTION CALL!
@@ -157,7 +155,7 @@ BaseNode *FileParser::parseAtomically()
 }
 
 
-BaseNode *FileParser::parseAtomicallyExpression()
+BaseNode::Ptr FileParser::parseAtomicallyExpression()
 {
     // TODO: - breakup
     if (equals(Token::Punctuation, "("))
@@ -208,7 +206,7 @@ BaseNode *FileParser::parseAtomicallyExpression()
     switch (token.type())
     {
         case Token::Variable:
-            return _subParsers.variable.parseVariableName();
+            return _subParsers.variable.parseVariable();
         case Token::String:
             return _subParsers.dataType.parseString();
         case Token::Int:
@@ -223,32 +221,22 @@ BaseNode *FileParser::parseAtomicallyExpression()
 
 void FileParser::skipSemicolonLineEndingIfRequired(const BaseNode &node)
 {
-    bool doSkipPunctuation = (node.isNodeType<ModuleNode>() || // Bit ugly.
-                              node.isNodeType<MathModuleNode>() ||
-                              node.isNodeType<IOModuleNode>() ||
-                              node.isNodeType<ArrayModuleNode>() ||
-                              node.isNodeType<TestModule>() ||
-                              // node.isNodeType<FileNode>() ||
-                              node.isNodeType<ProgramNode>() ||
-                              // node.isNodeType<IfNode>() ||
-                              // node.isNodeType<WhileNode>() ||
-                              // node.isNodeType<DoWhileNode>() ||
-                              // node.isNodeType<ForLoopNode>() ||
-                              node.isNodeType<FunctionNode>());
-
-    const auto *anyNode = dynamic_cast<const AnyNode *>(&node); // TODO: - temporary code before we rewrite BaseNode
-    if (anyNode)
+    switch (node.type())
     {
-        doSkipPunctuation |= (anyNode->type() == NodeType::File);
-        doSkipPunctuation |= (anyNode->type() == NodeType::If);
-        doSkipPunctuation |= (anyNode->type() == NodeType::ForLoop);
-        doSkipPunctuation |= (anyNode->type() == NodeType::While);
-        doSkipPunctuation |= (anyNode->type() == NodeType::DoWhile);
-        doSkipPunctuation |= (anyNode->type() == NodeType::Block);
-    }
-
-    if (!doSkipPunctuation)
-        skip(";");
+        case NodeType::Module:
+        case NodeType::File:
+        case NodeType::If:
+        case NodeType::ForLoop:
+        case NodeType::While:
+        case NodeType::DoWhile:
+        case NodeType::Block:
+        case NodeType::Program:
+        case NodeType::Function:
+            break;
+        default:
+            skip(";");
+            break;
+    };
 }
 
 
@@ -286,11 +274,11 @@ int FileParser::getPrecedence()
 }
 
 
-BaseNode *FileParser::parseBrackets()
+BaseNode::Ptr FileParser::parseBrackets()
 {
     skip("(");
 
-    BaseNode *expression = parseExpression();
+    BaseNode::Ptr expression = parseExpression();
 
     skip(")");
 

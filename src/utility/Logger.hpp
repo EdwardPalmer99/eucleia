@@ -20,7 +20,7 @@
 #include <thread>
 
 /* Add to top of functions for tracing */
-#define _trace (Logger::instance().trace(eucleia::stringify("Entering: %s()", __func__)))
+#define _trace (Logger::instance().trace(eucleia::stringify("Entering: %s() [%s:%d]", __func__, __FILE__, __LINE__)))
 
 enum class LogLevel
 {

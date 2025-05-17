@@ -9,6 +9,7 @@
 
 #pragma once
 #include "BaseObject.hpp"
+#include "ObjectFactory.hpp"
 #include <utility>
 
 /* Template wrapper around BaseObject with accessors */
@@ -18,6 +19,11 @@ class BaseObjectT : public BaseObject
 public:
     /* Use this to ensure that stored value type is correct */
     using Type = TValue;
+
+    virtual BaseObject &operator=(const BaseObject &other) override
+    {
+        return BaseObject::operator=(other);
+    }
 
     /* Elegant wrapper to extract value from a base object */
     static const TValue &value(const BaseObject &obj)
@@ -47,12 +53,6 @@ public:
     [[nodiscard]] const TValue &operator*() const
     {
         return _value;
-    }
-
-    /* Overrides clone method */
-    BaseObjectT<TValue> *clone() const override
-    {
-        return new BaseObjectT<TValue>(_value);
     }
 
     /* Const-accessor */

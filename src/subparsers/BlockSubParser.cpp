@@ -11,35 +11,20 @@
 #include "BaseNode.hpp"
 #include "FileParser.hpp"
 #include "NodeFactory.hpp"
-#include "ProgramNode.hpp"
 
 
-AnyNode *BlockSubParser::parseBlock()
+AnyNode::Ptr BlockSubParser::parseBlock()
 {
     // TODO: - if there is only a single expression inside then return that
 
-    BaseNodeSharedPtrVector capturedNodes;
+    BaseNodePtrVector capturedNodes;
 
-    for (auto *node : parseBraces()) /* TODO: - not ideal, wrapper to convert raw -> shared-ptr */
+    for (auto &node : parseBraces()) /* TODO: - not ideal, wrapper to convert raw -> shared-ptr */
     {
-        capturedNodes.emplace_back(node);
+        capturedNodes.push_back(node);
     }
 
     return NodeFactory::createBlockNode(capturedNodes);
-}
-
-
-BaseNode *BlockSubParser::parseBlockLegacy()
-{
-    // TODO: - remove
-    auto capturedNodes = parseBraces();
-
-    if (capturedNodes.size() == 1)
-    {
-        return capturedNodes.front();
-    }
-
-    return new ProgramNode(std::move(capturedNodes));
 }
 
 

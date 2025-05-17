@@ -14,13 +14,22 @@
 class LookupVariableNode : public BaseNode
 {
 public:
-    LookupVariableNode(std::string name_) : name(std::move(name_))
+    LookupVariableNode(std::string name) : _name(std::move(name))
     {
         setType(NodeType::LookupVariable);
     }
 
-    // Returns the object in the scope associated with a variable name.
-    BaseObject *evaluate(Scope &scope) override;
+    [[nodiscard]] inline const std::string &name() const;
 
-    std::string name;
+    /* Returns the object in the scope associated with a variable name */
+    BaseObject::Ptr evaluate(Scope &scope) override;
+
+private:
+    std::string _name;
 };
+
+
+const std::string &LookupVariableNode::name() const
+{
+    return _name;
+}

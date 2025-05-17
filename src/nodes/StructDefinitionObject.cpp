@@ -12,26 +12,16 @@
 
 StructDefinitionObject::StructDefinitionObject(std::string typeName_,
                                                std::string parentTypeName_,
-                                               std::vector<AddVariableNode *> variableDefs_)
+                                               std::vector<AddVariableNode::Ptr> variableDefs_)
     : typeName(std::move(typeName_)),
       parentTypeName(std::move(parentTypeName_)),
       variableDefs(std::move(variableDefs_))
 {
+    setType(NodeType::StructDefinition);
 }
 
 
-StructDefinitionObject::~StructDefinitionObject()
-{
-    // We are responsible for deleting nodes.
-    for (auto *ptr : variableDefs)
-    {
-        delete ptr;
-    }
-
-    variableDefs.clear();
-}
-
-StructDefinitionObject *StructDefinitionObject::lookupParent(const Scope &scope) const
+std::shared_ptr<StructDefinitionObject> StructDefinitionObject::lookupParent(const Scope &scope) const
 {
     if (parentTypeName.empty())
     {
@@ -42,7 +32,7 @@ StructDefinitionObject *StructDefinitionObject::lookupParent(const Scope &scope)
 }
 
 
-BaseObject *StructDefinitionObject::evaluate(Scope &scope)
+BaseObject::Ptr StructDefinitionObject::evaluate(Scope &scope)
 {
     if (active) // Expect one definition only!
     {
@@ -60,8 +50,8 @@ BaseObject *StructDefinitionObject::evaluate(Scope &scope)
 
     // NB: scope cannot manage lifetime of this definition currently since it
     // is owned by the AST. TODO: - rectify this.
-    scope.linkObject(typeName, this);
-    return this;
+    scope.linkObject(typeName, shared_from_this());
+    return shared_from_this();
 }
 
 
@@ -89,7 +79,7 @@ void StructDefinitionObject::buildVariableDefHashMap(const Scope &scope)
         return; // Already built.
     }
 
-    StructDefinitionObject *parent = lookupParent(scope);
+    std::shared_ptr<StructDefinitionObject> parent = lookupParent(scope);
     if (parent)
     {
         parent->buildVariableDefHashMap(scope); // TODO: - unnecessary
@@ -99,14 +89,14 @@ void StructDefinitionObject::buildVariableDefHashMap(const Scope &scope)
     }
 
     // Now we add our own variable definitions and check for any clashes.
-    for (AddVariableNode *variableDef : variableDefs)
+    for (AddVariableNode::Ptr &variableDef : variableDefs)
     {
-        auto iter = allVariableDefsMap.find(variableDef->name);
+        auto iter = allVariableDefsMap.find(variableDef->name());
         if (iter != allVariableDefsMap.end())
         {
             ThrowException("duplicate class variable " + iter->first);
         }
 
-        allVariableDefsMap[variableDef->name] = variableDef;
+        allVariableDefsMap[variableDef->name()] = variableDef;
     }
 }

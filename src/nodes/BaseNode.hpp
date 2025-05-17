@@ -46,7 +46,8 @@ enum class NodeType
     ClassDefinition,
     ClassMethodCall,
     ArrayAccess,
-    AddVariable
+    AddVariable,
+    Module
 };
 
 
@@ -71,25 +72,24 @@ public:
     }
 
 
-    template <class TNode>
-    bool isNodeType() const
+    bool isNodeType(NodeType queryType) const
     {
-        return typeid(*this) == typeid(TNode);
+        return (type() == queryType);
     }
 
 
     bool typesMatch(const BaseNode &other) const
     {
-        return typeid(*this) == typeid(other);
+        return type() == other.type();
     }
 
-    virtual BaseObject *evaluate(Scope &scope) = 0;
+    virtual BaseObject::Ptr evaluate(Scope &scope) = 0; /* TODO: - move to shared pointers */
 
     /* Evaluates object */
     template <typename TObject>
-    TObject *evaluate(Scope &scope)
+    std::shared_ptr<TObject> evaluate(Scope &scope)
     {
-        return static_cast<TObject *>(evaluate(scope));
+        return std::static_pointer_cast<TObject>(evaluate(scope));
     }
 
     /* Evaluates object and returns the object's stored value directly */
@@ -97,7 +97,7 @@ public:
     TValue &evaluateObject(Scope &scope)
     {
         /* BaseObject ptr */
-        BaseObject *baseObjPtr = evaluate(scope);
+        BaseObject::Ptr baseObjPtr = evaluate(scope);
 
         /* Up-cast */
         auto &upcastedObj = static_cast<BaseObjectT<TValue> &>(*baseObjPtr);
@@ -120,8 +120,4 @@ protected:
     NodeType _type{NodeType::Unknown};
 };
 
-using BaseNodeSharedPtrVector = std::vector<BaseNode::Ptr>;
-using BaseNodePtrVector = std::vector<BaseNode *>;
-
-/* Utility convert method */
-BaseNodeSharedPtrVector toSharedNodePtrVector(BaseNodePtrVector &nodes);
+using BaseNodePtrVector = std::vector<BaseNode::Ptr>;

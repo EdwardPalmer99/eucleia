@@ -14,7 +14,7 @@
 #include "FloatObject.hpp"
 #include "FunctionObject.hpp"
 #include "IntObject.hpp"
-#include "LibraryFunctionObject.hpp"
+#include "ModuleFunctionObject.hpp"
 #include "StringObject.hpp"
 #include "StructDefinitionObject.hpp"
 #include "StructObject.hpp"
@@ -47,7 +47,7 @@ inline std::ostream &operator<<(std::ostream &out, const BaseObject &object)
         out << "(";
         for (auto &name : structObject.variableNames)
         {
-            BaseObject *obj = structObject.instanceScope.getNamedObject(name);
+            BaseObject::Ptr obj = structObject._instanceScope.getNamedObject(name);
             out << name << ": " << (*obj) << ", ";
         }
         out << ")";
@@ -60,7 +60,7 @@ inline std::ostream &operator<<(std::ostream &out, const BaseObject &object)
         out << "(";
         for (auto &name : classObject.variableNames)
         {
-            BaseObject *obj = classObject.instanceScope.getNamedObject(name);
+            BaseObject::Ptr obj = classObject._instanceScope.getNamedObject(name);
             out << name << ": " << (*obj) << ", ";
         }
         out << ")";

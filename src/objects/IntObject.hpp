@@ -9,6 +9,7 @@
 
 #pragma once
 #include "BaseObjectT.hpp"
+#include "ObjectFactory.hpp"
 #include "PoolAllocator.hpp"
 #include <cassert>
 
@@ -45,9 +46,9 @@ public:
         allocator.deallocate(ptr);
     }
 
-    IntObject *clone() const override
+    BaseObject::Ptr clone() const override
     {
-        return new IntObject(_value);
+        return ObjectFactory::allocate<IntObject>(_value);
     }
 
     FloatObject castToFloat() const;

@@ -13,29 +13,26 @@
 #include <cassert>
 #include <vector>
 
-using ArrayValue = std::vector<BaseObject *>;
-
-class ArrayObject : public BaseObjectT<ArrayValue>
+class ArrayObject : public BaseObjectT<BaseObjectPtrVector>
 {
 public:
     ArrayObject() = default;
-    ArrayObject(ArrayValue values);
+    ~ArrayObject() override = default;
 
-    ~ArrayObject() override;
-
+    ArrayObject(BaseObjectPtrVector objects) : BaseObjectT<BaseObjectPtrVector>(std::move(objects)) {}
 
     /// Add two array objects and return an unmanaged pointer to result.
-    ArrayObject *operator+(const BaseObject &other) const override;
+    ArrayObject operator+(const BaseObject &other) const;
 
     ArrayObject &operator=(const BaseObject &other) override;
 
     /// Performs a deep copy of array. This will enable the array to be returned
     /// by a function without objects (defined in function scope) being destroyed.
-    ArrayObject *clone() const override;
+    BaseObject::Ptr clone() const override;
 
-    BaseObject *operator[](std::size_t index) const
+    BaseObject::Ptr operator[](std::size_t index) const
     {
         assert(index < value().size());
-        return (value().at(index)); // TODO: - fix this. Just return a reference or something.
+        return (value().at(index));
     }
 };

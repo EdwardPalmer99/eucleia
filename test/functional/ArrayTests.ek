@@ -1,9 +1,11 @@
 import <io>
 import <test>
-import <stdarray>
+import <array>
 
 {
+    print([1, 2, 3]);
     array first = [1, 2, 3];
+    print(first);
     TEST(first[0] == 1 && first[1] == 2, "array access");
 
     int index = 0;

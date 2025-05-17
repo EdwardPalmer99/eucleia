@@ -8,11 +8,13 @@
  */
 
 #pragma once
+#include "BaseNode.hpp"
+#include "FunctionCallNode.hpp"
+#include "FunctionNode.hpp"
 #include "SubParser.hpp"
+#include <string>
 
 class FileParser;
-class FunctionNode;
-class FunctionCallNode;
 
 /* TODO: - parser should keep track of previously parsed expressions by storing in a vector so we can use */
 
@@ -30,11 +32,13 @@ public:
      * }
      *
      */
-    FunctionNode *parseFunctionDefinition();
+    FunctionNode::Ptr parseFunctionDefinition();
 
     /*
      * Parse function call: [funcName]([funcArgs])
      * Example: test(a, b, c);
      */
-    FunctionCallNode *parseFunctionCall(BaseNode *lastExpression);
+    FunctionCallNode::Ptr parseFunctionCall(BaseNode::Ptr lastExpressionNode);
+
+    FunctionCallNode::Ptr parseFunctionCall(std::string funcName);
 };

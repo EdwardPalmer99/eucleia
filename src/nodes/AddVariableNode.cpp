@@ -11,33 +11,16 @@
 #include "ArrayObject.hpp"
 #include "FloatObject.hpp"
 #include "IntObject.hpp"
+#include "ObjectFactory.hpp"
 #include "StringObject.hpp"
 
-BaseObject *AddVariableNode::evaluate(Scope &scope)
+
+BaseObject::Ptr AddVariableNode::evaluate(Scope &scope)
 {
-    BaseObject *objectPtr = nullptr;
+    /* TODO: - add support for functions (to enable passing to other functions, etc) */
+    auto objectPtr = ObjectFactory::allocate(_variableType);
+    scope.linkObject(name(), objectPtr);
 
-    switch (type)
-    {
-        case ObjectType::Int:
-        case ObjectType::Bool:
-            objectPtr = scope.createManagedObject<IntObject>();
-            break;
-        case ObjectType::Float:
-            objectPtr = scope.createManagedObject<FloatObject>();
-            break;
-        case ObjectType::String:
-            objectPtr = scope.createManagedObject<StringObject>();
-            break;
-        case ObjectType::Array:
-            objectPtr = scope.createManagedObject<ArrayObject>();
-            break;
-        // TODO: - handle function type. (will need to think about this.)
-        default:
-            ThrowException("cannot create a variable of specified type");
-    }
-
-    scope.linkObject(name, objectPtr); // TODO: - could call this linkObjectToVariableName()
     return objectPtr;
 }
 
@@ -45,7 +28,7 @@ BaseObject *AddVariableNode::evaluate(Scope &scope)
 /// Type checking.
 bool AddVariableNode::passesAssignmentTypeCheck(const BaseObject &assignObject) const
 {
-    switch (type)
+    switch (_variableType)
     {
         case ObjectType::Int:
             return assignObject.isObjectType<IntObject>();
@@ -65,7 +48,7 @@ bool AddVariableNode::passesAssignmentTypeCheck(const BaseObject &assignObject) 
 
 std::string AddVariableNode::description() const
 {
-    switch (type)
+    switch (_variableType)
     {
         case ObjectType::Bool:
             return "Bool";
@@ -92,19 +75,19 @@ AddReferenceVariableNode::AddReferenceVariableNode(std::string referenceName_,
 }
 
 
-BaseObject *AddReferenceVariableNode::evaluate(Scope &scope)
+BaseObject::Ptr AddReferenceVariableNode::evaluate(Scope &scope)
 {
     // 1. Lookup the object associated with the variable name defined in this
     // scope or a parent scope (no issue with lifetimes such as to be bound
     // object going out of scope before our reference.
-    BaseObject *boundObject = scope.getNamedObject(name);
+    BaseObject::Ptr boundObject = scope.getNamedObject(name());
 
     // 2. Type checking. The type of the reference must match that of the bound
     // object.
     bool passesTypeChecking{false};
 
     // TODO: - add type checking for classes and struct references.
-    switch (type)
+    switch (_variableType)
     {
         case ObjectType::Int:
             passesTypeChecking = boundObject->isObjectType<IntObject>();
@@ -130,7 +113,7 @@ BaseObject *AddReferenceVariableNode::evaluate(Scope &scope)
 
     if (!passesTypeChecking)
     {
-        ThrowException("Cannot bind reference " + referenceName + " to variable " + name + ". Types do not match!");
+        ThrowException("Cannot bind reference " + referenceName + " to variable " + name() + ". Types do not match!");
     }
 
     // 3. Instead of creating a new object, we add the reference name and link

@@ -16,21 +16,13 @@ Scope::Scope(const Scope &_parent)
 {
 }
 
-Scope::~Scope()
-{
-    for (BaseObject *obj : objectsCreatedInScope)
-    {
-        delete obj;
-    }
-}
-
 Scope::Scope(const Scope *_parent)
     : parent(const_cast<Scope *>(_parent))
 {
 }
 
 
-BaseObject *Scope::getOptionalNamedObject(const std::string &name) const
+BaseObject::Ptr Scope::getOptionalNamedObject(const std::string &name) const
 {
     // Try in our scope (to handle variable shadowing).
     auto iter = linkedObjectForName.find(name);
@@ -50,9 +42,9 @@ BaseObject *Scope::getOptionalNamedObject(const std::string &name) const
 }
 
 
-BaseObject *Scope::getNamedObject(const std::string &name) const
+BaseObject::Ptr Scope::getNamedObject(const std::string &name) const
 {
-    BaseObject *obj = getOptionalNamedObject(name);
+    BaseObject::Ptr obj = getOptionalNamedObject(name);
     if (!obj)
     {
         ThrowException("undefined variable " + name);
@@ -68,7 +60,7 @@ bool Scope::hasNamedObject(const std::string &name) const
 }
 
 
-void Scope::linkObject(const std::string &name, BaseObject *object)
+void Scope::linkObject(const std::string &name, BaseObject::Ptr object)
 {
     assert(object != nullptr);
 

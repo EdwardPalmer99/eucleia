@@ -13,33 +13,31 @@
 #include "BaseObject.hpp"
 #include "Scope.hpp"
 #include <algorithm>
+#include <memory>
+#include <string>
 #include <vector>
 
 
 class FunctionCallNode : public BaseNode
 {
 public:
-    FunctionCallNode(BaseNode *funcName_, BaseNodePtrVector funcArgs_)
-        : funcName(static_cast<AddVariableNode *>(funcName_)),
-          funcArgs(std::move(funcArgs_))
+    using Ptr = std::shared_ptr<FunctionCallNode>;
+
+    FunctionCallNode(std::string funcName_, BaseNodePtrVector funcArgs_)
+        : _funcName(std::move(funcName_)),
+          _funcArgs(std::move(funcArgs_))
     {
         setType(NodeType::FunctionCall);
     }
 
-    ~FunctionCallNode() override
-    {
-        delete funcName;
-
-        std::for_each(funcArgs.begin(), funcArgs.end(), [](BaseNode *node)
-        { delete node; });
-    }
+    ~FunctionCallNode() override = default;
 
     // TODO: - don't forget to do performance profiling for Fib sequence and see memory requirements for old and new version
     // TODO: - create a new PR after this for parser to store all nodes in AST in flat array using pointers with method to delete by walking along array.
-    BaseObject *evaluate(Scope &scope) override;
+    BaseObject::Ptr evaluate(Scope &scope) override;
 
-    BaseObject *evaluateFunctionBody(BaseNode &funcBody, Scope &funcScope);
+    BaseObject::Ptr evaluateFunctionBody(BaseNode &funcBody, Scope &funcScope);
 
-    AddVariableNode *funcName{nullptr};
-    BaseNodePtrVector funcArgs{nullptr};
+    std::string _funcName;
+    BaseNodePtrVector _funcArgs{nullptr};
 };

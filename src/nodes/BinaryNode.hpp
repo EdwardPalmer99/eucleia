@@ -16,33 +16,50 @@
 #include "StringObject.hpp"
 #include <string>
 
+enum class BinaryOperatorType : int
+{
+    Unknown = (-1),
+    Add,
+    Minus,
+    Multiply,
+    Divide,
+    Equal,
+    NotEqual,
+    GreaterOrEqual,
+    Greater,
+    LessOrEqual,
+    Less,
+    Modulo,
+    And,
+    Or
+};
+
+
 class BinaryNode : public BaseNode
 {
 public:
-    BinaryNode(BaseNode *left_, BaseNode *right_, std::string binaryOperator_)
-        : BaseNode(NodeType::Binary), _left(left_), _right(right_),
-          _binaryOperator(std::move(binaryOperator_))
+    BinaryNode(BaseNode::Ptr left, BaseNode::Ptr right, const std::string &binaryOperator)
+        : _left(left),
+          _right(right),
+          _binaryOperator(toBinaryOperator(binaryOperator))
     {
         setType(NodeType::Binary);
     }
 
-    ~BinaryNode() override
-    {
-        delete _left;
-        delete _right;
-    }
-
-    BaseObject *evaluate(Scope &scope) override;
+    BaseObject::Ptr evaluate(Scope &scope) override;
 
 protected:
-    BaseObject *applyOperator(Scope &scope, const BaseObject &left, const BaseObject &right) const;
+    BaseObject::Ptr applyOperator(const BaseObject &left, const BaseObject &right) const;
 
-    BaseObject *applyOperator(Scope &scope, const IntObject &left, const IntObject &right) const;
-    BaseObject *applyOperator(Scope &scope, const FloatObject &left, const FloatObject &right) const;
-    BaseObject *applyOperator(Scope &scope, const StringObject &left, const StringObject &right) const;
+    BaseObject::Ptr applyOperator(const IntObject &left, const IntObject &right) const;
+    BaseObject::Ptr applyOperator(const FloatObject &left, const FloatObject &right) const;
+    BaseObject::Ptr applyOperator(const StringObject &left, const StringObject &right) const;
+
+    /* Convert string to enum (faster if doing lost of comparisons) */
+    static BinaryOperatorType toBinaryOperator(const std::string &operatorString);
 
 private:
-    BaseNode *_left{nullptr};
-    BaseNode *_right{nullptr};
-    std::string _binaryOperator;
+    BaseNode::Ptr _left{nullptr};
+    BaseNode::Ptr _right{nullptr};
+    BinaryOperatorType _binaryOperator{BinaryOperatorType::Unknown};
 };

@@ -9,15 +9,15 @@
 
 #include "FunctionNode.hpp"
 #include "FunctionObject.hpp"
+#include "ObjectFactory.hpp"
 
 /// Create a new FunctionObject from a FunctionNode and register in current scope.
-BaseObject *FunctionNode::evaluate(Scope &scope)
+BaseObject::Ptr FunctionNode::evaluate(Scope &scope)
 {
-    auto &funcNameNode = funcName->castNode<LookupVariableNode>();
+    // TODO: - I think this creates a strong-reference cycle! Need to break the chain here
+    auto functionObject = ObjectFactory::allocate<FunctionObject>(shared_from_this());
 
-    auto functionObject = scope.createManagedObject<FunctionObject>(this); // TODO: - uh-oh!! Think about pointer ownership here!!
-
-    scope.linkObject(funcNameNode.name, functionObject);
+    scope.linkObject(_funcName, functionObject);
 
     return functionObject;
 }

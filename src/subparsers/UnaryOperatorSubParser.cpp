@@ -12,15 +12,15 @@
 #include "FileParser.hpp"
 #include "NodeFactory.hpp"
 
-AnyNode *UnaryOperatorSubParser::parseNot()
+AnyNode::Ptr UnaryOperatorSubParser::parseNot()
 {
     skip("!");
 
-    return NodeFactory::createNotNode(BaseNode::Ptr(parent().parseAtomically()));
+    return NodeFactory::createNotNode(parent().parseAtomically());
 }
 
 
-AnyNode *UnaryOperatorSubParser::parseNegation()
+AnyNode::Ptr UnaryOperatorSubParser::parseNegation()
 {
     skip("-");
 
@@ -28,7 +28,7 @@ AnyNode *UnaryOperatorSubParser::parseNegation()
 }
 
 
-AnyNode *UnaryOperatorSubParser::parsePrefixIncrement()
+AnyNode::Ptr UnaryOperatorSubParser::parsePrefixIncrement()
 {
     skip("++");
 
@@ -36,7 +36,7 @@ AnyNode *UnaryOperatorSubParser::parsePrefixIncrement()
 }
 
 
-AnyNode *UnaryOperatorSubParser::parsePrefixDecrement()
+AnyNode::Ptr UnaryOperatorSubParser::parsePrefixDecrement()
 {
     skip("--");
 

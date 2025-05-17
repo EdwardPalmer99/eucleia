@@ -16,22 +16,25 @@
 class AddVariableNode : public LookupVariableNode
 {
 public:
-    AddVariableNode(std::string name_, ObjectType type_)
-        : LookupVariableNode(std::move(name_)),
-          type(type_)
+    using Ptr = std::shared_ptr<AddVariableNode>;
+
+    AddVariableNode(std::string name, ObjectType type)
+        : LookupVariableNode(std::move(name)),
+          _variableType(type)
     {
         setType(NodeType::AddVariable);
     }
 
     // Creates a new empty variable of a given type to the scope (i.e. int a;).
-    BaseObject *evaluate(Scope &scope) override;
+    BaseObject::Ptr evaluate(Scope &scope) override;
 
     std::string description() const;
 
     //  Type checking for variable assignment.
     bool passesAssignmentTypeCheck(const BaseObject &assignObject) const;
 
-    const ObjectType type;
+protected:
+    const ObjectType _variableType;
 };
 
 
@@ -54,7 +57,7 @@ public:
      * @return Pointer to the object in the scope now bound to the variable name and
      * the reference name.
      */
-    BaseObject *evaluate(Scope &scope) override;
+    BaseObject::Ptr evaluate(Scope &scope) override;
 
 protected:
     const std::string referenceName;

@@ -17,7 +17,7 @@ class BaseParser
 {
 protected:
     /* Aliases */
-    using ParseMethod = std::function<BaseNode *(void)>;
+    using ParseMethod = std::function<BaseNode::Ptr(void)>;
 
     /* Protect to avoid direct initializaiton */
     BaseParser() = default;
