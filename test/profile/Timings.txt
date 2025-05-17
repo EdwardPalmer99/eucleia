@@ -24,3 +24,5 @@
 2025-05-23:
 - 28.2s (-O2, Docker)
 - 23.6s (-O2, Docker) < unordered_set to vector
+2025-05-17:
+- 16s (-O2, Docker) < shared pointers for Objects
