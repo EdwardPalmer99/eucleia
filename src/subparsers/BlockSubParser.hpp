@@ -35,9 +35,6 @@ public:
     /* Parse expressions inside { } and wrap-inside AnyNode::Ptr */
     AnyNode::Ptr parseBlock();
 
-    /* Old code to avoid problems temporarily. TODO: - remove */
-    BaseNode::Ptr parseBlockLegacy();
-
     /* Parse expressions inside {} and return vector of shared pointers */
     BaseNodePtrVector parseBraces();
 

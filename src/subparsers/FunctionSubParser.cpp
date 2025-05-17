@@ -37,7 +37,7 @@ FunctionNode::Ptr FunctionSubParser::parseFunctionDefinition()
     assert(funcName.type() == Token::Variable);
 
     auto funcArgs = subparsers().block.parseDelimited("(", ")", ",", std::bind(&VariableSubParser::parseVariableDefinition, &subparsers().variable)); // Func variables.
-    auto funcBody = parent().subparsers().block.parseBlockLegacy();                                                                                   // TODO: - investigate why this causes a segfault when we switch to parseBlock()
+    auto funcBody = parent().subparsers().block.parseBlock();                                                                                         // TODO: - investigate why this causes a segfault when we switch to parseBlock()
 
     return std::make_shared<FunctionNode>(funcName, funcArgs, funcBody);
 }

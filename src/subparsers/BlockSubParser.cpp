@@ -11,7 +11,6 @@
 #include "BaseNode.hpp"
 #include "FileParser.hpp"
 #include "NodeFactory.hpp"
-#include "ProgramNode.hpp"
 
 
 AnyNode::Ptr BlockSubParser::parseBlock()
@@ -26,20 +25,6 @@ AnyNode::Ptr BlockSubParser::parseBlock()
     }
 
     return NodeFactory::createBlockNode(capturedNodes);
-}
-
-
-BaseNode::Ptr BlockSubParser::parseBlockLegacy()
-{
-    // TODO: - remove
-    auto capturedNodes = parseBraces();
-
-    if (capturedNodes.size() == 1)
-    {
-        return capturedNodes.front();
-    }
-
-    return std::make_shared<ProgramNode>(std::move(capturedNodes));
 }
 
 
