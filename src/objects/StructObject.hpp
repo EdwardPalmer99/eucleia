@@ -13,6 +13,7 @@
 #include "Exceptions.hpp"
 #include "Scope.hpp"
 #include "StructDefinitionObject.hpp"
+#include <memory>
 #include <ostream>
 #include <string>
 #include <unordered_set>
@@ -20,7 +21,7 @@
 /**
  * struct SomeStruct a;
  */
-class StructObject : public BaseObject, public BaseNode
+class StructObject : public BaseObject, public BaseNode, public std::enable_shared_from_this<StructObject>
 {
 public:
     StructObject() = delete;
@@ -39,10 +40,10 @@ public:
      * Finishes initializing the struct object and links to the scope. Ownership
      * should pass to the scope from the AST. Returns a pointer to itself.
      */
-    BaseObject *evaluate(Scope &scope) override;
+    BaseObject::Ptr evaluate(Scope &scope) override;
 
     // TODO: - implement in future.
-    StructObject *clone() const override
+    BaseObject::Ptr clone() const override
     {
         ThrowException("not implemented!");
     }
@@ -83,5 +84,5 @@ protected:
     /**
      * Store the struct definition once active.
      */
-    StructDefinitionObject *structDefinition{nullptr};
+    std::shared_ptr<StructDefinitionObject> structDefinition{nullptr};
 };

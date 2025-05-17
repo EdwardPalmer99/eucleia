@@ -9,11 +9,12 @@
 
 #include "FunctionNode.hpp"
 #include "FunctionObject.hpp"
+#include "ObjectFactory.hpp"
 
 /// Create a new FunctionObject from a FunctionNode and register in current scope.
-BaseObject *FunctionNode::evaluate(Scope &scope)
+BaseObject::Ptr FunctionNode::evaluate(Scope &scope)
 {
-    auto functionObject = scope.createManagedObject<FunctionObject>(this); // TODO: - uh-oh!! Think about pointer ownership here!!
+    auto functionObject = ObjectFactory::allocate<FunctionObject>(this); /* TODO: - think about this */
 
     scope.linkObject(_funcName, functionObject);
 

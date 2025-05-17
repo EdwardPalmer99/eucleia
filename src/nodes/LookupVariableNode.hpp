@@ -20,7 +20,7 @@ public:
     }
 
     // Returns the object in the scope associated with a variable name.
-    BaseObject *evaluate(Scope &scope) override;
+    BaseObject::Ptr evaluate(Scope &scope) override;
 
     std::string name;
 };

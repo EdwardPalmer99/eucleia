@@ -9,7 +9,7 @@
 
 #include "ProgramNode.hpp"
 
-BaseObject *ProgramNode::evaluate(Scope &scope)
+BaseObject::Ptr ProgramNode::evaluate(Scope &scope)
 {
     // Create inner program scope for each block of statements. Good example is
     // for a loop where the body of the loop redeclares a variable. This should

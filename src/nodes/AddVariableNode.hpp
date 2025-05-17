@@ -24,7 +24,7 @@ public:
     }
 
     // Creates a new empty variable of a given type to the scope (i.e. int a;).
-    BaseObject *evaluate(Scope &scope) override;
+    BaseObject::Ptr evaluate(Scope &scope) override;
 
     std::string description() const;
 
@@ -54,7 +54,7 @@ public:
      * @return Pointer to the object in the scope now bound to the variable name and
      * the reference name.
      */
-    BaseObject *evaluate(Scope &scope) override;
+    BaseObject::Ptr evaluate(Scope &scope) override;
 
 protected:
     const std::string referenceName;

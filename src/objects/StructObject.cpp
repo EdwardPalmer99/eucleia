@@ -20,7 +20,7 @@ StructObject::StructObject(std::string typeName_, std::string name_)
 }
 
 
-BaseObject *StructObject::evaluate(Scope &scope)
+BaseObject::Ptr StructObject::evaluate(Scope &scope)
 {
     if (active)
     {
@@ -35,8 +35,8 @@ BaseObject *StructObject::evaluate(Scope &scope)
 
     // Add the active struct instance to the scope. TODO: - transfer ownership
     // to the scope. Will have to remove this class from AST to do this correctly.
-    scope.linkObject(name, this);
-    return this;
+    scope.linkObject(name, shared_from_this());
+    return shared_from_this();
 }
 
 
@@ -59,8 +59,8 @@ StructObject &StructObject::operator=(const BaseObject &other)
     // 3. iterate over the objects stored in the scopes and assign.
     for (auto &variableName : variableNames)
     {
-        BaseObject *thisObject = _instanceScope.getNamedObject(variableName);
-        BaseObject *otherObject = otherStruct._instanceScope.getNamedObject(variableName);
+        BaseObject::Ptr thisObject = _instanceScope.getNamedObject(variableName);
+        BaseObject::Ptr otherObject = otherStruct._instanceScope.getNamedObject(variableName);
 
         // Attempt an assignment. Will fail if different types.
         (*thisObject) = (*otherObject);

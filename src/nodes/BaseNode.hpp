@@ -83,13 +83,13 @@ public:
         return type() == other.type();
     }
 
-    virtual BaseObject *evaluate(Scope &scope) = 0;
+    virtual BaseObject::Ptr evaluate(Scope &scope) = 0; /* TODO: - move to shared pointers */
 
     /* Evaluates object */
     template <typename TObject>
-    TObject *evaluate(Scope &scope)
+    std::shared_ptr<TObject> evaluate(Scope &scope)
     {
-        return static_cast<TObject *>(evaluate(scope));
+        return std::static_pointer_cast<TObject>(evaluate(scope));
     }
 
     /* Evaluates object and returns the object's stored value directly */
@@ -97,7 +97,7 @@ public:
     TValue &evaluateObject(Scope &scope)
     {
         /* BaseObject ptr */
-        BaseObject *baseObjPtr = evaluate(scope);
+        BaseObject::Ptr baseObjPtr = evaluate(scope);
 
         /* Up-cast */
         auto &upcastedObj = static_cast<BaseObjectT<TValue> &>(*baseObjPtr);

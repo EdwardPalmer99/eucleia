@@ -25,15 +25,9 @@ public:
     virtual ~BaseObject() = default;
 
     // Implement copy assignment in derived classes.
-    virtual BaseObject &operator=(const BaseObject &other)
+    virtual BaseObject &operator=(const BaseObject &)
     {
         ThrowException("copy assignment not implemented");
-    }
-
-    // Implement addition. Returns unmanaged pointer to result.
-    virtual BaseObject *operator+(const BaseObject &other) const
-    {
-        ThrowException("addition not implemented");
     }
 
     /// Cast to object type.
@@ -63,10 +57,10 @@ public:
 
     // TODO: - clone should be called with a scope specified to handle memory.
     /// Implement creating a copy for derived classes.
-    virtual BaseObject *clone() const = 0;
+    virtual BaseObject::Ptr clone() const = 0;
 
 protected:
     BaseObject() = default;
 };
 
-using BaseObjectPtrVector = std::vector<BaseObject *>;
+using BaseObjectPtrVector = std::vector<BaseObject::Ptr>;

@@ -40,7 +40,7 @@ public:
     /**
      * Install object in current scope.
      */
-    BaseObject *evaluate(Scope &scope) override;
+    BaseObject::Ptr evaluate(Scope &scope) override;
 
     /**
      * Calls evaluate method on all method nodes. Installs them in argument scope.

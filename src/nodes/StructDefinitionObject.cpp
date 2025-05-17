@@ -32,7 +32,7 @@ StructDefinitionObject::~StructDefinitionObject()
     variableDefs.clear();
 }
 
-StructDefinitionObject *StructDefinitionObject::lookupParent(const Scope &scope) const
+std::shared_ptr<StructDefinitionObject> StructDefinitionObject::lookupParent(const Scope &scope) const
 {
     if (parentTypeName.empty())
     {
@@ -43,7 +43,7 @@ StructDefinitionObject *StructDefinitionObject::lookupParent(const Scope &scope)
 }
 
 
-BaseObject *StructDefinitionObject::evaluate(Scope &scope)
+BaseObject::Ptr StructDefinitionObject::evaluate(Scope &scope)
 {
     if (active) // Expect one definition only!
     {
@@ -61,8 +61,8 @@ BaseObject *StructDefinitionObject::evaluate(Scope &scope)
 
     // NB: scope cannot manage lifetime of this definition currently since it
     // is owned by the AST. TODO: - rectify this.
-    scope.linkObject(typeName, this);
-    return this;
+    scope.linkObject(typeName, shared_from_this());
+    return shared_from_this();
 }
 
 
@@ -90,7 +90,7 @@ void StructDefinitionObject::buildVariableDefHashMap(const Scope &scope)
         return; // Already built.
     }
 
-    StructDefinitionObject *parent = lookupParent(scope);
+    std::shared_ptr<StructDefinitionObject> parent = lookupParent(scope);
     if (parent)
     {
         parent->buildVariableDefHashMap(scope); // TODO: - unnecessary

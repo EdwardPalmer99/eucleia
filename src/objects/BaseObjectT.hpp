@@ -9,6 +9,7 @@
 
 #pragma once
 #include "BaseObject.hpp"
+#include "ObjectFactory.hpp"
 #include <utility>
 
 /* Template wrapper around BaseObject with accessors */
@@ -50,9 +51,9 @@ public:
     }
 
     /* Overrides clone method */
-    BaseObjectT<TValue> *clone() const override
+    BaseObjectT<TValue>::Ptr clone() const override
     {
-        return new BaseObjectT<TValue>(_value);
+        return ObjectFactory::allocate<BaseObjectT<TValue>>(_value);
     }
 
     /* Const-accessor */

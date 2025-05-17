@@ -11,6 +11,7 @@
 #include "AddVariableNode.hpp"
 #include "BaseNode.hpp"
 #include "BaseObject.hpp"
+#include <memory>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -20,7 +21,7 @@
  * will be stored in the scope along with the struct name. We can then use this
  * to construct struct instances.
  */
-class StructDefinitionObject : public BaseObject, public BaseNode
+class StructDefinitionObject : public BaseObject, public BaseNode, public std::enable_shared_from_this<StructDefinitionObject>
 {
 public:
     /**
@@ -41,14 +42,14 @@ public:
      * to the scope. Careful! Going this route means we don't have to create a
      * separate Node to create an Object.
      */
-    BaseObject *evaluate(Scope &scope) override;
+    BaseObject::Ptr evaluate(Scope &scope) override;
 
     /**
      * No destructor provided. Should not be possible to copy the struct definition
      * as you would expect. If this were to be implemented, all nodes we are
      * storing would have to be copied.
      */
-    StructDefinitionObject *clone() const final
+    BaseObject::Ptr clone() const final
     {
         ThrowException("not implemented");
     }
@@ -69,7 +70,7 @@ protected:
     /**
      * Returns a pointer to the parent struct or nullptr if not found.
      */
-    StructDefinitionObject *lookupParent(const Scope &scope) const;
+    std::shared_ptr<StructDefinitionObject> lookupParent(const Scope &scope) const;
 
     /**
      * Stores our owned variables and those of any parent variables we inherit.
@@ -87,7 +88,7 @@ protected:
      */
     std::string parentTypeName;
 
-        /**
+    /**
      * Store AddVariableNode so class can create all defined variables. We take
      * ownership of all nodes. There may be additional nodes that are not in this
      * vector and will be stored in a parent class.

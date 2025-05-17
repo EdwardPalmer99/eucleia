@@ -13,16 +13,17 @@
 #include "ArrayObject.hpp"
 #include "BaseObject.hpp"
 #include "ClassObject.hpp"
-#include "ExpressionScope.hpp"
 #include "FloatObject.hpp"
 #include "FunctionCallNode.hpp"
 #include "IntObject.hpp"
 #include "JumpPoints.hpp"
 #include "LookupVariableNode.hpp"
+#include "ObjectFactory.hpp"
 #include "Scope.hpp"
 #include "StringObject.hpp"
 #include "StructObject.hpp"
 #include <cassert>
+#include <iostream>
 #include <memory>
 
 namespace NodeFactory
@@ -30,33 +31,33 @@ namespace NodeFactory
 
 AnyNode *createBoolNode(bool state)
 {
-    return new AnyNode(NodeType::Bool, [state](Scope &scope)
+    return new AnyNode(NodeType::Bool, [state](Scope &)
     {
-        return scope.createManagedObject<BoolObject>(state);
+        return ObjectFactory::allocate<BoolObject>(state);
     });
 }
 
 AnyNode *createIntNode(long value)
 {
-    return new AnyNode(NodeType::Int, [value](Scope &scope)
+    return new AnyNode(NodeType::Int, [value](Scope &)
     {
-        return scope.createManagedObject<IntObject>(value);
+        return ObjectFactory::allocate<IntObject>(value);
     });
 }
 
 AnyNode *createStringNode(std::string value)
 {
-    return new AnyNode(NodeType::String, [value = std::move(value)](Scope &scope)
+    return new AnyNode(NodeType::String, [value = std::move(value)](Scope &)
     {
-        return scope.createManagedObject<StringObject>(value);
+        return ObjectFactory::allocate<StringObject>(value);
     });
 }
 
 AnyNode *createFloatNode(double value)
 {
-    return new AnyNode(NodeType::Float, [value](Scope &scope)
+    return new AnyNode(NodeType::Float, [value](Scope &)
     {
-        return scope.createManagedObject<FloatObject>(value);
+        return ObjectFactory::allocate<FloatObject>(value);
     });
 }
 
@@ -64,12 +65,12 @@ AnyNode *createIfNode(BaseNode::Ptr condition, BaseNode::Ptr thenBranch, BaseNod
 {
     return new AnyNode(NodeType::If, [condition, thenBranch, elseBranch](Scope &scope) /* Use shared pointer to manage ownership */
     {                                                                                  /* Lifetime of owned nodes will end when AnyNode's destructor is called */
-      if (evaluateExpression<BoolObject::Type>(condition.get(), scope))
+      if (condition->evaluate<BoolObject>(scope)->value())
           return thenBranch->evaluate(scope);
       else if (elseBranch)
           return elseBranch->evaluate(scope);
       else
-          return static_cast<BaseObject *>(nullptr);
+          return BaseObject::Ptr();
     });
 }
 
@@ -89,7 +90,7 @@ AnyNode *createForLoopNode(BaseNode::Ptr init, BaseNode::Ptr condition, BaseNode
         if (setjmp(local) != 1)
         {
             for (;
-                 evaluateExpression<BoolObject::Type>(condition.get(), loopScope); // TODO: - not very efficient repeatedly recalculating...
+                 condition->evaluate<BoolObject>(loopScope)->value();
                  update->evaluate(loopScope))
             {
                 (void)body->evaluate(loopScope);
@@ -114,7 +115,7 @@ AnyNode *createWhileLoopNode(BaseNode::Ptr condition, BaseNode::Ptr body)
         {
             Scope loopScope(scope); // Extend scope.
 
-            while (evaluateExpression<BoolObject::Type>(condition.get(), scope))
+            while (condition->evaluate<BoolObject>(scope)->value()) /* Memory leak */
             {
                 (void)body->evaluate(loopScope);
             }
@@ -142,7 +143,7 @@ AnyNode *createDoWhileLoopNode(BaseNode::Ptr condition, BaseNode::Ptr body)
             do
             {
                 (void)body->evaluate(loopScope);
-            } while (evaluateExpression<BoolObject::Type>(condition.get(), scope));
+            } while (condition->evaluate<BoolObject>(scope)->value()); /* NB: evaluate in outerscope (no access to loop scope)*/
         }
 
         // Restore original context.
@@ -172,20 +173,7 @@ AnyNode *createReturnNode(BaseNode::Ptr returnNode)
 
         if (returnNode != nullptr) // i.e. return true;
         {
-            // Evaluate in function scope (need all local variables, etc.).
-            BaseObject *tmpResult = returnNode->evaluate(scope);
-            if (tmpResult != nullptr)
-            {
-                // TODO: - instead, remove this from the scope and copy into parent scope instead of cloning.
-
-                // Get the scope in which the function was called. We copy the object to this scope.
-                // This is because the function scope will destroy the return object as soon as its
-                // destructor is called and we need this object to persist until parent scope destructor called.
-                assert(scope.parentScope() != nullptr);
-
-                BaseObject *result = scope.parentScope()->cloneObject(tmpResult);
-                gEnvironmentContext.returnValue = result;
-            }
+            gEnvironmentContext.returnValue = returnNode->evaluate(scope);
         }
 
         longjmp(*gEnvironmentContext.returnJumpPoint, 1);
@@ -200,7 +188,7 @@ AnyNode *createNotNode(BaseNode::Ptr expression)
     {
         auto result = expression->evaluate<BoolObject>(scope);
 
-        return scope.createManagedObject<BoolObject>(!*result); // TODO: - seems really inefficient
+        return ObjectFactory::allocate<BoolObject>(!result->value());
     });
 }
 
@@ -241,12 +229,10 @@ AnyNode *createAssignNode(BaseNode *left, BaseNode *right)
 
         // Case 1: AddVariableNode -> we create default init object, add to scope and return.
         // Case 2: LookupVariableNode -> we object defined in scope (not cloned!) - TODO: - think about whether we should clone it.
-        BaseObject *objectLHS = left->evaluate(scope);
+        BaseObject::Ptr objectLHS = left->evaluate(scope);
 
         // Object we want to assign to LHS.
-        // NB: evaluate in temporary scope so destroy when we exit this function.
-        Scope tmpScope(scope);
-        BaseObject *objectRHS = right->evaluate(tmpScope);
+        BaseObject::Ptr objectRHS = right->evaluate(scope);
 
         // Update directly. TODO: - We will need to implement this for some object types still.
         *objectLHS = *objectRHS;
@@ -257,19 +243,19 @@ AnyNode *createAssignNode(BaseNode *left, BaseNode *right)
 
 AnyNode *createArrayNode(BaseNodeSharedPtrVector nodes)
 {
+    // TODO: - could treat as references in array?
     return new AnyNode(NodeType::Array, [nodes](Scope &scope)
     {
         BaseObjectPtrVector evaluatedObjects;
 
         evaluatedObjects.reserve(nodes.size());
 
-        /* Scope owns all objects in array we are passing in. The array object will copy these! */
         for (auto &node : nodes)
         {
             evaluatedObjects.push_back(node->evaluate(scope));
         }
 
-        return scope.createManagedObject<ArrayObject>(std::move(evaluatedObjects));
+        return ObjectFactory::allocate<ArrayObject>(std::move(evaluatedObjects));
     });
 }
 
@@ -343,12 +329,12 @@ AnyNode *createNegationNode(BaseNode *expression)
     {
         auto bodyEvaluated = expression->evaluate(scope);
 
-        BaseObject *result{nullptr};
+        BaseObject::Ptr result{nullptr};
 
         if (bodyEvaluated->isObjectType<IntObject>())
-            result = scope.createManagedObject<IntObject>(-bodyEvaluated->castObject<IntObject>());
+            result = ObjectFactory::allocate<IntObject>(-bodyEvaluated->castObject<IntObject>());
         else if (bodyEvaluated->isObjectType<FloatObject>())
-            result = scope.createManagedObject<FloatObject>(-bodyEvaluated->castObject<FloatObject>());
+            result = ObjectFactory::allocate<FloatObject>(-bodyEvaluated->castObject<FloatObject>());
         else
             ThrowException("invalid object type");
 
@@ -361,15 +347,14 @@ AnyPropertyNode *createStructAccessNode(std::string structVarName, std::string m
 {
     auto evaluateNoClone = [structVarName, memberVarName](Scope &scope)
     {
-        StructObject *structObject = scope.getNamedObject<StructObject>(structVarName);
-
+        auto structObject = scope.getNamedObject<StructObject>(structVarName);
         return structObject->instanceScope().getNamedObject(memberVarName);
     };
 
     auto evaluate = [evaluateNoClone](Scope &scope)
     {
-        BaseObject *currentObject = evaluateNoClone(scope);
-        return scope.cloneObject(currentObject);
+        BaseObject::Ptr currentObject = evaluateNoClone(scope);
+        return currentObject->clone();
     };
 
 
@@ -385,15 +370,15 @@ AnyPropertyNode *createArrayAccessNode(BaseNode *arrayLookupNode, BaseNode *arra
                             arrayIndexNode = BaseNode::Ptr(arrayIndexNode)](Scope &scope)
     {
         // Lookup in array.
-        auto &arrayObj = arrayLookupNode->evaluate(scope)->castObject<ArrayObject>();
+        auto arrayObj = arrayLookupNode->evaluate(scope)->castObject<ArrayObject>();
 
         return arrayObj[arrayIndexNode->evaluateObject<IntObject::Type>(scope)];
     };
 
     auto evaluate = [evaluateNoClone](Scope &scope)
     {
-        BaseObject *currentObject = evaluateNoClone(scope);
-        return scope.cloneObject(currentObject);
+        BaseObject::Ptr currentObject = evaluateNoClone(scope);
+        return currentObject->clone();
     };
 
     return new AnyPropertyNode(NodeType::ArrayAccess, std::move(evaluate), std::move(evaluateNoClone));
@@ -406,7 +391,7 @@ AnyNode *createModuleNode(std::string moduleName, std::vector<ModuleFunctionPair
     {
         for (auto &it : moduleFunctions) /* Add to scope */
         {
-            auto *object = scope.createManagedObject<ModuleFunctionObject>(it.second);
+            auto object = ObjectFactory::allocate<ModuleFunctionObject>(it.second);
             scope.linkObject(it.first, object);
         }
 
@@ -419,7 +404,7 @@ AnyNode *createClassMethodCallNode(std::string instanceName, FunctionCallNode *m
     return new AnyNode(NodeType::ClassMethodCall, [instanceName = std::move(instanceName),
                                                    methodCallNode = FunctionCallNode::Ptr(methodCallNode)](Scope &scope)
     {
-        ClassObject *thisObject = scope.getNamedObject<ClassObject>(instanceName);
+        auto thisObject = scope.getNamedObject<ClassObject>(instanceName);
 
         // Important: to correctly evaluate the method, we need to add a parent scope
         // for the class instance temporarily each time we evaluate so function has
@@ -427,7 +412,7 @@ AnyNode *createClassMethodCallNode(std::string instanceName, FunctionCallNode *m
         thisObject->instanceScope().setParentScope(&scope);
 
         /* But evaluate in class' instance scope */
-        BaseObject *result = methodCallNode->evaluate(thisObject->instanceScope());
+        BaseObject::Ptr result = methodCallNode->evaluate(thisObject->instanceScope());
 
         // Set back to avoid problems if we forget to reset it in future.
         thisObject->instanceScope().setParentScope(nullptr);

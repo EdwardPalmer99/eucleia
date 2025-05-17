@@ -11,26 +11,28 @@
 #include "ArrayObject.hpp"
 #include "FloatObject.hpp"
 #include "IntObject.hpp"
+#include "ObjectFactory.hpp"
 #include "StringObject.hpp"
 
-BaseObject *AddVariableNode::evaluate(Scope &scope)
+
+BaseObject::Ptr AddVariableNode::evaluate(Scope &scope)
 {
-    BaseObject *objectPtr = nullptr;
+    BaseObject::Ptr objectPtr = nullptr;
 
     switch (type)
     {
         case ObjectType::Int:
         case ObjectType::Bool:
-            objectPtr = scope.createManagedObject<IntObject>();
+            objectPtr = ObjectFactory::allocate<IntObject>();
             break;
         case ObjectType::Float:
-            objectPtr = scope.createManagedObject<FloatObject>();
+            objectPtr = ObjectFactory::allocate<FloatObject>();
             break;
         case ObjectType::String:
-            objectPtr = scope.createManagedObject<StringObject>();
+            objectPtr = ObjectFactory::allocate<StringObject>();
             break;
         case ObjectType::Array:
-            objectPtr = scope.createManagedObject<ArrayObject>();
+            objectPtr = ObjectFactory::allocate<ArrayObject>();
             break;
         // TODO: - handle function type. (will need to think about this.)
         default:
@@ -92,12 +94,12 @@ AddReferenceVariableNode::AddReferenceVariableNode(std::string referenceName_,
 }
 
 
-BaseObject *AddReferenceVariableNode::evaluate(Scope &scope)
+BaseObject::Ptr AddReferenceVariableNode::evaluate(Scope &scope)
 {
     // 1. Lookup the object associated with the variable name defined in this
     // scope or a parent scope (no issue with lifetimes such as to be bound
     // object going out of scope before our reference.
-    BaseObject *boundObject = scope.getNamedObject(name);
+    BaseObject::Ptr boundObject = scope.getNamedObject(name);
 
     // 2. Type checking. The type of the reference must match that of the bound
     // object.

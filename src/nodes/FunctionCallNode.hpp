@@ -38,9 +38,9 @@ public:
 
     // TODO: - don't forget to do performance profiling for Fib sequence and see memory requirements for old and new version
     // TODO: - create a new PR after this for parser to store all nodes in AST in flat array using pointers with method to delete by walking along array.
-    BaseObject *evaluate(Scope &scope) override;
+    BaseObject::Ptr evaluate(Scope &scope) override;
 
-    BaseObject *evaluateFunctionBody(BaseNode &funcBody, Scope &funcScope);
+    BaseObject::Ptr evaluateFunctionBody(BaseNode &funcBody, Scope &funcScope);
 
     std::string _funcName;
     BaseNodePtrVector _funcArgs{nullptr};

@@ -16,7 +16,7 @@ struct GlobalEnvRec
     jmp_buf *breakJumpPoint;
     jmp_buf *returnJumpPoint;
 
-    BaseObject *returnValue{nullptr};
+    BaseObject::Ptr returnValue{nullptr};
 };
 
 extern GlobalEnvRec gEnvironmentContext; // TODO: - remove once return done as well.

@@ -32,7 +32,7 @@ ClassDefinitionObject::~ClassDefinitionObject()
 }
 
 
-BaseObject *ClassDefinitionObject::evaluate(Scope &scope)
+BaseObject::Ptr ClassDefinitionObject::evaluate(Scope &scope)
 {
     // NB: override method defined in StructDefinitionObject.
     if (active)
@@ -49,8 +49,8 @@ BaseObject *ClassDefinitionObject::evaluate(Scope &scope)
 
     // NB: scope cannot manage lifetime of this definition currently since it
     // is owned by the AST.
-    scope.linkObject(typeName, this);
-    return this;
+    scope.linkObject(typeName, shared_from_this());
+    return shared_from_this();
 }
 
 
@@ -75,15 +75,13 @@ void ClassDefinitionObject::buildMethodDefsHashMap(const Scope &scope)
         return;
     }
 
-    ClassDefinitionObject *parent = static_cast<ClassDefinitionObject *>(lookupParent(scope));
+    auto parent = std::static_pointer_cast<ClassDefinitionObject>(lookupParent(scope));
     if (parent)
     {
-        ClassDefinitionObject *parentObj = static_cast<ClassDefinitionObject *>(parent);
-
-        parentObj->buildMethodDefsHashMap(scope); // Unnecessary since to be installed, this will already have happened.
+        parent->buildMethodDefsHashMap(scope); // Unnecessary since to be installed, this will already have happened.
 
         // Copy parent methods.
-        allMethodDefsMap = parentObj->allMethodDefsMap;
+        allMethodDefsMap = parent->allMethodDefsMap;
     }
 
     // Now we add our own methods and replace any existing methods with same name

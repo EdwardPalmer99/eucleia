@@ -11,12 +11,12 @@
 #include "FunctionNode.hpp"
 #include "FunctionObject.hpp"
 #include "JumpPoints.hpp"
-#include "LibraryFunctionObject.hpp"
+#include "ModuleFunctionObject.hpp"
 
-BaseObject *FunctionCallNode::evaluate(Scope &scope)
+BaseObject::Ptr FunctionCallNode::evaluate(Scope &scope)
 {
     // 0. Any library functions that we wish to evaluate.
-    BaseObject *libraryFunc = scope.getOptionalNamedObject<BaseObject>(_funcName);
+    auto libraryFunc = scope.getOptionalNamedObject<BaseObject>(_funcName);
     if (libraryFunc && libraryFunc->isObjectType<ModuleFunctionObject>())
     {
         return libraryFunc->castObject<ModuleFunctionObject>()(_funcArgs, scope);
@@ -77,7 +77,7 @@ BaseObject *FunctionCallNode::evaluate(Scope &scope)
     return evaluateFunctionBody(*funcNode->funcBody, funcScope);
 }
 
-BaseObject *FunctionCallNode::evaluateFunctionBody(BaseNode &funcBody, Scope &funcScope)
+BaseObject::Ptr FunctionCallNode::evaluateFunctionBody(BaseNode &funcBody, Scope &funcScope)
 {
     // Reset return value.
     gEnvironmentContext.returnValue = nullptr;

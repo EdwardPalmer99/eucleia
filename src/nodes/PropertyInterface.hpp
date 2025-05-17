@@ -28,7 +28,7 @@ struct PropertyInterface
     // virtual BaseObject *evaluate(Scope &scope) = 0;
 
     /* Return object directly for modifying value (setter) */
-    virtual BaseObject *evaluateNoClone(Scope &scope) = 0;
+    virtual typename BaseObject::Ptr evaluateNoClone(Scope &scope) = 0;
 
     virtual ~PropertyInterface() = default;
 };

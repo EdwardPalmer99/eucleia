@@ -46,7 +46,7 @@ public:
     }
 
     // Evaluates a vector of nodes sequentially. Returns nullptr.
-    BaseObject *evaluate(Scope &scope) override;
+    BaseObject::Ptr evaluate(Scope &scope) override;
 
     std::vector<BaseNode *> programNodes;
 };

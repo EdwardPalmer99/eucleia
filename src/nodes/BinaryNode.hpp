@@ -16,7 +16,7 @@
 #include "StringObject.hpp"
 #include <string>
 
-enum class BinaryOperatorType
+enum class BinaryOperatorType : int
 {
     Unknown = (-1),
     Add,
@@ -53,14 +53,14 @@ public:
         delete _right;
     }
 
-    BaseObject *evaluate(Scope &scope) override;
+    BaseObject::Ptr evaluate(Scope &scope) override;
 
 protected:
-    BaseObject *applyOperator(Scope &scope, const BaseObject &left, const BaseObject &right) const;
+    BaseObject::Ptr applyOperator(const BaseObject &left, const BaseObject &right) const;
 
-    BaseObject *applyOperator(Scope &scope, const IntObject &left, const IntObject &right) const;
-    BaseObject *applyOperator(Scope &scope, const FloatObject &left, const FloatObject &right) const;
-    BaseObject *applyOperator(Scope &scope, const StringObject &left, const StringObject &right) const;
+    BaseObject::Ptr applyOperator(const IntObject &left, const IntObject &right) const;
+    BaseObject::Ptr applyOperator(const FloatObject &left, const FloatObject &right) const;
+    BaseObject::Ptr applyOperator(const StringObject &left, const StringObject &right) const;
 
 private:
     BaseNode *_left{nullptr};

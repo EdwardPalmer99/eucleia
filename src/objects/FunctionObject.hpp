@@ -9,6 +9,7 @@
 
 #pragma once
 #include "BaseObjectT.hpp"
+#include "ObjectFactory.hpp"
 
 /* Forward declaration */
 class FunctionNode;
@@ -23,8 +24,8 @@ class FunctionObject : public BaseObjectT<FunctionNodePtr>
 public:
     FunctionObject(FunctionNodePtr function) : BaseObjectT<FunctionNodePtr>(function) {}
 
-    FunctionObject *clone() const override
+    FunctionObject::Ptr clone() const override
     {
-        return new FunctionObject(_value);
+        return ObjectFactory::allocate<FunctionObject>(_value);
     }
 };

@@ -31,5 +31,5 @@ public:
      * @param scope The scope in which to add the instance.
      * @return BaseObject* Pointer to itself
      */
-    BaseObject *evaluate(Scope &scope) override;
+    BaseObject::Ptr evaluate(Scope &scope) override;
 };

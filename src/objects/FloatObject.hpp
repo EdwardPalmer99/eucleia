@@ -10,6 +10,7 @@
 #pragma once
 #include "BaseObjectT.hpp"
 #include "IntObject.hpp"
+#include "ObjectFactory.hpp"
 #include <memory>
 
 /**
@@ -32,9 +33,9 @@ public:
         return (*this);
     }
 
-    FloatObject *clone() const override
+    BaseObject::Ptr clone() const override
     {
-        return new FloatObject(_value);
+        return ObjectFactory::allocate<FloatObject>(_value);
     }
 
     FloatObject &operator++()

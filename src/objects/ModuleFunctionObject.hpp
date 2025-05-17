@@ -15,7 +15,7 @@
 
 class Scope;
 
-using ModuleFunction = std::function<BaseObject *(BaseNodePtrVector &, Scope &)>;
+using ModuleFunction = std::function<BaseObject::Ptr(BaseNodePtrVector &, Scope &)>;
 using ModuleFunctionPair = std::pair<std::string, ModuleFunction>;
 
 /// Library function allows us to define lambdas which wrap around existing stdlib
@@ -29,13 +29,8 @@ public:
     {
     }
 
-    ModuleFunctionObject *clone() const override
-    {
-        return new ModuleFunctionObject(_value);
-    }
-
     /* Elegant operator overload allowing user to call function */
-    BaseObject *operator()(BaseNodePtrVector &args, Scope &scope) const
+    BaseObject::Ptr operator()(BaseNodePtrVector &args, Scope &scope) const
     {
         return _value(args, scope);
     }

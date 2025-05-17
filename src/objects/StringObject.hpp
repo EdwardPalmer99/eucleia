@@ -27,11 +27,6 @@ public:
         return (*this);
     }
 
-    StringObject *clone() const override
-    {
-        return new StringObject(_value);
-    }
-
     StringObject operator+(const StringObject &other) const
     {
         return StringObject(_value + other.value());

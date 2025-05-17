@@ -9,7 +9,7 @@
 
 #include "LookupVariableNode.hpp"
 
-BaseObject *LookupVariableNode::evaluate(Scope &scope)
+BaseObject::Ptr LookupVariableNode::evaluate(Scope &scope)
 {
     return scope.getNamedObject(name);
 }

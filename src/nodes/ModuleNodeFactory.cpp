@@ -7,6 +7,7 @@
 
 #include "ModuleNodeFactory.hpp"
 #include "ArrayObject.hpp"
+#include "BaseNode.hpp"
 #include "FloatObject.hpp"
 #include "IntObject.hpp"
 #include "Logger.hpp"
@@ -65,18 +66,18 @@ AnyNode *createMathModuleNode()
     {
         assert(callArgs.size() == 1);
 
-        auto *first = callArgs.front()->evaluate<FloatObject>(scope);
-        return scope.createManagedObject<FloatObject>(sqrt(first->value()));
+        auto first = callArgs.front()->evaluate<FloatObject>(scope);
+        return ObjectFactory::allocate<FloatObject>(sqrt(first->value()));
     });
 
     auto doPow = std::pair("pow", [](BaseNodePtrVector &callArgs, Scope &scope)
     {
         assert(callArgs.size() == 2);
 
-        auto *first = callArgs.front()->evaluate<FloatObject>(scope);
-        auto *second = callArgs.back()->evaluate<FloatObject>(scope);
+        auto first = callArgs.front()->evaluate<FloatObject>(scope);
+        auto second = callArgs.back()->evaluate<FloatObject>(scope);
 
-        return scope.createManagedObject<FloatObject>(pow(first->value(), second->value()));
+        return ObjectFactory::allocate<FloatObject>(pow(first->value(), second->value()));
     });
 
     return NodeFactory::createModuleNode("math", {doSqrt, doPow});
@@ -89,7 +90,7 @@ AnyNode *createArrayModuleNode()
     {
         assert(callArgs.size() == 1);
 
-        auto *arrayObject = callArgs.front()->evaluate<ArrayObject>(scope);
+        auto arrayObject = callArgs.front()->evaluate<ArrayObject>(scope);
         arrayObject->value().clear();
         return nullptr;
     });
@@ -98,17 +99,17 @@ AnyNode *createArrayModuleNode()
     {
         assert(callArgs.size() == 1);
 
-        auto *arrayObject = callArgs.front()->evaluate<ArrayObject>(scope);
+        auto arrayObject = callArgs.front()->evaluate<ArrayObject>(scope);
 
-        return scope.createManagedObject<IntObject>(arrayObject->value().size());
+        return ObjectFactory::allocate<IntObject>(arrayObject->value().size());
     });
 
     auto doAppend = std::pair("append", [](BaseNodePtrVector &callArgs, Scope &scope)
     {
         assert(callArgs.size() == 2);
 
-        auto *arrayObject = callArgs.front()->evaluate<ArrayObject>(scope);
-        BaseObject *someObject = callArgs.back()->evaluate(scope);
+        auto arrayObject = callArgs.front()->evaluate<ArrayObject>(scope);
+        auto someObject = callArgs.back()->evaluate(scope);
 
         arrayObject->value().push_back(someObject->clone()); // NB: must clone!
         return nullptr;
@@ -130,8 +131,8 @@ AnyNode *createTestModuleNode()
 
         assert(callArgs.size() == 2);
 
-        auto *result = callArgs.front()->evaluate<BoolObject>(scope);
-        auto *description = callArgs.back()->evaluate<StringObject>(scope);
+        auto result = callArgs.front()->evaluate<BoolObject>(scope);
+        auto description = callArgs.back()->evaluate<StringObject>(scope);
 
         // Print pass or fail depending on the test case.
         const char *statusString = result->value() ? "PASSED" : "FAILED";

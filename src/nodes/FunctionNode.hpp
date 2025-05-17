@@ -29,7 +29,7 @@ public:
         delete funcBody;
     }
 
-    BaseObject *evaluate(Scope &scope) override;
+    BaseObject::Ptr evaluate(Scope &scope) override;
 
     BaseNode *funcBody{nullptr};
 };

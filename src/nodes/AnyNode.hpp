@@ -21,12 +21,12 @@ class AnyNode : public BaseNode
 public:
     using Ptr = std::shared_ptr<AnyNode>;
 
-    using EvaluateFunction = std::function<BaseObject *(Scope &)>;
+    using EvaluateFunction = std::function<BaseObject::Ptr(Scope &)>;
 
     explicit AnyNode(NodeType type, EvaluateFunction &&evaluateFunc)
         : BaseNode(type), _evaluateFunc(std::move(evaluateFunc)) {}
 
-    BaseObject *evaluate(Scope &scope) final
+    BaseObject::Ptr evaluate(Scope &scope) final
     {
         return _evaluateFunc(scope);
     }
@@ -45,7 +45,7 @@ public:
         : AnyNode(type, std::move(evaluateFunc)),
           _evaluateNoCloneFunc(std::move(evaluateNoCloneFunc)) {}
 
-    BaseObject *evaluateNoClone(Scope &scope) final
+    BaseObject::Ptr evaluateNoClone(Scope &scope) final
     {
         return _evaluateNoCloneFunc(scope);
     }
