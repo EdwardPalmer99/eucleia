@@ -22,7 +22,6 @@ first.f = 1.1;
 TEST(first.f == 1.1, "set struct float");
 
 first.s = "hello, world!";
-print("First.s is ", first.s);
 TEST(first.s == "hello, world!", "set struct string");
 
 // Getters (assigning value).
