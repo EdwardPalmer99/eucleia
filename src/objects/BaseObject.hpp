@@ -50,7 +50,10 @@ public:
         return typeid(*this) == typeid(TObject);
     }
 
-    [[nodiscard]] virtual BaseObject::Ptr clone() const = 0;
+    [[nodiscard]] virtual BaseObject::Ptr clone() const
+    {
+        ThrowException("clone is not implemented");
+    }
 
 protected:
     BaseObject() = default;
