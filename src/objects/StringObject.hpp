@@ -27,6 +27,11 @@ public:
         return (*this);
     }
 
+    BaseObject::Ptr clone() const override
+    {
+        return ObjectFactory::allocate<StringObject>(_value);
+    }
+
     StringObject operator+(const StringObject &other) const
     {
         return StringObject(_value + other.value());
