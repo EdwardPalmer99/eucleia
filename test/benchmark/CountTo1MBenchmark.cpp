@@ -38,5 +38,17 @@ static void BenchmarkEvaluatingCountTo1M(benchmark::State &state)
     }
 }
 
+
+static void BenchmarkEvaluateFibTo25(benchmark::State &state)
+{
+    auto path = (getTestDirPath() + "benchmark/data/EvaluateFibToTwentyFive.ek");
+
+    for (auto _ : state)
+    {
+        Interpreter::evaluateFile(path);
+    }
+}
+
 BENCHMARK(BenchmarkParsingCountTo1M)->Unit(benchmark::kMillisecond);
 BENCHMARK(BenchmarkEvaluatingCountTo1M)->Unit(benchmark::kMillisecond);
+BENCHMARK(BenchmarkEvaluateFibTo25)->Unit(benchmark::kMillisecond);

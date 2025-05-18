@@ -26,3 +26,16 @@
 - 23.6s (-O2, Docker) < unordered_set to vector
 2025-05-17:
 - 15s (-O2, Docker) < shared pointers for Objects, Nodes
+
+
+=== EvaluateFibToTwentyFive.ek ===
+
+Python3: ~112ms/~9MB 
+Eucleia:
+    2024-11-13: ~12s/~500MB (-O0)
+    2024-11-18: ~23s/~400kB (-O0)
+    2024-11-23: 7.6s/440kB  (-O0)
+    2024-11-23: 1.9s/440kB  (-O2)
+    2024-11-27: 740ms       (-Ofast, Docker)
+    2024-12-01: 4.9s        (-OO, Docker)
+    2024-12-01: 680ms       (-Ofast, Docker)
