@@ -1,0 +1,22 @@
+import <math>
+
+func DifferenceSumOfSquaresAndSquareOfSum(int max)
+{
+    float sum = 0;
+    float sumSquares = 0;
+
+    for (int i = 1; i <= max; ++i)
+    {
+        float fCounter = i;
+
+        sum = sum + fCounter;
+        sumSquares = sumSquares + pow(fCounter, 2.0);   // Careful! Issues with passing Int to func expecting float!
+    }
+
+    int lhs = pow(sum, 2.0);    // Note the implicit conversion back.
+    int rhs = sumSquares;
+
+    return (lhs - rhs);
+}
+
+DifferenceSumOfSquaresAndSquareOfSum(100); // 25164150

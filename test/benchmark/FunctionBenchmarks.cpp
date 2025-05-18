@@ -47,9 +47,20 @@ static void ParseAndEvaluateSumOfMultiplesOf3Or5To1000Opt(benchmark::State &stat
     }
 }
 
+static void ParseAndEvaluateDifferenceSumOfSquaresAndSquareOfSum(benchmark::State &state)
+{
+    auto path = (getTestDirPath() + "benchmark/data/DifferenceSumOfSquaresAndSquareOfSum.ek");
+
+    for (auto _ : state)
+    {
+        Interpreter::evaluateFile(path);
+    }
+}
+
 } // namespace Functions
 
 
 BENCHMARK(Functions::ParseAndEvaluateFibTo25)->Unit(benchmark::kMillisecond);
 BENCHMARK(Functions::ParseAndEvaluateSumOfMultiplesOf3Or5To1000Naive)->Unit(benchmark::kMillisecond);
 BENCHMARK(Functions::ParseAndEvaluateSumOfMultiplesOf3Or5To1000Opt)->Unit(benchmark::kMillisecond);
+BENCHMARK(Functions::ParseAndEvaluateDifferenceSumOfSquaresAndSquareOfSum)->Unit(benchmark::kMillisecond);
