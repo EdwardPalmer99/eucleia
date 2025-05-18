@@ -42,22 +42,5 @@ static void EvaluateCountTo1M(benchmark::State &state)
 } // namespace Loops
 
 
-namespace Functions
-{
-
-static void ParseAndEvaluateFibTo25(benchmark::State &state)
-{
-    auto path = (getTestDirPath() + "benchmark/data/EvaluateFibToTwentyFive.ek");
-
-    for (auto _ : state)
-    {
-        Interpreter::evaluateFile(path);
-    }
-}
-
-} // namespace Functions
-
-
 BENCHMARK(Loops::ParseCountTo1M)->Unit(benchmark::kMillisecond);
 BENCHMARK(Loops::EvaluateCountTo1M)->Unit(benchmark::kMillisecond);
-BENCHMARK(Functions::ParseAndEvaluateFibTo25)->Unit(benchmark::kMillisecond);
