@@ -1,9 +1,0 @@
-// Count to 10 million
-
-int counter = 0;
-int max_counter = 10000000;
-
-while (counter < max_counter)
-{
-    ++counter;
-}

@@ -18,7 +18,7 @@ cc_library(
         "environment/",
         "utility/",
     ],
-    visibility = ["//src:__pkg__", "//test:__pkg__"]
+    visibility = ["//src:__pkg__", "//test:__subpackages__"]
 )
 
 

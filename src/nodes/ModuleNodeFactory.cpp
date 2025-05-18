@@ -27,7 +27,7 @@ AnyNode::Ptr createDefinedModuleNode(std::string moduleName)
         return createIOModuleNode();
     else if (moduleName == "math")
         return createMathModuleNode();
-    else if (moduleName == "array")
+    else if (moduleName == "stdarray")
         return createArrayModuleNode();
     else if (moduleName == "test")
         return createTestModuleNode();

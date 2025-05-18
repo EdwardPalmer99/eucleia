@@ -1,0 +1,11 @@
+import "Fib.ek"
+
+func evaluateFib(int min, int max)
+{
+	for (int n = min; n < max; ++n)
+	{
+		fib(n);
+	}
+}
+
+evaluateFib(1, 25);

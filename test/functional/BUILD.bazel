@@ -1,10 +1,17 @@
+filegroup(
+    name = "data",
+    srcs = glob(["data/*.ek"])
+)
+
 cc_test(
-    name = "unit",
-    srcs = glob(["unit/*.cpp"]),
+    name = "functional",
+    srcs = glob(["*.cpp"]),
+    data = [":data"],
     deps = [
         "@googletest//:gtest",
         "@googletest//:gtest_main",
         "//src:eucleia_lib",
+        "//test/utility:testutils_lib"
     ],
     size = "small",
     visibility = ["//visibility:private"]
