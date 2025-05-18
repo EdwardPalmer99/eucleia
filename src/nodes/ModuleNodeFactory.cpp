@@ -74,10 +74,12 @@ AnyNode::Ptr createMathModuleNode()
     {
         assert(callArgs.size() == 2);
 
-        auto first = callArgs.front()->evaluate<FloatObject>(scope);
-        auto second = callArgs.back()->evaluate<FloatObject>(scope);
+        /* TODO: - bug if pass in an integer rather than a floatObject */
 
-        return ObjectFactory::allocate<FloatObject>(pow(first->value(), second->value()));
+        auto &first = callArgs.front()->evaluate(scope)->castObject<FloatObject>();
+        auto &second = callArgs.back()->evaluate(scope)->castObject<FloatObject>();
+
+        return ObjectFactory::allocate<FloatObject>(pow(first.value(), second.value()));
     });
 
     return NodeFactory::createModuleNode("math", {doSqrt, doPow});

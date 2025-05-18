@@ -21,6 +21,7 @@ public:
     {
         if (this != &other)
         {
+            assert(other.isObjectType<StringObject>());
             _value = StringObject::value(other);
         }
 

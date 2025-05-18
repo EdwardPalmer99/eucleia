@@ -9,6 +9,7 @@
 
 #pragma once
 #include "BaseObjectT.hpp"
+#include "Exceptions.hpp"
 #include "IntObject.hpp"
 #include "ObjectFactory.hpp"
 #include <memory>
@@ -27,7 +28,12 @@ public:
     {
         if (this != &other)
         {
-            _value = FloatObject::value(other);
+            if (other.isObjectType<IntObject>())
+                _value = IntObject::value(other);
+            else if (other.isObjectType<FloatObject>())
+                _value = FloatObject::value(other);
+            else
+                ThrowException("Cannot assign object to type FloatObject");
         }
 
         return (*this);

@@ -30,7 +30,12 @@ public:
     {
         if (this != &other)
         {
-            _value = IntObject::value(other);
+            if (other.isObjectType<IntObject>())
+                _value = IntObject::value(other);
+            else if (other.isObjectType<FloatObject>())
+                _value = (long)BaseObjectT<double>::value(other);
+            else
+                ThrowException("Cannot assign object to type FloatObject");
         }
 
         return (*this);
