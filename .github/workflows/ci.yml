@@ -22,6 +22,6 @@ jobs:
     - name: Build
       run: bazel build //... --config=release
     - name: Functional Tests
-      run: bazel test/functional:functional --config=release
+      run: bazel test test/functional:functional --config=release
     - name: Benchmarking Tests 
-      run: bazel test/benchmark:benchmark --config=release --test_output=all
+      run: bazel test test/benchmark:benchmark --config=release --test_output=all
