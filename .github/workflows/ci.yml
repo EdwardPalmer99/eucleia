@@ -19,9 +19,9 @@ jobs:
         disk-cache: ${{ github.workflow }}
         # Share repository cache between workflows.
         repository-cache: true
-    - name: Release Build
+    - name: Build
       run: bazel build //... --config=release
-    - name: Unit Tests
-      run: bazel test //... --config=release
     - name: Functional Tests
-      run: bazel run --config=release src:eucleia -- $(realpath test/functional/Main.ek)
+      run: bazel test/functional:functional --config=release
+    - name: Benchmarking Tests 
+      run: bazel test/benchmark:benchmark --config=release --test_output=all

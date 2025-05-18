@@ -13,4 +13,4 @@ build:debug --compilation_mode=dbg
 build:debug --copt='-O0'
 
 # Test:
-test --test_output=all
+test --test_output=errors

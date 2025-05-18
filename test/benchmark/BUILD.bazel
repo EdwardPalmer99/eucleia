@@ -1,0 +1,18 @@
+filegroup(
+    name = "data",
+    srcs = glob(["data/*.ek"])
+)
+
+cc_test(
+    name = "benchmark",
+    srcs = glob(["*.cpp"]),
+    data = [":data"],
+    deps = [
+        "@google_benchmark//:benchmark",
+        "@google_benchmark//:benchmark_main",
+        "//src:eucleia_lib",
+        "//test/utility:testutils_lib"
+    ],
+    size = "small",
+    visibility = ["//visibility:private"]
+)

@@ -1,0 +1,6 @@
+cc_library(
+    name = "testutils_lib",
+    hdrs = glob(["*.hpp"]),
+    srcs = glob(["*.cpp"]),
+    visibility = ["//test:__subpackages__"]
+)
