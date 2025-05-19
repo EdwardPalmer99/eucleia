@@ -1,5 +1,5 @@
 /**
- * @file ClassDefinitionObject.cpp
+ * @file ClassDefinitionNode.cpp
  * @author Edward Palmer
  * @date 2024-11-30
  *
@@ -7,22 +7,25 @@
  *
  */
 
-#include "ClassDefinitionObject.hpp"
+#include "ClassDefinitionNode.hpp"
+#include "AnyObject.hpp"
+#include "ObjectFactory.hpp"
 
-ClassDefinitionObject::ClassDefinitionObject(std::string typeName_,
-                                             std::string parentTypeName_,
-                                             std::vector<AddVariableNode::Ptr> variableDefs_,
-                                             std::vector<FunctionNode::Ptr> methodDefs_)
-    : StructDefinitionObject(std::move(typeName_), std::move(parentTypeName_), std::move(variableDefs_)),
+
+ClassDefinitionNode::ClassDefinitionNode(std::string typeName_,
+                                         std::string parentTypeName_,
+                                         std::vector<AddVariableNode::Ptr> variableDefs_,
+                                         std::vector<FunctionNode::Ptr> methodDefs_)
+    : StructDefinitionNode(std::move(typeName_), std::move(parentTypeName_), std::move(variableDefs_)),
       methodDefs(std::move(methodDefs_))
 {
     setType(NodeType::ClassDefinition);
 }
 
 
-BaseObject::Ptr ClassDefinitionObject::evaluate(Scope &scope)
+AnyObject::Ptr ClassDefinitionNode::evaluate(Scope &scope)
 {
-    // NB: override method defined in StructDefinitionObject.
+    // NB: override method defined in StructDefinitionNode.
     if (active)
     {
         ThrowException(typeName + " is already defined");
@@ -30,19 +33,20 @@ BaseObject::Ptr ClassDefinitionObject::evaluate(Scope &scope)
 
     active = true;
 
-    // TODO: - would be nice to have single method we override form StructDefinitionObject
+    // TODO: - would be nice to have single method we override form StructDefinitionNode
     // and then we can call base method and just extend it.
     buildVariableDefHashMap(scope);
     buildMethodDefsHashMap(scope);
 
-    // NB: scope cannot manage lifetime of this definition currently since it
-    // is owned by the AST.
-    scope.linkObject(typeName, shared_from_this());
-    return shared_from_this();
+    /* NB: wrap-up in an object shared pointer */
+    auto objectWrapper = ObjectFactory::allocate(shared_from_this(), AnyObject::_ClassDefinition);
+
+    scope.linkObject(typeName, objectWrapper);
+    return objectWrapper;
 }
 
 
-void ClassDefinitionObject::installMethodsInScope(Scope &scope) const
+void ClassDefinitionNode::installMethodsInScope(Scope &scope) const
 {
     if (!active)
     {
@@ -56,14 +60,14 @@ void ClassDefinitionObject::installMethodsInScope(Scope &scope) const
 }
 
 
-void ClassDefinitionObject::buildMethodDefsHashMap(const Scope &scope)
+void ClassDefinitionNode::buildMethodDefsHashMap(const Scope &scope)
 {
     if (!allMethodDefsMap.empty())
     {
         return;
     }
 
-    auto parent = std::static_pointer_cast<ClassDefinitionObject>(lookupParent(scope));
+    auto parent = std::static_pointer_cast<ClassDefinitionNode>(lookupParent(scope));
     if (parent)
     {
         parent->buildMethodDefsHashMap(scope); // Unnecessary since to be installed, this will already have happened.

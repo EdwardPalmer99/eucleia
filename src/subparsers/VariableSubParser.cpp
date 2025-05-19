@@ -18,7 +18,7 @@ BaseNode::Ptr VariableSubParser::parseVariableDefinition()
     Token typeToken = tokens().dequeue();
     assert(typeToken.type() == Token::Keyword);
 
-    ObjectType typeOfObject = objectTypeForName(typeToken);
+    AnyObject::Type typeOfObject = AnyObject::getUserObjectType(typeToken);
 
     if (tokens().front() == "&") // Is reference.
     {
@@ -32,7 +32,7 @@ BaseNode::Ptr VariableSubParser::parseVariableDefinition()
 }
 
 
-BaseNode::Ptr VariableSubParser::parseReference(ObjectType boundVariableType)
+BaseNode::Ptr VariableSubParser::parseReference(AnyObject::Type boundVariableType)
 {
     skip("&");
 

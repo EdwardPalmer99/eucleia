@@ -1,5 +1,5 @@
 /**
- * @file ClassDefinitionObject.hpp
+ * @file ClassDefinitionNode.hpp
  * @author Edward Palmer
  * @date 2024-11-28
  *
@@ -8,18 +8,21 @@
  */
 
 #pragma once
-#include "BaseObject.hpp"
+#include "AddVariableNode.hpp"
 #include "FunctionNode.hpp"
-#include "StructDefinitionObject.hpp"
+#include "Scope.hpp"
+#include "StructDefinitionNode.hpp"
+#include <memory>
 #include <string>
 #include <vector>
+
 
 /**
  * This class defines the format of a class and the variables and methods stored
  * inside. It will be stored in the scope along with the class name. We can then
  * use this to construct class instances.
  */
-class ClassDefinitionObject : public StructDefinitionObject
+class ClassDefinitionNode : public StructDefinitionNode
 {
 public:
     /**
@@ -27,20 +30,20 @@ public:
      * pass vectors to the variables and methods we actually own. The others
      * will be in a parent class if provided.
      */
-    ClassDefinitionObject(std::string typeName_,
-                          std::string parentTypeName_,
-                          std::vector<AddVariableNode::Ptr> variableDefs_,
-                          std::vector<FunctionNode::Ptr> methodDefs_);
+    ClassDefinitionNode(std::string typeName_,
+                        std::string parentTypeName_,
+                        std::vector<std::shared_ptr<AddVariableNode>> variableDefs_,
+                        std::vector<std::shared_ptr<FunctionNode>> methodDefs_);
 
     /**
      * Destructor deletes all method definition nodes.
      */
-    ~ClassDefinitionObject() override = default;
+    ~ClassDefinitionNode() override = default;
 
     /**
      * Install object in current scope.
      */
-    BaseObject::Ptr evaluate(Scope &scope) override;
+    std::shared_ptr<class AnyObject> evaluate(Scope &scope) override;
 
     /**
      * Calls evaluate method on all method nodes. Installs them in argument scope.

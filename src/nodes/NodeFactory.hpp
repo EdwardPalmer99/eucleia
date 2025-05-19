@@ -11,7 +11,7 @@
 #include "AnyNode.hpp"
 #include "BaseNode.hpp"
 #include "FunctionCallNode.hpp"
-#include "ModuleFunctionObject.hpp"
+#include "ModuleFunctor.hpp"
 #include <string>
 #include <vector>
 
@@ -64,7 +64,7 @@ AnyPropertyNode::Ptr createStructAccessNode(std::string structVariableName, std:
 
 AnyPropertyNode::Ptr createArrayAccessNode(BaseNode::Ptr arrayLookupNode, BaseNode::Ptr arrayIndexNode);
 
-AnyNode::Ptr createModuleNode(std::string moduleName = "", std::vector<ModuleFunctionPair> moduleFunctionPairs = {});
+AnyNode::Ptr createModuleNode(std::string moduleName = "", ModuleFunctor::Definitions moduleFunctionPairs = {});
 
 AnyNode::Ptr createClassMethodCallNode(std::string instanceName, FunctionCallNode::Ptr methodCallNode);
 

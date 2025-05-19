@@ -8,6 +8,7 @@
  */
 
 #include "Scope.hpp"
+#include "AnyObject.hpp"
 #include "Exceptions.hpp"
 #include <cassert>
 
@@ -22,7 +23,7 @@ Scope::Scope(const Scope *_parent)
 }
 
 
-BaseObject::Ptr Scope::getOptionalNamedObject(const std::string &name) const
+AnyObject::Ptr Scope::getOptionalNamedObject(const std::string &name) const
 {
     // Try in our scope (to handle variable shadowing).
     auto iter = linkedObjectForName.find(name);
@@ -42,9 +43,9 @@ BaseObject::Ptr Scope::getOptionalNamedObject(const std::string &name) const
 }
 
 
-BaseObject::Ptr Scope::getNamedObject(const std::string &name) const
+AnyObject::Ptr Scope::getNamedObject(const std::string &name) const
 {
-    BaseObject::Ptr obj = getOptionalNamedObject(name);
+    AnyObject::Ptr obj = getOptionalNamedObject(name);
     if (!obj)
     {
         ThrowException("undefined variable " + name);
@@ -60,7 +61,7 @@ bool Scope::hasNamedObject(const std::string &name) const
 }
 
 
-void Scope::linkObject(const std::string &name, BaseObject::Ptr object)
+void Scope::linkObject(const std::string &name, AnyObject::Ptr object)
 {
     assert(object != nullptr);
 
