@@ -10,13 +10,17 @@
 #pragma once
 #include "BaseNode.hpp"
 #include "ModuleFunctor.hpp"
+#include "PoolAllocator.hpp"
 #include <cassert>
 #include <memory>
+#include <new>
 #include <ostream>
 #include <string>
 #include <variant>
 #include <vector>
 
+// TODO: - profile and investigate using PoolAllocator
+// static PoolAllocator allocator{10};
 
 class AnyObject
 {
@@ -42,6 +46,17 @@ public:
         _StructDefinition,
         _ClassDefinition,
     };
+
+    // void *operator new(size_t size)
+    // {
+    //     return allocator.allocate(size);
+    // }
+
+    // void operator delete(void *ptr)
+    // {
+    //     allocator.deallocate(ptr);
+    // }
+
 
     /* Converts user types like "int" --> AnyType::Int or returns None if not found */
     static AnyObject::Type getUserObjectType(const std::string &name);
