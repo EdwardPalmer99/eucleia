@@ -19,7 +19,7 @@ int main(int argc, const char *argv[])
         CLIParser parser("eucleia");
 
         parser.addFlagArg("--help", "display available options");
-        parser.addFlagArg("--trace", "logs everything!");
+        parser.addFlagArg("--trace", "logs everything!"); /* TODO: - enable user to set different log levels or disable */
 
         parser.addPositionalArg("fileName");
         parser.parseArgs(argc, argv);

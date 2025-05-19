@@ -9,6 +9,7 @@
 
 #pragma once
 #include "BaseNode.hpp"
+#include "Scope.hpp"
 #include <string>
 
 class LookupVariableNode : public BaseNode
@@ -22,7 +23,7 @@ public:
     [[nodiscard]] inline const std::string &name() const;
 
     /* Returns the object in the scope associated with a variable name */
-    BaseObject::Ptr evaluate(Scope &scope) override;
+    std::shared_ptr<class AnyObject> evaluate(Scope &scope) override;
 
 private:
     std::string _name;

@@ -8,28 +8,26 @@
  */
 
 #include "ObjectFactory.hpp"
-#include "ArrayObject.hpp"
 #include "Exceptions.hpp"
-#include "FloatObject.hpp"
-#include "IntObject.hpp"
-#include "StringObject.hpp"
+#include <string>
 
 namespace ObjectFactory
 {
 
-BaseObject::Ptr allocate(ObjectType objectType)
+AnyObject::Ptr allocate(AnyObject::Type objectType)
 {
     switch (objectType)
     {
-        case ObjectType::Int:
-        case ObjectType::Bool:
-            return allocate<IntObject>();
-        case ObjectType::Float:
-            return allocate<FloatObject>();
-        case ObjectType::String:
-            return allocate<StringObject>();
-        case ObjectType::Array:
-            return allocate<ArrayObject>();
+        case AnyObject::Int:
+            return std::make_shared<AnyObject>(0L);
+        case AnyObject::Bool:
+            return std::make_shared<AnyObject>(false);
+        case AnyObject::Float:
+            return std::make_shared<AnyObject>((double)0.0);
+        case AnyObject::String:
+            return std::make_shared<AnyObject>(std::string());
+        case AnyObject::Array:
+            return std::make_shared<AnyObject>(AnyObject::Vector());
         default:
             ThrowException("cannot allocate for object type!");
     }

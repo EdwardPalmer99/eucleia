@@ -8,23 +8,26 @@
  */
 
 #include "FunctionCallNode.hpp"
+#include "AddVariableNode.hpp"
+#include "AnyObject.hpp"
+#include "Exceptions.hpp"
 #include "FunctionNode.hpp"
-#include "FunctionObject.hpp"
 #include "JumpPoints.hpp"
-#include "ModuleFunctionObject.hpp"
+#include "ModuleFunctor.hpp"
+#include "Scope.hpp"
 
-BaseObject::Ptr FunctionCallNode::evaluate(Scope &scope)
+AnyObject::Ptr FunctionCallNode::evaluate(Scope &scope)
 {
     // 0. Any library functions that we wish to evaluate.
-    auto libraryFunc = scope.getOptionalNamedObject<BaseObject>(_funcName);
-    if (libraryFunc && libraryFunc->isObjectType<ModuleFunctionObject>())
+    auto moduleFunction = scope.getOptionalNamedObject(_funcName);
+    if (moduleFunction && moduleFunction->isType(AnyObject::_ModuleFunction))
     {
-        return libraryFunc->castObject<ModuleFunctionObject>()(_funcArgs, scope);
+        return moduleFunction->getValue<ModuleFunctor>()(_funcArgs, scope);
     }
 
     // TODO: - finish implementing here. Should not be a shared pointer.
     // 1. Get a pointer to the function node stored in this scope.
-    auto funcNode = scope.getNamedObject<FunctionObject>(_funcName)->value();
+    auto funcNode = std::static_pointer_cast<FunctionNode>(scope.getNamedObject(_funcName)->getValue<BaseNode::Ptr>());
 
     // 2. Verify that the number of arguments matches those required for the
     // function we are calling.
@@ -77,7 +80,8 @@ BaseObject::Ptr FunctionCallNode::evaluate(Scope &scope)
     return evaluateFunctionBody(*funcNode->funcBody, funcScope);
 }
 
-BaseObject::Ptr FunctionCallNode::evaluateFunctionBody(BaseNode &funcBody, Scope &funcScope)
+
+AnyObject::Ptr FunctionCallNode::evaluateFunctionBody(BaseNode &funcBody, Scope &funcScope)
 {
     // Reset return value.
     gEnvironmentContext.returnValue = nullptr;

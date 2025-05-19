@@ -10,7 +10,6 @@
 #include "Grammar.hpp"
 #include "Logger.hpp"
 #include "NodeFactory.hpp"
-#include "ObjectTypes.hpp"
 #include "ParserData.hpp"
 #include <assert.h>
 #include <cassert>

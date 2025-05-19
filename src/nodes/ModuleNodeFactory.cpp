@@ -6,17 +6,16 @@
 //
 
 #include "ModuleNodeFactory.hpp"
-#include "ArrayObject.hpp"
 #include "BaseNode.hpp"
-#include "FloatObject.hpp"
-#include "IntObject.hpp"
+#include "Exceptions.hpp"
 #include "Logger.hpp"
 #include "NodeFactory.hpp"
-#include "Objects.hpp"
-#include "StringObject.hpp"
+#include "ObjectFactory.hpp"
 #include "Stringify.hpp"
+#include <cassert>
 #include <cmath>
 #include <iostream>
+
 
 namespace NodeFactory
 {
@@ -66,18 +65,19 @@ AnyNode::Ptr createMathModuleNode()
     {
         assert(callArgs.size() == 1);
 
-        auto first = callArgs.front()->evaluate<FloatObject>(scope);
-        return ObjectFactory::allocate<FloatObject>(sqrt(first->value()));
+        double first = callArgs.front()->evaluate(scope)->getValue<double>();
+        return ObjectFactory::allocate(sqrt(first));
     });
 
     auto doPow = std::pair("pow", [](BaseNodePtrVector &callArgs, Scope &scope)
     {
         assert(callArgs.size() == 2);
 
-        auto first = callArgs.front()->evaluate<FloatObject>(scope);
-        auto second = callArgs.back()->evaluate<FloatObject>(scope);
+        /* TODO: - bug if pass in an integer rather than a floatObject */
+        auto firstObject = callArgs.front()->evaluate(scope);
+        auto secondObject = callArgs.back()->evaluate(scope);
 
-        return ObjectFactory::allocate<FloatObject>(pow(first->value(), second->value()));
+        return ObjectFactory::allocate(pow(firstObject->getValue<double>(), secondObject->getValue<double>()));
     });
 
     return NodeFactory::createModuleNode("math", {doSqrt, doPow});
@@ -90,8 +90,10 @@ AnyNode::Ptr createArrayModuleNode()
     {
         assert(callArgs.size() == 1);
 
-        auto arrayObject = callArgs.front()->evaluate<ArrayObject>(scope);
-        arrayObject->value().clear();
+        auto theObject = callArgs.front()->evaluate(scope); /* Careful if using a reference! Need to not hold reference to garbage! */
+
+        auto &arrayObject = theObject->getValue<AnyObject::Vector>();
+        arrayObject.clear();
         return nullptr;
     });
 
@@ -99,19 +101,23 @@ AnyNode::Ptr createArrayModuleNode()
     {
         assert(callArgs.size() == 1);
 
-        auto arrayObject = callArgs.front()->evaluate<ArrayObject>(scope);
+        auto theObject = callArgs.front()->evaluate(scope);
 
-        return ObjectFactory::allocate<IntObject>(arrayObject->value().size());
+        auto &arrayObject = theObject->getValue<AnyObject::Vector>();
+
+        return ObjectFactory::allocate((double)arrayObject.size());
     });
 
     auto doAppend = std::pair("append", [](BaseNodePtrVector &callArgs, Scope &scope)
     {
         assert(callArgs.size() == 2);
 
-        auto arrayObject = callArgs.front()->evaluate<ArrayObject>(scope);
+        auto theObject = callArgs.front()->evaluate(scope);
+
+        auto &arrayObject = theObject->getValue<AnyObject::Vector>();
         auto someObject = callArgs.back()->evaluate(scope);
 
-        arrayObject->value().push_back(someObject->clone()); // NB: must clone!
+        arrayObject.push_back(someObject->clone()); // NB: must clone!
         return nullptr;
     });
 
@@ -131,14 +137,14 @@ AnyNode::Ptr createTestModuleNode()
 
         assert(callArgs.size() == 2);
 
-        auto result = callArgs.front()->evaluate<BoolObject>(scope);
-        auto description = callArgs.back()->evaluate<StringObject>(scope);
+        bool result = callArgs.front()->evaluate(scope)->getValue<bool>();
+        std::string description = callArgs.back()->evaluate(scope)->getValue<std::string>(); /* Be very careful -> copy otherwise referencing garbage! */
 
         // Print pass or fail depending on the test case.
-        const char *statusString = result->value() ? "PASSED" : "FAILED";
-        const char *statusColor = result->value() ? PassColor : FailColor;
+        const char *statusString = result ? "PASSED" : "FAILED";
+        const char *statusColor = result ? PassColor : FailColor;
 
-        std::cout << stringify("%-50s %s%s%s", description->value().c_str(), statusColor, statusString, ClearColor) << std::endl;
+        std::cout << stringify("%-50s %s%s%s", description.c_str(), statusColor, statusString, ClearColor) << std::endl;
         return nullptr;
     });
 

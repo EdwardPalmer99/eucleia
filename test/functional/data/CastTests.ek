@@ -1,0 +1,14 @@
+import <test>
+import <io>
+
+int a = int(5.2);
+TEST(a == 5, "cast float to int");
+
+float b = float(2);
+TEST(b == 2.0, "cast int to float");
+
+float c = 4.5;
+TEST(int(c) == 4 && c == 4.5, "cast a float variable");
+
+float &d = c;
+TEST(int(d) == 4 && d == 4.5 && c == 4.5, "cast a float reference");

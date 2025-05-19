@@ -8,9 +8,9 @@
  */
 
 #include "LookupVariableNode.hpp"
+#include "AnyObject.hpp"
 
-
-BaseObject::Ptr LookupVariableNode::evaluate(Scope &scope)
+AnyObject::Ptr LookupVariableNode::evaluate(Scope &scope)
 {
     return scope.getNamedObject(_name);
 }

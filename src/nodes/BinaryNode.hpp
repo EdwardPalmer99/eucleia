@@ -8,12 +8,9 @@
  */
 
 #pragma once
+#include "AnyObject.hpp"
 #include "BaseNode.hpp"
-#include "BaseObject.hpp"
-#include "FloatObject.hpp"
-#include "IntObject.hpp"
 #include "Scope.hpp"
-#include "StringObject.hpp"
 #include <string>
 
 enum class BinaryOperatorType : int
@@ -46,14 +43,16 @@ public:
         setType(NodeType::Binary);
     }
 
-    BaseObject::Ptr evaluate(Scope &scope) override;
+    AnyObject::Ptr evaluate(Scope &scope) override;
 
 protected:
-    BaseObject::Ptr applyOperator(const BaseObject &left, const BaseObject &right) const;
+    AnyObject::Ptr applyOperator(const AnyObject &left, const AnyObject &right) const;
 
-    BaseObject::Ptr applyOperator(const IntObject &left, const IntObject &right) const;
-    BaseObject::Ptr applyOperator(const FloatObject &left, const FloatObject &right) const;
-    BaseObject::Ptr applyOperator(const StringObject &left, const StringObject &right) const;
+    AnyObject::Ptr applyOperator(bool left, bool right) const;
+    AnyObject::Ptr applyOperator(long left, long right) const;
+    AnyObject::Ptr applyOperator(double left, double right) const;
+    AnyObject::Ptr applyOperator(const std::string &left, const std::string &right) const;
+    AnyObject::Ptr applyOperator(const AnyObject::Vector &left, const AnyObject::Vector &right) const;
 
     /* Convert string to enum (faster if doing lost of comparisons) */
     static BinaryOperatorType toBinaryOperator(const std::string &operatorString);

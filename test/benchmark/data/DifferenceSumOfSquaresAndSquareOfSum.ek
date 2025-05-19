@@ -1,0 +1,19 @@
+import <math>
+
+func DifferenceSumOfSquaresAndSquareOfSum(int max)
+{
+    int sum = 0;
+    int sumSquares = 0;
+
+    for (int i = 1; i <= max; ++i)
+    {
+        sum = sum + i;
+        sumSquares = sumSquares + int(pow(float(i), 2.0));
+    }
+
+    int lhs = int(pow(float(sum), 2.0));    // Note the explicit conversion back.
+
+    return (lhs - sumSquares);
+}
+
+DifferenceSumOfSquaresAndSquareOfSum(100); // 25164150

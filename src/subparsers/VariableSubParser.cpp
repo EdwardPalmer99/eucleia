@@ -9,20 +9,28 @@
 
 #include "VariableSubParser.hpp"
 #include "AddVariableNode.hpp"
+#include "AnyNode.hpp"
 #include "FileParser.hpp"
 #include "LookupVariableNode.hpp"
+#include "NodeFactory.hpp"
 #include "Token.hpp"
+#include <cassert>
+
 
 BaseNode::Ptr VariableSubParser::parseVariableDefinition()
 {
     Token typeToken = tokens().dequeue();
     assert(typeToken.type() == Token::Keyword);
 
-    ObjectType typeOfObject = objectTypeForName(typeToken);
+    AnyObject::Type typeOfObject = AnyObject::getUserObjectType(typeToken);
 
-    if (tokens().front() == "&") // Is reference.
+    if (tokens().front() == "&") // Is reference: [type] & [name] = [another object]
     {
         return parseReference(typeOfObject);
+    }
+    else if (tokens().front() == "(") // Is cast: i.e., float(1), float(intVar), bool(1), int(1.2)
+    {
+        return parseCast(typeOfObject);
     }
 
     Token nameToken = tokens().dequeue();
@@ -32,9 +40,9 @@ BaseNode::Ptr VariableSubParser::parseVariableDefinition()
 }
 
 
-BaseNode::Ptr VariableSubParser::parseReference(ObjectType boundVariableType)
+BaseNode::Ptr VariableSubParser::parseReference(AnyObject::Type boundVariableType)
 {
-    skip("&");
+    skip("&"); // TODO: - add type-checking
 
     Token referenceNameToken = tokens().dequeue();
     assert(referenceNameToken.type() == Token::Variable);
@@ -54,4 +62,13 @@ BaseNode::Ptr VariableSubParser::parseVariable()
     assert(token.type() == Token::Variable);
 
     return std::make_shared<LookupVariableNode>(token);
+}
+
+
+BaseNode::Ptr VariableSubParser::parseCast(AnyObject::Type castType)
+{
+    /* Expression in ( expression ) to cast return type of */
+    auto expression = parent().parseBrackets();
+
+    return NodeFactory::createCastNode(expression, castType);
 }

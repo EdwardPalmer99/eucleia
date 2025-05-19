@@ -8,9 +8,8 @@
  */
 
 #include "BinaryNode.hpp"
-#include "ArrayObject.hpp"
+#include "Exceptions.hpp"
 #include "ObjectFactory.hpp"
-#include "Objects.hpp"
 #include <sstream>
 
 
@@ -47,7 +46,7 @@ BinaryOperatorType BinaryNode::toBinaryOperator(const std::string &operatorStrin
 }
 
 
-BaseObject::Ptr BinaryNode::evaluate(Scope &scope)
+AnyObject::Ptr BinaryNode::evaluate(Scope &scope)
 {
     auto leftEvaluated = _left->evaluate(scope);
     auto rightEvaluated = _right->evaluate(scope);
@@ -57,119 +56,160 @@ BaseObject::Ptr BinaryNode::evaluate(Scope &scope)
 }
 
 
-BaseObject::Ptr BinaryNode::applyOperator(const IntObject &left, const IntObject &right) const
+AnyObject::Ptr BinaryNode::applyOperator(const AnyObject &left, const AnyObject &right) const
 {
-    switch (_binaryOperator)
+    if (left.isType(AnyObject::Bool) && right.isType(AnyObject::Bool))
     {
-        case BinaryOperatorType::Add:
-            return ObjectFactory::allocate<IntObject>(left + right);
-        case BinaryOperatorType::Minus:
-            return ObjectFactory::allocate<IntObject>(left - right);
-        case BinaryOperatorType::Multiply:
-            return ObjectFactory::allocate<IntObject>(left * right);
-        case BinaryOperatorType::Divide:
-            return ObjectFactory::allocate<IntObject>(left / right);
-        case BinaryOperatorType::Equal:
-            return ObjectFactory::allocate<BoolObject>(left == right);
-        case BinaryOperatorType::NotEqual:
-            return ObjectFactory::allocate<BoolObject>(left != right);
-        case BinaryOperatorType::GreaterOrEqual:
-            return ObjectFactory::allocate<BoolObject>(left >= right);
-        case BinaryOperatorType::Greater:
-            return ObjectFactory::allocate<BoolObject>(left > right);
-        case BinaryOperatorType::LessOrEqual:
-            return ObjectFactory::allocate<BoolObject>(left <= right);
-        case BinaryOperatorType::Less:
-            return ObjectFactory::allocate<BoolObject>(left < right);
-        case BinaryOperatorType::Modulo:
-            return ObjectFactory::allocate<IntObject>(left % right);
-        case BinaryOperatorType::And:
-            return ObjectFactory::allocate<BoolObject>(left && right);
-        case BinaryOperatorType::Or:
-            return ObjectFactory::allocate<BoolObject>(left || right);
-        default:
-            ThrowException("cannot apply operator to types Int, Int");
+        return applyOperator(left.getValue<bool>(), right.getValue<bool>());
     }
-}
-
-
-BaseObject::Ptr BinaryNode::applyOperator(const FloatObject &left, const FloatObject &right) const
-{
-    switch (_binaryOperator)
+    if (left.isType(AnyObject::Int) && right.isType(AnyObject::Int))
     {
-        case BinaryOperatorType::Add:
-            return ObjectFactory::allocate<FloatObject>(left + right);
-        case BinaryOperatorType::Minus:
-            return ObjectFactory::allocate<FloatObject>(left - right);
-        case BinaryOperatorType::Multiply:
-            return ObjectFactory::allocate<FloatObject>(left * right);
-        case BinaryOperatorType::Divide:
-            return ObjectFactory::allocate<FloatObject>(left / right);
-        case BinaryOperatorType::Equal:
-            return ObjectFactory::allocate<BoolObject>(left == right);
-        case BinaryOperatorType::NotEqual:
-            return ObjectFactory::allocate<BoolObject>(left != right);
-        case BinaryOperatorType::GreaterOrEqual:
-            return ObjectFactory::allocate<BoolObject>(left >= right);
-        case BinaryOperatorType::Greater:
-            return ObjectFactory::allocate<BoolObject>(left > right);
-        case BinaryOperatorType::LessOrEqual:
-            return ObjectFactory::allocate<BoolObject>(left <= right);
-        case BinaryOperatorType::Less:
-            return ObjectFactory::allocate<BoolObject>(left < right);
-        default:
-            ThrowException("cannot apply operator to types Float, Float");
+        return applyOperator(left.getValue<long>(), right.getValue<long>());
     }
-}
-
-
-BaseObject::Ptr BinaryNode::applyOperator(const StringObject &left, const StringObject &right) const
-{
-    switch (_binaryOperator)
+    else if (left.isType(AnyObject::Float) && right.isType(AnyObject::Float)) /* Implicit casts */
     {
-        case BinaryOperatorType::Add:
-            return ObjectFactory::allocate<StringObject>(left + right);
-        case BinaryOperatorType::Equal:
-            return ObjectFactory::allocate<BoolObject>(left == right);
-        case BinaryOperatorType::NotEqual:
-            return ObjectFactory::allocate<BoolObject>(left != right);
-        default:
-            ThrowException("cannot apply operator to types String, String");
+        return applyOperator(left.getValue<double>(), right.getValue<double>());
     }
-}
-
-
-BaseObject::Ptr BinaryNode::applyOperator(const BaseObject &left, const BaseObject &right) const
-{
-    // TODO: - implement + operator for other object types. Will mean we don't need any if/else statements.
-
-    if (left.isObjectType<IntObject>() && right.isObjectType<IntObject>())
+    else if (left.isType(AnyObject::Int) && right.isType(AnyObject::Float))
     {
-        return applyOperator(left.castObject<IntObject>(), right.castObject<IntObject>());
+        return applyOperator((double)left.getValue<long>(), right.getValue<double>());
     }
-    else if (left.isObjectType<FloatObject>() && right.isObjectType<FloatObject>())
+    else if (left.isType(AnyObject::Float) && right.isType(AnyObject::Int))
     {
-        return applyOperator(left.castObject<FloatObject>(), right.castObject<FloatObject>());
+        return applyOperator(left.getValue<double>(), (double)right.getValue<long>());
     }
-    else if (left.isObjectType<IntObject>() && right.isObjectType<FloatObject>())
+    else if (left.isType(AnyObject::String) && right.isType(AnyObject::String))
     {
-        return applyOperator(left.castObject<IntObject>().castToFloat(), right.castObject<FloatObject>());
+        return applyOperator(left.getValue<std::string>(), right.getValue<std::string>());
     }
-    else if (left.isObjectType<FloatObject>() && right.isObjectType<IntObject>())
+    else if (left.isType(AnyObject::Array) && right.isType(AnyObject::Array))
     {
-        return applyOperator(left.castObject<FloatObject>(), right.castObject<IntObject>().castToFloat());
-    }
-    else if (left.isObjectType<StringObject>() && right.isObjectType<StringObject>())
-    {
-        return applyOperator(left.castObject<StringObject>(), right.castObject<StringObject>());
-    }
-    else if (left.isObjectType<ArrayObject>() && right.isObjectType<ArrayObject>())
-    {
-        return ObjectFactory::allocate<ArrayObject>(left.castObject<ArrayObject>() + right.castObject<ArrayObject>());
+        return applyOperator(left.getValue<AnyObject::Vector>(), right.getValue<AnyObject::Vector>());
     }
 
     std::stringstream oss;
     oss << "cannot apply operator [" << int(_binaryOperator) << "] to objects [" << left << "] and [" << right << "]";
 
     ThrowException(oss.str());
+}
+
+
+AnyObject::Ptr BinaryNode::applyOperator(const AnyObject::Vector &left, const AnyObject::Vector &right) const
+{
+    switch (_binaryOperator)
+    {
+        case BinaryOperatorType::Add:
+        {
+            // TODO: - this will probably require us to copy the vector otherwise we're doing shallow copying
+            AnyObject::Vector result;
+
+            result.reserve(left.size() + right.size());
+            result.insert(result.end(), left.begin(), left.end());
+            result.insert(result.end(), right.begin(), right.end());
+
+            return ObjectFactory::allocate(std::move(result));
+        }
+        default:
+            ThrowException("cannot apply operator to types Array, Array");
+    }
+}
+
+
+AnyObject::Ptr BinaryNode::applyOperator(bool left, bool right) const
+{
+    switch (_binaryOperator)
+    {
+        case BinaryOperatorType::Equal:
+            return ObjectFactory::allocate(left == right);
+        case BinaryOperatorType::NotEqual:
+            return ObjectFactory::allocate(left != right);
+        case BinaryOperatorType::And:
+            return ObjectFactory::allocate(left && right);
+        case BinaryOperatorType::Or:
+            return ObjectFactory::allocate(left != right);
+        default:
+            ThrowException("cannot apply operator to types Bool, Bool");
+    }
+}
+
+
+AnyObject::Ptr BinaryNode::applyOperator(long left, long right) const
+{
+    switch (_binaryOperator)
+    {
+        case BinaryOperatorType::Add:
+            return ObjectFactory::allocate(left + right);
+        case BinaryOperatorType::Minus:
+            return ObjectFactory::allocate(left - right);
+        case BinaryOperatorType::Multiply:
+            return ObjectFactory::allocate(left * right);
+        case BinaryOperatorType::Divide:
+            return ObjectFactory::allocate(left / right);
+        case BinaryOperatorType::Equal:
+            return ObjectFactory::allocate(left == right);
+        case BinaryOperatorType::NotEqual:
+            return ObjectFactory::allocate(left != right);
+        case BinaryOperatorType::GreaterOrEqual:
+            return ObjectFactory::allocate(left >= right);
+        case BinaryOperatorType::Greater:
+            return ObjectFactory::allocate(left > right);
+        case BinaryOperatorType::LessOrEqual:
+            return ObjectFactory::allocate(left <= right);
+        case BinaryOperatorType::Less:
+            return ObjectFactory::allocate(left < right);
+        case BinaryOperatorType::Modulo:
+            return ObjectFactory::allocate(left % right);
+        case BinaryOperatorType::And:
+            return ObjectFactory::allocate(left && right);
+        case BinaryOperatorType::Or:
+            return ObjectFactory::allocate(left || right);
+        default:
+            ThrowException("cannot apply operator to types Int, Int");
+    }
+}
+
+
+AnyObject::Ptr BinaryNode::applyOperator(double left, double right) const
+{
+    switch (_binaryOperator)
+    {
+        case BinaryOperatorType::Add:
+            return ObjectFactory::allocate(left + right);
+        case BinaryOperatorType::Minus:
+            return ObjectFactory::allocate(left - right);
+        case BinaryOperatorType::Multiply:
+            return ObjectFactory::allocate(left * right);
+        case BinaryOperatorType::Divide:
+            return ObjectFactory::allocate(left / right);
+        case BinaryOperatorType::Equal:
+            return ObjectFactory::allocate(left == right);
+        case BinaryOperatorType::NotEqual:
+            return ObjectFactory::allocate(left != right);
+        case BinaryOperatorType::GreaterOrEqual:
+            return ObjectFactory::allocate(left >= right);
+        case BinaryOperatorType::Greater:
+            return ObjectFactory::allocate(left > right);
+        case BinaryOperatorType::LessOrEqual:
+            return ObjectFactory::allocate(left <= right);
+        case BinaryOperatorType::Less:
+            return ObjectFactory::allocate(left < right);
+        default:
+            ThrowException("cannot apply operator to types Float, Float");
+    }
+}
+
+
+AnyObject::Ptr BinaryNode::applyOperator(const std::string &left, const std::string &right) const
+{
+    switch (_binaryOperator)
+    {
+        case BinaryOperatorType::Add:
+            return ObjectFactory::allocate(left + right);
+        case BinaryOperatorType::Equal:
+            return ObjectFactory::allocate(left == right);
+        case BinaryOperatorType::NotEqual:
+            return ObjectFactory::allocate(left != right);
+        default:
+            ThrowException("cannot apply operator to types String, String");
+    }
 }

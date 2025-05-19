@@ -8,9 +8,7 @@
  */
 
 #pragma once
-
-class BaseObject;
-class Scope;
+#include "Scope.hpp"
 
 /**
  *
@@ -28,7 +26,7 @@ struct PropertyInterface
     // virtual BaseObject *evaluate(Scope &scope) = 0;
 
     /* Return object directly for modifying value (setter) */
-    virtual typename BaseObject::Ptr evaluateNoClone(Scope &scope) = 0;
+    virtual std::shared_ptr<class AnyObject> evaluateNoClone(Scope &scope) = 0;
 
     virtual ~PropertyInterface() = default;
 };

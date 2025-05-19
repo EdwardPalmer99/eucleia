@@ -9,7 +9,6 @@
 
 #pragma once
 #include "BaseNode.hpp"
-#include "BaseObject.hpp"
 #include "PropertyInterface.hpp"
 #include "Scope.hpp"
 #include <functional>
@@ -21,15 +20,12 @@ class AnyNode : public BaseNode
 public:
     using Ptr = std::shared_ptr<AnyNode>;
 
-    using EvaluateFunction = std::function<BaseObject::Ptr(Scope &)>;
+    using EvaluateFunction = std::function<std::shared_ptr<class AnyObject>(Scope &)>;
 
     explicit AnyNode(NodeType type, EvaluateFunction &&evaluateFunc)
         : BaseNode(type), _evaluateFunc(std::move(evaluateFunc)) {}
 
-    BaseObject::Ptr evaluate(Scope &scope) final
-    {
-        return _evaluateFunc(scope);
-    }
+    std::shared_ptr<class AnyObject> evaluate(Scope &scope) final;
 
 private:
     EvaluateFunction _evaluateFunc;
@@ -45,7 +41,7 @@ public:
         : AnyNode(type, std::move(evaluateFunc)),
           _evaluateNoCloneFunc(std::move(evaluateNoCloneFunc)) {}
 
-    BaseObject::Ptr evaluateNoClone(Scope &scope) final
+    std::shared_ptr<class AnyObject> evaluateNoClone(Scope &scope) final
     {
         return _evaluateNoCloneFunc(scope);
     }

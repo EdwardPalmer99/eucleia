@@ -1,5 +1,5 @@
 /**
- * @file StructDefinitionObject.hpp
+ * @file StructDefinitionNode.hpp
  * @author Edward Palmer
  * @date 2024-11-24
  *
@@ -8,9 +8,8 @@
  */
 
 #pragma once
-#include "AddVariableNode.hpp"
 #include "BaseNode.hpp"
-#include "BaseObject.hpp"
+#include "Exceptions.hpp"
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
@@ -21,38 +20,30 @@
  * will be stored in the scope along with the struct name. We can then use this
  * to construct struct instances.
  */
-class StructDefinitionObject : public BaseObject, public BaseNode, public std::enable_shared_from_this<StructDefinitionObject>
+class StructDefinitionNode : public BaseNode, public std::enable_shared_from_this<StructDefinitionNode>
 {
 public:
+    using Ptr = std::shared_ptr<StructDefinitionNode>;
+
     /**
      * Supply a vector of nodes for constructing the struct. This class will take
      * ownership and free these later.
      */
-    StructDefinitionObject(std::string typeName_,
-                           std::string parentTypeName_,
-                           std::vector<AddVariableNode::Ptr> variableDefs_);
+    StructDefinitionNode(std::string typeName_,
+                         std::string parentTypeName_,
+                         std::vector<std::shared_ptr<class AddVariableNode>> variableDefs_);
 
     /**
      * Destructor deletes all nodes in variable definitions.
      */
-    ~StructDefinitionObject() override = default;
+    ~StructDefinitionNode() override = default;
 
     /**
      * Registers this class in the current scope with name. Ownership will pass
      * to the scope. Careful! Going this route means we don't have to create a
      * separate Node to create an Object.
      */
-    BaseObject::Ptr evaluate(Scope &scope) override;
-
-    /**
-     * No destructor provided. Should not be possible to copy the struct definition
-     * as you would expect. If this were to be implemented, all nodes we are
-     * storing would have to be copied.
-     */
-    BaseObject::Ptr clone() const final
-    {
-        ThrowException("not implemented");
-    }
+    std::shared_ptr<class AnyObject> evaluate(class Scope &scope) override;
 
     /**
      * Calls evaluate method on all variables in this struct and parents. Installs
@@ -70,13 +61,13 @@ protected:
     /**
      * Returns a pointer to the parent struct or nullptr if not found.
      */
-    std::shared_ptr<StructDefinitionObject> lookupParent(const Scope &scope) const;
+    std::shared_ptr<StructDefinitionNode> lookupParent(const Scope &scope) const;
 
     /**
      * Stores our owned variables and those of any parent variables we inherit.
      * To construct the object, we will call evaluate() method on each node.
      */
-    std::unordered_map<std::string, AddVariableNode::Ptr> allVariableDefsMap;
+    std::unordered_map<std::string, std::shared_ptr<class AddVariableNode>> allVariableDefsMap;
 
     /**
      * Type name for struct.
@@ -93,7 +84,7 @@ protected:
      * ownership of all nodes. There may be additional nodes that are not in this
      * vector and will be stored in a parent class.
      */
-    std::vector<AddVariableNode::Ptr> variableDefs;
+    std::vector<std::shared_ptr<class AddVariableNode>> variableDefs;
 
     /**
      * We activate the definition once evaluate is called. This is when we can

@@ -11,13 +11,17 @@ import <stdarray>
     TEST(first[index] == 1, "index using variable");
 
     int val = first[0];
+    print("The value is: ", val);
+
     TEST(val == 1 && first[0] == 1, "assign to variable");
 
     val = 2;
     TEST(val == 2 && first[0] == 1, "copy array value");
 
     first[0] = first[1];
+    print("Performing array assignment (setting)");
     TEST(first[0] == 2, "array setter (int)");
+    print(first);
 
     // Copy to second and modify.
     array second = first;
@@ -25,6 +29,7 @@ import <stdarray>
 
     second[0] = 100;
     TEST(second[0] == 100 && first[0] == 2, "modify copied array");
+    print(first, second);
 
     array a = [1, 2, 3];
     array b = [4, 5, 6];

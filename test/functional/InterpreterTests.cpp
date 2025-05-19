@@ -83,6 +83,12 @@ TEST(InterpreterTestSuite, StructTests)
 }
 
 
+TEST(InterpreterTestSuite, CastTests)
+{
+    Interpreter::evaluateFile(testDataPath("CastTests.ek"));
+}
+
+
 std::string testDataPath(std::string fileName)
 {
     return getTestDirPath() + "functional/data/" + fileName;
