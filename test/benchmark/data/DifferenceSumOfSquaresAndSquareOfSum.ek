@@ -8,13 +8,12 @@ func DifferenceSumOfSquaresAndSquareOfSum(int max)
     for (int i = 1; i <= max; ++i)
     {
         sum = sum + i;
-        sumSquares = sumSquares + pow(i, 2);   // Careful! Issues with passing Int to func expecting float!
+        sumSquares = sumSquares + int(pow(float(i), 2.0));
     }
 
-    int lhs = pow(sum, 2);    // Note the implicit conversion back.
-    int rhs = sumSquares;
+    int lhs = int(pow(float(sum), 2.0));    // Note the explicit conversion back.
 
-    return (lhs - rhs);
+    return (lhs - sumSquares);
 }
 
 DifferenceSumOfSquaresAndSquareOfSum(100); // 25164150

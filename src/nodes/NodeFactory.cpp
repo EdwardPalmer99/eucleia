@@ -23,6 +23,44 @@
 namespace NodeFactory
 {
 
+AnyNode::Ptr createCastNode(BaseNode::Ptr expression, AnyObject::Type castToType)
+{
+    auto isCastable = [](AnyObject::Type castToType) -> bool
+    {
+        return (castToType == AnyObject::Int || castToType == AnyObject::Float);
+    };
+
+    if (!isCastable(castToType))
+    {
+        ThrowException("Cannot create cast node. Unsupported cast type!");
+    }
+
+    return std::make_shared<AnyNode>(NodeType::Cast, [isCastable, expression, castToType](Scope &scope)
+    {
+        auto evaluatedObject = expression->evaluate(scope);
+        if (!isCastable(evaluatedObject->getType()))
+        {
+            ThrowException("Unsupported cast type!");
+        }
+
+        if (evaluatedObject->getType() == castToType) /* Nothing to do */
+        {
+            return evaluatedObject;
+        }
+
+        if (castToType == AnyObject::Int)
+        {
+            long value = (long)expression->evaluate(scope)->getValue<double>();
+            return ObjectFactory::allocate(value);
+        }
+        else
+        {
+            double value = (double)expression->evaluate(scope)->getValue<long>();
+            return ObjectFactory::allocate(value);
+        }
+    });
+}
+
 AnyNode::Ptr createBoolNode(bool state)
 {
     return std::make_shared<AnyNode>(NodeType::Bool, [state](Scope &)
@@ -372,7 +410,7 @@ AnyPropertyNode::Ptr createArrayAccessNode(BaseNode::Ptr arrayLookupNode, BaseNo
         auto &arrayObj = theArrayObject->getValue<AnyObject::Vector>();
         auto index = arrayIndexNode->evaluate(scope)->getValue<long>();
 
-        if (index < 0 || index >= arrayObj.size())
+        if (index < 0 || index >= (long)arrayObj.size())
             ThrowException("Array index [" + std::to_string(index) + "] is out of bounds!");
 
         return arrayObj[index];

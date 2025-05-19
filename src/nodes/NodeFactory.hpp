@@ -9,6 +9,7 @@
 
 #pragma once
 #include "AnyNode.hpp"
+#include "AnyObject.hpp"
 #include "BaseNode.hpp"
 #include "FunctionCallNode.hpp"
 #include "ModuleFunctor.hpp"
@@ -18,6 +19,9 @@
 
 namespace NodeFactory
 {
+
+AnyNode::Ptr createCastNode(BaseNode::Ptr expression, AnyObject::Type castToType);
+
 AnyNode::Ptr createBoolNode(bool state);
 
 AnyNode::Ptr createIntNode(long value);

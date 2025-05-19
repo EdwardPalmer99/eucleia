@@ -34,4 +34,7 @@ public:
 
     /* Parse: [variable name] */
     BaseNode::Ptr parseVariable();
+
+    /* Parse: int([bool/int/float]), float([bool/int/float]) */
+    BaseNode::Ptr parseCast(AnyObject::Type castType);
 };

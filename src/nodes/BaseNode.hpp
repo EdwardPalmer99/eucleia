@@ -44,7 +44,8 @@ enum class NodeType
     ClassMethodCall,
     ArrayAccess,
     AddVariable,
-    Module
+    Module,
+    Cast
 };
 
 

@@ -75,16 +75,9 @@ AnyNode::Ptr createMathModuleNode()
 
         /* TODO: - bug if pass in an integer rather than a floatObject */
         auto firstObject = callArgs.front()->evaluate(scope);
-        auto secondObject = callArgs.front()->evaluate(scope);
+        auto secondObject = callArgs.back()->evaluate(scope);
 
-        if (firstObject->isType(AnyObject::Int) && secondObject->isType(AnyObject::Int)) /* Implicit casts */
-        {
-            return ObjectFactory::allocate(pow(firstObject->getValue<long>(), secondObject->getValue<long>()));
-        }
-        else /* Assume both are doubles */
-        {
-            return ObjectFactory::allocate(pow(firstObject->getValue<double>(), secondObject->getValue<double>()));
-        }
+        return ObjectFactory::allocate(pow(firstObject->getValue<double>(), secondObject->getValue<double>()));
     });
 
     return NodeFactory::createModuleNode("math", {doSqrt, doPow});
