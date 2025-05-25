@@ -9,10 +9,11 @@
 
 #include "ModuleFunctor.hpp"
 #include "AnyObject.hpp"
+#include "BaseNode.hpp"
 
 ModuleFunctor::ModuleFunctor(Function function) : _function(function) {}
 
-std::shared_ptr<AnyObject> ModuleFunctor::operator()(BaseNodePtrVector &args, Scope &scope)
+AnyObject ModuleFunctor::operator()(BaseNodePtrVector &args, Scope &scope)
 {
-    return !_function ? nullptr : _function(args, scope);
+    return !_function ? AnyObject() : _function(args, scope);
 }

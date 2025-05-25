@@ -8,8 +8,8 @@
  */
 
 #pragma once
+#include "AnyObject.hpp"
 #include <csetjmp>
-#include <memory>
 
 
 struct GlobalEnvRec
@@ -17,7 +17,7 @@ struct GlobalEnvRec
     jmp_buf *breakJumpPoint;
     jmp_buf *returnJumpPoint;
 
-    std::shared_ptr<class AnyObject> returnValue{nullptr};
+    AnyObject returnValue;
 };
 
 extern GlobalEnvRec gEnvironmentContext; // TODO: - remove once return done as well.

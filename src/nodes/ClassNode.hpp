@@ -32,5 +32,5 @@ public:
      * @param scope The scope in which to add the instance.
      * @return BaseObject* Pointer to itself
      */
-    std::shared_ptr<class AnyObject> evaluate(Scope &scope) override;
+    class AnyObject evaluate(Scope &scope) override;
 };

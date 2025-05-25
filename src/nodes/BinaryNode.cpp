@@ -15,6 +15,7 @@
 
 BinaryOperatorType BinaryNode::toBinaryOperator(const std::string &operatorString)
 {
+    // TODO: - make into static hashtable for speeding up
     if (operatorString == "+")
         return BinaryOperatorType::Add;
     else if (operatorString == "-")
@@ -46,17 +47,17 @@ BinaryOperatorType BinaryNode::toBinaryOperator(const std::string &operatorStrin
 }
 
 
-AnyObject::Ptr BinaryNode::evaluate(Scope &scope)
+AnyObject BinaryNode::evaluate(Scope &scope)
 {
     auto leftEvaluated = _left->evaluate(scope);
     auto rightEvaluated = _right->evaluate(scope);
 
     // Persist result by storing in outer scope.
-    return applyOperator(*leftEvaluated, *rightEvaluated);
+    return applyOperator(leftEvaluated, rightEvaluated);
 }
 
 
-AnyObject::Ptr BinaryNode::applyOperator(const AnyObject &left, const AnyObject &right) const
+AnyObject BinaryNode::applyOperator(const AnyObject &left, const AnyObject &right) const
 {
     if (left.isType(AnyObject::Bool) && right.isType(AnyObject::Bool))
     {
@@ -94,9 +95,9 @@ AnyObject::Ptr BinaryNode::applyOperator(const AnyObject &left, const AnyObject 
 }
 
 
-AnyObject::Ptr BinaryNode::applyOperator(const AnyObject::Vector &left, const AnyObject::Vector &right) const
+AnyObject BinaryNode::applyOperator(const AnyObject::Vector &left, const AnyObject::Vector &right) const
 {
-    switch (_binaryOperator)
+    switch (_binaryOperator) // TODO: - does this work? Test this code
     {
         case BinaryOperatorType::Add:
         {
@@ -107,7 +108,7 @@ AnyObject::Ptr BinaryNode::applyOperator(const AnyObject::Vector &left, const An
             result.insert(result.end(), left.begin(), left.end());
             result.insert(result.end(), right.begin(), right.end());
 
-            return ObjectFactory::allocate(std::move(result));
+            return AnyObject(std::move(result));
         }
         default:
             ThrowException("cannot apply operator to types Array, Array");
@@ -115,100 +116,100 @@ AnyObject::Ptr BinaryNode::applyOperator(const AnyObject::Vector &left, const An
 }
 
 
-AnyObject::Ptr BinaryNode::applyOperator(bool left, bool right) const
+AnyObject BinaryNode::applyOperator(bool left, bool right) const
 {
     switch (_binaryOperator)
     {
         case BinaryOperatorType::Equal:
-            return ObjectFactory::allocate(left == right);
+            return AnyObject(left == right);
         case BinaryOperatorType::NotEqual:
-            return ObjectFactory::allocate(left != right);
+            return AnyObject(left != right);
         case BinaryOperatorType::And:
-            return ObjectFactory::allocate(left && right);
+            return AnyObject(left && right);
         case BinaryOperatorType::Or:
-            return ObjectFactory::allocate(left != right);
+            return AnyObject(left != right);
         default:
             ThrowException("cannot apply operator to types Bool, Bool");
     }
 }
 
 
-AnyObject::Ptr BinaryNode::applyOperator(long left, long right) const
+AnyObject BinaryNode::applyOperator(long left, long right) const
 {
     switch (_binaryOperator)
     {
         case BinaryOperatorType::Add:
-            return ObjectFactory::allocate(left + right);
+            return AnyObject(left + right);
         case BinaryOperatorType::Minus:
-            return ObjectFactory::allocate(left - right);
+            return AnyObject(left - right);
         case BinaryOperatorType::Multiply:
-            return ObjectFactory::allocate(left * right);
+            return AnyObject(left * right);
         case BinaryOperatorType::Divide:
-            return ObjectFactory::allocate(left / right);
+            return AnyObject(left / right);
         case BinaryOperatorType::Equal:
-            return ObjectFactory::allocate(left == right);
+            return AnyObject(left == right);
         case BinaryOperatorType::NotEqual:
-            return ObjectFactory::allocate(left != right);
+            return AnyObject(left != right);
         case BinaryOperatorType::GreaterOrEqual:
-            return ObjectFactory::allocate(left >= right);
+            return AnyObject(left >= right);
         case BinaryOperatorType::Greater:
-            return ObjectFactory::allocate(left > right);
+            return AnyObject(left > right);
         case BinaryOperatorType::LessOrEqual:
-            return ObjectFactory::allocate(left <= right);
+            return AnyObject(left <= right);
         case BinaryOperatorType::Less:
-            return ObjectFactory::allocate(left < right);
+            return AnyObject(left < right);
         case BinaryOperatorType::Modulo:
-            return ObjectFactory::allocate(left % right);
+            return AnyObject(left % right);
         case BinaryOperatorType::And:
-            return ObjectFactory::allocate(left && right);
+            return AnyObject(left && right);
         case BinaryOperatorType::Or:
-            return ObjectFactory::allocate(left || right);
+            return AnyObject(left || right);
         default:
             ThrowException("cannot apply operator to types Int, Int");
     }
 }
 
 
-AnyObject::Ptr BinaryNode::applyOperator(double left, double right) const
+AnyObject BinaryNode::applyOperator(double left, double right) const
 {
     switch (_binaryOperator)
     {
         case BinaryOperatorType::Add:
-            return ObjectFactory::allocate(left + right);
+            return AnyObject(left + right);
         case BinaryOperatorType::Minus:
-            return ObjectFactory::allocate(left - right);
+            return AnyObject(left - right);
         case BinaryOperatorType::Multiply:
-            return ObjectFactory::allocate(left * right);
+            return AnyObject(left * right);
         case BinaryOperatorType::Divide:
-            return ObjectFactory::allocate(left / right);
+            return AnyObject(left / right);
         case BinaryOperatorType::Equal:
-            return ObjectFactory::allocate(left == right);
+            return AnyObject(left == right);
         case BinaryOperatorType::NotEqual:
-            return ObjectFactory::allocate(left != right);
+            return AnyObject(left != right);
         case BinaryOperatorType::GreaterOrEqual:
-            return ObjectFactory::allocate(left >= right);
+            return AnyObject(left >= right);
         case BinaryOperatorType::Greater:
-            return ObjectFactory::allocate(left > right);
+            return AnyObject(left > right);
         case BinaryOperatorType::LessOrEqual:
-            return ObjectFactory::allocate(left <= right);
+            return AnyObject(left <= right);
         case BinaryOperatorType::Less:
-            return ObjectFactory::allocate(left < right);
+            return AnyObject(left < right);
         default:
             ThrowException("cannot apply operator to types Float, Float");
     }
 }
 
 
-AnyObject::Ptr BinaryNode::applyOperator(const std::string &left, const std::string &right) const
+AnyObject BinaryNode::applyOperator(const std::string &left, const std::string &right) const
 {
     switch (_binaryOperator)
     {
         case BinaryOperatorType::Add:
-            return ObjectFactory::allocate(left + right);
+            return AnyObject(left + right);
         case BinaryOperatorType::Equal:
-            return ObjectFactory::allocate(left == right);
+            return AnyObject(left == right);
         case BinaryOperatorType::NotEqual:
-            return ObjectFactory::allocate(left != right);
+            return AnyObject(left != right);
         default:
             ThrowException("cannot apply operator to types String, String");
     }

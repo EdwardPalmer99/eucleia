@@ -8,44 +8,47 @@
  */
 
 #pragma once
-#include <memory>
 #include <string>
 #include <unordered_map>
-#include <vector>
+#include <list>
 
 class Scope
 {
 public:
-    Scope(const Scope &_parent);
-    Scope(const Scope *_parent = nullptr);
-    ~Scope() = default;
+    using VariableName = std::string;
 
-    /// Returns true if named object ("variable") is defined in our scope or in
-    /// a parent scope.
-    bool hasNamedObject(const std::string &name) const;
+    Scope() = default;
+    Scope(const Scope &parentScope);
 
-    /// Get a named object ("variable") in our scope or an outer scope. We work
-    /// outwards from our scope to handle variable shadowing correctly. If the
-    /// object is not found, return nullptr.
-    std::shared_ptr<class AnyObject> getOptionalNamedObject(const std::string &name) const;
+    /// Get a named object ("variable") in our scope or an outer scope. We work outwards from our scope to handle variable shadowing correctly.
+    class AnyObject &getObjectRef(const VariableName &name) const;
 
-    /// Similar to getOptionalObject but has a check to ensure pointer is valid.
-    std::shared_ptr<class AnyObject> getNamedObject(const std::string &name) const;
-
-    /// Returns non-const reference to parent scope.
-    inline Scope *parentScope() { return parent; }
-
-    /// Set a new parent scope. Use with care!
-    void setParentScope(Scope *parent_) { parent = parent_; }
+    class AnyObject *getObjectPtr(const VariableName &name) const;
 
     /// Create a link between a variable name and an object in this scope.
-    void linkObject(const std::string &name, std::shared_ptr<class AnyObject> object);
+    class AnyObject &link(const VariableName &name, AnyObject &&object);
+
+    /// Add a link between an already-defined object in this scope and another name to reference it.
+    class AnyObject &alias(const VariableName &nameAlias, const VariableName &name);
+
+    /// Returns non-const reference to parent scope.
+    inline Scope *parentScope() { return _enclosingScope; }
+
+    /// Set a new parent scope. Use with care!
+    void setParentScope(Scope *parent) { _enclosingScope = parent; }
+
+protected:
+    /// Throws if the name is already defined in this scope.
+    void checkForNameClashesInCurrentScope(const VariableName &name) const;
 
 private:
-    /// Stores a mapping from the variable name to a pointer to the object. These
-    /// are only linked objects defined in this scope. This enables variable
-    /// shadowing.
-    std::unordered_map<std::string, std::shared_ptr<class AnyObject>> linkedObjectForName;
+    using AnyObjectPtrMap = std::unordered_map<VariableName, class AnyObject *>;
 
-    Scope *parent{nullptr};
+    /* Stores references (mapped to _linkedObjects vector) */
+    AnyObjectPtrMap _objectPtrMap;
+
+    /* Stores all objects added to scope */
+    std::list<class AnyObject> _objects;
+
+    Scope *_enclosingScope{nullptr};
 };

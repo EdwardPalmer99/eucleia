@@ -8,16 +8,18 @@
  */
 
 #pragma once
-#include "BaseNode.hpp"
+#include "Logger.hpp"
 #include "ModuleFunctor.hpp"
 #include "PoolAllocator.hpp"
 #include <cassert>
 #include <memory>
 #include <new>
+#include <optional>
 #include <ostream>
 #include <string>
 #include <variant>
 #include <vector>
+
 
 // TODO: - profile and investigate using PoolAllocator
 // static PoolAllocator allocator{10};
@@ -26,8 +28,10 @@ class AnyObject
 {
 public:
     using Ptr = std::shared_ptr<AnyObject>;
-    using Vector = std::vector<AnyObject::Ptr>;
+    using Vector = std::vector<AnyObject>;
+    using Ref = AnyObject &;
 
+    AnyObject() = default;          /* None type */
     virtual ~AnyObject() = default; /* In case we subclass */
 
     enum Type
@@ -61,6 +65,8 @@ public:
     /* Converts user types like "int" --> AnyType::Int or returns None if not found */
     static AnyObject::Type getUserObjectType(const std::string &name);
 
+    static std::string typeToString(Type type);
+
     std::string typeToString() const;
 
     /* NB: require explicit to avoid implicit casting */
@@ -72,7 +78,7 @@ public:
     explicit AnyObject(ModuleFunctor value) : _value(std::move(value)), _type(_ModuleFunction) {}
 
     /* _userFuntion, _StructDefinition, Struct, ...*/
-    explicit AnyObject(std::shared_ptr<BaseNode> value, Type type) : _value(std::move(value)), _type(type) {}
+    explicit AnyObject(std::shared_ptr<class BaseNode> value, Type type) : _value(std::move(value)), _type(type) {}
 
     AnyObject &operator=(const AnyObject &other);
 
@@ -86,12 +92,14 @@ public:
 
     [[nodiscard]] inline bool isType(Type expectedType) const;
 
-    [[nodiscard]] AnyObject::Ptr clone() const;
+    [[nodiscard]] AnyObject clone() const;
 
     friend std::ostream &operator<<(std::ostream &out, const AnyObject &object);
 
-protected:
-    AnyObject() = default; /* Prevent direct initialization */
+    bool operator!() /* !(instance) == true if not initialized with a value */
+    {
+        return (_type == Type::NotSet);
+    }
 
 private:
     using ValueVariant = std::variant<long,
@@ -100,10 +108,14 @@ private:
                                       std::string,
                                       Vector,
                                       ModuleFunctor,
-                                      BaseNode::Ptr>;
-    ValueVariant _value{};
+                                      std::shared_ptr<class BaseNode>>;
+    ValueVariant _value{false};
     Type _type{Type::NotSet};
 };
+
+
+// TODO: - should only return a reference IFF we're using evaluateRef() to get the object otherwise it's constructor
+// will be called and the reference to its internal stored value may be garbage before we end-up using it
 
 
 template <typename TValue> // No type checking!!

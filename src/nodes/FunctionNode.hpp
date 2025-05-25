@@ -10,7 +10,6 @@
 #pragma once
 #include "BaseNode.hpp"
 #include "FunctionCallNode.hpp"
-#include <memory>
 #include <string>
 
 
@@ -28,7 +27,7 @@ public:
 
     ~FunctionNode() override = default;
 
-    std::shared_ptr<class AnyObject> evaluate(class Scope &scope) override;
+    class AnyObject evaluate(class Scope &scope) override;
 
     BaseNode::Ptr funcBody{nullptr};
 };

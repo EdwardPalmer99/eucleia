@@ -21,12 +21,13 @@ public:
     AddVariableNode(std::string name, AnyObject::Type type);
 
     // Creates a new empty variable of a given type to the scope (i.e. int a;).
-    std::shared_ptr<AnyObject> evaluate(Scope &scope) override;
-
-    std::string description() const;
+    AnyObject evaluate(Scope &scope) override;
+    AnyObject::Ref evaluateRef(Scope &scope) override;
 
     //  Type checking for variable assignment.
     bool passesAssignmentTypeCheck(const AnyObject &assignObject) const;
+
+    AnyObject::Type variableType() const { return _variableType; }
 
 protected:
     const AnyObject::Type _variableType;
@@ -34,8 +35,8 @@ protected:
 
 
 /**
- * Construct a reference to an existing variable declared in the scope or a parent
- * scope. This is similar to C++ and avoids unnecessary copies.
+ * Construct a reference to an existing variable declared in the scope or a parent scope. This is similar to C++ and
+ * avoids unnecessary copies.
  */
 class AddReferenceVariableNode : public AddVariableNode
 {
@@ -52,7 +53,9 @@ public:
      * @return Pointer to the object in the scope now bound to the variable name and
      * the reference name.
      */
-    std::shared_ptr<AnyObject> evaluate(Scope &scope) override;
+    AnyObject::Ref evaluateRef(Scope &scope) override;
+
+    AnyObject evaluate(Scope &scope);
 
 protected:
     const std::string referenceName;

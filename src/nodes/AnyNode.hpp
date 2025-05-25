@@ -8,11 +8,13 @@
  */
 
 #pragma once
+#include "AnyObject.hpp"
 #include "BaseNode.hpp"
-#include "PropertyInterface.hpp"
 #include "Scope.hpp"
 #include <functional>
 #include <memory>
+#include <optional>
+
 
 /* Generic node */
 class AnyNode : public BaseNode
@@ -20,32 +22,30 @@ class AnyNode : public BaseNode
 public:
     using Ptr = std::shared_ptr<AnyNode>;
 
-    using EvaluateFunction = std::function<std::shared_ptr<class AnyObject>(Scope &)>;
+    using EvaluateFunction = std::function<AnyObject(Scope &)>;
 
     explicit AnyNode(NodeType type, EvaluateFunction &&evaluateFunc)
         : BaseNode(type), _evaluateFunc(std::move(evaluateFunc)) {}
 
-    std::shared_ptr<class AnyObject> evaluate(Scope &scope) final;
+    class AnyObject evaluate(Scope &scope) final;
 
 private:
     EvaluateFunction _evaluateFunc;
 };
 
 
-class AnyPropertyNode : public AnyNode, public PropertyInterface
+class AnyPropertyNode : public AnyNode
 {
 public:
     using Ptr = std::shared_ptr<AnyPropertyNode>;
+    using EvaluateRefFunction = std::function<AnyObject &(Scope &)>;
 
-    explicit AnyPropertyNode(NodeType type, EvaluateFunction &&evaluateFunc, EvaluateFunction &&evaluateNoCloneFunc)
+    explicit AnyPropertyNode(NodeType type, EvaluateFunction &&evaluateFunc, EvaluateRefFunction &&evaluateRefFunc)
         : AnyNode(type, std::move(evaluateFunc)),
-          _evaluateNoCloneFunc(std::move(evaluateNoCloneFunc)) {}
+          _evaluateRefFunc(std::move(evaluateRefFunc)) {}
 
-    std::shared_ptr<class AnyObject> evaluateNoClone(Scope &scope) final
-    {
-        return _evaluateNoCloneFunc(scope);
-    }
+    class AnyObject &evaluateRef(Scope &scope) final;
 
 private:
-    EvaluateFunction _evaluateNoCloneFunc;
+    EvaluateRefFunction _evaluateRefFunc;
 };

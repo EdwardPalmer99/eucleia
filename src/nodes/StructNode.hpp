@@ -45,7 +45,7 @@ public:
      * Finishes initializing the struct object and links to the scope. Ownership
      * should pass to the scope from the AST. Returns a pointer to itself.
      */
-    std::shared_ptr<class AnyObject> evaluate(Scope &scope) override;
+    class AnyObject evaluate(Scope &scope) override;
 
     [[nodiscard]] const Scope &instanceScope() const { return _instanceScope; }
 

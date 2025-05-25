@@ -43,16 +43,16 @@ public:
         setType(NodeType::Binary);
     }
 
-    AnyObject::Ptr evaluate(Scope &scope) override;
+    AnyObject evaluate(Scope &scope) override;
 
 protected:
-    AnyObject::Ptr applyOperator(const AnyObject &left, const AnyObject &right) const;
+    AnyObject applyOperator(const AnyObject &left, const AnyObject &right) const;
 
-    AnyObject::Ptr applyOperator(bool left, bool right) const;
-    AnyObject::Ptr applyOperator(long left, long right) const;
-    AnyObject::Ptr applyOperator(double left, double right) const;
-    AnyObject::Ptr applyOperator(const std::string &left, const std::string &right) const;
-    AnyObject::Ptr applyOperator(const AnyObject::Vector &left, const AnyObject::Vector &right) const;
+    AnyObject applyOperator(bool left, bool right) const;
+    AnyObject applyOperator(long left, long right) const;
+    AnyObject applyOperator(double left, double right) const;
+    AnyObject applyOperator(const std::string &left, const std::string &right) const;
+    AnyObject applyOperator(const AnyObject::Vector &left, const AnyObject::Vector &right) const;
 
     /* Convert string to enum (faster if doing lost of comparisons) */
     static BinaryOperatorType toBinaryOperator(const std::string &operatorString);

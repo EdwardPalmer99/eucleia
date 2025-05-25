@@ -9,9 +9,15 @@
 
 
 #include "AnyNode.hpp"
-#include "AnyObject.hpp"
 
-std::shared_ptr<AnyObject> AnyNode::evaluate(Scope &scope)
+
+AnyObject AnyNode::evaluate(Scope &scope)
 {
     return _evaluateFunc(scope);
+}
+
+
+AnyObject &AnyPropertyNode::evaluateRef(Scope &scope)
+{
+    return _evaluateRefFunc(scope);
 }

@@ -43,7 +43,7 @@ public:
     /**
      * Install object in current scope.
      */
-    std::shared_ptr<class AnyObject> evaluate(Scope &scope) override;
+    class AnyObject evaluate(Scope &scope) override;
 
     /**
      * Calls evaluate method on all method nodes. Installs them in argument scope.

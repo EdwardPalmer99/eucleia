@@ -8,6 +8,7 @@
  */
 
 #include "BaseParser.hpp"
+#include "AnyObject.hpp"
 #include "Exceptions.hpp"
 
 

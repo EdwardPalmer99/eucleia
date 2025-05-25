@@ -23,8 +23,10 @@ ClassDefinitionNode::ClassDefinitionNode(std::string typeName_,
 }
 
 
-AnyObject::Ptr ClassDefinitionNode::evaluate(Scope &scope)
+AnyObject ClassDefinitionNode::evaluate(Scope &scope)
 {
+    log().debug("evaluating classdefinition node");
+
     // NB: override method defined in StructDefinitionNode.
     if (active)
     {
@@ -39,15 +41,14 @@ AnyObject::Ptr ClassDefinitionNode::evaluate(Scope &scope)
     buildMethodDefsHashMap(scope);
 
     /* NB: wrap-up in an object shared pointer */
-    auto objectWrapper = ObjectFactory::allocate(shared_from_this(), AnyObject::_ClassDefinition);
-
-    scope.linkObject(typeName, objectWrapper);
-    return objectWrapper;
+    return scope.link(typeName, AnyObject(shared_from_this(), AnyObject::_ClassDefinition));
 }
 
 
 void ClassDefinitionNode::installMethodsInScope(Scope &scope) const
 {
+    log().debug("Installing class method definitions in scope...");
+
     if (!active)
     {
         ThrowException("The class definition is inactive!");
@@ -55,6 +56,7 @@ void ClassDefinitionNode::installMethodsInScope(Scope &scope) const
 
     for (auto &[name, funcNode] : allMethodDefsMap)
     {
+        log().debug("installing " + funcNode->_funcName);
         (void)funcNode->evaluate(scope);
     }
 }
@@ -81,6 +83,7 @@ void ClassDefinitionNode::buildMethodDefsHashMap(const Scope &scope)
     // the same name even with different numbers and types of arguments.
     for (FunctionNode::Ptr funcDef : methodDefs)
     {
+        log().debug("Installing new method definition: " + funcDef->_funcName);
         allMethodDefsMap[funcDef->_funcName] = funcDef;
     }
 }

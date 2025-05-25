@@ -8,7 +8,10 @@
  */
 
 #pragma once
+#include "Exceptions.hpp"
+#include "Scope.hpp"
 #include <memory>
+#include <optional>
 #include <vector>
 
 
@@ -81,7 +84,11 @@ public:
         return type() == other.type();
     }
 
-    virtual std::shared_ptr<class AnyObject> evaluate(class Scope &scope) = 0; // TODO: - can this be const-cast?
+    /* Returns a copy of an object (good for light-weight types) */
+    virtual class AnyObject evaluate(Scope &); // TODO: - can this be const-cast?
+
+
+    virtual class AnyObject &evaluateRef(Scope &);
 
     void setType(NodeType type)
     {

@@ -43,7 +43,7 @@ public:
      * to the scope. Careful! Going this route means we don't have to create a
      * separate Node to create an Object.
      */
-    std::shared_ptr<class AnyObject> evaluate(class Scope &scope) override;
+    class AnyObject evaluate(class Scope &scope) override;
 
     /**
      * Calls evaluate method on all variables in this struct and parents. Installs

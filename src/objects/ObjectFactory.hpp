@@ -16,12 +16,6 @@
 namespace ObjectFactory
 {
 
-template <class... Args>
-[[nodiscard]] inline AnyObject::Ptr allocate(Args &&...args)
-{
-    return std::make_shared<AnyObject>(std::forward<Args>(args)...);
-}
-
-AnyObject::Ptr allocate(AnyObject::Type objectType);
+AnyObject createEmptyObject(AnyObject::Type objectType);
 
 } // namespace ObjectFactory

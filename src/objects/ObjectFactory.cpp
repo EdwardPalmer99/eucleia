@@ -14,22 +14,22 @@
 namespace ObjectFactory
 {
 
-AnyObject::Ptr allocate(AnyObject::Type objectType)
+AnyObject createEmptyObject(AnyObject::Type objectType)
 {
     switch (objectType)
     {
         case AnyObject::Int:
-            return std::make_shared<AnyObject>(0L);
+            return AnyObject(0L);
         case AnyObject::Bool:
-            return std::make_shared<AnyObject>(false);
+            return AnyObject(false);
         case AnyObject::Float:
-            return std::make_shared<AnyObject>((double)0.0);
+            return AnyObject((double)0.0);
         case AnyObject::String:
-            return std::make_shared<AnyObject>(std::string());
+            return AnyObject(std::string());
         case AnyObject::Array:
-            return std::make_shared<AnyObject>(AnyObject::Vector());
+            return AnyObject(AnyObject::Vector());
         default:
-            ThrowException("cannot allocate for object type!");
+            ThrowException("cannot create empty AnyObject with type [" + AnyObject::typeToString(objectType) + "]");
     }
 }
 

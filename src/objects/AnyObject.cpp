@@ -37,7 +37,7 @@ AnyObject::Type AnyObject::getUserObjectType(const std::string &name)
 }
 
 
-std::string AnyObject::typeToString() const
+std::string AnyObject::typeToString(Type type)
 {
     static const std::unordered_map<Type, std::string> TypeToString = {{NotSet, "NotSet"},
                                                                        {Int, "Int"},
@@ -52,13 +52,19 @@ std::string AnyObject::typeToString() const
                                                                        {_StructDefinition, "StructDef"},
                                                                        {_ClassDefinition, "ClassDef"}};
 
-    auto iter = TypeToString.find(_type);
+    auto iter = TypeToString.find(type);
     if (iter != TypeToString.end())
     {
         return (iter->second);
     }
 
-    return "Unknown";
+    ThrowException("Unknown AnyObjectType!");
+}
+
+
+std::string AnyObject::typeToString() const
+{
+    return AnyObject::typeToString(_type);
 }
 
 
@@ -67,7 +73,15 @@ AnyObject &AnyObject::operator=(const AnyObject &other)
     /* TODO: - implement if required */
     AnyObject::Vector cloneVector(const AnyObject::Vector &);
 
-    if (getType() != other.getType())
+    /* Handling not-set return type */
+    if (getType() == AnyObject::NotSet || other.getType() == AnyObject::NotSet)
+    {
+        _value = other._value;
+        _type = other._type;
+        return (*this);
+    }
+
+    if (getType() != other.getType()) /* TODO: - bit hacky. But return type can take any */
     {
         ThrowException("Invalid assignment. Types do not match [LHS = " + typeToString() + ", RHS = " + other.typeToString() + "]");
     }
@@ -94,22 +108,22 @@ AnyObject &AnyObject::operator=(const AnyObject &other)
 }
 
 
-AnyObject::Ptr AnyObject::clone() const
+AnyObject AnyObject::clone() const
 {
     AnyObject::Vector cloneVector(const AnyObject::Vector &);
 
     switch (getType())
     {
         case Bool:
-            return std::make_shared<AnyObject>(getValue<bool>());
+            return AnyObject(getValue<bool>()); /* TODO: - these are implicit. All nodes with evaluateRef implmemeneted can call it with evaluate() and just copy */
         case Int:
-            return std::make_shared<AnyObject>(getValue<long>());
+            return AnyObject(getValue<long>()); /* TODO: - don't need any of these except vector */
         case Float:
-            return std::make_shared<AnyObject>(getValue<double>());
+            return AnyObject(getValue<double>());
         case String:
-            return std::make_shared<AnyObject>(getValue<std::string>());
+            return AnyObject(getValue<std::string>());
         case Array:
-            return std::make_shared<AnyObject>(cloneVector(getValue<Vector>()));
+            return AnyObject(cloneVector(getValue<Vector>()));
         default:
             ThrowException("clone() is not implemented for object type [" + typeToString() + "]");
     }
@@ -123,7 +137,7 @@ AnyObject::Vector cloneVector(const AnyObject::Vector &vector)
 
     for (const auto &object : vector)
     {
-        clone.push_back(object->clone()); /* Deep-copy */
+        clone.push_back(object.clone()); /* Deep-copy */
     }
 
     return clone;
@@ -166,7 +180,7 @@ std::ostream &operator<<(std::ostream &out, const AnyObject::Vector &array)
 
     for (const auto &object : array)
     {
-        out << *object << ", ";
+        out << object << ", ";
     }
 
     out << "]";

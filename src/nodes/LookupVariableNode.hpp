@@ -23,7 +23,8 @@ public:
     [[nodiscard]] inline const std::string &name() const;
 
     /* Returns the object in the scope associated with a variable name */
-    std::shared_ptr<class AnyObject> evaluate(Scope &scope) override;
+    class AnyObject &evaluateRef(Scope &scope) override;
+    class AnyObject evaluate(Scope &scope) override;
 
 private:
     std::string _name;

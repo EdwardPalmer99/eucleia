@@ -31,13 +31,13 @@ std::shared_ptr<StructDefinitionNode> StructDefinitionNode::lookupParent(const S
         return nullptr;
     }
 
-    auto theObject = scope.getNamedObject(parentTypeName);
+    AnyObject::Ref theObject = scope.getObjectRef(parentTypeName);
 
-    return std::static_pointer_cast<StructDefinitionNode>(theObject->getValue<BaseNode::Ptr>());
+    return std::static_pointer_cast<StructDefinitionNode>(theObject.getValue<BaseNode::Ptr>());
 }
 
 
-AnyObject::Ptr StructDefinitionNode::evaluate(Scope &scope)
+AnyObject StructDefinitionNode::evaluate(Scope &scope)
 {
     if (active) // Expect one definition only!
     {
@@ -54,10 +54,9 @@ AnyObject::Ptr StructDefinitionNode::evaluate(Scope &scope)
     buildVariableDefHashMap(scope);
 
     /* NB: need to wrap-up in an object shared pointer */
-    auto objectWrapper = ObjectFactory::allocate(shared_from_this(), AnyObject::_StructDefinition);
+    auto objectWrapper = AnyObject(shared_from_this(), AnyObject::_StructDefinition);
 
-    scope.linkObject(typeName, objectWrapper);
-    return objectWrapper;
+    return scope.link(typeName, std::move(objectWrapper));
 }
 
 
