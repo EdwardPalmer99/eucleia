@@ -90,7 +90,7 @@ private:
     std::condition_variable _cv;
 
     /* ISO 8601 date time format */
-    const std::string _timestampFormat{"%Y-%m-%dT%H:%M:%S"};
+    const std::string _timestampFormat{"%Y%m%d %H:%M:%S"};
 
     const std::string _logPath{"/var/log/eucleia.log"};
 };
