@@ -60,7 +60,7 @@ public:
 private:
     unsigned int endCol(unsigned int lineNum) const;
 
-    const std::filesystem path;
+    const std::filesystem::path path;
 
     char *base{nullptr};
     char *ptr{nullptr};
