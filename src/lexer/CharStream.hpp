@@ -8,6 +8,7 @@
  */
 
 #pragma once
+#include <filesystem>
 #include <string>
 #include <unordered_map>
 
@@ -59,8 +60,7 @@ public:
 private:
     unsigned int endCol(unsigned int lineNum) const;
 
-
-    const std::string path;
+    const std::filesystem path;
 
     char *base{nullptr};
     char *ptr{nullptr};

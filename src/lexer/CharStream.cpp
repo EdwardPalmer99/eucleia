@@ -14,6 +14,7 @@
 #include "Stringify.hpp"
 #include <algorithm>
 #include <cstring>
+#include <filesystem>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -172,5 +173,5 @@ unsigned int CharStream::endCol(unsigned int lineNum) const
 
 std::string CharStream::location() const
 {
-    return eucleia::stringify("File \"%s\", Ln %d, Col %d", path.c_str(), line, col);
+    return eucleia::stringify("(%s:%d:%d)", path.filename().c_str(), line, col);
 }
