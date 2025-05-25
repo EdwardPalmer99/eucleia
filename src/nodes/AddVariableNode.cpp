@@ -8,117 +8,67 @@
  */
 
 #include "AddVariableNode.hpp"
-#include "ArrayObject.hpp"
-#include "FloatObject.hpp"
-#include "IntObject.hpp"
+#include "Exceptions.hpp"
 #include "ObjectFactory.hpp"
-#include "StringObject.hpp"
+#include "Scope.hpp"
 
 
-BaseObject::Ptr AddVariableNode::evaluate(Scope &scope)
+AddVariableNode::AddVariableNode(std::string name, AnyObject::Type type)
+    : LookupVariableNode(std::move(name)),
+      _variableType(type)
 {
-    /* TODO: - add support for functions (to enable passing to other functions, etc) */
-    auto objectPtr = ObjectFactory::allocate(_variableType);
-    scope.linkObject(name(), objectPtr);
+    setType(NodeType::AddVariable);
+}
 
-    return objectPtr;
+
+AnyObject::Ref AddVariableNode::evaluateRef(Scope &scope)
+{
+    /* Construct an empty object of that type and add to the scope. We assume user will set value with copy assignment */
+    return scope.link(name(), ObjectFactory::createEmptyObject(_variableType));
+}
+
+
+AnyObject AddVariableNode::evaluate(Scope &scope)
+{
+    return evaluateRef(scope);
 }
 
 
 /// Type checking.
-bool AddVariableNode::passesAssignmentTypeCheck(const BaseObject &assignObject) const
+bool AddVariableNode::passesAssignmentTypeCheck(const AnyObject &assignObject) const
 {
-    switch (_variableType)
-    {
-        case ObjectType::Int:
-            return assignObject.isObjectType<IntObject>();
-        case ObjectType::Float:
-            return assignObject.isObjectType<FloatObject>();
-        case ObjectType::Bool:
-            return assignObject.isObjectType<BoolObject>();
-        case ObjectType::String:
-            return assignObject.isObjectType<StringObject>();
-        case ObjectType::Array:
-            return assignObject.isObjectType<ArrayObject>();
-        default:
-            return false;
-    }
-}
-
-
-std::string AddVariableNode::description() const
-{
-    switch (_variableType)
-    {
-        case ObjectType::Bool:
-            return "Bool";
-        case ObjectType::Int:
-            return "Int";
-        case ObjectType::Float:
-            return "Float";
-        case ObjectType::String:
-            return "String";
-        case ObjectType::Array:
-            return "Array";
-        default:
-            return "Unknown";
-    }
+    return assignObject.isType(_variableType);
 }
 
 
 AddReferenceVariableNode::AddReferenceVariableNode(std::string referenceName_,
                                                    std::string boundName_,
-                                                   ObjectType boundType_)
+                                                   AnyObject::Type boundType_)
     : AddVariableNode(boundName_, boundType_),
       referenceName(referenceName_)
 {
 }
 
 
-BaseObject::Ptr AddReferenceVariableNode::evaluate(Scope &scope)
+AnyObject::Ref AddReferenceVariableNode::evaluateRef(Scope &scope)
 {
-    // 1. Lookup the object associated with the variable name defined in this
-    // scope or a parent scope (no issue with lifetimes such as to be bound
-    // object going out of scope before our reference.
-    BaseObject::Ptr boundObject = scope.getNamedObject(name());
+    // 1. Lookup the object associated with the variable name defined in this scope or a parent scope (no issue with
+    // lifetimes such as to be bound object going out of scope before our reference.
+    AnyObject::Ref boundObject = scope.getObjectRef(name());
 
-    // 2. Type checking. The type of the reference must match that of the bound
-    // object.
-    bool passesTypeChecking{false};
-
-    // TODO: - add type checking for classes and struct references.
-    switch (_variableType)
+    // TODO: - this will not work for classes/structs since they could point to different types.
+    // 2. Type checking. The type of the reference must match that of the bound object.
+    if (!passesAssignmentTypeCheck(boundObject))
     {
-        case ObjectType::Int:
-            passesTypeChecking = boundObject->isObjectType<IntObject>();
-            break;
-        case ObjectType::Float:
-            passesTypeChecking = boundObject->isObjectType<FloatObject>();
-            break;
-        case ObjectType::String:
-            passesTypeChecking = boundObject->isObjectType<StringObject>();
-            break;
-        case ObjectType::Bool:
-            passesTypeChecking = boundObject->isObjectType<StringObject>();
-            break;
-        case ObjectType::Array:
-            passesTypeChecking = boundObject->isObjectType<ArrayObject>();
-            break;
-        case ObjectType::Struct:
-        case ObjectType::Class:
-        default:
-            passesTypeChecking = true;
-            break; // No type checking currently!
+        ThrowException("Cannot bind reference [" + referenceName + "] to variable [" + name() + "]. Types do not match!");
     }
 
-    if (!passesTypeChecking)
-    {
-        ThrowException("Cannot bind reference " + referenceName + " to variable " + name() + ". Types do not match!");
-    }
+    // 3. Instead of creating a new object, we add the reference name and link to this existing object in the scope.
+    return scope.alias(referenceName, name());
+}
 
-    // 3. Instead of creating a new object, we add the reference name and link
-    // to this existing object in the scope.
-    scope.linkObject(referenceName, boundObject);
 
-    return boundObject;
+AnyObject AddReferenceVariableNode::evaluate(Scope &scope)
+{
+    return evaluateRef(scope); /* Copy result */
 }

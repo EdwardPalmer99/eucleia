@@ -9,30 +9,65 @@
 
 #include "NodeFactory.hpp"
 #include "AddVariableNode.hpp"
-#include "ArrayObject.hpp"
-#include "BaseObject.hpp"
-#include "ClassObject.hpp"
-#include "FloatObject.hpp"
+#include "AnyObject.hpp"
+#include "ClassNode.hpp"
 #include "FunctionCallNode.hpp"
-#include "IntObject.hpp"
 #include "JumpPoints.hpp"
 #include "LookupVariableNode.hpp"
 #include "ObjectFactory.hpp"
 #include "Scope.hpp"
-#include "StringObject.hpp"
-#include "StructObject.hpp"
+#include "StructNode.hpp"
 #include <cassert>
 #include <iostream>
 #include <memory>
 
+
 namespace NodeFactory
 {
+
+AnyNode::Ptr createCastNode(BaseNode::Ptr expression, AnyObject::Type castToType)
+{
+    auto isCastable = [](AnyObject::Type castToType) -> bool
+    {
+        return (castToType == AnyObject::Int || castToType == AnyObject::Float);
+    };
+
+    if (!isCastable(castToType))
+    {
+        ThrowException("Cannot create cast node. Unsupported cast type!");
+    }
+
+    return std::make_shared<AnyNode>(NodeType::Cast, [isCastable, expression, castToType](Scope &scope)
+    {
+        auto evaluatedObject = expression->evaluate(scope);
+        if (!isCastable(evaluatedObject.getType()))
+        {
+            ThrowException("Unsupported cast type!");
+        }
+
+        if (evaluatedObject.getType() == castToType) /* Nothing to do */
+        {
+            return evaluatedObject;
+        }
+
+        if (castToType == AnyObject::Int)
+        {
+            long value = (long)expression->evaluate(scope).getValue<double>();
+            return AnyObject(value);
+        }
+        else
+        {
+            double value = (double)expression->evaluate(scope).getValue<long>();
+            return AnyObject(value);
+        }
+    });
+}
 
 AnyNode::Ptr createBoolNode(bool state)
 {
     return std::make_shared<AnyNode>(NodeType::Bool, [state](Scope &)
     {
-        return ObjectFactory::allocate<BoolObject>(state);
+        return AnyObject(state);
     });
 }
 
@@ -40,7 +75,7 @@ AnyNode::Ptr createIntNode(long value)
 {
     return std::make_shared<AnyNode>(NodeType::Int, [value](Scope &)
     {
-        return ObjectFactory::allocate<IntObject>(value);
+        return AnyObject(value);
     });
 }
 
@@ -48,7 +83,7 @@ AnyNode::Ptr createStringNode(std::string value)
 {
     return std::make_shared<AnyNode>(NodeType::String, [value = std::move(value)](Scope &)
     {
-        return ObjectFactory::allocate<StringObject>(value);
+        return AnyObject(value);
     });
 }
 
@@ -56,7 +91,7 @@ AnyNode::Ptr createFloatNode(double value)
 {
     return std::make_shared<AnyNode>(NodeType::Float, [value](Scope &)
     {
-        return ObjectFactory::allocate<FloatObject>(value);
+        return AnyObject(value);
     });
 }
 
@@ -64,12 +99,12 @@ AnyNode::Ptr createIfNode(BaseNode::Ptr condition, BaseNode::Ptr thenBranch, Bas
 {
     return std::make_shared<AnyNode>(NodeType::If, [condition, thenBranch, elseBranch](Scope &scope) /* Use shared pointer to manage ownership */
     {
-        if (condition->evaluate<BoolObject>(scope)->value())
+        if (condition->evaluate(scope).getValue<bool>())
             return thenBranch->evaluate(scope);
         else if (elseBranch)
             return elseBranch->evaluate(scope);
         else
-            return BaseObject::Ptr();
+            return AnyObject();
     });
 }
 
@@ -89,15 +124,15 @@ AnyNode::Ptr createForLoopNode(BaseNode::Ptr init, BaseNode::Ptr condition, Base
         if (setjmp(local) != 1)
         {
             for (;
-                 condition->evaluate<BoolObject>(loopScope)->value();
-                 update->evaluate(loopScope))
+                 condition->evaluate(loopScope).getValue<bool>();
+                 (void)update->evaluate(loopScope))
             {
                 (void)body->evaluate(loopScope);
             }
         }
 
         popBreakJumpPoint();
-        return nullptr;
+        return AnyObject();
     });
 }
 
@@ -114,7 +149,7 @@ AnyNode::Ptr createWhileLoopNode(BaseNode::Ptr condition, BaseNode::Ptr body)
         {
             Scope loopScope(scope); // Extend scope.
 
-            while (condition->evaluate<BoolObject>(scope)->value()) /* Memory leak */
+            while (condition->evaluate(scope).getValue<bool>())
             {
                 (void)body->evaluate(loopScope);
             }
@@ -123,7 +158,7 @@ AnyNode::Ptr createWhileLoopNode(BaseNode::Ptr condition, BaseNode::Ptr body)
         // Restore original context.
         popBreakJumpPoint();
 
-        return nullptr;
+        return AnyObject();
     });
 }
 
@@ -142,13 +177,13 @@ AnyNode::Ptr createDoWhileLoopNode(BaseNode::Ptr condition, BaseNode::Ptr body)
             do
             {
                 (void)body->evaluate(loopScope);
-            } while (condition->evaluate<BoolObject>(scope)->value()); /* NB: evaluate in outerscope (no access to loop scope)*/
+            } while (condition->evaluate(scope).getValue<bool>()); /* NB: evaluate in outerscope (no access to loop scope) */
         }
 
         // Restore original context.
         popBreakJumpPoint();
 
-        return nullptr; // Return nothing.
+        return AnyObject(); // Return nothing.
     });
 }
 
@@ -160,7 +195,7 @@ AnyNode::Ptr createBreakNode()
         (void)scope;
         jumpToBreakJumpPoint(); /* Jump to last set point */
 
-        return nullptr;
+        return AnyObject();
     });
 }
 
@@ -168,7 +203,7 @@ AnyNode::Ptr createReturnNode(BaseNode::Ptr returnNode)
 {
     return std::make_shared<AnyNode>(NodeType::Return, [returnNode](Scope &scope)
     {
-        gEnvironmentContext.returnValue = nullptr;
+        gEnvironmentContext.returnValue = AnyObject();
 
         if (returnNode != nullptr) // i.e. return true;
         {
@@ -176,7 +211,7 @@ AnyNode::Ptr createReturnNode(BaseNode::Ptr returnNode)
         }
 
         longjmp(*gEnvironmentContext.returnJumpPoint, 1);
-        return nullptr;
+        return AnyObject();
     });
 }
 
@@ -185,9 +220,9 @@ AnyNode::Ptr createNotNode(BaseNode::Ptr expression)
 {
     return std::make_shared<AnyNode>(NodeType::Not, [expression](Scope &scope)
     {
-        auto result = expression->evaluate<BoolObject>(scope);
+        AnyObject result = expression->evaluate(scope);
 
-        return ObjectFactory::allocate<BoolObject>(!result->value());
+        return AnyObject(!result.getValue<bool>());
     });
 }
 
@@ -207,7 +242,7 @@ AnyNode::Ptr createBlockNode(BaseNodePtrVector nodes)
         }
 
         /* Any memory allocations cleared-up when we exit */
-        return nullptr;
+        return AnyObject();
     });
 }
 
@@ -220,22 +255,16 @@ AnyNode::Ptr createAssignNode(BaseNode::Ptr left, BaseNode::Ptr right)
         {
             auto &accessor = left->castNode<AnyPropertyNode>();
 
-            *(accessor.evaluateNoClone(scope)) = *(right->evaluate(scope));
-            return nullptr;
+            accessor.evaluateRef(scope) = right->evaluate(scope);
+            return AnyObject();
         }
 
         assert(left->isNodeType(NodeType::AddVariable) || left->isNodeType(NodeType::LookupVariable));
 
         // Case 1: AddVariableNode -> we create default init object, add to scope and return.
-        // Case 2: LookupVariableNode -> we object defined in scope (not cloned!) - TODO: - think about whether we should clone it.
-        BaseObject::Ptr objectLHS = left->evaluate(scope);
-
-        // Object we want to assign to LHS.
-        BaseObject::Ptr objectRHS = right->evaluate(scope);
-
-        // Update directly. TODO: - We will need to implement this for some object types still.
-        *objectLHS = *objectRHS;
-        return nullptr;
+        // Case 2: LookupVariableNode -> object defined in scope (not cloned!) - TODO: - think about whether we should clone it.
+        left->evaluateRef(scope) = right->evaluate(scope);
+        return AnyObject();
     });
 }
 
@@ -245,7 +274,7 @@ AnyNode::Ptr createArrayNode(BaseNodePtrVector nodes)
     // TODO: - could treat as references in array?
     return std::make_shared<AnyNode>(NodeType::Array, [nodes = std::move(nodes)](Scope &scope)
     {
-        BaseObjectPtrVector evaluatedObjects;
+        AnyObject::Vector evaluatedObjects;
 
         evaluatedObjects.reserve(nodes.size());
 
@@ -254,7 +283,7 @@ AnyNode::Ptr createArrayNode(BaseNodePtrVector nodes)
             evaluatedObjects.push_back(node->evaluate(scope));
         }
 
-        return ObjectFactory::allocate<ArrayObject>(std::move(evaluatedObjects));
+        return AnyObject(std::move(evaluatedObjects));
     });
 }
 
@@ -268,7 +297,7 @@ AnyNode::Ptr createFileNode(BaseNodePtrVector nodes)
             (void)node->evaluate(scope);
         }
 
-        return nullptr;
+        return AnyObject();
     });
 }
 
@@ -281,19 +310,19 @@ AnyNode::Ptr createPrefixIncrementNode(BaseNode::Ptr expression)
         assert(expression->isNodeType(NodeType::LookupVariable));
 
         // 2. Object associated with variable name in scope must be integer or float.
-        auto bodyEvaluated = expression->evaluate(scope);
-        if (bodyEvaluated->isObjectType<IntObject>())
+        AnyObject::Ref bodyEvaluated = expression->evaluateRef(scope);
+        if (bodyEvaluated.isType(AnyObject::Int))
         {
-            ++(bodyEvaluated->castObject<IntObject>());
+            ++(bodyEvaluated.getValue<long>());
             return bodyEvaluated;
         }
-        else if (bodyEvaluated->isObjectType<FloatObject>())
+        else if (bodyEvaluated.isType(AnyObject::Float))
         {
-            ++(bodyEvaluated->castObject<FloatObject>());
+            ++(bodyEvaluated.getValue<double>());
             return bodyEvaluated;
         }
 
-        ThrowException("cannot use prefix operator on object of type");
+        ThrowException("cannot use prefix operator on object of type [" + bodyEvaluated.typeToString() + "]");
     });
 }
 
@@ -306,19 +335,19 @@ AnyNode::Ptr createPrefixDecrementNode(BaseNode::Ptr expression)
         assert(expression->isNodeType(NodeType::LookupVariable));
 
         // 2. Object associated with variable name in scope must be integer or float.
-        auto bodyEvaluated = expression->evaluate(scope);
-        if (bodyEvaluated->isObjectType<IntObject>())
+        AnyObject::Ref bodyEvaluated = expression->evaluateRef(scope);
+        if (bodyEvaluated.isType(AnyObject::Int))
         {
-            --(bodyEvaluated->castObject<IntObject>());
+            --(bodyEvaluated.getValue<long>());
             return bodyEvaluated;
         }
-        else if (bodyEvaluated->isObjectType<FloatObject>())
+        else if (bodyEvaluated.isType(AnyObject::Float))
         {
-            --(bodyEvaluated->castObject<FloatObject>());
+            --(bodyEvaluated.getValue<double>());
             return bodyEvaluated;
         }
 
-        ThrowException("cannot use prefix operator on object of type.");
+        ThrowException("cannot use prefix operator on object of type [" + bodyEvaluated.typeToString() + "]");
     });
 }
 
@@ -327,18 +356,14 @@ AnyNode::Ptr createNegationNode(BaseNode::Ptr expression)
 {
     return std::make_shared<AnyNode>(NodeType::Negation, [expression](Scope &scope)
     {
-        auto bodyEvaluated = expression->evaluate(scope);
+        AnyObject bodyEvaluated = expression->evaluate(scope);
 
-        BaseObject::Ptr result{nullptr};
-
-        if (bodyEvaluated->isObjectType<IntObject>())
-            result = ObjectFactory::allocate<IntObject>(-bodyEvaluated->castObject<IntObject>());
-        else if (bodyEvaluated->isObjectType<FloatObject>())
-            result = ObjectFactory::allocate<FloatObject>(-bodyEvaluated->castObject<FloatObject>());
+        if (bodyEvaluated.isType(AnyObject::Int))
+            return AnyObject(-bodyEvaluated.getValue<long>());
+        else if (bodyEvaluated.isType(AnyObject::Float))
+            return AnyObject(-bodyEvaluated.getValue<double>());
         else
-            ThrowException("invalid object type");
-
-        return result;
+            ThrowException("invalid object type [" + bodyEvaluated.typeToString() + "]");
     });
 }
 
@@ -347,14 +372,17 @@ AnyPropertyNode::Ptr createStructAccessNode(std::string structVarName, std::stri
 {
     auto evaluateNoClone = [structVarName, memberVarName](Scope &scope)
     {
-        auto structObject = scope.getNamedObject<StructObject>(structVarName);
-        return structObject->instanceScope().getNamedObject(memberVarName);
+        auto &theObject = scope.getObjectRef(structVarName);
+
+        // TODO: - reimplement this
+        auto theStructObject = std::static_pointer_cast<StructNode>(theObject.getValue<BaseNode::Ptr>());
+
+        return std::ref(theStructObject->instanceScope().getObjectRef(memberVarName));
     };
 
     auto evaluate = [evaluateNoClone](Scope &scope)
     {
-        BaseObject::Ptr currentObject = evaluateNoClone(scope);
-        return currentObject->clone();
+        return evaluateNoClone(scope);
     };
 
 
@@ -366,35 +394,39 @@ AnyPropertyNode::Ptr createArrayAccessNode(BaseNode::Ptr arrayLookupNode, BaseNo
 {
     assert(arrayLookupNode->isNodeType(NodeType::LookupVariable));
 
-    auto evaluateNoClone = [arrayLookupNode, arrayIndexNode](Scope &scope)
+    auto evaluateNoClone = [arrayLookupNode, arrayIndexNode](Scope &scope) /* TODO: - can remove arrayLookupNode and just use name to find it in scope*/
     {
         // Lookup in array.
-        auto arrayObj = arrayLookupNode->evaluate(scope)->castObject<ArrayObject>();
+        AnyObject::Ref theArrayObject = arrayLookupNode->evaluateRef(scope); /* Careful with references! */
 
-        return arrayObj[arrayIndexNode->evaluateObject<IntObject::Type>(scope)];
+        auto &arrayObj = theArrayObject.getValue<AnyObject::Vector>();
+        auto index = arrayIndexNode->evaluate(scope).getValue<long>();
+
+        if (index < 0 || index >= (long)arrayObj.size())
+            ThrowException("Array index [" + std::to_string(index) + "] is out of bounds!");
+
+        return std::ref(arrayObj.at(index)); /* Returns a reference */
     };
 
     auto evaluate = [evaluateNoClone](Scope &scope)
     {
-        BaseObject::Ptr currentObject = evaluateNoClone(scope);
-        return currentObject->clone();
+        return evaluateNoClone(scope); /* Returns a copy */
     };
 
     return std::make_shared<AnyPropertyNode>(NodeType::ArrayAccess, std::move(evaluate), std::move(evaluateNoClone));
 }
 
 
-AnyNode::Ptr createModuleNode(std::string moduleName, std::vector<ModuleFunctionPair> moduleFunctions)
+AnyNode::Ptr createModuleNode(std::string moduleName, ModuleFunctor::Definitions moduleFunctions)
 {
     return std::make_shared<AnyNode>(NodeType::Module, [moduleName = std::move(moduleName), moduleFunctions = std::move(moduleFunctions)](Scope &scope)
     {
         for (auto &it : moduleFunctions) /* Add to scope */
         {
-            auto object = ObjectFactory::allocate<ModuleFunctionObject>(it.second);
-            scope.linkObject(it.first, object);
+            (void)scope.link(it.first, AnyObject(ModuleFunctor(it.second)));
         }
 
-        return nullptr;
+        return AnyObject();
     });
 }
 
@@ -403,7 +435,9 @@ AnyNode::Ptr createClassMethodCallNode(std::string instanceName, FunctionCallNod
     return std::make_shared<AnyNode>(NodeType::ClassMethodCall, [instanceName = std::move(instanceName),
                                                                  methodCallNode](Scope &scope)
     {
-        auto thisObject = scope.getNamedObject<ClassObject>(instanceName);
+        AnyObject::Ref anyObject = scope.getObjectRef(instanceName);
+
+        auto thisObject = std::static_pointer_cast<ClassNode>(anyObject.getValue<BaseNode::Ptr>());
 
         // Important: to correctly evaluate the method, we need to add a parent scope
         // for the class instance temporarily each time we evaluate so function has
@@ -411,7 +445,7 @@ AnyNode::Ptr createClassMethodCallNode(std::string instanceName, FunctionCallNod
         thisObject->instanceScope().setParentScope(&scope);
 
         /* But evaluate in class' instance scope */
-        BaseObject::Ptr result = methodCallNode->evaluate(thisObject->instanceScope());
+        AnyObject result = methodCallNode->evaluate(thisObject->instanceScope());
 
         // Set back to avoid problems if we forget to reset it in future.
         thisObject->instanceScope().setParentScope(nullptr);

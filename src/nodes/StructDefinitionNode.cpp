@@ -1,5 +1,5 @@
 /**
- * @file StructDefinitionObject.cpp
+ * @file StructDefinitionNode.cpp
  * @author Edward Palmer
  * @date 2024-11-30
  *
@@ -7,12 +7,15 @@
  *
  */
 
-#include "StructDefinitionObject.hpp"
+#include "StructDefinitionNode.hpp"
+#include "AddVariableNode.hpp"
+#include "AnyObject.hpp"
+#include "ObjectFactory.hpp"
+#include "Scope.hpp"
 
-
-StructDefinitionObject::StructDefinitionObject(std::string typeName_,
-                                               std::string parentTypeName_,
-                                               std::vector<AddVariableNode::Ptr> variableDefs_)
+StructDefinitionNode::StructDefinitionNode(std::string typeName_,
+                                           std::string parentTypeName_,
+                                           std::vector<AddVariableNode::Ptr> variableDefs_)
     : typeName(std::move(typeName_)),
       parentTypeName(std::move(parentTypeName_)),
       variableDefs(std::move(variableDefs_))
@@ -21,18 +24,20 @@ StructDefinitionObject::StructDefinitionObject(std::string typeName_,
 }
 
 
-std::shared_ptr<StructDefinitionObject> StructDefinitionObject::lookupParent(const Scope &scope) const
+std::shared_ptr<StructDefinitionNode> StructDefinitionNode::lookupParent(const Scope &scope) const
 {
     if (parentTypeName.empty())
     {
         return nullptr;
     }
 
-    return scope.getNamedObject<StructDefinitionObject>(parentTypeName);
+    AnyObject::Ref theObject = scope.getObjectRef(parentTypeName);
+
+    return std::static_pointer_cast<StructDefinitionNode>(theObject.getValue<BaseNode::Ptr>());
 }
 
 
-BaseObject::Ptr StructDefinitionObject::evaluate(Scope &scope)
+AnyObject StructDefinitionNode::evaluate(Scope &scope)
 {
     if (active) // Expect one definition only!
     {
@@ -48,14 +53,14 @@ BaseObject::Ptr StructDefinitionObject::evaluate(Scope &scope)
     // prior to this.
     buildVariableDefHashMap(scope);
 
-    // NB: scope cannot manage lifetime of this definition currently since it
-    // is owned by the AST. TODO: - rectify this.
-    scope.linkObject(typeName, shared_from_this());
-    return shared_from_this();
+    /* NB: need to wrap-up in an object shared pointer */
+    auto objectWrapper = AnyObject(shared_from_this(), AnyObject::_StructDefinition);
+
+    return scope.link(typeName, std::move(objectWrapper));
 }
 
 
-void StructDefinitionObject::installVariablesInScope(Scope &scope, std::unordered_set<std::string> &variableNames) const
+void StructDefinitionNode::installVariablesInScope(Scope &scope, std::unordered_set<std::string> &variableNames) const
 {
     if (!active)
     {
@@ -72,14 +77,14 @@ void StructDefinitionObject::installVariablesInScope(Scope &scope, std::unordere
 }
 
 
-void StructDefinitionObject::buildVariableDefHashMap(const Scope &scope)
+void StructDefinitionNode::buildVariableDefHashMap(const Scope &scope)
 {
     if (!allVariableDefsMap.empty())
     {
         return; // Already built.
     }
 
-    std::shared_ptr<StructDefinitionObject> parent = lookupParent(scope);
+    auto parent = lookupParent(scope);
     if (parent)
     {
         parent->buildVariableDefHashMap(scope); // TODO: - unnecessary

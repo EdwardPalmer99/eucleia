@@ -68,17 +68,17 @@ std::string LoggerImpl::levelName(LogLevel level) const
     switch (level)
     {
         case LogLevel::Trace:
-            return "trace";
+            return "Trace";
         case LogLevel::Debug:
-            return "debug";
+            return "Debug";
         case LogLevel::Info:
-            return "info";
+            return "Info";
         case LogLevel::Warning:
-            return "warning";
+            return "Warn";
         case LogLevel::Error:
-            return "error";
+            return "Error";
         case LogLevel::Critical:
-            return "critical";
+            return "Critical";
         default:
             ThrowException("invalid Level enum");
     }

@@ -11,13 +11,16 @@
 #include "AnyNode.hpp"
 #include "BaseNode.hpp"
 #include "FunctionCallNode.hpp"
-#include "ModuleFunctionObject.hpp"
+#include "ModuleFunctor.hpp"
 #include <string>
 #include <vector>
 
 
 namespace NodeFactory
 {
+
+AnyNode::Ptr createCastNode(BaseNode::Ptr expression, typename AnyObject::Type castToType);
+
 AnyNode::Ptr createBoolNode(bool state);
 
 AnyNode::Ptr createIntNode(long value);
@@ -64,7 +67,7 @@ AnyPropertyNode::Ptr createStructAccessNode(std::string structVariableName, std:
 
 AnyPropertyNode::Ptr createArrayAccessNode(BaseNode::Ptr arrayLookupNode, BaseNode::Ptr arrayIndexNode);
 
-AnyNode::Ptr createModuleNode(std::string moduleName = "", std::vector<ModuleFunctionPair> moduleFunctionPairs = {});
+AnyNode::Ptr createModuleNode(std::string moduleName = "", ModuleFunctor::Definitions moduleFunctionPairs = {});
 
 AnyNode::Ptr createClassMethodCallNode(std::string instanceName, FunctionCallNode::Ptr methodCallNode);
 

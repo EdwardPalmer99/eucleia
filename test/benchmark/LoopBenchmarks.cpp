@@ -13,8 +13,9 @@
 #include "test/utility/Utility.hpp"
 #include <benchmark/benchmark.h>
 
-
-static void BenchmarkParsingCountTo1M(benchmark::State &state)
+namespace Loops
+{
+static void ParseCountTo1M(benchmark::State &state)
 {
     auto path = (getTestDirPath() + "benchmark/data/CountToOneMillion.ek");
 
@@ -25,7 +26,7 @@ static void BenchmarkParsingCountTo1M(benchmark::State &state)
 }
 
 
-static void BenchmarkEvaluatingCountTo1M(benchmark::State &state)
+static void EvaluateCountTo1M(benchmark::State &state)
 {
     auto path = (getTestDirPath() + "benchmark/data/CountToOneMillion.ek");
 
@@ -38,17 +39,8 @@ static void BenchmarkEvaluatingCountTo1M(benchmark::State &state)
     }
 }
 
+} // namespace Loops
 
-static void BenchmarkEvaluateFibTo25(benchmark::State &state)
-{
-    auto path = (getTestDirPath() + "benchmark/data/EvaluateFibToTwentyFive.ek");
 
-    for (auto _ : state)
-    {
-        Interpreter::evaluateFile(path);
-    }
-}
-
-BENCHMARK(BenchmarkParsingCountTo1M)->Unit(benchmark::kMillisecond);
-BENCHMARK(BenchmarkEvaluatingCountTo1M)->Unit(benchmark::kMillisecond);
-BENCHMARK(BenchmarkEvaluateFibTo25)->Unit(benchmark::kMillisecond);
+BENCHMARK(Loops::ParseCountTo1M)->Unit(benchmark::kMillisecond);
+BENCHMARK(Loops::EvaluateCountTo1M)->Unit(benchmark::kMillisecond);

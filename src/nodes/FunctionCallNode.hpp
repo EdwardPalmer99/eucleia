@@ -8,12 +8,8 @@
  */
 
 #pragma once
-#include "AddVariableNode.hpp"
 #include "BaseNode.hpp"
-#include "BaseObject.hpp"
-#include "Scope.hpp"
 #include <algorithm>
-#include <memory>
 #include <string>
 #include <vector>
 
@@ -34,10 +30,10 @@ public:
 
     // TODO: - don't forget to do performance profiling for Fib sequence and see memory requirements for old and new version
     // TODO: - create a new PR after this for parser to store all nodes in AST in flat array using pointers with method to delete by walking along array.
-    BaseObject::Ptr evaluate(Scope &scope) override;
+    class AnyObject evaluate(class Scope &scope) override;
 
-    BaseObject::Ptr evaluateFunctionBody(BaseNode &funcBody, Scope &funcScope);
+    class AnyObject evaluateFunctionBody(BaseNode &funcBody, class Scope &funcScope);
 
-    std::string _funcName;
+    std::string _funcName; /* TODO: - hide */
     BaseNodePtrVector _funcArgs{nullptr};
 };

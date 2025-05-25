@@ -1,5 +1,5 @@
 /**
- * @file StructObject.hpp
+ * @file StructNode.hpp
  * @author Edward Palmer
  * @date 2024-11-24
  *
@@ -9,10 +9,10 @@
 
 #pragma once
 #include "BaseNode.hpp"
-#include "BaseObject.hpp"
+
 #include "Exceptions.hpp"
 #include "Scope.hpp"
-#include "StructDefinitionObject.hpp"
+#include "StructDefinitionNode.hpp"
 #include <memory>
 #include <ostream>
 #include <string>
@@ -21,37 +21,31 @@
 /**
  * struct SomeStruct a;
  */
-class StructObject : public BaseObject, public BaseNode, public std::enable_shared_from_this<StructObject>
+class StructNode : public BaseNode, public std::enable_shared_from_this<StructNode>
 {
 public:
-    StructObject() = delete;
+    using Ptr = std::shared_ptr<StructNode>();
+
+    StructNode() = delete;
 
     /**
-     * Create a new empty StructObject with the name.
+     * Create a new empty StructNode with the name.
      */
-    StructObject(std::string typeName_, std::string name_);
+    StructNode(std::string typeName_, std::string name_);
 
     /**
      * Assignment operator.
      */
-    StructObject &operator=(const BaseObject &other) override;
+    StructNode &operator=(const StructNode &other);
+
+    // TODO: - we will need to copy this assignment check and add it to the AnyNode
+    // type
 
     /**
      * Finishes initializing the struct object and links to the scope. Ownership
      * should pass to the scope from the AST. Returns a pointer to itself.
      */
-    BaseObject::Ptr evaluate(Scope &scope) override;
-
-    // TODO: - implement in future.
-    BaseObject::Ptr clone() const override
-    {
-        ThrowException("not implemented!");
-    }
-
-    /**
-     * Returns a description of the struct.
-     */
-    friend std::ostream &operator<<(std::ostream &os, const BaseObject &);
+    class AnyObject evaluate(Scope &scope) override;
 
     [[nodiscard]] const Scope &instanceScope() const { return _instanceScope; }
 
@@ -84,5 +78,5 @@ protected:
     /**
      * Store the struct definition once active.
      */
-    std::shared_ptr<StructDefinitionObject> structDefinition{nullptr};
+    std::shared_ptr<StructDefinitionNode> structDefinition{nullptr};
 };

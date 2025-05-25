@@ -8,9 +8,15 @@
  */
 
 #include "LookupVariableNode.hpp"
+#include "AnyObject.hpp"
 
-
-BaseObject::Ptr LookupVariableNode::evaluate(Scope &scope)
+AnyObject::Ref LookupVariableNode::evaluateRef(Scope &scope)
 {
-    return scope.getNamedObject(_name);
+    return scope.getObjectRef(_name);
+}
+
+
+AnyObject LookupVariableNode::evaluate(Scope &scope)
+{
+    return evaluateRef(scope); /* Copy object. Avoid if possible */
 }

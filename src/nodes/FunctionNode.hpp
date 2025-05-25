@@ -9,7 +9,6 @@
 
 #pragma once
 #include "BaseNode.hpp"
-#include "BaseObject.hpp"
 #include "FunctionCallNode.hpp"
 #include <string>
 
@@ -28,7 +27,7 @@ public:
 
     ~FunctionNode() override = default;
 
-    BaseObject::Ptr evaluate(Scope &scope) override;
+    class AnyObject evaluate(class Scope &scope) override;
 
     BaseNode::Ptr funcBody{nullptr};
 };

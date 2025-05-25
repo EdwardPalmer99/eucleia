@@ -8,15 +8,16 @@
  */
 
 #pragma once
-#include "BaseObject.hpp"
+#include "AnyObject.hpp"
 #include <csetjmp>
+
 
 struct GlobalEnvRec
 {
     jmp_buf *breakJumpPoint;
     jmp_buf *returnJumpPoint;
 
-    BaseObject::Ptr returnValue{nullptr};
+    AnyObject returnValue;
 };
 
 extern GlobalEnvRec gEnvironmentContext; // TODO: - remove once return done as well.

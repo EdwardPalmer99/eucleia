@@ -8,23 +8,27 @@
  */
 
 #include "FunctionCallNode.hpp"
+#include "AddVariableNode.hpp"
+#include "AnyObject.hpp"
+#include "Exceptions.hpp"
 #include "FunctionNode.hpp"
-#include "FunctionObject.hpp"
 #include "JumpPoints.hpp"
-#include "ModuleFunctionObject.hpp"
+#include "ModuleFunctor.hpp"
+#include "Scope.hpp"
 
-BaseObject::Ptr FunctionCallNode::evaluate(Scope &scope)
+AnyObject FunctionCallNode::evaluate(Scope &scope)
 {
+    AnyObject::Ref funcObject = scope.getObjectRef(_funcName);
+
     // 0. Any library functions that we wish to evaluate.
-    auto libraryFunc = scope.getOptionalNamedObject<BaseObject>(_funcName);
-    if (libraryFunc && libraryFunc->isObjectType<ModuleFunctionObject>())
+    if (funcObject.isType(AnyObject::_ModuleFunction))
     {
-        return libraryFunc->castObject<ModuleFunctionObject>()(_funcArgs, scope);
+        return funcObject.getValue<ModuleFunctor>()(_funcArgs, scope);
     }
 
     // TODO: - finish implementing here. Should not be a shared pointer.
     // 1. Get a pointer to the function node stored in this scope.
-    auto funcNode = scope.getNamedObject<FunctionObject>(_funcName)->value();
+    auto funcNode = std::static_pointer_cast<FunctionNode>(funcObject.getValue<BaseNode::Ptr>()); // TODO: - insanely ugly
 
     // 2. Verify that the number of arguments matches those required for the
     // function we are calling.
@@ -51,25 +55,25 @@ BaseObject::Ptr FunctionCallNode::evaluate(Scope &scope)
     for (const auto &argNode : _funcArgs)
     {
         // Evaluate all function arguments in external scope (outside function).
-        auto evaluatedArg = argNode->evaluate(scope);
+        AnyObject evaluatedArg = argNode->evaluate(scope);
 
         // Check that the evaluatedArg type (RHS) is compatible with the corresponding
         // (LHS) variable.
         auto &argVariable = funcNode->_funcArgs[iarg++]->castNode<AddVariableNode>();
 
-        if (!argVariable.passesAssignmentTypeCheck(*evaluatedArg))
+        if (!argVariable.passesAssignmentTypeCheck(evaluatedArg))
         {
             char buffer[150];
             snprintf(buffer, 150, "incorrect type for argument '%s' of function '%s'. Expected type '%s'.",
                      argVariable.name().c_str(),
                      _funcName.c_str(),
-                     argVariable.description().c_str());
+                     AnyObject::typeToString(argVariable.variableType()).c_str());
 
             ThrowException(buffer);
         }
 
         // Define variable in the function's scope.
-        funcScope.linkObject(argVariable.name(), evaluatedArg);
+        funcScope.link(argVariable.name(), std::move(evaluatedArg));
     }
 
     // Evaluate the function body in our function scope now that we've added the
@@ -77,10 +81,11 @@ BaseObject::Ptr FunctionCallNode::evaluate(Scope &scope)
     return evaluateFunctionBody(*funcNode->funcBody, funcScope);
 }
 
-BaseObject::Ptr FunctionCallNode::evaluateFunctionBody(BaseNode &funcBody, Scope &funcScope)
+
+AnyObject FunctionCallNode::evaluateFunctionBody(BaseNode &funcBody, Scope &funcScope)
 {
     // Reset return value.
-    gEnvironmentContext.returnValue = nullptr;
+    gEnvironmentContext.returnValue = AnyObject();
 
     jmp_buf *original = gEnvironmentContext.returnJumpPoint;
 

@@ -9,20 +9,13 @@
 
 #pragma once
 
-#include "BaseObject.hpp"
-#include "ObjectTypes.hpp"
+#include "AnyObject.hpp"
 #include <memory>
 #include <new>
 
 namespace ObjectFactory
 {
 
-template <class TObject, class... Args>
-[[nodiscard]] inline std::shared_ptr<TObject> allocate(Args &&...args)
-{
-    return std::make_shared<TObject>(std::forward<Args>(args)...);
-}
-
-BaseObject::Ptr allocate(ObjectType objectType);
+AnyObject createEmptyObject(AnyObject::Type objectType);
 
 } // namespace ObjectFactory

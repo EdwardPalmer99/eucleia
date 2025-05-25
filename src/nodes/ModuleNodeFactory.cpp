@@ -6,17 +6,17 @@
 //
 
 #include "ModuleNodeFactory.hpp"
-#include "ArrayObject.hpp"
+#include "AnyObject.hpp"
 #include "BaseNode.hpp"
-#include "FloatObject.hpp"
-#include "IntObject.hpp"
+#include "Exceptions.hpp"
 #include "Logger.hpp"
 #include "NodeFactory.hpp"
-#include "Objects.hpp"
-#include "StringObject.hpp"
+#include "ObjectFactory.hpp"
 #include "Stringify.hpp"
+#include <cassert>
 #include <cmath>
 #include <iostream>
+
 
 namespace NodeFactory
 {
@@ -42,9 +42,9 @@ AnyNode::Ptr createIOModuleNode()
     {
         for (const auto &callArg : callArgs)
         {
-            auto evaluatedNode = callArg->evaluate(scope);
+            auto evaluatedNode = callArg->evaluate(scope); /* TODO: - its not the most efficient if we have to copy a reference */
 
-            std::cout << *evaluatedNode;
+            std::cout << evaluatedNode;
 
             if (callArg != callArgs.back())
             {
@@ -53,7 +53,7 @@ AnyNode::Ptr createIOModuleNode()
         }
 
         std::cout << std::endl;
-        return nullptr;
+        return AnyObject();
     });
 
     return NodeFactory::createModuleNode("io", {doPrint});
@@ -66,18 +66,19 @@ AnyNode::Ptr createMathModuleNode()
     {
         assert(callArgs.size() == 1);
 
-        auto first = callArgs.front()->evaluate<FloatObject>(scope);
-        return ObjectFactory::allocate<FloatObject>(sqrt(first->value()));
+        double first = callArgs.front()->evaluate(scope).getValue<double>();
+        return AnyObject(sqrt(first));
     });
 
     auto doPow = std::pair("pow", [](BaseNodePtrVector &callArgs, Scope &scope)
     {
         assert(callArgs.size() == 2);
 
-        auto first = callArgs.front()->evaluate<FloatObject>(scope);
-        auto second = callArgs.back()->evaluate<FloatObject>(scope);
+        /* TODO: - bug if pass in an integer rather than a floatObject */
+        auto firstObject = callArgs.front()->evaluate(scope);
+        auto secondObject = callArgs.back()->evaluate(scope);
 
-        return ObjectFactory::allocate<FloatObject>(pow(first->value(), second->value()));
+        return AnyObject(pow(firstObject.getValue<double>(), secondObject.getValue<double>()));
     });
 
     return NodeFactory::createModuleNode("math", {doSqrt, doPow});
@@ -90,29 +91,35 @@ AnyNode::Ptr createArrayModuleNode()
     {
         assert(callArgs.size() == 1);
 
-        auto arrayObject = callArgs.front()->evaluate<ArrayObject>(scope);
-        arrayObject->value().clear();
-        return nullptr;
+        AnyObject::Ref theObject = callArgs.front()->evaluateRef(scope); /* Careful if using a reference! Need to not hold reference to garbage! */
+
+        auto &arrayObject = theObject.getValue<AnyObject::Vector>();
+        arrayObject.clear();
+        return AnyObject();
     });
 
     auto doLength = std::pair("length", [](BaseNodePtrVector &callArgs, Scope &scope)
     {
         assert(callArgs.size() == 1);
 
-        auto arrayObject = callArgs.front()->evaluate<ArrayObject>(scope);
+        AnyObject::Ref theObject = callArgs.front()->evaluateRef(scope);
 
-        return ObjectFactory::allocate<IntObject>(arrayObject->value().size());
+        auto &arrayObject = theObject.getValue<AnyObject::Vector>();
+
+        return AnyObject((double)arrayObject.size());
     });
 
     auto doAppend = std::pair("append", [](BaseNodePtrVector &callArgs, Scope &scope)
     {
         assert(callArgs.size() == 2);
 
-        auto arrayObject = callArgs.front()->evaluate<ArrayObject>(scope);
+        AnyObject::Ref theObject = callArgs.front()->evaluateRef(scope);
+
+        auto &arrayObject = theObject.getValue<AnyObject::Vector>();
         auto someObject = callArgs.back()->evaluate(scope);
 
-        arrayObject->value().push_back(someObject->clone()); // NB: must clone!
-        return nullptr;
+        arrayObject.push_back(someObject.clone()); // NB: must clone!
+        return AnyObject();
     });
 
     return NodeFactory::createModuleNode("array", {doClear, doLength, doAppend});
@@ -131,15 +138,15 @@ AnyNode::Ptr createTestModuleNode()
 
         assert(callArgs.size() == 2);
 
-        auto result = callArgs.front()->evaluate<BoolObject>(scope);
-        auto description = callArgs.back()->evaluate<StringObject>(scope);
+        bool result = callArgs.front()->evaluate(scope).getValue<bool>();
+        std::string description = callArgs.back()->evaluate(scope).getValue<std::string>(); /* Be very careful -> copy otherwise referencing garbage! */
 
         // Print pass or fail depending on the test case.
-        const char *statusString = result->value() ? "PASSED" : "FAILED";
-        const char *statusColor = result->value() ? PassColor : FailColor;
+        const char *statusString = result ? "PASSED" : "FAILED";
+        const char *statusColor = result ? PassColor : FailColor;
 
-        std::cout << stringify("%-50s %s%s%s", description->value().c_str(), statusColor, statusString, ClearColor) << std::endl;
-        return nullptr;
+        std::cout << stringify("%-50s %s%s%s", description.c_str(), statusColor, statusString, ClearColor) << std::endl;
+        return AnyObject();
     });
 
     return NodeFactory::createModuleNode("test", {doTest});

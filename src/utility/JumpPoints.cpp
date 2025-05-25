@@ -8,8 +8,10 @@
  */
 
 #include "JumpPoints.hpp"
+#include "AnyObject.hpp"
 #include "Exceptions.hpp"
 #include <stack>
+
 
 std::stack<jmp_buf *> gBreakJumpPointStack;
 

@@ -8,71 +8,96 @@
  */
 
 #include "Scope.hpp"
+#include "AnyObject.hpp"
 #include "Exceptions.hpp"
+#include "Logger.hpp"
 #include <cassert>
+#include <functional>
+#include <iostream>
 
-Scope::Scope(const Scope &_parent)
-    : Scope(&_parent)
+
+Scope::Scope(const Scope &parentScope)
+    : _enclosingScope(const_cast<Scope *>(&parentScope))
 {
 }
 
-Scope::Scope(const Scope *_parent)
-    : parent(const_cast<Scope *>(_parent))
-{
-}
 
-
-BaseObject::Ptr Scope::getOptionalNamedObject(const std::string &name) const
+AnyObject *Scope::getObjectPtr(const VariableName &name) const
 {
-    // Try in our scope (to handle variable shadowing).
-    auto iter = linkedObjectForName.find(name);
-    if (iter != linkedObjectForName.end())
+    auto iter = _objectPtrMap.find(name);
+    if (iter != _objectPtrMap.end())
     {
-        return (iter->second);
+        return const_cast<AnyObject *>(iter->second); // TODO: - bit dodgy with const_cast
     }
 
     // Otherwise check if it is defined in our parent's scope? Keep working outwards.
-    if (parent)
+    if (_enclosingScope)
     {
-        return parent->getOptionalNamedObject(name);
+        return _enclosingScope->getObjectPtr(name);
     }
 
-    // Not defined.
     return nullptr;
 }
 
+#include "Logger.hpp"
 
-BaseObject::Ptr Scope::getNamedObject(const std::string &name) const
+AnyObject &Scope::getObjectRef(const VariableName &name) const
 {
-    BaseObject::Ptr obj = getOptionalNamedObject(name);
-    if (!obj)
+    log().info("Getting object reference for name " + name);
+    auto ptr = getObjectPtr(name);
+
+    if (ptr)
     {
-        ThrowException("undefined variable " + name);
+        log().debug("the pointer type is: <" + ptr->typeToString() + ">");
+
+        return *ptr;
     }
 
-    return obj;
+    // Not defined.
+    ThrowException("No variable defined in scope with name [" + name + "]");
 }
 
 
-bool Scope::hasNamedObject(const std::string &name) const
+void Scope::checkForNameClashesInCurrentScope(const VariableName &name) const
 {
-    return (getOptionalNamedObject(name) != nullptr);
+    if (!_objectPtrMap.count(name))
+        return;
+
+    ThrowException("Variable [" + name + "] is already defined in current scope");
 }
 
 
-void Scope::linkObject(const std::string &name, BaseObject::Ptr object)
+AnyObject::Ref Scope::alias(const VariableName &nameAlias, const VariableName &name)
 {
-    assert(object != nullptr);
+    checkForNameClashesInCurrentScope(nameAlias);
 
-    // 1. Check for name clashes. This is where we have two variables with
-    // the same name defined in the SAME scope.
-    auto iter = linkedObjectForName.find(name);
-    if (iter != linkedObjectForName.end())
+    auto *object = getObjectPtr(name);
+    if (!object)
     {
-        ThrowException(name + " is already defined in current scope");
+        ThrowException("No variable defined in scope with name [" + name + "]");
     }
 
-    // 2. Add to map. This will ensure that we now ignore any outer-scope variables
-    // with this name (variable shadowing).
-    linkedObjectForName[name] = object;
+    _objectPtrMap[nameAlias] = object;
+
+    return std::ref(*object);
+}
+
+
+AnyObject::Ref Scope::link(const VariableName &name, AnyObject &&object)
+{
+    log().debug("Adding variable '" + name + "' with type '" + object.typeToString() + "'");
+
+    assert(!name.empty() && object.getType() != AnyObject::NotSet);
+
+    // 1. Check for name clashes. This is where we have two variables with the same name defined in the SAME scope.
+    // Note that it's okay to have the same variable defined multiple times if they're in different scopes --
+    // this is 'variable shadowing'.
+    checkForNameClashesInCurrentScope(name);
+
+    // 2. Add to map. This will ensure that we now ignore any outer-scope variables with this name (variable shadowing).
+    _objects.push_back(object);
+
+    _objectPtrMap[name] = &_objects.back();
+
+    return _objects.back();
 }

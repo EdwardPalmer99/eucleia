@@ -12,8 +12,8 @@
 #include "Exceptions.hpp"
 #include "FileParser.hpp"
 #include "NodeFactory.hpp"
-#include "StructDefinitionObject.hpp"
-#include "StructObject.hpp"
+#include "StructDefinitionNode.hpp"
+#include "StructNode.hpp"
 #include <memory>
 
 
@@ -45,19 +45,19 @@ BaseNode::Ptr ClassSubParser::parseStruct()
             variableDefs.push_back(std::reinterpret_pointer_cast<AddVariableNode>(node));
         }
 
-        return std::make_shared<StructDefinitionObject>(structTypeName, structParentTypeName, variableDefs);
+        return std::make_shared<StructDefinitionNode>(structTypeName, structParentTypeName, variableDefs);
     }
     else
     {
         // Case: "struct STRUCT_TYPE_NAME & STRUCT_REF_INSTANCE_NAME = STRUCT_VARIABLE_NAME_TO_BIND"
         if (equals(Token::Operator, "&"))
         {
-            return parent().subparsers().variable.parseReference(ObjectType::Struct);
+            return parent().subparsers().variable.parseReference(AnyObject::Struct);
         }
 
         auto structInstanceName = tokens().dequeue();
 
-        return std::make_shared<StructObject>(structTypeName, structInstanceName);
+        return std::make_shared<StructNode>(structTypeName, structInstanceName);
     }
 }
 
@@ -97,19 +97,19 @@ BaseNode::Ptr ClassSubParser::parseClass()
                 ThrowException("unexpected node type for class definition " + classTypeName);
         }
 
-        return std::make_shared<ClassDefinitionObject>(classTypeName, classParentTypeName, classVariables, classMethods);
+        return std::make_shared<ClassDefinitionNode>(classTypeName, classParentTypeName, classVariables, classMethods);
     }
     else
     {
         // Case: "class CLASS_INSTANCE_NAME & CLASS_REF_NAME = CLASS_VARIABLE_NAME_TO_BIND"
         if (equals(Token::Operator, "&"))
         {
-            return parent().subparsers().variable.parseReference(ObjectType::Class);
+            return parent().subparsers().variable.parseReference(AnyObject::Class);
         }
 
         auto classInstanceName = tokens().dequeue();
 
-        return std::make_shared<ClassObject>(classTypeName, classInstanceName);
+        return std::make_shared<ClassNode>(classTypeName, classInstanceName);
     }
 
     return nullptr;

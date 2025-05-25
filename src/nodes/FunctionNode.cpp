@@ -8,16 +8,20 @@
  */
 
 #include "FunctionNode.hpp"
-#include "FunctionObject.hpp"
-#include "ObjectFactory.hpp"
+#include "AnyObject.hpp"
+#include "Logger.hpp"
+#include "Scope.hpp"
+
 
 /// Create a new FunctionObject from a FunctionNode and register in current scope.
-BaseObject::Ptr FunctionNode::evaluate(Scope &scope)
+AnyObject FunctionNode::evaluate(Scope &scope)
 {
+    log().info("evaluating reference in FunctionNode: " + _funcName);
+
     // TODO: - I think this creates a strong-reference cycle! Need to break the chain here
-    auto functionObject = ObjectFactory::allocate<FunctionObject>(shared_from_this());
+    auto functionObject = AnyObject(shared_from_this(), AnyObject::_UserFunction);
 
-    scope.linkObject(_funcName, functionObject);
+    log().debug("Linking function node with name " + _funcName);
 
-    return functionObject;
+    return scope.link(_funcName, std::move(functionObject)); // TODO: - this should be called in evaluateRef()
 }

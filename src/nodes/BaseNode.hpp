@@ -8,10 +8,10 @@
  */
 
 #pragma once
-#include "BaseObject.hpp"
-#include "BaseObjectT.hpp"
+#include "Exceptions.hpp"
 #include "Scope.hpp"
 #include <memory>
+#include <optional>
 #include <vector>
 
 
@@ -47,7 +47,8 @@ enum class NodeType
     ClassMethodCall,
     ArrayAccess,
     AddVariable,
-    Module
+    Module,
+    Cast
 };
 
 
@@ -83,28 +84,11 @@ public:
         return type() == other.type();
     }
 
-    virtual BaseObject::Ptr evaluate(Scope &scope) = 0; /* TODO: - move to shared pointers */
+    /* Returns a copy of an object (good for light-weight types) */
+    virtual class AnyObject evaluate(Scope &); // TODO: - can this be const-cast?
 
-    /* Evaluates object */
-    template <typename TObject>
-    std::shared_ptr<TObject> evaluate(Scope &scope)
-    {
-        return std::static_pointer_cast<TObject>(evaluate(scope));
-    }
 
-    /* Evaluates object and returns the object's stored value directly */
-    template <typename TValue>
-    TValue &evaluateObject(Scope &scope)
-    {
-        /* BaseObject ptr */
-        BaseObject::Ptr baseObjPtr = evaluate(scope);
-
-        /* Up-cast */
-        auto &upcastedObj = static_cast<BaseObjectT<TValue> &>(*baseObjPtr);
-
-        /* Apply operator overload to get stored value */
-        return (*upcastedObj);
-    }
+    virtual class AnyObject &evaluateRef(Scope &);
 
     void setType(NodeType type)
     {

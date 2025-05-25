@@ -8,30 +8,28 @@
  */
 
 #include "ObjectFactory.hpp"
-#include "ArrayObject.hpp"
 #include "Exceptions.hpp"
-#include "FloatObject.hpp"
-#include "IntObject.hpp"
-#include "StringObject.hpp"
+#include <string>
 
 namespace ObjectFactory
 {
 
-BaseObject::Ptr allocate(ObjectType objectType)
+AnyObject createEmptyObject(AnyObject::Type objectType)
 {
     switch (objectType)
     {
-        case ObjectType::Int:
-        case ObjectType::Bool:
-            return allocate<IntObject>();
-        case ObjectType::Float:
-            return allocate<FloatObject>();
-        case ObjectType::String:
-            return allocate<StringObject>();
-        case ObjectType::Array:
-            return allocate<ArrayObject>();
+        case AnyObject::Int:
+            return AnyObject(0L);
+        case AnyObject::Bool:
+            return AnyObject(false);
+        case AnyObject::Float:
+            return AnyObject((double)0.0);
+        case AnyObject::String:
+            return AnyObject(std::string());
+        case AnyObject::Array:
+            return AnyObject(AnyObject::Vector());
         default:
-            ThrowException("cannot allocate for object type!");
+            ThrowException("cannot create empty AnyObject with type [" + AnyObject::typeToString(objectType) + "]");
     }
 }
 
