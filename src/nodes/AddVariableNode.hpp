@@ -8,33 +8,28 @@
  */
 
 #pragma once
-#include "BaseObject.hpp"
+#include "AnyObject.hpp"
 #include "LookupVariableNode.hpp"
-#include "ObjectTypes.hpp"
 #include "Scope.hpp"
+
 
 class AddVariableNode : public LookupVariableNode
 {
 public:
     using Ptr = std::shared_ptr<AddVariableNode>;
 
-    AddVariableNode(std::string name, ObjectType type)
-        : LookupVariableNode(std::move(name)),
-          _variableType(type)
-    {
-        setType(NodeType::AddVariable);
-    }
+    AddVariableNode(std::string name, AnyObject::Type type);
 
     // Creates a new empty variable of a given type to the scope (i.e. int a;).
-    BaseObject::Ptr evaluate(Scope &scope) override;
+    std::shared_ptr<AnyObject> evaluate(Scope &scope) override;
 
     std::string description() const;
 
     //  Type checking for variable assignment.
-    bool passesAssignmentTypeCheck(const BaseObject &assignObject) const;
+    bool passesAssignmentTypeCheck(const AnyObject &assignObject) const;
 
 protected:
-    const ObjectType _variableType;
+    const AnyObject::Type _variableType;
 };
 
 
@@ -50,14 +45,14 @@ public:
      * @param boundName_ Name of the variable to be bound to the reference.
      * @param boundType_ Type of the bound variable. To be checked when evaluate() called.
      */
-    AddReferenceVariableNode(std::string referenceName_, std::string boundName_, ObjectType boundType_);
+    AddReferenceVariableNode(std::string referenceName_, std::string boundName_, AnyObject::Type boundType_);
 
     /**
      * @param scope
      * @return Pointer to the object in the scope now bound to the variable name and
      * the reference name.
      */
-    BaseObject::Ptr evaluate(Scope &scope) override;
+    std::shared_ptr<AnyObject> evaluate(Scope &scope) override;
 
 protected:
     const std::string referenceName;

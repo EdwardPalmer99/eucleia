@@ -8,9 +8,8 @@
  */
 
 #pragma once
-
+#include "AnyObject.hpp"
 #include "BaseNode.hpp"
-#include "ObjectTypes.hpp"
 #include "SubParser.hpp"
 
 class FileParser;
@@ -31,8 +30,11 @@ public:
      *
      * Parse: VARIABLE_TO_BIND_TO_TYPE & REFERENCE_NAME = VARIABLE_TO_BIND_TO;
      */
-    BaseNode::Ptr parseReference(ObjectType boundVariableType_);
+    BaseNode::Ptr parseReference(AnyObject::Type boundVariableType_);
 
     /* Parse: [variable name] */
     BaseNode::Ptr parseVariable();
+
+    /* Parse: int([bool/int/float]), float([bool/int/float]) */
+    BaseNode::Ptr parseCast(AnyObject::Type castType);
 };
