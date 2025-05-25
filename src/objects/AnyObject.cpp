@@ -12,53 +12,54 @@
 #include "StructNode.hpp"
 
 
-AnyObject::Type AnyObject::getUserObjectType(const std::string &name)
+AnyObject::Type AnyObject::stringToType(const std::string &name)
 {
-    /* TODO: - use a static map to make more efficient */
+    static const StringToTypeHashMap StringToType = {{"int", AnyObject::Int},
+                                                     {"float", AnyObject::Float},
+                                                     {"bool", AnyObject::Bool},
+                                                     {"string", AnyObject::String},
+                                                     {"array", AnyObject::Array},
+                                                     {"struct", AnyObject::Struct},
+                                                     {"class", AnyObject::Class}};
+
+    auto iter = StringToType.find(name);
+    if (iter != StringToType.end())
+    {
+        return (iter->second);
+    }
+
+    ThrowException("Type [" + name + "] is not a valid user type");
+};
 
 
-    /* Todo: enable also for functions, etc */
-    if (name == "int")
-        return AnyObject::Int;
-    else if (name == "bool")
-        return AnyObject::Bool;
-    else if (name == "float")
-        return AnyObject::Float;
-    else if (name == "string")
-        return AnyObject::String;
-    else if (name == "array")
-        return AnyObject::Array;
-    else if (name == "struct")
-        return AnyObject::Struct; /* TODO: -  add */
-    else if (name == "class")
-        return AnyObject::Class;
-
-    ThrowException("'" + name + "' is not a valid user object type");
-}
-
-
-std::string AnyObject::typeToString() const
+std::string AnyObject::typeToString(AnyObject::Type type)
 {
-    static const std::unordered_map<Type, std::string> TypeToString = {{NotSet, "NotSet"},
-                                                                       {Int, "Int"},
-                                                                       {Bool, "Bool"},
-                                                                       {Float, "Float"},
-                                                                       {String, "String"},
-                                                                       {Array, "Array"},
-                                                                       {Struct, "Struct"},
-                                                                       {Class, "Class"},
-                                                                       {_UserFunction, "Function"},
-                                                                       {_ModuleFunction, "ModuleFunction"},
-                                                                       {_StructDefinition, "StructDef"},
-                                                                       {_ClassDefinition, "ClassDef"}};
+    static const TypeToStringHashMap TypeToString = {{NotSet, "NotSet"},
+                                                     {Int, "Int"},
+                                                     {Bool, "Bool"},
+                                                     {Float, "Float"},
+                                                     {String, "String"},
+                                                     {Array, "Array"},
+                                                     {Struct, "Struct"},
+                                                     {Class, "Class"},
+                                                     {_UserFunction, "Function"},
+                                                     {_ModuleFunction, "ModuleFunction"},
+                                                     {_StructDefinition, "StructDef"},
+                                                     {_ClassDefinition, "ClassDef"}};
 
-    auto iter = TypeToString.find(_type);
+    auto iter = TypeToString.find(type);
     if (iter != TypeToString.end())
     {
         return (iter->second);
     }
 
-    return "Unknown";
+    ThrowException("Type [" + std::to_string(type) + "] is not valid");
+}
+
+
+std::string AnyObject::typeToString() const
+{
+    return AnyObject::typeToString(_type);
 }
 
 

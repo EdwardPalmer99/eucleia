@@ -59,7 +59,9 @@ public:
 
 
     /* Converts user types like "int" --> AnyType::Int or returns None if not found */
-    static AnyObject::Type getUserObjectType(const std::string &name);
+    static AnyObject::Type stringToType(const std::string &name);
+
+    static std::string typeToString(AnyObject::Type type);
 
     std::string typeToString() const;
 
@@ -94,6 +96,9 @@ protected:
     AnyObject() = default; /* Prevent direct initialization */
 
 private:
+    using TypeToStringHashMap = std::unordered_map<Type, std::string>;
+    using StringToTypeHashMap = std::unordered_map<std::string, Type>;
+
     using ValueVariant = std::variant<long,
                                       bool,
                                       double,

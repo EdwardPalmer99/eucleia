@@ -37,21 +37,7 @@ bool AddVariableNode::passesAssignmentTypeCheck(const AnyObject &assignObject) c
 
 std::string AddVariableNode::description() const
 {
-    switch (_variableType)
-    {
-        case AnyObject::Bool:
-            return "Bool";
-        case AnyObject::Int:
-            return "Int";
-        case AnyObject::Float:
-            return "Float";
-        case AnyObject::String:
-            return "String";
-        case AnyObject::Array:
-            return "Array";
-        default:
-            return "Unknown";
-    }
+    return AnyObject::typeToString(_variableType);
 }
 
 

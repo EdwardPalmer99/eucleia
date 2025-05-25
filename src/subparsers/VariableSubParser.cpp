@@ -22,7 +22,7 @@ BaseNode::Ptr VariableSubParser::parseVariableDefinition()
     Token typeToken = tokens().dequeue();
     assert(typeToken.type() == Token::Keyword);
 
-    AnyObject::Type typeOfObject = AnyObject::getUserObjectType(typeToken);
+    AnyObject::Type typeOfObject = AnyObject::stringToType(typeToken);
 
     if (tokens().front() == "&") // Is reference: [type] & [name] = [another object]
     {
