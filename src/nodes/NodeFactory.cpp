@@ -377,7 +377,6 @@ AnyPropertyNode::Ptr createStructAccessNode(std::string structVarName, std::stri
         // TODO: - reimplement this
         auto theStructObject = std::static_pointer_cast<StructNode>(theObject.getValue<BaseNode::Ptr>());
 
-        std::cout << "getting object reference from scope " << memberVarName << std::endl;
         return std::ref(theStructObject->instanceScope().getObjectRef(memberVarName));
     };
 
