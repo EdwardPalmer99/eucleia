@@ -20,16 +20,8 @@ public:
     Scope(const Scope *_parent = nullptr);
     ~Scope() = default;
 
-    /// Returns true if named object ("variable") is defined in our scope or in
-    /// a parent scope.
-    bool hasNamedObject(const std::string &name) const;
-
-    /// Get a named object ("variable") in our scope or an outer scope. We work
-    /// outwards from our scope to handle variable shadowing correctly. If the
-    /// object is not found, return nullptr.
-    std::shared_ptr<class AnyObject> getOptionalNamedObject(const std::string &name) const;
-
-    /// Similar to getOptionalObject but has a check to ensure pointer is valid.
+    /// Get a named object ("variable") in our scope or an outer scope. We work outwards from our scope to handle
+    /// variable shadowing correctly
     std::shared_ptr<class AnyObject> getNamedObject(const std::string &name) const;
 
     /// Returns non-const reference to parent scope.

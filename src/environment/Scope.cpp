@@ -23,7 +23,7 @@ Scope::Scope(const Scope *_parent)
 }
 
 
-AnyObject::Ptr Scope::getOptionalNamedObject(const std::string &name) const
+AnyObject::Ptr Scope::getNamedObject(const std::string &name) const
 {
     // Try in our scope (to handle variable shadowing).
     auto iter = linkedObjectForName.find(name);
@@ -35,29 +35,10 @@ AnyObject::Ptr Scope::getOptionalNamedObject(const std::string &name) const
     // Otherwise check if it is defined in our parent's scope? Keep working outwards.
     if (parent)
     {
-        return parent->getOptionalNamedObject(name);
+        return parent->getNamedObject(name);
     }
 
-    // Not defined.
-    return nullptr;
-}
-
-
-AnyObject::Ptr Scope::getNamedObject(const std::string &name) const
-{
-    AnyObject::Ptr obj = getOptionalNamedObject(name);
-    if (!obj)
-    {
-        ThrowException("undefined variable " + name);
-    }
-
-    return obj;
-}
-
-
-bool Scope::hasNamedObject(const std::string &name) const
-{
-    return (getOptionalNamedObject(name) != nullptr);
+    ThrowException("No variable defined with name [" + name + "]");
 }
 
 

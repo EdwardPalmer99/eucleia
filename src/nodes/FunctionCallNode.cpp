@@ -19,15 +19,15 @@
 AnyObject::Ptr FunctionCallNode::evaluate(Scope &scope)
 {
     // 0. Any library functions that we wish to evaluate.
-    auto moduleFunction = scope.getOptionalNamedObject(_funcName);
-    if (moduleFunction && moduleFunction->isType(AnyObject::_ModuleFunction))
+    auto someNode = scope.getNamedObject(_funcName);
+    if (someNode->isType(AnyObject::_ModuleFunction))
     {
-        return moduleFunction->getValue<ModuleFunctor>()(_funcArgs, scope);
+        return someNode->getValue<ModuleFunctor>()(_funcArgs, scope);
     }
 
     // TODO: - finish implementing here. Should not be a shared pointer.
     // 1. Get a pointer to the function node stored in this scope.
-    auto funcNode = std::static_pointer_cast<FunctionNode>(scope.getNamedObject(_funcName)->getValue<BaseNode::Ptr>());
+    auto funcNode = std::static_pointer_cast<FunctionNode>(someNode->getValue<BaseNode::Ptr>());
 
     // 2. Verify that the number of arguments matches those required for the
     // function we are calling.
