@@ -126,7 +126,7 @@ AnyObject::Ptr BinaryNode::applyOperator(bool left, bool right) const
         case BinaryOperatorType::And:
             return ObjectFactory::allocate(left && right);
         case BinaryOperatorType::Or:
-            return ObjectFactory::allocate(left != right);
+            return ObjectFactory::allocate(left || right);
         default:
             ThrowException("cannot apply operator to types Bool, Bool");
     }
