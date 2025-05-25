@@ -31,6 +31,8 @@ public:
         Float
     };
 
+    std::string typeToString() const;
+
     /* Constructors */
     Token(Type type) : _type(type) {}
     Token(std::string &value, Type type = NotSet) : std::string(value), _type(type) {}
