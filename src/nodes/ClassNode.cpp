@@ -15,27 +15,23 @@
 
 
 ClassNode::ClassNode(std::string typeName_, std::string name_)
-    : StructNode(std::move(typeName_), std::move(name_))
+    : typeName(std::move(typeName_)), name(std::move(name_))
 {
 }
 
 AnyObject::Ptr ClassNode::evaluate(Scope &scope)
 {
-    // TODO: - inefficient, should have another method we can call to do most of StructNode::evaluate.
-    if (active)
+    if (classDefinition)
     {
-        ThrowException("ClassNode named " + name + " of type " + typeName + " is already active");
+        ThrowException("Class [" + name + "] is already initialized!");
     }
-
-    active = true;
 
     // Initialize our instance from the struct definition defined in the scope.
     auto theObject = scope.getNamedObject(typeName);
 
-    structDefinition = std::static_pointer_cast<StructDefinitionNode>(theObject->getValue<BaseNode::Ptr>());
-    structDefinition->installVariablesInScope(_instanceScope, variableNames);
+    classDefinition = std::static_pointer_cast<ClassDefinitionNode>(theObject->getValue<BaseNode::Ptr>());
 
-    auto classDefinition = std::static_pointer_cast<ClassDefinitionNode>(structDefinition);
+    classDefinition->installVariablesInScope(_instanceScope);
     classDefinition->installMethodsInScope(_instanceScope);
 
     // Add the active struct instance to the scope. TODO: - transfer ownership
@@ -44,4 +40,23 @@ AnyObject::Ptr ClassNode::evaluate(Scope &scope)
 
     scope.linkObject(name, wrappedClass);
     return wrappedClass;
+}
+
+
+ClassNode &ClassNode::operator=(const ClassNode &other)
+{
+    if (this == &other)
+    {
+        return (*this);
+    }
+
+    // 1. check that both are instances of the same struct type.
+    if (other.classDefinition != classDefinition)
+    {
+        ThrowException("cannot assign Class objects with different definitions");
+    }
+
+    // 2. Copy scope.
+    _instanceScope = other._instanceScope;
+    return (*this);
 }

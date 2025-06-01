@@ -10,6 +10,7 @@
 #pragma once
 #include "SubParser.hpp"
 #include <string>
+#include <unordered_set>
 
 class FileParser;
 class BaseNode;
@@ -19,22 +20,6 @@ class ClassSubParser : public SubParser
 {
 public:
     explicit ClassSubParser(FileParser &parser_) : SubParser(parser_) {}
-
-    /**
-     * Case 1: parse definition of a new structure:
-     *
-     * struct SomeStruct
-     * {
-     *      int i;
-     *      float f;
-     *      string s;
-     * };
-     *
-     * Case 2: parse instance of structure.
-     *
-     * struct SomeStruct aStruct;
-     */
-    BaseNode::Ptr parseStruct();
 
     /**
      * Case 1: parse definition of a new class:
@@ -50,11 +35,6 @@ public:
                 return i;
             }
      * };
-     *
-     *
-     * Case 2: parse instance of the class:
-     *
-     * class SomeClass aClass;
      */
     BaseNode::Ptr parseClass();
 
@@ -64,4 +44,17 @@ public:
      * aStruct.i --> returns int object stored in struct instance.
      */
     BaseNode::Ptr parseStructAccessor(BaseNode::Ptr lastExpression);
+
+    inline bool isParsedClassDefinition(const std::string &name) const;
+
+private:
+    using ClassDefinitionSet = std::unordered_set<std::string>;
+
+    ClassDefinitionSet _parsedClassDefinitions;
 };
+
+
+bool ClassSubParser::isParsedClassDefinition(const std::string &name) const
+{
+    return _parsedClassDefinitions.count(name);
+}

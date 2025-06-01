@@ -8,8 +8,8 @@
  */
 
 #include "AnyObject.hpp"
+#include "ClassNode.hpp"
 #include "Exceptions.hpp"
-#include "StructNode.hpp"
 
 
 AnyObject::Type AnyObject::stringToType(const std::string &name)
@@ -19,7 +19,6 @@ AnyObject::Type AnyObject::stringToType(const std::string &name)
                                                      {"bool", AnyObject::Bool},
                                                      {"string", AnyObject::String},
                                                      {"array", AnyObject::Array},
-                                                     {"struct", AnyObject::Struct},
                                                      {"class", AnyObject::Class}};
 
     auto iter = StringToType.find(name);
@@ -40,11 +39,9 @@ std::string AnyObject::typeToString(AnyObject::Type type)
                                                      {Float, "Float"},
                                                      {String, "String"},
                                                      {Array, "Array"},
-                                                     {Struct, "Struct"},
                                                      {Class, "Class"},
                                                      {_UserFunction, "Function"},
                                                      {_ModuleFunction, "ModuleFunction"},
-                                                     {_StructDefinition, "StructDef"},
                                                      {_ClassDefinition, "ClassDef"}};
 
     auto iter = TypeToString.find(type);
@@ -81,8 +78,8 @@ AnyObject &AnyObject::operator=(const AnyObject &other)
         case String:
             _value = other._value; /* Standard copy assignment */
             break;
-        case Struct:
-            *std::static_pointer_cast<StructNode>(getValue<BaseNode::Ptr>()) = *std::static_pointer_cast<StructNode>(other.getValue<BaseNode::Ptr>());
+        case Class:
+            *std::static_pointer_cast<ClassNode>(getValue<BaseNode::Ptr>()) = *std::static_pointer_cast<ClassNode>(other.getValue<BaseNode::Ptr>());
             break;
         case Array: /* Array is a vector of shared pointers --> need to clone for deep-copy */
             getValue<Vector>() = cloneVector(other.getValue<Vector>());

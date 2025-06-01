@@ -1,20 +1,20 @@
 import <io>
 import <test>
 
-struct Base
+class Base
 {
     int i;
 };
 
-struct Derived extends Base 
+class Derived : Base 
 {
     int b;
 };
 
-struct Derived aStruct;
+Derived aStruct;
 aStruct.i = 1;
 aStruct.b = 2;
-TEST(aStruct.i == 1 && aStruct.b == 2, "struct inheritance");
+TEST(aStruct.i == 1 && aStruct.b == 2, "class inheritance");
 
 class BaseClass
 {
@@ -26,7 +26,7 @@ class BaseClass
     int i;
 };
 
-class DerivedClass extends BaseClass 
+class DerivedClass : BaseClass 
 {
     func init()
     {
@@ -34,11 +34,11 @@ class DerivedClass extends BaseClass
     }
 };
 
-class BaseClass bClass;
+BaseClass bClass;
 bClass.init();
 TEST(bClass.i == 0, "base class method");
 
-class DerivedClass aClass;
+DerivedClass aClass;
 aClass.init();
 TEST(aClass.i == 1, "class method overriding"); 
 

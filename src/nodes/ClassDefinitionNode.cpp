@@ -9,6 +9,7 @@
 
 #include "ClassDefinitionNode.hpp"
 #include "AnyObject.hpp"
+#include "Exceptions.hpp"
 #include "ObjectFactory.hpp"
 
 
@@ -16,16 +17,30 @@ ClassDefinitionNode::ClassDefinitionNode(std::string typeName_,
                                          std::string parentTypeName_,
                                          std::vector<AddVariableNode::Ptr> variableDefs_,
                                          std::vector<FunctionNode::Ptr> methodDefs_)
-    : StructDefinitionNode(std::move(typeName_), std::move(parentTypeName_), std::move(variableDefs_)),
+    : typeName(std::move(typeName_)),
+      parentTypeName(std::move(parentTypeName_)),
+      variableDefs(std::move(variableDefs_)),
       methodDefs(std::move(methodDefs_))
 {
     setType(NodeType::ClassDefinition);
 }
 
 
+std::shared_ptr<ClassDefinitionNode> ClassDefinitionNode::lookupParent(const Scope &scope) const
+{
+    if (parentTypeName.empty())
+    {
+        return nullptr;
+    }
+
+    auto theObject = scope.getNamedObject(parentTypeName);
+
+    return std::static_pointer_cast<ClassDefinitionNode>(theObject->getValue<BaseNode::Ptr>());
+}
+
+
 AnyObject::Ptr ClassDefinitionNode::evaluate(Scope &scope)
 {
-    // NB: override method defined in StructDefinitionNode.
     if (active)
     {
         ThrowException(typeName + " is already defined");
@@ -33,8 +48,6 @@ AnyObject::Ptr ClassDefinitionNode::evaluate(Scope &scope)
 
     active = true;
 
-    // TODO: - would be nice to have single method we override form StructDefinitionNode
-    // and then we can call base method and just extend it.
     buildVariableDefHashMap(scope);
     buildMethodDefsHashMap(scope);
 
@@ -43,6 +56,20 @@ AnyObject::Ptr ClassDefinitionNode::evaluate(Scope &scope)
 
     scope.linkObject(typeName, objectWrapper);
     return objectWrapper;
+}
+
+
+void ClassDefinitionNode::installVariablesInScope(Scope &scope) const
+{
+    if (!active)
+    {
+        ThrowException("the struct definition is inactive!");
+    }
+
+    for (auto iter = allVariableDefsMap.begin(); iter != allVariableDefsMap.end(); ++iter)
+    {
+        (void)iter->second->evaluate(scope);
+    }
 }
 
 
@@ -56,6 +83,36 @@ void ClassDefinitionNode::installMethodsInScope(Scope &scope) const
     for (auto &[name, funcNode] : allMethodDefsMap)
     {
         (void)funcNode->evaluate(scope);
+    }
+}
+
+
+void ClassDefinitionNode::buildVariableDefHashMap(const Scope &scope)
+{
+    if (!allVariableDefsMap.empty())
+    {
+        return; // Already built.
+    }
+
+    auto parent = lookupParent(scope);
+    if (parent)
+    {
+        parent->buildVariableDefHashMap(scope); // TODO: - unnecessary
+
+        // Copy parent definitions.
+        allVariableDefsMap = parent->allVariableDefsMap;
+    }
+
+    // Now we add our own variable definitions and check for any clashes.
+    for (AddVariableNode::Ptr &variableDef : variableDefs)
+    {
+        auto iter = allVariableDefsMap.find(variableDef->name());
+        if (iter != allVariableDefsMap.end())
+        {
+            ThrowException("duplicate class variable " + iter->first);
+        }
+
+        allVariableDefsMap[variableDef->name()] = variableDef;
     }
 }
 
