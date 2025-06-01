@@ -10,11 +10,11 @@
 #include "Grammar.hpp"
 
 GrammarImpl::GrammarImpl()
-    : punctuation{',', ';', '(', ')', '{', '}', '[', ']', '.'},
+    : punctuation{',', ';', '(', ')', '{', '}', '[', ']', '.', ':'},
       operators{'+', '-', '*', '/', '%', '&', '|', '<', '>', '=', '!'},
       keywords{"if", "else", "true", "false", "func", "while", "do", "for", "int",
                "float", "bool", "array", "string", "break", "return", "import",
-               "class", "extends"},
+               "class"},
       dataTypes{"int", "float", "bool", "array", "string"}
 {
 }

@@ -24,14 +24,14 @@ BaseNode::Ptr ClassSubParser::parseClass()
     _parsedClassDefinitions.insert(classTypeName);
 
     // Do we have a '{' token next? If we do then it is definition of new struct.
-    if (equals(Token::Punctuation, "{") || equals(Token::Keyword, "extends"))
+    if (equals(Token::Punctuation, "{") || equals(Token::Punctuation, ":"))
     {
         // *** Inheritance: class SomeClass(ParentClass) ***
         std::string classParentTypeName = "";
 
-        if (equals(Token::Keyword, "extends"))
+        if (equals(Token::Punctuation, ":"))
         {
-            skip("extends");
+            skip(":");
 
             classParentTypeName = tokens().dequeue();
         }

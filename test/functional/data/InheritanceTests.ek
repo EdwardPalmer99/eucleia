@@ -6,7 +6,7 @@ class Base
     int i;
 };
 
-class Derived extends Base 
+class Derived : Base 
 {
     int b;
 };
@@ -26,7 +26,7 @@ class BaseClass
     int i;
 };
 
-class DerivedClass extends BaseClass 
+class DerivedClass : BaseClass 
 {
     func init()
     {
