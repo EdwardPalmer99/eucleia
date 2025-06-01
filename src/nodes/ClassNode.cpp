@@ -21,19 +21,17 @@ ClassNode::ClassNode(std::string typeName_, std::string name_)
 
 AnyObject::Ptr ClassNode::evaluate(Scope &scope)
 {
-    if (active)
+    if (classDefinition)
     {
-        ThrowException("ClassNode named " + name + " of type " + typeName + " is already active");
+        ThrowException("Class [" + name + "] is already initialized!");
     }
-
-    active = true;
 
     // Initialize our instance from the struct definition defined in the scope.
     auto theObject = scope.getNamedObject(typeName);
 
     classDefinition = std::static_pointer_cast<ClassDefinitionNode>(theObject->getValue<BaseNode::Ptr>());
 
-    classDefinition->installVariablesInScope(_instanceScope, variableNames);
+    classDefinition->installVariablesInScope(_instanceScope);
     classDefinition->installMethodsInScope(_instanceScope);
 
     // Add the active struct instance to the scope. TODO: - transfer ownership

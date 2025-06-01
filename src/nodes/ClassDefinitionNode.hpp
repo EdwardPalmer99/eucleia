@@ -55,7 +55,7 @@ public:
     /**
      * Calls evaluate method on all variables in this struct and parents. Installs them in argument scope.
      */
-    void installVariablesInScope(Scope &scope, std::unordered_set<std::string> &variableNames) const;
+    void installVariablesInScope(Scope &scope) const;
 
 protected:
     /**

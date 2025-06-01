@@ -27,12 +27,6 @@ public:
 
     ClassNode &operator=(const ClassNode &other);
 
-
-    // ClassNode &operator=(const BaseObject &) override
-    // {
-    //     ThrowException("Not implemented");
-    // }
-
     /**
      * Finishes initializing the class object and links to the scope.
      * @param scope The scope in which to add the instance.
@@ -51,16 +45,6 @@ protected:
      * When this instance goes out of scope, all variables will be deleted.
      */
     Scope _instanceScope;
-
-    /**
-     * Stores names of all variables stored in set.
-     */
-    std::unordered_set<std::string> variableNames;
-
-    /**
-     * Ony a single evaluate call allowed.
-     */
-    bool active{false};
 
     /**
      * Stores name of instance and the type.

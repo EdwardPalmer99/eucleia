@@ -59,18 +59,15 @@ AnyObject::Ptr ClassDefinitionNode::evaluate(Scope &scope)
 }
 
 
-void ClassDefinitionNode::installVariablesInScope(Scope &scope, std::unordered_set<std::string> &variableNames) const
+void ClassDefinitionNode::installVariablesInScope(Scope &scope) const
 {
     if (!active)
     {
         ThrowException("the struct definition is inactive!");
     }
 
-    variableNames.clear();
-
     for (auto iter = allVariableDefsMap.begin(); iter != allVariableDefsMap.end(); ++iter)
     {
-        variableNames.insert(iter->first);
         (void)iter->second->evaluate(scope);
     }
 }
