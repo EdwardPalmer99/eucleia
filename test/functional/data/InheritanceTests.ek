@@ -1,20 +1,20 @@
 import <io>
 import <test>
 
-struct Base
+class Base
 {
     int i;
 };
 
-struct Derived extends Base 
+class Derived extends Base 
 {
     int b;
 };
 
-struct Derived aStruct;
+class Derived aStruct;
 aStruct.i = 1;
 aStruct.b = 2;
-TEST(aStruct.i == 1 && aStruct.b == 2, "struct inheritance");
+TEST(aStruct.i == 1 && aStruct.b == 2, "class inheritance");
 
 class BaseClass
 {

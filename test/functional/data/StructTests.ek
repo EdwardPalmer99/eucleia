@@ -3,7 +3,7 @@ import <test>
 
 // Definition of a structure. Should be stored in the scope so we can lookup for
 // this type of struct.
-struct SomeStruct
+class SomeStruct
 {
     int i;
     float f;
@@ -11,7 +11,7 @@ struct SomeStruct
 };
 
 // TODO: - would be nice to have { .i = 1, .f = 1.1, .s = "hi" }; assignment
-struct SomeStruct first;
+class SomeStruct first;
 TEST(first.i == 0, "struct init");
 
 // Setters.
@@ -31,6 +31,6 @@ int iValue = first.i;
 TEST(iValue == 2 && first.i == 1, "int getter");
 
 // Copy struct instances.
-struct SomeStruct second;   // TODO: - cannot handle = first here!
+class SomeStruct second;   // TODO: - cannot handle = first here!
 second = first;
 TEST(second.i == 1 && second.f == 1.1 && second.s == "hello, world!", "struct assignment");

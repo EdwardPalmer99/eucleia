@@ -177,8 +177,6 @@ BaseNode::Ptr FileParser::parseAtomicallyExpression()
         return _subParsers.import.parseImport();
     else if (equals(Token::Keyword, "func")) // Functions should be defined as in C --> will need void type
         return _subParsers.function.parseFunctionDefinition();
-    else if (equals(Token::Keyword, "struct"))
-        return _subParsers.classParser.parseStruct();
     else if (equals(Token::Keyword, "class"))
         return _subParsers.classParser.parseClass();
     else if (Grammar::instance().isDataType(tokens().front()))

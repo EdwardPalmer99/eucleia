@@ -21,8 +21,6 @@
 #include "ImportSubParser.hpp"
 #include "LookupVariableNode.hpp"
 #include "LoopSubParser.hpp"
-#include "StructDefinitionNode.hpp"
-#include "StructNode.hpp"
 #include "SubParsers.hpp"
 #include "Tokenizer.hpp"
 #include "UnaryOperatorSubParser.hpp"

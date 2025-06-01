@@ -21,27 +21,11 @@ public:
     explicit ClassSubParser(FileParser &parser_) : SubParser(parser_) {}
 
     /**
-     * Case 1: parse definition of a new structure:
-     *
-     * struct SomeStruct
-     * {
-     *      int i;
-     *      float f;
-     *      string s;
-     * };
-     *
-     * Case 2: parse instance of structure.
-     *
-     * struct SomeStruct aStruct;
-     */
-    BaseNode::Ptr parseStruct();
-
-    /**
      * Case 1: parse definition of a new class:
      *
      * class SomeClass
      * {
-     *      int i;
+     *      int i;å
      *
      *      func someFunc(int a)
             {

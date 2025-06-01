@@ -14,7 +14,7 @@ GrammarImpl::GrammarImpl()
       operators{'+', '-', '*', '/', '%', '&', '|', '<', '>', '=', '!'},
       keywords{"if", "else", "true", "false", "func", "while", "do", "for", "int",
                "float", "bool", "array", "string", "break", "return", "import",
-               "struct", "class", "extends"},
+               "class", "extends"},
       dataTypes{"int", "float", "bool", "array", "string"}
 {
 }

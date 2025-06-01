@@ -12,55 +12,7 @@
 #include "Exceptions.hpp"
 #include "FileParser.hpp"
 #include "NodeFactory.hpp"
-#include "StructDefinitionNode.hpp"
-#include "StructNode.hpp"
 #include <memory>
-
-
-BaseNode::Ptr ClassSubParser::parseStruct()
-{
-    skip("struct");
-
-    auto structTypeName = tokens().dequeue();
-
-    // Do we have a '{' token next? If we do then it is definition of new struct.
-    if (equals(Token::Punctuation, "{") || equals(Token::Keyword, "extends"))
-    {
-        std::string structParentTypeName = "";
-
-        if (equals(Token::Keyword, "extends"))
-        {
-            skip("extends");
-
-            structParentTypeName = tokens().dequeue();
-        }
-
-        auto nodes = subparsers().block.parseDelimited("{", "}", ";", std::bind(&VariableSubParser::parseVariableDefinition, subparsers().variable));
-
-        std::vector<AddVariableNode::Ptr> variableDefs;
-        variableDefs.reserve(nodes.size());
-
-        for (BaseNode::Ptr node : nodes)
-        {
-            variableDefs.push_back(std::reinterpret_pointer_cast<AddVariableNode>(node));
-        }
-
-        return std::make_shared<StructDefinitionNode>(structTypeName, structParentTypeName, variableDefs);
-    }
-    else
-    {
-        // Case: "struct STRUCT_TYPE_NAME & STRUCT_REF_INSTANCE_NAME = STRUCT_VARIABLE_NAME_TO_BIND"
-        if (equals(Token::Operator, "&"))
-        {
-            return parent().subparsers().variable.parseReference(AnyObject::Struct);
-        }
-
-        auto structInstanceName = tokens().dequeue();
-
-        return std::make_shared<StructNode>(structTypeName, structInstanceName);
-    }
-}
-
 
 BaseNode::Ptr ClassSubParser::parseClass()
 {

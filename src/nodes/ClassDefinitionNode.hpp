@@ -11,9 +11,9 @@
 #include "AddVariableNode.hpp"
 #include "FunctionNode.hpp"
 #include "Scope.hpp"
-#include "StructDefinitionNode.hpp"
 #include <memory>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 
@@ -22,9 +22,11 @@
  * inside. It will be stored in the scope along with the class name. We can then
  * use this to construct class instances.
  */
-class ClassDefinitionNode : public StructDefinitionNode
+class ClassDefinitionNode : public BaseNode, public std::enable_shared_from_this<ClassDefinitionNode>
 {
 public:
+    using Ptr = std::shared_ptr<ClassDefinitionNode>;
+
     /**
      * Supply vectors of nodes containing the variables and methods. We only
      * pass vectors to the variables and methods we actually own. The others
@@ -50,6 +52,11 @@ public:
      */
     void installMethodsInScope(Scope &scope) const;
 
+    /**
+     * Calls evaluate method on all variables in this struct and parents. Installs them in argument scope.
+     */
+    void installVariablesInScope(Scope &scope, std::unordered_set<std::string> &variableNames) const;
+
 protected:
     /**
      * Builds the method map from parent classes.
@@ -57,10 +64,51 @@ protected:
     void buildMethodDefsHashMap(const Scope &scope);
 
     /**
+     * Builds the variableDefsMap from any parent classes and checks for clashing variables.
+     */
+    void buildVariableDefHashMap(const Scope &scope);
+
+    /**
+     * Returns a pointer to the parent struct or nullptr if not found.
+     */
+    std::shared_ptr<ClassDefinitionNode> lookupParent(const Scope &scope) const;
+
+    /**
+     * Type name for struct.
+     */
+    std::string typeName;
+
+    /**
+     * Type name for parent.
+     */
+    std::string parentTypeName;
+
+    /**
+     * Store AddVariableNode so class can create all defined variables. We take
+     * ownership of all nodes. There may be additional nodes that are not in this
+     * vector and will be stored in a parent class.
+     */
+    std::vector<std::shared_ptr<class AddVariableNode>> variableDefs;
+
+    /**
+     * We activate the definition once evaluate is called. This is when we can
+     * try to locate the definition of the parent if there is one and install
+     * it in the scope. We also refuse to allow more than one definition in the
+     * scope as you would expect so evaluate() cannot be called more than once!
+     */
+    bool active{false};
+
+    /**
      * Stores FunctionNodes. We will call evaluate() method to add them to class scope.
      * Note we are responsible for deleting these.
      */
     std::vector<FunctionNode::Ptr> methodDefs;
+
+    /**
+     * Stores our owned variables and those of any parent variables we inherit.
+     * To construct the object, we will call evaluate() method on each node.
+     */
+    std::unordered_map<std::string, std::shared_ptr<class AddVariableNode>> allVariableDefsMap;
 
     /**
      * Stores our owned methods and those of any parent methods we inherit. If

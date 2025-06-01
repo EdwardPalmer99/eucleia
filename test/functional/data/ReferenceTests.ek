@@ -51,17 +51,17 @@ import <io>
 }
 
 {
-   struct SomeStruct 
+   class SomeStruct 
    {
        int a;
        int b;
        int c;
    };
 
-   struct SomeStruct instance;
+   class SomeStruct instance;
    instance.a = 2;
 
-   struct SomeStruct &ref = instance;
+   class SomeStruct &ref = instance;
    ref.a = 3;
    TEST(instance.a == 3, "struct reference");
 }

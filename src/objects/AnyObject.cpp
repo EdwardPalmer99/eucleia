@@ -8,8 +8,8 @@
  */
 
 #include "AnyObject.hpp"
+#include "ClassNode.hpp"
 #include "Exceptions.hpp"
-#include "StructNode.hpp"
 
 
 AnyObject::Type AnyObject::stringToType(const std::string &name)
@@ -81,8 +81,8 @@ AnyObject &AnyObject::operator=(const AnyObject &other)
         case String:
             _value = other._value; /* Standard copy assignment */
             break;
-        case Struct:
-            *std::static_pointer_cast<StructNode>(getValue<BaseNode::Ptr>()) = *std::static_pointer_cast<StructNode>(other.getValue<BaseNode::Ptr>());
+        case Class:
+            *std::static_pointer_cast<ClassNode>(getValue<BaseNode::Ptr>()) = *std::static_pointer_cast<ClassNode>(other.getValue<BaseNode::Ptr>());
             break;
         case Array: /* Array is a vector of shared pointers --> need to clone for deep-copy */
             getValue<Vector>() = cloneVector(other.getValue<Vector>());

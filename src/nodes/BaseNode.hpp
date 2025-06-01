@@ -36,7 +36,6 @@ enum class NodeType
     Binary,
     Program,
     StructAccess,
-    StructDefinition,
     FunctionCall,
     LookupVariable,
     Function,

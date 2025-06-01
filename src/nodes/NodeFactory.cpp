@@ -15,7 +15,6 @@
 #include "LookupVariableNode.hpp"
 #include "ObjectFactory.hpp"
 #include "Scope.hpp"
-#include "StructNode.hpp"
 #include <cassert>
 #include <iostream>
 #include <memory>
@@ -382,7 +381,7 @@ AnyPropertyNode::Ptr createStructAccessNode(std::string structVarName, std::stri
     {
         auto theObject = scope.getNamedObject(structVarName);
 
-        auto theStructObject = std::static_pointer_cast<StructNode>(theObject->getValue<BaseNode::Ptr>());
+        auto theStructObject = std::static_pointer_cast<ClassNode>(theObject->getValue<BaseNode::Ptr>());
 
         return theStructObject->instanceScope().getNamedObject(memberVarName);
     };
@@ -392,7 +391,6 @@ AnyPropertyNode::Ptr createStructAccessNode(std::string structVarName, std::stri
         auto currentObject = evaluateNoClone(scope);
         return currentObject->clone();
     };
-
 
     return std::make_shared<AnyPropertyNode>(NodeType::StructAccess, std::move(evaluate), std::move(evaluateNoClone));
 }
