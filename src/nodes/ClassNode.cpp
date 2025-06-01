@@ -58,15 +58,7 @@ ClassNode &ClassNode::operator=(const ClassNode &other)
         ThrowException("cannot assign Class objects with different definitions");
     }
 
-    // 2. iterate over the objects stored in the scopes and assign. // TODO: - make more efficient
-    for (auto &variableName : variableNames)
-    {
-        AnyObject::Ptr thisObject = _instanceScope.getNamedObject(variableName);
-        AnyObject::Ptr otherObject = other._instanceScope.getNamedObject(variableName);
-
-        // Attempt an assignment. Will fail if different types.
-        (*thisObject) = (*otherObject);
-    }
-
+    // 2. Copy scope.
+    _instanceScope = other._instanceScope;
     return (*this);
 }
