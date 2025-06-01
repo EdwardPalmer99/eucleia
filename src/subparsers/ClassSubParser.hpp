@@ -10,6 +10,7 @@
 #pragma once
 #include "SubParser.hpp"
 #include <string>
+#include <unordered_set>
 
 class FileParser;
 class BaseNode;
@@ -25,7 +26,7 @@ public:
      *
      * class SomeClass
      * {
-     *      int i;å
+     *      int i;
      *
      *      func someFunc(int a)
             {
@@ -34,11 +35,6 @@ public:
                 return i;
             }
      * };
-     *
-     *
-     * Case 2: parse instance of the class:
-     *
-     * class SomeClass aClass;
      */
     BaseNode::Ptr parseClass();
 
@@ -48,4 +44,17 @@ public:
      * aStruct.i --> returns int object stored in struct instance.
      */
     BaseNode::Ptr parseStructAccessor(BaseNode::Ptr lastExpression);
+
+    inline bool isParsedClassDefinition(const std::string &name) const;
+
+private:
+    using ClassDefinitionSet = std::unordered_set<std::string>;
+
+    ClassDefinitionSet _parsedClassDefinitions;
 };
+
+
+bool ClassSubParser::isParsedClassDefinition(const std::string &name) const
+{
+    return _parsedClassDefinitions.count(name);
+}

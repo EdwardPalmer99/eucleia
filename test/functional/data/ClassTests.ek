@@ -34,11 +34,11 @@ class Point
 };
 
 
-class Point p;
+Point p;
 p.one();
 TEST(p.vx == 1.0 && p.vy == 1.0 && p.vz == 1.0, "class method one.");
 
-class Point q;
+Point q;
 q.init(1.0, 3.0, 5.0);
 TEST(q.vx == 1.0 && q.vy == 3.0 && q.vz == 5.0, "class method init.");
 TEST(wasSet == true, "access global variable in class.");

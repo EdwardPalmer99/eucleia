@@ -20,6 +20,9 @@ BaseNode::Ptr ClassSubParser::parseClass()
 
     auto classTypeName = tokens().dequeue();
 
+    /* Insert to keep track of class definitions */
+    _parsedClassDefinitions.insert(classTypeName);
+
     // Do we have a '{' token next? If we do then it is definition of new struct.
     if (equals(Token::Punctuation, "{") || equals(Token::Keyword, "extends"))
     {
@@ -51,20 +54,8 @@ BaseNode::Ptr ClassSubParser::parseClass()
 
         return std::make_shared<ClassDefinitionNode>(classTypeName, classParentTypeName, classVariables, classMethods);
     }
-    else
-    {
-        // Case: "class CLASS_INSTANCE_NAME & CLASS_REF_NAME = CLASS_VARIABLE_NAME_TO_BIND"
-        if (equals(Token::Operator, "&"))
-        {
-            return parent().subparsers().variable.parseReference(AnyObject::Class);
-        }
 
-        auto classInstanceName = tokens().dequeue();
-
-        return std::make_shared<ClassNode>(classTypeName, classInstanceName);
-    }
-
-    return nullptr;
+    ThrowException("Failed to parse class definition");
 }
 
 

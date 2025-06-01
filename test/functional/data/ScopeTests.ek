@@ -29,7 +29,7 @@ import <test>
         }
     };
 
-    class ClassA firstInstance;
+    ClassA firstInstance;
 
     {
         class ClassA 
@@ -40,7 +40,7 @@ import <test>
             }
         };
 
-        class ClassA secondInstance;
+        ClassA secondInstance;
 
         TEST(firstInstance.greeting() != secondInstance.greeting(), "nested class definitions");
     }

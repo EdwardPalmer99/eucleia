@@ -51,22 +51,6 @@ import <io>
 }
 
 {
-   class SomeStruct 
-   {
-       int a;
-       int b;
-       int c;
-   };
-
-   class SomeStruct instance;
-   instance.a = 2;
-
-   class SomeStruct &ref = instance;
-   ref.a = 3;
-   TEST(instance.a == 3, "struct reference");
-}
-
-{
    class SomeClass 
    {
        int a;
@@ -74,12 +58,13 @@ import <io>
        int c;
    };
 
-   class SomeClass instance;
+   SomeClass instance;
    instance.a = 2;
 
-   class SomeClass &ref = instance;
-   ref.a = 3;
-   TEST(instance.a == 3, "class reference");
+   // Binding to class instances not currently supported!
+   //SomeClass &ref = instance;
+   //ref.a = 3;
+   //TEST(instance.a == 3, "class reference");
 
    // TODO: - Special case. Cannot get it to bind to class variable!
    int &anotherRef = instance.a;

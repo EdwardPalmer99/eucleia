@@ -11,7 +11,7 @@ class SomeStruct
 };
 
 // TODO: - would be nice to have { .i = 1, .f = 1.1, .s = "hi" }; assignment
-class SomeStruct first;
+SomeStruct first;
 TEST(first.i == 0, "struct init");
 
 // Setters.
@@ -31,6 +31,6 @@ int iValue = first.i;
 TEST(iValue == 2 && first.i == 1, "int getter");
 
 // Copy struct instances.
-class SomeStruct second;   // TODO: - cannot handle = first here!
+SomeStruct second;   // TODO: - cannot handle = first here!
 second = first;
 TEST(second.i == 1 && second.f == 1.1 && second.s == "hello, world!", "struct assignment");

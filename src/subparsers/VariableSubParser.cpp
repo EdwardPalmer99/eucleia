@@ -10,6 +10,7 @@
 #include "VariableSubParser.hpp"
 #include "AddVariableNode.hpp"
 #include "AnyNode.hpp"
+#include "ClassNode.hpp"
 #include "FileParser.hpp"
 #include "LookupVariableNode.hpp"
 #include "NodeFactory.hpp"
@@ -40,6 +41,9 @@ BaseNode::Ptr VariableSubParser::parseVariableDefinition()
 }
 
 
+#include <iostream>
+
+
 BaseNode::Ptr VariableSubParser::parseReference(AnyObject::Type boundVariableType)
 {
     skip("&"); // TODO: - add type-checking
@@ -60,6 +64,13 @@ BaseNode::Ptr VariableSubParser::parseVariable()
 {
     Token token = tokens().dequeue();
     assert(token.type() == Token::Variable);
+
+    /* Note: we may have a class instance defined here: [classType] [classInstance] */
+    if (subparsers().classParser.isParsedClassDefinition(token))
+    {
+        /* ClassTypeName, ClassInstanceName */
+        return std::make_shared<ClassNode>(token, tokens().dequeue());
+    }
 
     return std::make_shared<LookupVariableNode>(token);
 }

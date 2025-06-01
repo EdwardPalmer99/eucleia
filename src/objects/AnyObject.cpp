@@ -19,7 +19,6 @@ AnyObject::Type AnyObject::stringToType(const std::string &name)
                                                      {"bool", AnyObject::Bool},
                                                      {"string", AnyObject::String},
                                                      {"array", AnyObject::Array},
-                                                     {"struct", AnyObject::Struct},
                                                      {"class", AnyObject::Class}};
 
     auto iter = StringToType.find(name);
@@ -40,11 +39,9 @@ std::string AnyObject::typeToString(AnyObject::Type type)
                                                      {Float, "Float"},
                                                      {String, "String"},
                                                      {Array, "Array"},
-                                                     {Struct, "Struct"},
                                                      {Class, "Class"},
                                                      {_UserFunction, "Function"},
                                                      {_ModuleFunction, "ModuleFunction"},
-                                                     {_StructDefinition, "StructDef"},
                                                      {_ClassDefinition, "ClassDef"}};
 
     auto iter = TypeToString.find(type);

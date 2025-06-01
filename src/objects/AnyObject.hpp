@@ -38,12 +38,10 @@ public:
         Float,
         String,
         Array,
-        Struct,
         Class,
 
         _UserFunction, /* Private implementation-types */
         _ModuleFunction,
-        _StructDefinition,
         _ClassDefinition,
     };
 
