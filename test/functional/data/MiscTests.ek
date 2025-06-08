@@ -5,3 +5,9 @@ import <test>
     int result = (((3 * 2) / 3 + 4) - 1) / (4 + 1);
     TEST(result == 1, "operation order");
 }
+
+{
+    // Variable name including digits
+    int abc123 = 1;
+    print(abc123);
+}

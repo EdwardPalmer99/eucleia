@@ -199,7 +199,7 @@ Token Tokenizer::buildIDToken(CharStream &stream)
 
     std::vector<char> buffer;
 
-    while (stream.isID())
+    while (stream.isID() || stream.isDigit()) // Enable digits after first 'id' character so 'abc123' is allowed
     {
         buffer.push_back(stream.current());
         (void)stream.increment();
